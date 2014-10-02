@@ -34,6 +34,7 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 	#include "db.h"
 	#include "query_result.cpp"
 	#include "db.cpp"
+	#include "morphan_result.cpp"
 	#include "morphan.cpp"
 	morphan *stemmer=NULL;
 	#include "lexer.h"
@@ -43,7 +44,7 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 	interpreter *sparser=NULL;
 	#include "sp.cpp"
 	int line=0;
-#line 46 "y.tab.c"
+#line 47 "y.tab.c"
 
 #ifndef YYSTYPE
 typedef int YYSTYPE;
@@ -77,138 +78,125 @@ typedef int YYSTYPE;
 extern int YYPARSE_DECL();
 
 
-#define hiCONSTANT 1
-#define hiLIST 2
-#define hiCOPY 3
-#define hiDIRECTORY 4
-#define hiDIRECTORIES 5
-#define hiEXECUTABLE 6
-#define hiNONEXECUTABLE 7
-#define hiALL 8
-#define hiFILE 9
-#define hiFILES 10
-#define hiTO 11
-#define hiREMOVE 12
-#define hiDELETE 13
-#define hiFROM 14
-#define hiCHANGE 15
-#define hiMOVE 16
-#define hiIN 17
-#define hiMAKE 18
-#define hiDOWN 19
-#define hiSHUT 20
-#define hiCOMPUTER 21
-#define hiTHE 22
+#define t_Con 1
+#define t_ENG_A 2
+#define t_ENG_Adv 3
+#define t_ENG_Det 4
+#define t_ENG_N 5
+#define t_ENG_N_stem 6
+#define t_ENG_N_lfea_Pl 7
+#define t_ENG_N_lfea_Sg 8
+#define t_ENG_Prep 9
+#define t_ENG_QPro 10
+#define t_ENG_V_stem 11
 #define YYERRCODE 256
 static const short yylhs[] = {                           -1,
     0,    1,    1,    1,    1,    1,    6,    4,    4,    2,
     5,    7,    7,   10,   10,    3,    8,   11,   13,   13,
-   13,   13,   13,   13,   13,   12,   12,    9,    9,    9,
-   15,   14,   16,
+   17,   15,   21,   20,   24,   24,   16,   16,   18,   19,
+   22,   12,    9,   23,   14,
 };
 static const short yylen[] = {                            2,
     1,    1,    2,    1,    2,    2,    2,    2,    2,    2,
-    2,    1,    2,    2,    1,    1,    1,    1,    2,    1,
-    1,    2,    1,    1,    1,    1,    1,    1,    1,    1,
-    1,    1,    1,
+    2,    1,    2,    2,    1,    1,    1,    1,    1,    1,
+    2,    2,    2,    1,    2,    2,    1,    2,    1,    1,
+    1,    1,    1,    1,    1,
 };
 static const short yydefred[] = {                         0,
-   17,    0,    1,    0,    0,    0,    0,   31,    0,   23,
-   26,   27,   18,    0,   20,   28,   29,   30,   32,   24,
-    3,    8,    9,    0,   12,    0,    0,   15,   16,   25,
-    5,    6,    7,   10,   22,   19,   11,   13,   14,
+   17,    0,    1,    0,    0,    0,    0,   32,   35,   29,
+   33,   18,    3,    8,    9,    0,   12,    0,    0,   15,
+   16,   19,   20,    0,    0,    0,    5,    6,    7,   10,
+   11,   13,   14,   34,   22,   24,   31,   30,   21,   23,
+    0,    0,   25,   26,
 };
 static const short yydgoto[] = {                          2,
-    3,    4,   21,    5,   22,    6,   23,    7,   24,   25,
-   26,   27,   28,   29,   30,    0,
+    3,    4,   13,    5,   14,    6,   15,    7,   16,   17,
+   18,   19,   20,   21,   22,   23,   24,   25,   39,   35,
+   26,   40,   36,   42,
 };
-static const short yysindex[] = {                        -2,
-    0,    0,    0,   20,    2,   58,   39,    0,    3,    0,
-    0,    0,    0,    3,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,   58,    0,   68,   68,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,
+static const short yysindex[] = {                       -11,
+    0,    0,    0,   15,   -7,   26,   24,    0,    0,    0,
+    0,    0,    0,    0,    0,   26,    0,   27,   27,    0,
+    0,    0,    0,    4,   12,    4,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    4,    4,    0,    0,
 };
 static const short yyrindex[] = {                         0,
-    0,    0,    0,   14,   17,    0,    0,    0,    1,    0,
+    0,    0,    0,   22,   31,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    1,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    6,    0,    0,
 };
 static const short yygindex[] = {                         0,
-    0,    0,   16,    0,   30,    0,   26,    0,    0,  -24,
-    0,    0,    0,    0,   42,    0,
+    0,    0,   28,    0,   36,    0,    7,    0,    0,   19,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   16,
+    0,    0,   -2,    0,
 };
-#define YYTABLESIZE 89
+#define YYTABLESIZE 42
 static const short yytable[] = {                          1,
-   21,   38,   39,    8,   21,   21,   21,   21,   21,   21,
-   21,   21,   16,    2,   21,   17,    4,   21,   18,   21,
-    8,   21,   33,    9,   10,   11,   12,   13,   14,   15,
-   16,   32,   34,   17,   31,    0,   18,    0,   19,    8,
-   20,    0,    9,   10,   11,   12,   13,   14,   15,   37,
-   35,    0,    0,    0,    0,   36,    0,   19,    8,   20,
-    0,    9,   10,   11,   12,   13,   14,   15,    8,    0,
-    0,    9,   10,   11,   12,    0,   14,   15,   20,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   20,
+   27,   11,   27,   27,   34,   28,   27,   28,   28,   27,
+   27,   28,   28,   30,   28,   28,    8,    9,   37,   38,
+   10,    2,   31,   11,   12,    8,    9,    8,    8,   10,
+    4,   10,   10,   12,   29,   12,   32,   33,   43,   44,
+   27,   41,
 };
-static const short yycheck[] = {                          2,
-    0,   26,   27,    1,    4,    5,    6,    7,    8,    9,
-   10,   11,   11,    0,   14,   14,    0,   17,   17,   19,
-    1,   21,    7,    4,    5,    6,    7,    8,    9,   10,
-   11,    6,    7,   14,    5,   -1,   17,   -1,   19,    1,
-   21,   -1,    4,    5,    6,    7,    8,    9,   10,   24,
-    9,   -1,   -1,   -1,   -1,   14,   -1,   19,    1,   21,
-   -1,    4,    5,    6,    7,    8,    9,   10,    1,   -1,
-   -1,    4,    5,    6,    7,   -1,    9,   10,   21,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   21,
+static const short yycheck[] = {                         11,
+    0,    9,    2,    3,    1,    0,    6,    2,    3,    9,
+   10,    6,    6,    7,    9,   10,    2,    3,    7,    8,
+    6,    0,   16,    9,   10,    2,    3,    2,    2,    6,
+    0,    6,    6,   10,    7,   10,   18,   19,   41,   42,
+    5,   26,
 };
 #define YYFINAL 2
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define YYMAXTOKEN 22
+#define YYMAXTOKEN 11
 #if YYDEBUG
 static const char *yyname[] = {
 
-"end-of-file","hiCONSTANT","hiLIST","hiCOPY","hiDIRECTORY","hiDIRECTORIES",
-"hiEXECUTABLE","hiNONEXECUTABLE","hiALL","hiFILE","hiFILES","hiTO","hiREMOVE",
-"hiDELETE","hiFROM","hiCHANGE","hiMOVE","hiIN","hiMAKE","hiDOWN","hiSHUT",
-"hiCOMPUTER","hiTHE",
+"end-of-file","t_Con","t_ENG_A","t_ENG_Adv","t_ENG_Det","t_ENG_N",
+"t_ENG_N_stem","t_ENG_N_lfea_Pl","t_ENG_N_lfea_Sg","t_ENG_Prep","t_ENG_QPro",
+"t_ENG_V_stem",
 };
 static const char *yyrule[] = {
 "$accept : S",
-"S : VP",
-"VP : Vbar1",
-"VP : Vbar1 AdvP",
-"VP : Vbar2",
-"VP : Vbar2 PP",
-"VP : Vbar3 NP",
-"Vbar3 : V AdvP",
-"Vbar2 : Vbar1 PP",
-"Vbar2 : Vbar1 NP",
-"Vbar1 : V NP",
-"PP : Prep NP",
-"NP : CNP",
-"NP : QPro CNP",
-"CNP : A CNP",
-"CNP : N",
-"AdvP : Adv",
-"V : hiLIST",
-"QPro : hiALL",
-"N : hiFILE Con",
-"N : hiFILES",
-"N : hiDIRECTORY",
-"N : hiDIRECTORY Con",
-"N : hiDIRECTORIES",
-"N : hiCOMPUTER",
-"N : Con",
-"A : hiEXECUTABLE",
-"A : hiNONEXECUTABLE",
-"Prep : hiTO",
-"Prep : hiFROM",
-"Prep : hiIN",
-"Con : hiCONSTANT",
-"Adv : hiDOWN",
-"Det : hiTHE",
+"S : ENG_VP",
+"ENG_VP : ENG_Vbar1",
+"ENG_VP : ENG_Vbar1 ENG_AdvP",
+"ENG_VP : ENG_Vbar2",
+"ENG_VP : ENG_Vbar2 ENG_PP",
+"ENG_VP : ENG_Vbar3 ENG_NP",
+"ENG_Vbar3 : ENG_V ENG_AdvP",
+"ENG_Vbar2 : ENG_Vbar1 ENG_PP",
+"ENG_Vbar2 : ENG_Vbar1 ENG_NP",
+"ENG_Vbar1 : ENG_V ENG_NP",
+"ENG_PP : ENG_Prep ENG_NP",
+"ENG_NP : ENG_CNP",
+"ENG_NP : ENG_QPro ENG_CNP",
+"ENG_CNP : ENG_A ENG_CNP",
+"ENG_CNP : ENG_N",
+"ENG_AdvP : ENG_Adv",
+"ENG_V : t_ENG_V_stem",
+"ENG_QPro : t_ENG_QPro",
+"ENG_N : ENG_N_Sg",
+"ENG_N : ENG_N_Pl",
+"ENG_N_Sg_0Con : ENG_N_Stem ENG_N_lfea_Sg",
+"ENG_N_Sg : ENG_N_Sg_0Con ENG_1Con",
+"ENG_N_Pl_0Con : ENG_N_Stem ENG_N_lfea_Pl",
+"ENG_1Con : ENG_Con",
+"ENG_nCon : ENG_1Con ENG_Con",
+"ENG_nCon : ENG_nCon ENG_Con",
+"ENG_N_Pl : ENG_N_Pl_0Con",
+"ENG_N_Pl : ENG_N_Pl_0Con ENG_nCon",
+"ENG_N_Stem : t_ENG_N_stem",
+"ENG_N_lfea_Sg : t_ENG_N_lfea_Sg",
+"ENG_N_lfea_Pl : t_ENG_N_lfea_Pl",
+"ENG_A : t_ENG_A",
+"ENG_Prep : t_ENG_Prep",
+"ENG_Con : t_Con",
+"ENG_Adv : t_ENG_Adv",
 
 };
 #endif
@@ -246,17 +234,16 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 394 "hi.y"
+#line 446 "hi.y"
 
 int yylex(void){
 	int token;
-	lexicon word;
+	lexicon word={};
 
 	token=lex->next_token();
-//	word=lex->last_word_scanned();
-//	if(token==0&&lex->last_word_scanned().empty()==true) return 0;//Historic indicator of YACC about end of input stream
-//	else return token+1;
-	return token;
+	word=lex->last_word_scanned();//Check if any word was scanned
+	if(token==0&&word.word.empty()==true) return 0;//Return 0 (historic indicator of YACC about end of input stream) only if no word was scanned last time where as a corollary token = 0 as well
+	else return token+1;//return token+1 if a word was scanned but could not be tokenized (token=0)->consider it a constant (yacc %token for constant is 1)
 }
 
 void yyerror(char *s){
@@ -272,6 +259,7 @@ int yywrap(){
 const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
 	std::string shell_command;
 	db *sqlite=NULL;
+	std::pair<std::string,unsigned int> functor_found;
 
 	try{
 		if(human_input!=NULL){
@@ -279,7 +267,12 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			sqlite=db::get_instance();
 			sqlite->open("hi.db");
 			sparser=new interpreter;
-			if(yyparse()==0)std::cout<<"TRUE";//shell_command=sparser->get_command();
+			if(yyparse()==0){
+				if(sparser->is_longest_match_for_semantic_rules_found(functor_found)==true)
+					std::cout<<"TRUE";
+					//shell_command=sparser->get_command();
+				else std::cout<<"FALSE";
+			}
 			else std::cout<<"FALSE";
 			delete sparser;
 			sparser=NULL;
@@ -332,7 +325,7 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 		exit(EXIT_FAILURE);
 	}
 }
-#line 335 "y.tab.c"
+#line 328 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -539,163 +532,162 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 54 "hi.y"
+#line 47 "hi.y"
 	{
-				const node_info& VP=sparser->get_node_info(yystack.l_mark[0]);
-				std::cout<<"S->VP"<<std::endl;
-				return 0;
+				const node_info& ENG_VP=sparser->get_node_info(yystack.l_mark[0]);
+				std::cout<<"S->ENG_VP"<<std::endl;
 }
 break;
 case 2:
-#line 60 "hi.y"
+#line 52 "hi.y"
 	{
 				lexicon word;
 
-				const node_info& Vbar1=sparser->get_node_info(yystack.l_mark[0]);
-				word.gcat="VP";
-				yyval=sparser->set_node_info(word,Vbar1);
-				std::cout<<"VP->Vbar1"<<std::endl;
+				const node_info& ENG_Vbar1=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_VP";
+				yyval=sparser->set_node_info(word,ENG_Vbar1);
+				std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
 }
 break;
 case 3:
-#line 69 "hi.y"
+#line 61 "hi.y"
 	{
-				const node_info& Vbar1=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& AdvP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VP",Vbar1,AdvP);
+				const node_info& ENG_Vbar1=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_AdvP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
 				if(yyval<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
 					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"VP->Vbar1 AdvP"<<std::endl;
+				std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 }
 break;
 case 4:
-#line 81 "hi.y"
+#line 73 "hi.y"
 	{
 				lexicon word;
 
-				const node_info& Vbar2=sparser->get_node_info(yystack.l_mark[0]);
-				word.gcat="VP";
-				yyval=sparser->set_node_info(word,Vbar2);
-				std::cout<<"VP->Vbar2"<<std::endl;
+				const node_info& ENG_Vbar2=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_VP";
+				yyval=sparser->set_node_info(word,ENG_Vbar2);
+				std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
 }
 break;
 case 5:
-#line 90 "hi.y"
+#line 82 "hi.y"
 	{
-				const node_info& Vbar2=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& PP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VP",Vbar2,PP);
+				const node_info& ENG_Vbar2=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_PP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
 				if(yyval<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
 					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"VP->Vbar2 PP"<<std::endl;
+				std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 }
 break;
 case 6:
-#line 102 "hi.y"
+#line 94 "hi.y"
 	{
-				const node_info& Vbar3=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& NP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VP",Vbar3,NP);
+				const node_info& ENG_Vbar3=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_NP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
 				if(yyval<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
 					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"VP->Vbar3 NP"<<std::endl;
+				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 }
 break;
 case 7:
-#line 114 "hi.y"
+#line 106 "hi.y"
 	{
-				const node_info& V=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& AdvP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VBAR3",V,AdvP);
+				const node_info& ENG_V=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_AdvP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_VBAR3",ENG_V,ENG_AdvP);
 				if(yyval<0){
 					/*object_node=sparser->get_object_node(NP);*/
 					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"Vbar3->V AdvP"<<std::endl;
+				std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
 }
 break;
 case 8:
-#line 126 "hi.y"
+#line 118 "hi.y"
 	{
-				const node_info& Vbar1=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& PP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VBAR2",Vbar1,PP);
+				const node_info& ENG_Vbar1=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_PP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_PP);
 				if(yyval<0){
 					/*object_node=sparser->get_object_node(NP);*/
 					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"Vbar2->Vbar1 PP"<<std::endl;
+				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
 }
 break;
 case 9:
-#line 138 "hi.y"
+#line 130 "hi.y"
 	{
-				const node_info& Vbar1=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& NP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VBAR2",Vbar1,NP);
+				const node_info& ENG_Vbar1=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_NP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
 				if(yyval<0){
 					/*object_node=sparser->get_object_node(NP);*/
 					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"Vbar2->Vbar1 NP"<<std::endl;
+				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 }
 break;
 case 10:
-#line 150 "hi.y"
+#line 142 "hi.y"
 	{
-				const node_info& V=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& NP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("VBAR1",V,NP);
+				const node_info& ENG_V=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_NP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
 				if(yyval<0){
 					/*object_node=sparser->get_object_node(NP);*/
 					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"Vbar1->V NP"<<std::endl;
+				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 }
 break;
 case 11:
-#line 162 "hi.y"
+#line 154 "hi.y"
 	{
-				const node_info& Prep=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& NP=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->combine_nodes("PP",Prep,NP);
+				const node_info& ENG_Prep=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_NP=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
 				if(yyval<0){
 					/*object_node=sparser->public.get_object_node(sparser,NP);
 					printf("Error: cannot interpret %s %s.\n",Prep->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"PP->Prep NP"<<std::endl;
+				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
 }
 break;
 case 12:
-#line 174 "hi.y"
+#line 166 "hi.y"
 	{
 				lexicon word;
 
-				const node_info& CNP=sparser->get_node_info(yystack.l_mark[0]);
-				word.gcat="NP";
-				yyval=sparser->set_node_info(word,CNP);
-				std::cout<<"NP->CNP"<<std::endl;
+				const node_info& ENG_CNP=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_NP";
+				yyval=sparser->set_node_info(word,ENG_CNP);
+				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 }
 break;
 case 13:
-#line 183 "hi.y"
+#line 175 "hi.y"
 	{
-				const node_info& Det=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& CNP=sparser->get_node_info(yystack.l_mark[0]);
+				const node_info& ENG_QPro=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_CNP=sparser->get_node_info(yystack.l_mark[0]);
 				/*	TODO: really need to check if there's a constant ?
 					Currently, it's done to make functor argument diff easier.*/
 				/*const node_info& object_node=sparser->get_node_info(sparser->get_object_node(CNP));
@@ -703,240 +695,291 @@ case 13:
 					//printf("Syntax error: constants like %s cannot be quantified!\n",sparser->get_node_info(object_node.right_child).expression.c_str());
 					return -1;
 				}*/
-				yyval=sparser->combine_nodes("NP",Det,CNP);
+				yyval=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
 				/* No check for $$<0 since quantifier pronouns are not validated as
 				 * everything in the current model seems to be countable.*/
-				std::cout<<"NP->QPro CNP:"<<Det.expression.lexeme<<std::endl;
+				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
 }
 break;
 case 14:
-#line 203 "hi.y"
+#line 195 "hi.y"
 	{
-				const node_info& A=sparser->get_node_info(yystack.l_mark[-1]);
-				const node_info& CNP=sparser->get_node_info(yystack.l_mark[0]);
-				/*TODO: ellenõrizni, hogy ha a CNP paraméteres akkor hiba mint a QPro CNP-nál!*/
-				yyval=sparser->combine_nodes("CNP",A,CNP);
+				const node_info& ENG_A=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_CNP=sparser->get_node_info(yystack.l_mark[0]);
+				/*TODO: ellenorizni, hogy ha a CNP parameteres akkor hiba mint a QPro CNP-nal!*/
+				yyval=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
 				if(yyval<0){
 					/*object_node=sparser->public.get_object_node(sparser,CNP);
 					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"CNP->A CNP:"<<A.expression.lexeme<<std::endl;
+				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
 }
 break;
 case 15:
-#line 216 "hi.y"
+#line 208 "hi.y"
 	{
 				lexicon word;
 
-				const node_info& N=sparser->get_node_info(yystack.l_mark[0]);
-				word.gcat="CNP";
-				yyval=sparser->set_node_info(word,N);
-				std::cout<<"CNP->N:"<<N.expression.lexeme<<std::endl;
+				const node_info& ENG_N=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_CNP";
+				yyval=sparser->set_node_info(word,ENG_N);
+				std::cout<<"ENG_CNP->ENG_N"<<std::endl;
 }
 break;
 case 16:
-#line 225 "hi.y"
+#line 217 "hi.y"
 	{
 				lexicon word;
 
-				const node_info& Adv=sparser->get_node_info(yystack.l_mark[0]);
-				word.gcat="ADVP";
-				yyval=sparser->set_node_info(word,Adv);
-				std::cout<<"AdvP->Adv:"<<Adv.expression.lexeme<<std::endl;
+				const node_info& ENG_Adv=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_AdvP";
+				yyval=sparser->set_node_info(word,ENG_Adv);
+				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
 }
 break;
 case 17:
-#line 234 "hi.y"
+#line 226 "hi.y"
 	{
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiLIST-1);
+				word=lex->last_word_scanned();
 				yyval=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
 case 18:
-#line 243 "hi.y"
+#line 235 "hi.y"
 	{
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiALL-1);
+				word=lex->last_word_scanned();
 				/*TODO: consider what if quantifiers like ALL are handled as functors?*/
 				yyval=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
 case 19:
-#line 253 "hi.y"
+#line 245 "hi.y"
 	{
 				lexicon word;
 	
-				word=lex->get_word_by_token(hiFILE-1);
-				const node_info& Con=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->set_node_info(word,Con);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<" "<<Con.expression.lexeme<<std::endl;
+				const node_info& ENG_N_Sg=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_N";
+				yyval=sparser->set_node_info(word,ENG_N_Sg);
+				std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
 }
 break;
 case 20:
-#line 262 "hi.y"
+#line 254 "hi.y"
 	{
 				lexicon word;
-				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiFILES-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+				const node_info& ENG_N_Pl=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_N";
+				yyval=sparser->set_node_info(word,ENG_N_Pl);
+				std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
 }
 break;
 case 21:
-#line 271 "hi.y"
+#line 263 "hi.y"
 	{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiDIRECTORY-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+				const node_info& ENG_N_Stem=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_N_lfea_Sg=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_N_Sg",ENG_N_Stem,ENG_N_lfea_Sg);
+				if(yyval<0){
+					/*object_node=sparser->get_object_node(NP);*/
+					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					return -1;
+				}
+				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 }
 break;
 case 22:
-#line 280 "hi.y"
+#line 276 "hi.y"
 	{
-				lexicon word;
+				/*TODO: create an implementaion for set_node_info() that accepts two node_infos as input parameters*/
+				/*Question: what to do if both the stem and an affix have/can have functors like 'non' in 'nonexecutable'?*/
+				/*Shall combine_nodes() be called in such cases instead of set_node_info()? If so, how to decide when*/
+				/*any of these methods should be called? Can it be grasped at syntactic level? E.g. introducing a new*/
+				/*symbol for PREFIX and creating a rule like N: PREFIX N_stem in which we can decide if set_node_info()*/
+				/*or combine_nodes() should be called, depending on the prefix having a functor or not. If combine_nodes()*/
+				/*needs to be called, it must be enhanced (or the underlying parts) to be able to validate affixes*/
+				/*(all kinds:prefix, infix, suffix, circumfix) against verbs.*/
 
-				word=lex->get_word_by_token(hiDIRECTORY-1);
-				const node_info& Con=sparser->get_node_info(yystack.l_mark[0]);
-				yyval=sparser->set_node_info(word,Con);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<" "<<Con.expression.lexeme<<std::endl;
+				const node_info& ENG_N_Sg_0Con=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_1Con=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con,ENG_1Con);
+				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con ENG_1Con"<<std::endl;
 }
 break;
 case 23:
-#line 289 "hi.y"
+#line 292 "hi.y"
 	{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiDIRECTORIES-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+				const node_info& ENG_N_Stem=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_N_lfea_Pl=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
+				if(yyval<0){
+					/*object_node=sparser->get_object_node(NP);*/
+					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					return -1;
+				}
+				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
 }
 break;
 case 24:
-#line 298 "hi.y"
+#line 304 "hi.y"
 	{
 				lexicon word;
-				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiCOMPUTER-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+				const node_info& ENG_Con=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="CON";
+				yyval=sparser->set_node_info(word,ENG_Con);
+				std::cout<<"ENG_1Con->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
 }
 break;
 case 25:
-#line 307 "hi.y"
+#line 313 "hi.y"
 	{
-				lexicon word;
-
-				const node_info& Con=sparser->get_node_info(yystack.l_mark[0]);
-				word.gcat="N";
-				yyval=sparser->set_node_info(word,Con);
-				std::cout<<"N->"<<Con.expression.lexeme<<std::endl;
+				const node_info& ENG_1Con=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_Con=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
+				if(yyval<0){
+					/*object_node=sparser->get_object_node(NP);*/
+					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					return -1;
+				}
+				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 }
 break;
 case 26:
-#line 316 "hi.y"
+#line 325 "hi.y"
 	{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiEXECUTABLE-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+				const node_info& ENG_nCon=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_Con=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
+				if(yyval<0){
+					/*object_node=sparser->get_object_node(NP);*/
+					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					return -1;
+				}
+				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 }
 break;
 case 27:
-#line 325 "hi.y"
+#line 338 "hi.y"
+	{
+				lexicon word;
+
+				const node_info& ENG_N_Pl_0Con=sparser->get_node_info(yystack.l_mark[0]);
+				word.gcat="ENG_N_Pl";
+				yyval=sparser->set_node_info(word,ENG_N_Pl_0Con);
+				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con"<<std::endl;
+}
+break;
+case 28:
+#line 347 "hi.y"
+	{
+				const node_info& ENG_N_Pl_0Con=sparser->get_node_info(yystack.l_mark[-1]);
+				const node_info& ENG_nCon=sparser->get_node_info(yystack.l_mark[0]);
+				yyval=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con,ENG_nCon);
+				if(yyval<0){
+					/*object_node=sparser->get_object_node(NP);*/
+					/*printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					return -1;
+				}
+				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con ENG_nCon"<<std::endl;
+}
+break;
+case 29:
+#line 359 "hi.y"
 	{
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiNONEXECUTABLE-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-break;
-case 28:
-#line 334 "hi.y"
-	{
-				lexicon word;
-				const node_info empty_node_info={};
-			
-				word=lex->get_word_by_token(hiTO-1);
-				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-break;
-case 29:
-#line 343 "hi.y"
-	{
-				lexicon word;
-				const node_info empty_node_info={};
-			
-				word=lex->get_word_by_token(hiFROM-1);
+				word=lex->last_word_scanned();
 				yyval=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
 case 30:
-#line 352 "hi.y"
+#line 368 "hi.y"
 	{
 				lexicon word;
 				const node_info empty_node_info={};
-			
-				word=lex->get_word_by_token(hiIN-1);
+
+				word=lex->last_word_scanned();/*TODO: it's unnecessary to duplicate the word info for each node that is related to an affix of the stem of the last scanned word*/
+				/*Create a method that returns the info only about the affix in question. Hint: create a method 'lexicon lexer::get_lexicon_info_by_token( uint token )' which*/
+				/*would return everything what last_word_scanned() returns but: if the token belongs to a stem it equals to calling last_word_scanned()*/
+				/*if the token belongs to an lfea, every field is the same as when calling last_word_scanned() but: the token field would contain the token of the lfea,*/
+				/*and if the affix has a functor, then the gcat is the corresponding PREFIX/INFIX/SUFFIX and the lexeme corresponds to that of the affix*/
+				/*if the affix does not have a functor, then the gcat is again either PREFIX/INFIX/SUFFIX but the lexeme field is empty*/
+				/*WELL, it would have been good if I had written here if duplicating word info poses any problem...*/
+				word.gcat="ENG_N_lfea_Sg";
 				yyval=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
 case 31:
-#line 365 "hi.y"
+#line 384 "hi.y"
 	{
-				const node_info empty_node_info={};
 				lexicon word;
+				const node_info empty_node_info={};
 
-				const std::string& constant=lex->last_word_scanned();
-				word.gcat="CON";
-				word.lexeme=constant;
+				word=lex->last_word_scanned();
+				word.gcat="ENG_N_lfea_Pl";
 				yyval=sparser->set_node_info(word,empty_node_info);
-				std::cout<<"Constant:"<<constant<<std::endl;
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
 case 32:
-#line 376 "hi.y"
+#line 394 "hi.y"
 	{
 				lexicon word;
 				const node_info empty_node_info={};
-			
-				word=lex->get_word_by_token(hiDOWN-1);
+
+				word=lex->last_word_scanned();
 				yyval=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
 case 33:
-#line 385 "hi.y"
+#line 403 "hi.y"
 	{
 				lexicon word;
 				const node_info empty_node_info={};
 			
-				word=lex->get_word_by_token(hiTHE-1);
+				word=lex->last_word_scanned();
 				yyval=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 break;
-#line 939 "y.tab.c"
+case 34:
+#line 416 "hi.y"
+	{
+				const node_info empty_node_info={};
+				lexicon word;
+
+				word=lex->last_word_scanned();
+				word.gcat="CON";
+				yyval=sparser->set_node_info(word,empty_node_info);
+				std::cout<<"Constant:"<<word.word<<std::endl;
+}
+break;
+case 35:
+#line 426 "hi.y"
+	{
+				lexicon word;
+				const node_info empty_node_info={};
+			
+				word=lex->last_word_scanned();
+				yyval=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+break;
+#line 982 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

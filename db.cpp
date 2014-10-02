@@ -37,7 +37,7 @@ query_result *db::exec_sql(const std::string& sql){
 	if(sqlite3_exec(sqlite, sql.c_str(), db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
 		throw sql_execution_error();
 	}
-	if(result_set->result_rows()==0){
+	if(result_set->nr_of_result_rows()==0){
 		delete result_set;
 		result_set=NULL;
 	}
@@ -53,13 +53,14 @@ int db::store_row_data(void *p_result, int nr_of_columns, char **field_values, c
 //	std::cout<<nr_of_columns<<std::endl;
 	result=(query_result*)(p_result);
 	if(nr_of_columns!=0&&field_values!=NULL&&fields!=NULL){
-		for(int i=0;i<nr_of_columns;++i){
+		result->set_metadata(nr_of_columns,(const char**) &(*fields));
+		for(unsigned int i=0;i<nr_of_columns;++i){
 			field.field_name=fields[i];
 			if(field_values[i]!=NULL) field.field_value=field_values[i];
 			else field.field_value.clear();
 //			std::cout<<field.field_name<<":"<<field.field_value<<std::endl;
+			row_index=result->result_set().size()/nr_of_columns;
 			result->insert(std::make_pair(row_index,field));
-			if(i>0&&std::string (fields[0])==std::string (fields[i]))++row_index;
 		}
 	}
 	return 0; 

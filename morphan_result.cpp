@@ -6,13 +6,14 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 	std::string morpheme;
 
 	word_form=word;
-	word_morphemes=new std::vector<std::string>(morphemes);
+//	word_morphemes=new std::vector<std::string>(morphemes);
+	word_morphemes=morphemes;
 	nr_of_morphemes=morphemes.size();
 	for(i=0;i<nr_of_morphemes;++i){
 		if(word_gcat.empty()==true){
 			hit=morphemes[i].find("[gcat]");
 			if(hit!=std::string::npos){
-				word_gcat=morphemes[i].substr(0,hit-1);//the algorithm is based on the assumption that [...] tags are added as suffixes
+				word_gcat=morphemes[i].substr(0,hit);//the algorithm is based on the assumption that [...] tags are added as suffixes
 			}
 		}
 		else if(word_gcat.empty()==false&&morphemes[i].find("[gcat]")!=std::string::npos){
@@ -22,7 +23,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 		if(word_stem.empty()==true){
 			hit=morphemes[i].find("[stem]");
 			if(hit!=std::string::npos){
-				word_stem=morphemes[i].substr(0,hit-1);//the algorithm is based on the assumption that [...] tags are added as suffixes
+				word_stem=morphemes[i].substr(0,hit);//the algorithm is based on the assumption that [...] tags are added as suffixes
 			}
 		}
 		else if(word_stem.empty()==false&&morphemes[i].find("[stem]")!=std::string::npos){
@@ -35,14 +36,14 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 morphan_result::~morphan_result(){
 }
 
-const std::string& morphan_result::stem(){
+const std::string& morphan_result::stem() const{
 	return word_stem;
 }
 
-const std::string& morphan_result::gcat(){
+const std::string& morphan_result::gcat() const{
 	return word_gcat;
 }
 
-const std::vector<std::string>& morphan_result::morphemes(){
+const std::vector<std::string>& morphan_result::morphemes() const{
 	return word_morphemes;
 }

@@ -15,7 +15,8 @@ interpreter::~interpreter(){
 
 int interpreter::set_node_info(const lexicon& word, const node_info& node){
 	node_info nodeinfo;
-	std::string functor_table_name,io_type,functor_definition,shell_function_call,functor_result;
+	std::string functor_table_name,shell_function_call,functor_result;
+	const std::string *io_type=NULL,*functor_definition=NULL;
 	char functor_result_block[1024]="";
 	db *sqlite=NULL;
 	query_result *functors=NULL,*io_type_functors=NULL;
@@ -27,54 +28,56 @@ int interpreter::set_node_info(const lexicon& word, const node_info& node){
 	if(word.gcat.empty()==true) exit(EXIT_FAILURE);//TODO: throw exception
 	nodeinfo.symbol=word.gcat;
 	if(word.lexeme.empty()==true){
-		if(node.symbol=="CON"){//TODO: This is an inefficient (bruteforce) way of determining what the constant is. Later another logic should be introduced
-			//that marks somewhere that a constant is lingering without having any classification as in case of 'Delete abc.' Once e.g. the verb is available,
-			//it could be used to get all entries from the RELATION_FUNCTORS and just scan the functors of the IO_TYPEs found there.
-			if(word.gcat=="V"){
-				functor_table_name="RELATION_FUNCTORS";
-			}
-			else if(word.gcat=="N"){
-				functor_table_name="ENTITY_FUNCTORS";
-			}
-			else if(word.gcat=="ADJ"){
-				functor_table_name="ENTITY_FUNCTORS";
-			}
-			else if(word.gcat=="ADV"){
-				functor_table_name="RELATION_FUNCTORS";
-			}
-			else exit(EXIT_FAILURE);//TODO: throw exception
-			sqlite=db::get_instance();
-			functors=sqlite->exec_sql("SELECT * FROM "+functor_table_name+";");
-			if(functors==NULL) exit(EXIT_FAILURE);
-			number_of_functors=functors->result_rows();
-			for(unsigned int i=0;i<number_of_functors;++i){
-				io_type=functors->get_field_value(i,"IO_TYPE");
-				io_type_functors=sqlite->exec_sql("SELECT * FROM ENTITY_FUNCTORS WHERE FUNCTOR = '"+io_type+"' AND IO_TYPE = '"+io_type+"' AND ARGUMENT = '"+io_type+"';");
-				if(io_type_functors==NULL) exit(EXIT_FAILURE);
-				number_of_io_type_functors=io_type_functors->result_rows();
-				if(number_of_io_type_functors==1){
-					functor_definition=io_type_functors->get_field_value(0,"DEFINITION");
-					//TODO: Figure out how to execute the shell scripts, as invoking a shell function is language
-					//specific (bash, ksh, etc.) which might be impossible to implement in a POSIX shell manner...
-					shell_function_call=functor_definition;
-					shell_function_call+="io_array[0]=\""+node.expression.lexeme+"\";"
-						+"argument[0]=\""+node.expression.lexeme+"\";"+io_type+" io_array argument;echo $?;";
-					//executing shell_function_call
-					functor_process=popen(shell_function_call.c_str(),"r");
-					while(fgets(functor_result_block,sizeof functor_result_block,functor_process)) functor_result+=functor_result_block;
-					pclose(functor_process);
-					//if functor returns the same output what the input was
-					if(functor_result==node.expression.lexeme){
-						//insert the word of the functor in the parent node of the constant as expression
-						constant_word=lex->get_word_by_lexeme(io_type_functors->get_field_value(0,"FUNCTOR"));
-						nodeinfo.expression=constant_word;
-						break;
-					}
-				}
-				else exit(EXIT_FAILURE);//TODO: throw exception
-			}
-		}
-		else;//Not an error: Phrase nodes like NP usually don't have anything in the expression field
+//		if(node.symbol=="CON"){//TODO: This is an inefficient (bruteforce) way of determining what the constant is. Later another logic should be introduced
+//			//that marks somewhere that a constant is lingering without having any classification as in case of 'Delete abc.' Once e.g. the verb is available,
+//			//it could be used to get all entries from the RELATION_FUNCTORS and just scan the functors of the IO_TYPEs found there.
+//			if(word.gcat=="V"){
+//				functor_table_name="RELATION_FUNCTORS";
+//			}
+//			else if(word.gcat=="N"){
+//				functor_table_name="ENTITY_FUNCTORS";
+//			}
+//			else if(word.gcat=="ADJ"){
+//				functor_table_name="ENTITY_FUNCTORS";
+//			}
+//			else if(word.gcat=="ADV"){
+//				functor_table_name="RELATION_FUNCTORS";
+//			}
+//			else exit(EXIT_FAILURE);//TODO: throw exception
+//			sqlite=db::get_instance();
+//			functors=sqlite->exec_sql("SELECT * FROM "+functor_table_name+";");
+//			if(functors==NULL) exit(EXIT_FAILURE);
+//			number_of_functors=functors->result_rows();
+//			for(unsigned int i=0;i<number_of_functors;++i){
+//				io_type=functors->get_field_value(i,"io_type");
+//				if(io_type==NULL) exit(EXIT_FAILURE);
+//				io_type_functors=sqlite->exec_sql("SELECT * FROM ENTITY_FUNCTORS WHERE FUNCTOR = '"+*io_type+"' AND IO_TYPE = '"+*io_type+"' AND ARGUMENT = '"+*io_type+"';");
+//				if(io_type_functors==NULL) exit(EXIT_FAILURE);
+//				number_of_io_type_functors=io_type_functors->result_rows();
+//				if(number_of_io_type_functors==1){
+//					functor_definition=io_type_functors->get_field_value(0,"definition");
+//					if(functor_definition==NULL) exit(EXIT_FAILURE);
+//					//TODO: Figure out how to execute the shell scripts, as invoking a shell function is language
+//					//specific (bash, ksh, etc.) which might be impossible to implement in a POSIX shell manner...
+//					shell_function_call=*functor_definition;
+//					shell_function_call+="io_array[0]=\""+node.expression.lexeme+"\";"
+//						+"argument[0]=\""+node.expression.lexeme+"\";"+*io_type+" io_array argument;echo $?;";
+//					//executing shell_function_call
+//					functor_process=popen(shell_function_call.c_str(),"r");
+//					while(fgets(functor_result_block,sizeof functor_result_block,functor_process)) functor_result+=functor_result_block;
+//					pclose(functor_process);
+//					//if functor returns the same output what the input was
+//					if(functor_result==node.expression.lexeme){
+//						//insert the word of the functor in the parent node of the constant as expression
+//						constant_word=lex->get_word_by_lexeme(*(io_type_functors->get_field_value(0,"functor")));
+//						nodeinfo.expression=constant_word;
+//						break;
+//					}
+//				}
+//				else exit(EXIT_FAILURE);//TODO: throw exception
+//			}
+//		}
+//		else;//Not an error: Phrase nodes like NP usually don't have anything in the expression field
 	}
 	else nodeinfo.expression=word;
 	nodeinfo.left_child=0;
@@ -110,6 +113,8 @@ node_info& interpreter::get_private_node_info(unsigned int node_id){
 
 int interpreter::combine_nodes(const std::string& symbol, const node_info& left_node, const node_info& right_node){
 	node_info nodeinfo, new_phrase_head_root, new_phrase_non_head_root;
+	db *sqlite=NULL;
+	query_result *functors=NULL, *rule_to_rule_map_result=NULL;
 
 	/*TODO:valamit kezdeni kell azzal ha a left_node->symbol='QPro' ill. ha az object_node-nak van gyereke*/
 	nodeinfo.node_id=++nr_of_nodes;
@@ -127,6 +132,9 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	}
 	else ;//TODO: What if none of them -like a programming language?
 	if(new_phrase_head_root.node_id!=0&&new_phrase_non_head_root.node_id!=0){
+		sqlite=db::get_instance();
+		rule_to_rule_map_result=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
+		if(rule_to_rule_map_result!=NULL&&new_phrase_head_root.symbol!="CON"&&new_phrase_non_head_root.symbol!="CON"){
 		/* TODO: Instead of the current validation, the head node needs to be validated against
 		 * all child nodes of the right_node having a non-empty expression. This would ensure that
 		 * all constituents are checked against each other and not only the new head of the phrase and
@@ -137,8 +145,8 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 				throw invalid_combination(left_node.expression.word,right_node.expression.word);
 			}
 		/*printf("valid combination:%s %s\n",head_node->expression,((node_info *)object_node)->expression);*/
+		}
 	}
-	else exit(EXIT_FAILURE);//TODO: throw exception
 	nodeinfo.left_child=left_node.node_id;
 	nodeinfo.right_child=right_node.node_id;
 	node_infos.push_back(nodeinfo);
@@ -150,19 +158,19 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	return nodeinfo.node_id;
 }
 
-unsigned int interpreter::get_head_node(const node_info& node){
-	unsigned int head_node_id=0;
-
-	if(node.expression.lexeme.empty()==false){
-		std::cout<<"head_node:"<<node.node_id<<std::endl;
-		return node.node_id;
-	}
-	if(node.left_child!=0)head_node_id=get_head_node(get_node_info(node.left_child));
-	/* Stop if head_node is already found on the left since English is a 'head first' language
-	 * with a left-to-right word order!*/
-	if(node.right_child!=0&&head_node_id==0)head_node_id=get_head_node(get_node_info(node.right_child));
-	return head_node_id;
-}
+//unsigned int interpreter::get_head_node(const node_info& node){
+//	unsigned int head_node_id=0;
+//
+//	if(node.expression.lexeme.empty()==false){
+//		std::cout<<"head_node:"<<node.node_id<<std::endl;
+//		return node.node_id;
+//	}
+//	if(node.left_child!=0)head_node_id=get_head_node(get_node_info(node.left_child));
+//	/* Stop if head_node is already found on the left since English is a 'head first' language
+//	 * with a left-to-right word order!*/
+//	if(node.right_child!=0&&head_node_id==0)head_node_id=get_head_node(get_node_info(node.right_child));
+//	return head_node_id;
+//}
 
 
 //std::string interpreter::get_command(){
@@ -293,822 +301,261 @@ std::string interpreter::resolve_ev_redefinitions(const std::string& in, const s
 }
 */
 
-query_result *interpreter::is_valid_expression(node_info& head_leaf, node_info& non_head_leaf, node_info& head_dependency, node_info& non_head_dependency){
-	//leaf1, leaf2: leaves (lowest level nodes in the semantic tree) that need to be validated for combination
+query_result *interpreter::is_valid_expression(node_info& main_node, node_info& dependent_node, node_info& validator_node){
+	unsigned int rowid=0;
+	query_result *functors=NULL;
 
-	//Method responsibility: When two nodes are combined, check their assignment either in the
-	//ATTRIBUTE_FUNCTORS, ADVERB_FUNCTORS or RELATION_FUNCTORS table using the keys available depending on their
-	//grammatical categories:
+	if(main_node.expression.lexeme.empty()==false){//&&validator_node.expression.lexeme.empty()==false){//testing for leaves being leaves indeed
+		if(dependent_node.node_id!=0){
+			functors=functors_found_for_dependencies(dependent_node,validator_node,main_node);
+			if(functors->nr_of_result_rows()==1){
+				if(main_node.functor_attributes.common.functor.empty()==true){
+					rowid=functors->result_set().begin()->first;
+					main_node.functor_attributes.common.functor=*(functors->field_value_at_row_position(rowid,"functor"));
+					main_node.functor_attributes.common.d_key=std::atoi(functors->field_value_at_row_position(rowid,"d_key")->c_str());
+					main_node.functor_attributes.common.argument=*(functors->field_value_at_row_position(rowid,"argument"));
+					main_node.functor_attributes.common.definition=*(functors->field_value_at_row_position(rowid,"definition"));
+					if(main_node.symbol=="N"){
+						main_node.functor_attributes.rel_adj_ent.io_type=*(functors->field_value_at_row_position(rowid,"io_type"));
+					}
+					else if(main_node.symbol=="ADJ"){
+						main_node.functor_attributes.rel_adj_ent.io_type=*(functors->field_value_at_row_position(rowid,"io_type"));
+						main_node.functor_attributes.rel_adj_adv.definition_type=std::atoi(functors->field_value_at_row_position(rowid,"definition_type")->c_str());
+					}
+					else if(main_node.symbol=="V"){
+						main_node.functor_attributes.rel_adj_ent.io_type=*(functors->field_value_at_row_position(rowid,"io_type"));
+						main_node.functor_attributes.rel_adj_adv.definition_type=std::atoi(functors->field_value_at_row_position(rowid,"definition_type")->c_str());
+					}
+					else if(main_node.symbol=="ADV"){
+						main_node.functor_attributes.rel_adj_adv.definition_type=std::atoi(functors->field_value_at_row_position(rowid,"definition_type")->c_str());
+						main_node.functor_attributes.adv.relation_functor=*(functors->field_value_at_row_position(rowid,"relation_functor"));
+						main_node.functor_attributes.adv.relation_d_key=std::atoi(functors->field_value_at_row_position(rowid,"relation_d_key")->c_str());
+						main_node.functor_attributes.adv.relation_io_type=*(functors->field_value_at_row_position(rowid,"relation_io_type"));
+					}
+				}
+				else if(main_node.functor_attributes.common.functor!=*(functors->field_value_at_row_position(rowid,"functor"))
+						&&main_node.functor_attributes.common.d_key!=std::atoi(functors->field_value_at_row_position(rowid,"d_key")->c_str())){
+					exit(EXIT_FAILURE);//TODO:Throw exception
+				}
+			}
+			else if(functors->nr_of_result_rows()>1){//More than one functor is acceptable as an intermediate result
+			}
+			else exit(EXIT_FAILURE);//TODO:Throw exception
+			dependent_node.node_links.insert(std::make_pair(main_node.node_id,dependent_node.node_links.size()+1));
+			main_node.node_links.insert(std::make_pair(dependent_node.node_id,main_node.node_links.size()+1));
+		}
+	}
+	return functors;
+}
 
-	//ADJ-N: look up existing entries in ATTRIBUTE_FUNCTORS using keys functor=lexeme+lid+gcat of ADJ,
-	//io_type=lexeme+lid+gcat of N
 
-	//ADV-V: Look up existing entries in ADVERB_FUNCTORS using keys functor=lexeme+lid+gcat of ADV,
-	//relation_functor=lexeme+lid+gcat of V, relation_io_type=not used, argument=not used.
-	//This means that the ADV-V combination is validated only
-	//theoretically (i.e. to see if a certain verb like 'PLAY' can combine with the adverb 'SLOWER' at all),
-	//and not for the concrete object of the sentence (io_type of V).
-	//That must be done in is_valid_combination() when the object (gcat N) of the predicate of the
-	//sentence is validated.
-
-	//V-N: Look up existing entries in RELATION_FUNCTORS using keys functor=lexeme+lid+gcat of V,
-	//io_type=lexeme+lid+gcat of N.
-
-	std::string query,relation_functor_name,io_type,functor,d_key_list;
-	std::stringstream d_key,io_type_ss;
+query_result* interpreter::functors_found_for_dependencies(const node_info& dependent_node, const node_info& validator_node, node_info& main_node){
+	dependency_validation_pair dependency_pair;
+	std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > functors_found;
+	std::string d_key_list,functor;
+	query_result *functors=NULL;
+	std::vector<std::pair<unsigned int,std::string> > dependency_stack;
 	db *sqlite=NULL;
-	query_result *functors=NULL,*relation_functors=NULL, *entity_functors=NULL;
-	std::multimap<unsigned int,field>::const_iterator i,k,functor_found;
-	std::multimap<unsigned int,depolex>::const_iterator j;
-	std::multimap<unsigned int,depolex> head_leaf_dependency_table,non_head_leaf_dependency_table,relevant_head_dependencies,relevant_non_head_dependencies,*relevant_dependencies;
-	std::multimap<unsigned int,relation_functor> relation_functor_table,entity_functor_table;
-	std::multimap<unsigned int,relation_functor>::const_iterator l;
-	relation_functor relation_functor, relation_functor_found;
-	depolex head_leaf_dependency={},non_head_leaf_dependency={};
-	unsigned int row_index=0,previous_iteration_d_key=0;
-	dependency_validation_pair dependency_pair;
-	std::multimap<unsigned int,dependency_validation_pair>::const_iterator m;
-	bool complete_dependency_found, partial_dependency_found;
-	node_info dependent_node;
-	std::multimap<std::string,std::string> functor_criteria;
 
+	functor=main_node.expression.lexeme+main_node.expression.lid+main_node.expression.gcat;
+	find_functors_for_dependency(dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat,*main_node.expression.dependencies,functors_found,dependency_stack);
+	if(functors_found.empty()==true) exit(EXIT_FAILURE);//TODO:Throw exception
+	//generate d_key_list string which lists the d_keys of functors_found like: ('1', '2', ..., '3')
+	d_key_list="(";
+	for(std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >::const_iterator j=functors_found.begin();
+			j!=functors_found.end();++j){
+		if(j->first.first!=functor) exit(EXIT_FAILURE);//TODO:Throw exception
+		if(d_key_list.find("'"+j->first.second+"'")==std::string::npos){
+			d_key_list+="'"+j->first.second+"',";
+		}
+	}
+	d_key_list.resize(d_key_list.length()-1);//remove last ','
+	d_key_list+=")";
 	sqlite=db::get_instance();
-	if(head_leaf.expression.lexeme.empty()==false&&non_head_leaf.expression.lexeme.empty()==false){//testing for leaves being leaves indeed
-		if(head_dependency.node_id!=0){
-			//loop over head_node.dependencies into dependency_entry where dependency.lexeme=head_node and dependency.semantic_dependency=head_dependency
-			//	collect dependency entry into dependency_entries
-			//endloop
-			const std::multimap<unsigned int,field>& head_leaf_dependencies=head_leaf.expression.dependencies->result_set();
-			for(row_index=0,i=head_leaf_dependencies.begin();i!=head_leaf_dependencies.end();++i){
-				if(row_index>0&&row_index<i->first){
-					head_leaf_dependency_table.insert(std::make_pair(row_index,head_leaf_dependency));
-				}
-				row_index=i->first;
-				if(i->second.field_name=="lexeme"){
-					head_leaf_dependency.lexeme=i->second.field_value;
-				}
-				else if(i->second.field_name=="d_key"){
-					head_leaf_dependency.d_key=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="d_counter"){
-					head_leaf_dependency.d_counter=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="manner"){
-					head_leaf_dependency.manner=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="semantic_dependency"){
-					head_leaf_dependency.semantic_dependency=i->second.field_value;
-				}
-				else if(i->second.field_name=="ref_d_key"){
-					head_leaf_dependency.ref_d_key=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="functor_d_key"){
-					head_leaf_dependency.functor_d_key=std::atoi(i->second.field_value.c_str());
-				}
-				else exit(EXIT_FAILURE);
-			}
-			row_index=0;
-			for(j=head_leaf_dependency_table.begin();j!=head_leaf_dependency_table.end();++j){
-				if(j->second.lexeme==head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat
-						&&j->second.semantic_dependency==head_dependency.expression.lexeme+head_dependency.expression.lid+head_dependency.expression.gcat){
-					//CHECK: the condition above should as well apply to cases where the head_dependency is empty!!!
-					//They count as relevant dependencies because a lexeme (functor) may have a dependent argument without having
-					//any lexical dependency. See e.g. 'send Mary an email'.
-					relevant_head_dependencies.insert(*j);
-				}
-
-			}
-			if(relevant_head_dependencies.empty()==true) exit(EXIT_FAILURE);
-		}
-		if(non_head_dependency.node_id!=0){
-			const std::multimap<unsigned int,field>& non_head_leaf_dependencies=non_head_leaf.expression.dependencies->result_set();
-			for(row_index=0,i=non_head_leaf_dependencies.begin();i!=non_head_leaf_dependencies.end();++i){
-				if(row_index>0&&row_index<i->first){
-					non_head_leaf_dependency_table.insert(std::make_pair(row_index,non_head_leaf_dependency));
-				}
-				row_index=i->first;
-				if(i->second.field_name=="lexeme"){
-					non_head_leaf_dependency.lexeme=i->second.field_value;
-				}
-				else if(i->second.field_name=="d_key"){
-					non_head_leaf_dependency.d_key=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="d_counter"){
-					non_head_leaf_dependency.d_counter=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="manner"){
-					head_leaf_dependency.manner=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="semantic_dependency"){
-					non_head_leaf_dependency.semantic_dependency=i->second.field_value;
-				}
-				else if(i->second.field_name=="ref_d_key"){
-					head_leaf_dependency.ref_d_key=std::atoi(i->second.field_value.c_str());
-				}
-				else if(i->second.field_name=="functor_d_key"){
-					head_leaf_dependency.functor_d_key=std::atoi(i->second.field_value.c_str());
-				}
-				else exit(EXIT_FAILURE);
-			}
-			row_index=0;
-			for(j=non_head_leaf_dependency_table.begin();j!=non_head_leaf_dependency_table.end();++j){
-				if(j->second.lexeme==non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat
-						&&j->second.semantic_dependency==non_head_dependency.expression.lexeme+non_head_dependency.expression.lid+non_head_dependency.expression.gcat){
-					//CHECK: the condition above should as well apply to cases where the non_head_dependency is empty!!!
-					//They count as relevant dependencies because a lexeme (functor) may have a dependent argument without having
-					//any lexical dependency. See e.g. 'send Mary an email'.
-					relevant_non_head_dependencies.insert(*j);
-				}
-
-			}
-			if(relevant_non_head_dependencies.empty()==true) exit(EXIT_FAILURE);
-		}
-		//TODO: Add a check in each 'if' branch below to test for relevant_(non)_head_dependencies!!!
-		if(head_leaf.symbol=="V"&&non_head_leaf.symbol=="N"||head_leaf.symbol=="N"&&non_head_leaf.symbol=="V"){
-			if(head_leaf.symbol=="V"&&non_head_leaf.symbol=="N"){
-				functor=head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat;
-				io_type=non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat;
-			}
-			else{
-				functor=non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat;
-				io_type=head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat;
-			}
-			if(non_head_dependency.node_id!=0){
-				if(non_head_leaf.symbol=="N"){
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					N_node=&non_head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				else{
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					N_node=&head_leaf;
-					dependent_node=&head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				entity_functors=sqlite->exec_sql("SELECT * FROM ENTITY_FUNCTORS WHERE FUNCTOR = '"+io_type+"' AND D_KEY IN "+d_key_list+";");
-				if(entity_functors==NULL) exit(EXIT_FAILURE);
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,entity_functors,*N_node);
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",N_node->expression.lexeme+N_node->expression.lid+N_node->expression.gcat));
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*N_node,entity_functors);
-				if(entity_functors->result_rows()==1){
-					if(N_node->command.functor.empty()==true){
-						functors=entity_functors;
-						rowid=entity_functors->result_set().begin()->first;
-						N_node->command.functor=entity_functors.get_field_value(rowid,"FUNCTOR");
-						N_node->command.d_key=entity_functors.get_field_value(rowid,"D_KEY");
-						N_node->command.io_type=entity_functors.get_field_value(rowid,"IO_TYPE");
-						N_node->command.argument=entity_functors.get_field_value(rowid,"ARGUMENT");
-						N_node->command.definition=entity_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(N_node->command.functor!=entity_functors.get_field_value(rowid,"FUNCTOR")
-							&&N_node->command.d_key!=std::atoi(entity_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&N_node->command.io_type!=entity_functors.get_field_value(rowid,"IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(entity_functors->result_rows()>1){
-					functors=entity_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(N_node->node_id,dependent_node->node_links.size()+1));
-				N_node->node_links.insert(std::make_pair(dependent_node->node_id,N_node->node_links.size()+1));
-			}
-			if(head_dependency.node_id!=0){
-				if(head_leaf.symbol=="V"){
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					V_node=&head_leaf;
-					N_node=&non_head_leaf;
-					dependent_node=&head_dependency;
-				}
-				else{
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					V_node=&non_head_leaf;
-					N_node=&head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				//select entries from RELATION_FUNCTORS into relation_functors with keys functor=head_node and d_key is in dependency_entries.d_key and io_type=non_head_node and definition_type=executable
-				relation_functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+" AND IO_TYPE = '"+io_type+"';");
-				if(relation_functors==NULL) exit(EXIT_FAILURE);
-				//loop over relation_functors into relation_functor
-					//put the pair of non_head_node and head_dependency node into head_node.dependency_validation matrix with the row_index of dependency_entry in dependency_entries
-					//where dependency_entry.lexeme=relation_functor.lexeme and dependency_entry.d_key=relation_functor.d_key
-				//endloop
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,relation_functors,V_node);
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",V_node->expression.lexeme+V_node->expression.lid+V_node->expression.gcat));
-				functor_criteria.insert(std::make_pair("IO_TYPE",N_node->expression.lexeme+N_node->expression.lid+N_node->expression.gcat));
-				//functor_criteria.insert(std::make_pair("DEFINITION_TYPE","0"));
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*V_node,relation_functors);
-				if(relation_functors->result_rows()==1){
-					if(V_node->command.functor.empty()==true){
-						functors=relation_functors;
-						rowid=relation_functors->result_set().begin()->first;
-						V_node->command.functor=relation_functors.get_field_value(rowid,"FUNCTOR");
-						V_node->command.d_key=relation_functors.get_field_value(rowid,"D_KEY");
-						V_node->command.io_type=relation_functors.get_field_value(rowid,"IO_TYPE");
-						V_node->command.argument=relation_functors.get_field_value(rowid,"ARGUMENT");
-						V_node->command.definition_type=relation_functors.get_field_value(rowid,"DEFINITION_TYPE");
-						V_node->command.definition=relation_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(V_node->command.functor!=relation_functors.get_field_value(rowid,"FUNCTOR")
-							&&V_node->command.d_key!=std::atoi(relation_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&V_node->command.io_type!=relation_functors.get_field_value(rowid,"IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(relation_functors->result_rows()>1){
-					functors=relation_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(V_node->node_id,dependent_node->node_links.size()+1));
-				V_node->node_links.insert(std::make_pair(dependent_node->node_id,V_node->node_links.size()+1));
-				V_node->node_links.insert(std::make_pair(N_node->node_id,V_node->node_links.size()+1));
-				N_node->node_links.insert(std::make_pair(V->node_id,N_node->node_links.size()+1));
-			}
-			if(functors==NULL)//Only execute query if functors==NULL, as functors may have been filled due to finding a complete/partial dependency
-				functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND IO_TYPE = '"+io_type+"' AND DEFINITION_TYPE = 0;");
-		}
-		else if(head_leaf.symbol=="N"&&non_head_leaf.symbol=="ADJ"||head_leaf.symbol=="ADJ"&&non_head_leaf.symbol=="N"){
-			if(head_leaf.symbol=="N"&&non_head_leaf.symbol=="ADJ"){
-				io_type=head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat;
-				functor=non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat;
-			}
-			else{
-				io_type=non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat;
-				functor=head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat;
-			}
-			if(non_head_dependency.node_id!=0){
-				if(non_head_leaf.symbol=="N"){
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					N_node=&non_head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				else{
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					N_node=&head_leaf;
-					dependent_node=&head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				entity_functors=sqlite->exec_sql("SELECT * FROM ENTITY_FUNCTORS WHERE FUNCTOR = '"+io_type+"' AND D_KEY IN "+d_key_list+";");
-				if(entity_functors==NULL) exit(EXIT_FAILURE);
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,entity_functors,*N_node);
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",N_node->expression.lexeme+N_node->expression.lid+N_node->expression.gcat));
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*N_node,entity_functors);
-				if(entity_functors->result_rows()==1){
-					if(N_node->command.functor.empty()==true){
-						functors=entity_functors;
-						rowid=entity_functors->result_set().begin()->first;
-						N_node->command.functor=entity_functors.get_field_value(rowid,"FUNCTOR");
-						N_node->command.d_key=entity_functors.get_field_value(rowid,"D_KEY");
-						N_node->command.io_type=entity_functors.get_field_value(rowid,"IO_TYPE");
-						N_node->command.argument=entity_functors.get_field_value(rowid,"ARGUMENT");
-						N_node->command.definition=entity_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(N_node->command.functor!=entity_functors.get_field_value(rowid,"FUNCTOR")
-							&&N_node->command.d_key!=std::atoi(entity_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&N_node->command.io_type!=entity_functors.get_field_value(rowid,"IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(entity_functors->result_rows()>1){
-					functors=entity_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(N_node->node_id,dependent_node->node_links.size()+1));
-				N_node->node_links.insert(std::make_pair(dependent_node->node_id,N_node->node_links.size()+1));
-			}
-			if(head_dependency.node_id!=0){
-				if(head_leaf.symbol=="ADJ"){
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					ADJ_node=&head_leaf;
-					N_node=&non_head_leaf;
-					dependent_node=&head_dependency;
-				}
-				else{
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					ADJ_node=&non_head_leaf;
-					N_node=&head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				attribute_functors=sqlite->exec_sql("SELECT * FROM ATTRIBUTE_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+" AND IO_TYPE = '"+io_type+"';");
-				if(attribute_functors==NULL) exit(EXIT_FAILURE);
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,attribute_functors,ADJ_node);
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",V_node->expression.lexeme+V_node->expression.lid+V_node->expression.gcat));
-				functor_criteria.insert(std::make_pair("IO_TYPE",N_node->expression.lexeme+N_node->expression.lid+N_node->expression.gcat));
-				//functor_criteria.insert(std::make_pair("DEFINITION_TYPE","0"));
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*ADJ_node,attribute_functors);
-				if(attribute_functors->result_rows()==1){
-					if(ADJ_node->command.functor.empty()==true){
-						functors=attribute_functors;
-						rowid=attribute_functors->result_set().begin()->first;
-						ADJ_node->command.functor=attribute_functors.get_field_value(rowid,"FUNCTOR");
-						ADJ_node->command.d_key=attribute_functors.get_field_value(rowid,"D_KEY");
-						ADJ_node->command.io_type=attribute_functors.get_field_value(rowid,"IO_TYPE");
-						ADJ_node->command.argument=attribute_functors.get_field_value(rowid,"ARGUMENT");
-						ADJ_node->command.definition_type=attribute_functors.get_field_value(rowid,"DEFINITION_TYPE");
-						ADJ_node->command.definition=attribute_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(ADJ_node->command.functor!=attribute_functors.get_field_value(rowid,"FUNCTOR")
-							&&ADJ_node->command.d_key!=std::atoi(attribute_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&ADJ_node->command.io_type!=attribute_functors.get_field_value(rowid,"IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(relation_functors->result_rows()>1){
-					functors=relation_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(ADJ_node->node_id,dependent_node->node_links.size()+1));
-				ADJ_node->node_links.insert(std::make_pair(dependent_node->node_id,ADJ_node->node_links.size()+1));
-				ADJ_node->node_links.insert(std::make_pair(N_node->node_id,ADJ_node->node_links.size()+1));
-				N_node->node_links.insert(std::make_pair(ADJ_node->node_id,N_node->node_links.size()+1));
-			}
-			if(functors==NULL)//Only execute query if functors==NULL, as functors may have been filled due to finding a complete/partial dependency
-				functors=sqlite->exec_sql("SELECT * FROM ATTRIBUTE_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND IO_TYPE = '"+io_type+"';");
-		}
-		else if(head_leaf.symbol=="V"&&non_head_leaf.symbol=="ADV"||head_leaf.symbol=="ADV"&&non_head_leaf.symbol=="V"){
-			if(head_leaf.symbol=="V"&&non_head_leaf.symbol=="ADV"){
-				relation_functor=head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat;
-				adverb_functor=non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat;
-			}
-			else{
-				relation_functor=non_head_leaf.expression.lexeme+non_head_leaf.expression.lid+non_head_leaf.expression.gcat;
-				adverb_functor=head_leaf.expression.lexeme+head_leaf.expression.lid+head_leaf.expression.gcat;
-			}
-			if(head_dependency.node_id!=0){
-				if(head_leaf.symbol=="V"){
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					V_node=&head_leaf;
-					ADV_node=&non_head_leaf;
-					dependent_node=&head_dependency;
-				}
-				else{
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					V_node=&non_head_leaf;
-					ADV_node=&head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",V_node->expression.lexeme+V_node->expression.lid+V_node->expression.gcat));
-				//functor_criteria.insert(std::make_pair("DEFINITION_TYPE","0"));
-				//generate io_type string which lists the io_types of the nouns already linked to the verb
-				io_types="(";
-				for(const std::map<unsigned int,unsigned int>::const_iterator i=V_node.node_links.begin();i!=V_node.node_links.end();++i){
-					N_node=get_node_info(i->first);
-					if(N_node.gcat=='N'){
-						io_type=N_node.expression.lexeme+N_node.expression.lid+N_node.expression.gcat;
-						if(io_types.find(io_type)==std::string::npos){
-							io_types+="'"+io_type+"',";
-							functor_criteria.insert(std::make_pair("IO_TYPE",io_type));
-						}
-					}
-				}
-				io_types.resize(io_types.length()-1);//remove last ','
-				io_types+=")";
-				//select entries from RELATION_FUNCTORS into relation_functors with keys functor=head_node and d_key is in dependency_entries.d_key and io_type=non_head_node and definition_type=executable
-				if(io_types=="()"){
-					relation_functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+relation_functor+"' AND D_KEY IN "+d_key_list+";");
-				}
-				else{
-					relation_functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+relation_functor+"' AND D_KEY IN "+d_key_list+" AND IO_TYPE IN "+io_types+";");
-				}
-				if(relation_functors==NULL) exit(EXIT_FAILURE);
-				//loop over relation_functors into relation_functor
-					//put the pair of non_head_node and head_dependency node into head_node.dependency_validation matrix with the row_index of dependency_entry in dependency_entries
-					//where dependency_entry.lexeme=relation_functor.lexeme and dependency_entry.d_key=relation_functor.d_key
-				//endloop
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,relation_functors,V_node);
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*V_node,relation_functors);
-				if(relation_functors->result_rows()==1){
-					if(V_node->command.functor.empty()==true){
-						functors=relation_functors;
-						rowid=relation_functors->result_set().begin()->first;
-						V_node->command.functor=relation_functors.get_field_value(rowid,"FUNCTOR");
-						V_node->command.d_key=relation_functors.get_field_value(rowid,"D_KEY");
-						V_node->command.io_type=relation_functors.get_field_value(rowid,"IO_TYPE");
-						V_node->command.argument=relation_functors.get_field_value(rowid,"ARGUMENT");
-						V_node->command.definition_type=relation_functors.get_field_value(rowid,"DEFINITION_TYPE");
-						V_node->command.definition=relation_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(V_node->command.functor!=relation_functors.get_field_value(rowid,"FUNCTOR")
-							&&V_node->command.d_key!=std::atoi(relation_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&V_node->command.io_type!=relation_functors.get_field_value(rowid,"IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(relation_functors->result_rows()>1){
-					functors=relation_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(V_node->node_id,dependent_node->node_links.size()+1));
-				V_node->node_links.insert(std::make_pair(dependent_node->node_id,V_node->node_links.size()+1));
-			}
-			if(head_dependency.node_id!=0){
-				if(head_leaf.symbol=="ADV"){
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					ADV_node=&head_leaf;
-					V_node=&non_head_leaf;
-					dependent_node=&head_dependency;
-				}
-				else{
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					ADV_node=&non_head_leaf;
-					V_node=&head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",adverb_functor));
-				functor_criteria.insert(std::make_pair("RELATION_FUNCTOR",V_node->expression.lexeme+V_node->expression.lid+V_node->expression.gcat));
-				nr_of_functors=relation_functors.result_rows();
-				relation_d_keys="(";
-				io_types="(";
-				for(unsigned int k=0;k<nr_of_functors;++k){
-					relation_d_key=relation_functors.get_field_value(k,"D_KEY");
-					if(relation_d_keys.find("'"+relation_d_key+"'")==std::string::npos){
-						relation_d_keys+="'"+relation_d_key+"',";
-						functor_criteria.insert(std::make_pair("RELATION_D_KEY",relation_d_key));
-					}
-					io_type=relation_functors.get_field_value(k,"IO_TYPE");
-					if(io_types.find("'"+io_type+"'")==std::string::npos){
-						io_types+="'"+io_type+"',";
-						functor_criteria.insert(std::make_pair("RELATION_IO_TYPE",io_type));
-					}
-				}
-				relation_d_keys.resize(relation_d_keys.length()-1);//remove last ','
-				relation_d_keys+=")";
-				io_types.resize(io_types.length()-1);//remove last ','
-				io_types+=")";
-				if(io_types=="()"){
-					adverb_functors=sqlite->exec_sql("SELECT * FROM ADVERB_FUNCTORS WHERE FUNCTOR = '"+adverb_functor+"' AND D_KEY IN "+d_key_list+" AND RELATION_FUNCTOR = '"+relation_functor+"' AND RELATION_D_KEY IN "+relation_d_keys+";");
-				}
-				else{
-					//TODO: due the the nature of sql in-lists, the result set contains the Cartesian product of
-					//relation_d_key and relation_io_type. That is, the relation_d_keys are not bound to the
-					//corresponding relation_io_type which can yield wrong results.
-					adverb_functors=sqlite->exec_sql("SELECT * FROM ADVERB_FUNCTORS WHERE FUNCTOR = '"+adverb_functor+"' AND D_KEY IN "+d_key_list+" AND RELATION_FUNCTOR = '"+relation_functor+"' AND RELATION_D_KEY IN "+relation_d_keys+" AND RELATION_IO_TYPE IN "+io_types+";");
-				}
-				if(attribute_functors==NULL) exit(EXIT_FAILURE);
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,attribute_functors,ADJ_node);
-				//functor_criteria.insert(std::make_pair("DEFINITION_TYPE","0"));
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*ADV_node,adverb_functors);
-				if(adverb_functors->result_rows()==1){
-					if(ADV_node->command.functor.empty()==true){
-						functors=adverb_functors;
-						rowid=adverb_functors->result_set().begin()->first;
-						ADV_node->command.functor=adverb_functors.get_field_value(rowid,"FUNCTOR");
-						ADV_node->command.d_key=adverb_functors.get_field_value(rowid,"D_KEY");
-						ADV_node->command.relation_functor=adverb_functors.get_field_value(rowid,"RELATION_FUNCTOR");
-						ADV_node->command.relation_d_key=adverb_functors.get_field_value(rowid,"RELATION_D_KEY");
-						ADV_node->command.relation_io_type=adverb_functors.get_field_value(rowid,"RELATION_IO_TYPE");
-						ADV_node->command.argument=adverb_functors.get_field_value(rowid,"ARGUMENT");
-						ADV_node->command.definition_type=adverb_functors.get_field_value(rowid,"DEFINITION_TYPE");
-						ADV_node->command.definition=adverb_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(ADV_node->command.functor!=adverb_functors.get_field_value(rowid,"FUNCTOR")
-							&&ADV_node->command.d_key!=std::atoi(adverb_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&ADV_node->command.functor!=adverb_functors.get_field_value(rowid,"RELATION_FUNCTOR")
-							&&ADV_node->command.d_key!=std::atoi(adverb_functors.get_field_value(rowid,"RELATION_D_KEY").c_str())
-							&&ADV_node->command.io_type!=adverb_functors.get_field_value(rowid,"RELATION_IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(adverb_functors->result_rows()>1){
-					functors=adverb_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(ADV_node->node_id,dependent_node->node_links.size()+1));
-				ADV_node->node_links.insert(std::make_pair(dependent_node->node_id,ADV_node->node_links.size()+1));
-				ADV_node->node_links.insert(std::make_pair(V_node->node_id,ADV_node->node_links.size()+1));
-				V_node->node_links.insert(std::make_pair(ADV_node->node_id,V_node->node_links.size()+1));
-			}
-			if(functors==NULL)//Only execute query if functors==NULL, as functors may have been filled due to finding a complete/partial dependency
-				functors=sqlite->exec_sql("SELECT * FROM ADVERB_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND RELATION_FUNCTOR = '"+relation_functor+"';");
-		}
-		else if(head_leaf.symbol=="V"&&non_head_leaf.symbol!="N"&&non_head_leaf.symbol!="ADV"&&non_head_leaf.symbol!="ADJ"||
-				non_head_leaf.symbol=="V"&&head_leaf.symbol!="N"&&head_leaf.symbol!="ADV"&&head_leaf.symbol!="ADJ"){
-			if(head_dependency.node_id!=0){
-				if(head_leaf.symbol=="V"){
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					V_node=&head_leaf;
-					NC_node=&non_head_leaf;
-					dependent_node=&head_dependency;
-				}
-				else{
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					V_node=&non_head_leaf;
-					NC_node=&head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				functor_criteria.clear();
-				functor_criteria.insert(std::make_pair("FUNCTOR",V_node->expression.lexeme+V_node->expression.lid+V_node->expression.gcat));
-				//functor_criteria.insert(std::make_pair("DEFINITION_TYPE","0"));
-				//generate io_type string which lists the io_types of the nouns already linked to the verb
-				io_types="(";
-				for(const std::map<unsigned int,unsigned int>::const_iterator i=V_node.node_links.begin();i!=V_node.node_links.end();++i){
-					N_node=get_node_info(i->first);
-					if(N_node.gcat=='N'){
-						io_type=N_node.expression.lexeme+N_node.expression.lid+N_node.expression.gcat;
-						if(io_types.find(io_type)==std::string::npos){
-							io_types+="'"+io_type+"',";
-							functor_criteria.insert(std::make_pair("IO_TYPE",io_type));
-						}
-					}
-				}
-				io_types.resize(io_types.length()-1);//remove last ','
-				io_types+=")";
-				//select entries from RELATION_FUNCTORS into relation_functors with keys functor=head_node and d_key is in dependency_entries.d_key and io_type=non_head_node and definition_type=executable
-				if(io_types=="()"){
-					relation_functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+relation_functor+"' AND D_KEY IN "+d_key_list+";");
-				}
-				else{
-					relation_functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+relation_functor+"' AND D_KEY IN "+d_key_list+" AND IO_TYPE IN "+io_types+";");
-				}
-				if(relation_functors==NULL) exit(EXIT_FAILURE);
-				//loop over relation_functors into relation_functor
-					//put the pair of non_head_node and head_dependency node into head_node.dependency_validation matrix with the row_index of dependency_entry in dependency_entries
-					//where dependency_entry.lexeme=relation_functor.lexeme and dependency_entry.d_key=relation_functor.d_key
-				//endloop
-				//set_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,relation_functors,V_node);
-				find_functor_for_dependencies(dependent_node->node_id,validator_node_id,*full_dependency_table,functor_criteria,*V_node,relation_functors);
-				if(relation_functors->result_rows()==1){
-					if(V_node->command.functor.empty()==true){
-						functors=relation_functors;
-						rowid=relation_functors->result_set().begin()->first;
-						V_node->command.functor=relation_functors.get_field_value(rowid,"FUNCTOR");
-						V_node->command.d_key=relation_functors.get_field_value(rowid,"D_KEY");
-						V_node->command.io_type=relation_functors.get_field_value(rowid,"IO_TYPE");
-						V_node->command.argument=relation_functors.get_field_value(rowid,"ARGUMENT");
-						V_node->command.definition_type=relation_functors.get_field_value(rowid,"DEFINITION_TYPE");
-						V_node->command.definition=relation_functors.get_field_value(rowid,"DEFINITION");
-					}
-					else if(V_node->command.functor!=relation_functors.get_field_value(rowid,"FUNCTOR")
-							&&V_node->command.d_key!=std::atoi(relation_functors.get_field_value(rowid,"D_KEY").c_str())
-							&&V_node->command.io_type!=relation_functors.get_field_value(rowid,"IO_TYPE")){
-						exit(EXIT_FAILURE);//TODO:Throw exception
-					}
-				}
-				else if(relation_functors->result_rows()>1){
-					functors=relation_functors;
-				}
-				else exit(EXIT_FAILURE);//TODO:Throw exception
-				dependent_node->node_links.insert(std::make_pair(V_node->node_id,dependent_node->node_links.size()+1));
-				V_node->node_links.insert(std::make_pair(dependent_node->node_id,V_node->node_links.size()+1));
-			}
-			if(non_head_dependency.node_id!=0){
-				if(head_leaf.symbol=="V"){
-					full_dependency_table=&head_leaf_dependency_table;
-					relevant_dependencies=&relevant_head_dependencies;
-					validator_node_id=non_head_leaf.node_id;
-					V_node=&head_leaf;
-					NC_node=&non_head_leaf;
-					dependent_node=&head_dependency;
-				}
-				else{
-					full_dependency_table=&non_head_leaf_dependency_table;
-					relevant_dependencies=&relevant_non_head_dependencies;
-					validator_node_id=head_leaf.node_id;
-					V_node=&non_head_leaf;
-					NC_node=&head_leaf;
-					dependent_node=&non_head_dependency;
-				}
-				//generate d_key_list string which lists the d_keys of relevant_dependencies like: ('1', '2', ..., '3')
-				d_key_list="(";
-				for(j=*relevant_dependencies.begin();j!=*relevant_dependencies.end();++j){
-					d_key<<j->second.functor_d_key;
-					if(d_key_list.find("'"+d_key.str()+"'")==std::string::npos){
-						d_key_list+="'"+d_key.str()+"',";
-					}
-				}
-				d_key_list.resize(d_key_list.length()-1);//remove last ','
-				d_key_list+=")";
-				set_functorless_node_dependencies(dependent_node->node_id,validator_node_id,*relevant_dependencies,NC_node);
-				dependent_node->node_links.insert(std::make_pair(NC_node->node_id,dependent_node->node_links.size()+1));
-				NC_node->node_links.insert(std::make_pair(dependent_node->node_id,NC_node->node_links.size()+1));
-				V_node->node_links.insert(std::make_pair(NC_node->node_id,V_node->node_links.size()+1));
-				NC_node->node_links.insert(std::make_pair(V->node_id,NC_node->node_links.size()+1));
-			}
-		}
-		else if(head_leaf.symbol=="N"&&non_head_leaf.symbol!="V"&&non_head_leaf.symbol!="ADV"&&non_head_leaf.symbol!="ADJ"||
-				non_head_leaf.symbol=="V"&&head_leaf.symbol!="N"&&head_leaf.symbol!="ADV"&&head_leaf.symbol!="ADJ"){
-		}
-		else if(head_leaf.symbol=="ADJ"&&non_head_leaf.symbol!="V"&&non_head_leaf.symbol!="ADV"&&non_head_leaf.symbol!="N"||
-				non_head_leaf.symbol=="ADJ"&&head_leaf.symbol!="V"&&head_leaf.symbol!="ADV"&&head_leaf.symbol!="N"){
-		}
-		else if(head_leaf.symbol=="ADV"&&non_head_leaf.symbol!="V"&&non_head_leaf.symbol!="ADJ"&&non_head_leaf.symbol!="N"||
-				non_head_leaf.symbol=="ADV"&&head_leaf.symbol!="V"&&head_leaf.symbol!="ADJ"&&head_leaf.symbol!="N"){
-		}
-		if(functors->result_set().empty()==true){
-			delete functors;
-			return NULL;
-		}
-		else return functors;
+	if(main_node.symbol=="N"){
+		functors=sqlite->exec_sql("SELECT * FROM ENTITY_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+";");
+		if(functors==NULL) exit(EXIT_FAILURE);
 	}
-	else exit(EXIT_FAILURE);//TODO: throw exception
+	else if(main_node.symbol=="V"){
+		functors=sqlite->exec_sql("SELECT * FROM RELATION_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+";");
+		if(functors==NULL) exit(EXIT_FAILURE);
+	}
+	else if(main_node.symbol=="ADJ"){
+		functors=sqlite->exec_sql("SELECT * FROM ATTRIBUTE_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+";");
+		if(functors==NULL) exit(EXIT_FAILURE);
+	}
+	else if(main_node.symbol=="ADV"){
+		functors=sqlite->exec_sql("SELECT * FROM ADVERB_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+";");
+		if(functors==NULL) exit(EXIT_FAILURE);
+	}
+	for(std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >::const_iterator i=functors_found.begin();
+			i!=functors_found.end();++i){
+		dependency_pair.dependent_node_id=dependent_node.node_id;
+		dependency_pair.validator_node_id=validator_node.node_id;
+		main_node.dependency_validation_matrix.insert(std::make_pair(i->second.first,dependency_pair));
+		std::cout<<"dependency "<<i->second.second<<" for functor "<<i->first.first<<" found"<<std::endl;
+	}
+	return functors;
 }
 
-void interpreter::set_functorless_node_dependencies(const unsigned int dependent_node_id,const unsigned int validator_node_id,
-		const std::multimap<unsigned int,depolex>& dependencies, node_info& node){
-	unsigned int nr_of_functors=0;
-	std::multimap<unsigned int,depolex>::const_iterator j;
-	dependency_validation_pair dependency_pair;
+bool interpreter::find_functors_for_dependency(const std::string& dependency, const query_result& dependencies,
+		std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >& functors_found,
+		std::vector<std::pair<unsigned int,std::string> >& dependency_stack){
+	const std::pair<const unsigned int,field> *depolex_entry=NULL;
+	std::string lexeme,d_key;
 
-	nr_of_functors=functors.result_rows();
-	for(j=dependencies.begin();j!=dependencies.end();++j){
-		for(unsigned int i=0;i<nr_of_functors;++i){
-			if(functors.get_field_value(i,"FUNCTOR")==j->second.lexeme
-					&&std::atoi(functors.get_field_value(i,"D_KEY").c_str())==j->second.functor_d_key){
-				//TODO: Shall any further checks be performed for duplicate entries in the
-				//dependency_validation_matrix?
-				dependency_pair.dependent_node_id=dependent_node_id;
-				dependency_pair.validator_node_id=validator_node_id;
-				node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
-			}
+	depolex_entry=dependencies.first_value_for_field_name_found("semantic_dependency",dependency);
+	if(depolex_entry==NULL) return true;
+	while(depolex_entry!=NULL){
+		lexeme=*dependencies.field_value_at_row_position(depolex_entry->first,"lexeme");
+		d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"d_key");
+		dependency_stack.push_back(std::make_pair(depolex_entry->first,depolex_entry->second.field_value));
+		if(find_functors_for_dependency(lexeme,dependencies,functors_found,dependency_stack)==true){
+			functors_found.insert(std::make_pair(std::make_pair(lexeme,d_key),*dependency_stack.begin()));
 		}
+		dependency_stack.pop_back();
+		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 	}
 }
 
-void interpreter::find_functor_for_dependencies(const unsigned int dependent_node_id, const unsigned int validator_node_id,const std::multimap<unsigned int,depolex>& dependencies,const std::multimap<std::string,std::string>& functor_criteria,
-		node_info& node,query_result& functors){
-	std::map<std::string,std::string>::const_iterator l;
-	std::multimap<unsigned int,depolex>::const_iterator j;
-	unsigned int rowid_of_functor_found=0,previous_iteration_d_key,nr_of_functors=0;
-	std::set<unsigned int> rowids_to_keep;
-	bool complete_dependency_found,partial_dependency_found;
-	node_info dependent_node;
-	dependency_validation_pair dependency_pair;
-	std::pair <std::multimap<std::string,std::string>::const_iterator,std::string,std::string>::const_iterator> range;
+//void interpreter::set_functorless_node_dependencies(const unsigned int dependent_node_id,const unsigned int validator_node_id,
+//		query_result& functors,const std::multimap<unsigned int,depolex>& dependencies, node_info& node){
+//	unsigned int nr_of_functors=0;
+//	std::multimap<unsigned int,depolex>::const_iterator j;
+//	dependency_validation_pair dependency_pair;
+//
+//	nr_of_functors=functors.result_rows();
+//	for(j=dependencies.begin();j!=dependencies.end();++j){
+//		for(unsigned int i=0;i<nr_of_functors;++i){
+//			if(*(functors.get_field_value(i,"functor"))==j->second.lexeme
+//					&&std::atoi(functors.get_field_value(i,"d_key")->c_str())==j->second.functor_d_key){
+//				//TODO: Shall any further checks be performed for duplicate entries in the
+//				//dependency_validation_matrix?
+//				dependency_pair.dependent_node_id=dependent_node_id;
+//				dependency_pair.validator_node_id=validator_node_id;
+//				node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
+//			}
+//		}
+//	}
+//}
 
-	//if all the d_counter dependency entries of a dependency of a functor belonging to a relation_functor
-	//entry can be found in head_node.dependency_validation_matrix in pair with the non_head_node:
-	//check if head_node.command already contains an executable relation_functor entry with a different key
-	//and if so, throw exception, otherwise insert the relation_functor entry just validated.
-	//Remark: This way that the dependencies are put together with the noun in the validation matrix,
-	//the first noun with all the dependencies of the verb that match an executable relation_functor
-	//gets validated. If nouns were not stored together with the dependencies in the matrix, different
-	//iterations with different nouns would validate dependencies which would result in
-	//a wrong relation_functor.
-	complete_dependency_found=true;
-	for(j=dependencies.begin(),previous_iteration_d_key=j->second.d_key;j!=dependencies.end();++j){
-		if(previous_iteration_d_key==j->second.d_key){
-			if(complete_dependency_found==true){
-				dependent_node=get_node_info(dependent_node_id);
-				if(j->second.lexeme==node.expression.lexeme+node.expression.lid+node.expression.gcat
-						&&j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
-					//read table relation_functor_table with functor=head_leaf.expression.lexeme+lid+gcat
-					//and d_key=d_key of current iteration and io_type=non_head_leaf.expression.lexeme+lid+gcat
-					//and definition_type=function_definition
-					//into relation_functor_found;
-					nr_of_functors=functors.result_rows();
-					for(unsigned int k=0;k<nr_of_functors;++k){
-						if(functors.get_field_value(k,"D_KEY")==j->second.functor_d_key){
-							for(l=functor_criteria.begin(),range=functor_criteria.equal_range(l->first);l!=functor_criteria.end();++l){
-								if(l>=range->first){
-									for(;range->first!=range->second;++range->first){
-										if(range->first->first!="D_KEY"&&functors.get_field_value(k,range->first->first)==range->first->second) break;//passing in D_KEY criterion is illegal, ignore if it comes in
-									}
-									if(range->first==range->second) break;//not any criterion in range matched the functor
-								}
-							}
-						}
-						if(l==functor_criteria.end()){
-							rowid_of_functor_found=k;
-							dependency_pair.dependent_node_id=dependent_node_id;
-							dependency_pair.validator_node_id=validator_node_id;
-							node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
-							break;
-						}
-					}
-				}
-				else{
-					partial_dependency_found=false;
-					for(m=node.dependency_validation_matrix.lower_bound(j->first);m!=node.dependency_validation_matrix.upper_bound(j->first);++m){
-						if(m->second.validator_node_id==validator_node_id){
-							dependent_node=get_node_info(m->second.dependent_node_id);
-							if(j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
-								partial_dependency_found=true;
-								break;
-							}
-						}
-					}
-					if(partial_dependency_found==false)
-						complete_dependency_found=false;
-				}
-			}
-		}
-		else{
-			if(complete_dependency_found==true){
-				rowids_to_keep.insert(rowid_of_functor_found);
-				functors.keep(rowids_to_keep);
-				//TODO:This does NOT guarantee that the entry for the functor with the d_key found is executable
-				//i.e. that the definition_type=0. So the executable entry needs to be looked up later...
-				break;
-			}
-			else{
-				complete_dependency_found=true;
-			}
-		}
-		previous_iteration_d_key=j->second.d_key;
-	}
-}
+//void interpreter::find_functor_for_dependencies(const unsigned int dependent_node_id, const unsigned int validator_node_id,const std::multimap<unsigned int,depolex>& dependencies,const std::multimap<std::string,std::string>& functor_criteria,
+//		node_info& node,query_result& functors){
+//	std::multimap<std::string,std::string>::const_iterator l;
+//	std::multimap<unsigned int,depolex>::const_iterator j;
+//	unsigned int rowid_of_functor_found=0,previous_iteration_d_key,nr_of_functors=0;
+//	std::set<unsigned int> rowids_to_keep;
+//	bool complete_dependency_found,partial_dependency_found;
+//	node_info dependent_node;
+//	dependency_validation_pair dependency_pair;
+//	std::multimap<unsigned int,dependency_validation_pair>::const_iterator m;
+//	//std::pair <std::multimap<std::string,std::string>::const_iterator,std::multimap<std::string,std::string>::const_iterator> range;
+//
+//	//if all the d_counter dependency entries of a dependency of a functor belonging to a relation_functor
+//	//entry can be found in head_node.dependency_validation_matrix in pair with the non_head_node:
+//	//check if head_node.command already contains an executable relation_functor entry with a different key
+//	//and if so, throw exception, otherwise insert the relation_functor entry just validated.
+//	//Remark: This way that the dependencies are put together with the noun in the validation matrix,
+//	//the first noun with all the dependencies of the verb that match an executable relation_functor
+//	//gets validated. If nouns were not stored together with the dependencies in the matrix, different
+//	//iterations with different nouns would validate dependencies which would result in
+//	//a wrong relation_functor.
+//	complete_dependency_found=true;
+//	for(j=dependencies.begin(),previous_iteration_d_key=j->second.d_key;j!=dependencies.end();++j){
+//		std::cout<<"checking dependency "<<j->second.semantic_dependency<<" for functors of "<<node.expression.lexeme+node.expression.lid+node.expression.gcat<<std::endl;
+//		if(previous_iteration_d_key==j->second.d_key){
+//			if(complete_dependency_found==true){
+//				dependent_node=get_node_info(dependent_node_id);
+//				if(j->second.lexeme==node.expression.lexeme+node.expression.lid+node.expression.gcat
+//						&&j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
+//					//read functor table with functor criteria
+//					//and d_key=d_key of current iteration
+//					//into relation_functor_found;
+//					nr_of_functors=functors.result_rows();
+//					for(unsigned int k=0;k<nr_of_functors;++k){
+//						if(std::atoi(functors.get_field_value(k,"d_key")->c_str())==j->second.functor_d_key){
+//							for(l=functor_criteria.begin();l!=functor_criteria.end();++l){
+//								if(l->first!="d_key"&&*(functors.get_field_value(k,l->first))!=l->second) break;//check functor criterion but passing in D_KEY criterion is illegal, ignore if it comes in
+//							}
+//							if(l==functor_criteria.end()){
+//								rowid_of_functor_found=k;
+//								dependency_pair.dependent_node_id=dependent_node_id;
+//								dependency_pair.validator_node_id=validator_node_id;
+//								node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
+//								std::cout<<"dependency "<<j->second.semantic_dependency<<" for functor "<<node.expression.lexeme+node.expression.lid+node.expression.gcat<<" found"<<std::endl;
+//								break;
+//							}
+//						}
+//					}
+//				}
+//				else{
+//					partial_dependency_found=false;
+//					for(m=node.dependency_validation_matrix.lower_bound(j->first);m!=node.dependency_validation_matrix.upper_bound(j->first);++m){
+//						if(m->second.validator_node_id==validator_node_id){
+//							dependent_node=get_node_info(m->second.dependent_node_id);
+//							if(j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
+//								partial_dependency_found=true;
+//								break;
+//							}
+//						}
+//					}
+//					if(partial_dependency_found==false)
+//						complete_dependency_found=false;
+//				}
+//			}
+//		}
+//		else{
+//			if(complete_dependency_found==true){
+//				rowids_to_keep.insert(rowid_of_functor_found);
+//				functors.keep(rowids_to_keep);
+//				//TODO:This does NOT guarantee that the entry for the functor with the d_key found is executable
+//				//i.e. that the definition_type=0. So the executable entry needs to be looked up later...
+//				break;
+//			}
+//			else{
+//				complete_dependency_found=true;
+//				dependent_node=get_node_info(dependent_node_id);
+//				if(j->second.lexeme==node.expression.lexeme+node.expression.lid+node.expression.gcat
+//						&&j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
+//					//read functor table with functor criteria
+//					//and d_key=d_key of current iteration
+//					//into relation_functor_found;
+//					nr_of_functors=functors.result_rows();
+//					for(unsigned int k=0;k<nr_of_functors;++k){
+//						if(std::atoi(functors.get_field_value(k,"d_key")->c_str())==j->second.functor_d_key){
+//							for(l=functor_criteria.begin();l!=functor_criteria.end();++l){
+//								if(l->first!="d_key"&&*(functors.get_field_value(k,l->first))!=l->second) break;//check functor criterion but passing in D_KEY criterion is illegal, ignore if it comes in
+//							}
+//							if(l==functor_criteria.end()){
+//								rowid_of_functor_found=k;
+//								dependency_pair.dependent_node_id=dependent_node_id;
+//								dependency_pair.validator_node_id=validator_node_id;
+//								node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
+//								std::cout<<"dependency "<<j->second.semantic_dependency<<" for functor "<<node.expression.lexeme+node.expression.lid+node.expression.gcat<<" found"<<std::endl;
+//								break;
+//							}
+//						}
+//					}
+//				}
+//				else{
+//					partial_dependency_found=false;
+//					for(m=node.dependency_validation_matrix.lower_bound(j->first);m!=node.dependency_validation_matrix.upper_bound(j->first);++m){
+//						if(m->second.validator_node_id==validator_node_id){
+//							dependent_node=get_node_info(m->second.dependent_node_id);
+//							if(j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
+//								partial_dependency_found=true;
+//								break;
+//							}
+//						}
+//					}
+//					if(partial_dependency_found==false)
+//						complete_dependency_found=false;
+//				}
+//			}
+//		}
+//		previous_iteration_d_key=j->second.d_key;
+//	}
+//}
 
 void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::string symbol, std::vector<unsigned int>& nodes_found){
 	//root_node: root node of the subtree in which the node should be found by the symbol
@@ -1125,11 +572,116 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	else exit(EXIT_FAILURE);//TODO: throw exception, symbol cannot be empty
 }
 
+std::map<unsigned int,std::pair<unsigned int,unsigned int> > interpreter::dependencies_found_for_root_node(){
+	std::map<unsigned int,std::pair<unsigned int,unsigned int> > dependencies_found;
+	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
+	unsigned int nr_of_dependencies_found=0,nr_of_dependencies=0;
+	std::string functor,d_key;
+	const std::pair<const unsigned int,field> *depolex_entry=NULL;
+	std::vector<unsigned int> verbs_found;
+
+	const node_info& root_node=get_node_info(nr_of_nodes);
+	get_nodes_by_symbol(root_node,"V",verbs_found);
+	if(verbs_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
+	const node_info& verb=get_node_info(*verbs_found.begin());
+	functor=verb.expression.lexeme+verb.expression.lid+verb.expression.gcat;
+	depolex_entry=verb.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
+	d_key=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+	dependency_for_d_key_found.first=0;
+	dependency_for_d_key_found.second=0;
+	while(depolex_entry!=NULL){
+		check_dependencies_for_functor(verb.node_id,functor,*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key"),*verb.expression.dependencies,nr_of_dependencies_found,nr_of_dependencies);
+		dependency_for_d_key_found.first=dependency_for_d_key_found.first+nr_of_dependencies_found;
+		dependency_for_d_key_found.second=dependency_for_d_key_found.second+nr_of_dependencies;
+		depolex_entry=verb.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
+		if(depolex_entry!=NULL){
+			if(d_key!=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
+				dependencies_found.insert(std::make_pair(std::atoi(d_key.c_str()),dependency_for_d_key_found));
+				d_key=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+			}
+		}
+	}
+	return dependencies_found;
+}
+
+bool interpreter::check_dependencies_for_functor(const unsigned int node_id, const std::string& functor, const std::string& d_key, const query_result& dependencies, unsigned int& nr_of_dependencies_found, unsigned int& nr_of_dependencies){
+	const std::pair<const unsigned int,field> *depolex_entry=NULL;
+	std::string semantic_dependency,ref_d_key,d_counter;
+	std::multimap<unsigned int,dependency_validation_pair>::const_iterator dependency_matrix_entry;
+
+	std::cout<<"checking dependency for functor "<<functor<<std::endl;
+	depolex_entry=dependencies.first_value_for_field_name_found("lexeme",functor);
+	if(depolex_entry==NULL) return false;
+	while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")!=d_key){
+		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
+	}
+	d_counter=*dependencies.field_value_at_row_position(depolex_entry->first,"d_counter");
+	while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")==d_key
+			&&std::atoi(dependencies.field_value_at_row_position(depolex_entry->first,"d_counter")->c_str())>=std::atoi(d_counter.c_str())){
+		semantic_dependency=*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency");
+		ref_d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key");
+		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
+			++nr_of_dependencies;
+			const node_info& node=get_node_info(node_id);
+			dependency_matrix_entry=node.dependency_validation_matrix.find(depolex_entry->first);
+			if(dependency_matrix_entry!=node.dependency_validation_matrix.end()){
+				//If the row_id of the depolex_entry is found among the row_ids stored in the dep.vld.matrix
+				//then the field values match as well since both row_ids refer to the corresponding
+				//field in the node.expression.dependencies attribute.
+				++nr_of_dependencies_found;
+				if(check_dependencies_for_functor(dependency_matrix_entry->second.dependent_node_id,semantic_dependency,ref_d_key,dependencies,nr_of_dependencies_found,nr_of_dependencies)==false){
+					return false;
+				}
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			//TODO:a leaf in the dependency tree is found so the semantic dependency is empty. As such, there's no
+			//functor-dependency pair to be checked in the dep.vld.matrix
+			//what to return? As there's nothing to check, only one level above, just return true.
+			return true;
+		}
+		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
+	}
+	return true;//All d_counters for the lexeme (functor) and d_key pair have been checked and should have returned with false by now if
+	//a dependency was not found for that. So theoretically, all deps have been found at this level, so return true.
+}
+
+bool interpreter::is_longest_match_for_semantic_rules_found(std::pair<std::string,unsigned int>& functor){
+	std::map<unsigned int,std::pair<unsigned int,unsigned int> > dependencies_found;
+	unsigned int longest_match=0;
+	std::ostringstream out;
+
+	const node_info& root_node=get_node_info(nr_of_nodes);
+	functor.first=root_node.expression.word+root_node.expression.lid+root_node.expression.gcat;
+	dependencies_found=dependencies_found_for_root_node();
+	for(std::map<unsigned int,std::pair<unsigned int,unsigned int> >::const_iterator i=dependencies_found.begin();
+			i!=dependencies_found.end();++i){
+		out.str(std::string());
+		out.clear();
+		out<<i->second.first;
+		std::cout<<"nr_of_dependencies_found:"<<out.str()<<std::endl;
+		out.str(std::string());
+		out.clear();
+		out<<i->second.second;
+		std::cout<<"nr_of_dependencies:"<<out.str()<<std::endl;
+		if(i->second.first==i->second.second&&longest_match<i->second.first){
+			functor.second=i->first;
+			longest_match=i->second.first;
+		}
+		else if(i->second.first==i->second.second&&longest_match==i->first) return false;
+	}
+	if(longest_match>0) return true;
+	else return false;
+}
+
 bool interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
 	std::string entity,argument,command,constant,options,options_field_value, preposition_field_value,
 				argument_field_value, command_field_value, entity_field_value, is_a_field_value, lexeme;
 	bool valid_combination=false;
-	unsigned int preposition_matched[256],rule_to_rule_map_entry_index=0;
+	unsigned int rule_to_rule_map_entry_index=0;
 	db *sqlite=NULL;
 	rule_to_rule_map rule_to_rule_map_entry={};
 	query_result *functors=NULL, *rule_to_rule_map_result=NULL;
@@ -1176,10 +728,17 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 		}
 		else if(i->second.field_name=="non_head_dependency_lookup_root"){
 			rule_to_rule_map_entry.non_head_dependency_lookup_root=i->second.field_value;
+		}
+		else if(i->second.field_name=="lid"){
+			rule_to_rule_map_entry.lid=i->second.field_value;
 			++rule_to_rule_map_entry_index;
 		}
 		else exit(EXIT_FAILURE);
 		if(rule_to_rule_map_entry_index>0&&rule_to_rule_map_entry_index==i->first+1){
+			head_nodes_found_by_symbol.clear();
+			head_d_nodes_found_by_symbol.clear();
+			non_head_nodes_found_by_symbol.clear();
+			non_head_d_nodes_found_by_symbol.clear();
 			if(rule_to_rule_map_entry.head_root_symbol==new_phrase_head_root.symbol&&rule_to_rule_map_entry.non_head_root_symbol==new_phrase_non_head_root.symbol){
 				get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_node_symbol,head_nodes_found_by_symbol);
 				get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_node_symbol,non_head_nodes_found_by_symbol);
@@ -1188,18 +747,20 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
 					else if(rule_to_rule_map_entry.head_dependency_lookup_root=="N")
 						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-					else
+					else{
 						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
 						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
+					}
 				}
 				if(rule_to_rule_map_entry.non_head_d_node_symbol.empty()==false){
 					if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="H")
 						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
 					else if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="N")
 						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-					else
+					else{
 						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
 						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
+					}
 				}
 				//1)Loop over head_nodes_found_by_symbol
 				for(j=head_nodes_found_by_symbol.begin();j!=head_nodes_found_by_symbol.end();++j){
@@ -1209,23 +770,18 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 					for(k=non_head_nodes_found_by_symbol.begin();k!=non_head_nodes_found_by_symbol.end();++k){
 						std::cout<<"loop pass on non_head_nodes_found_by_symbol:"<<*k<<std::endl;
 						node_info& non_head_node=get_private_node_info(*k);
-						if(std::find(head_node.node_links.begin(),head_node.node_links.end(),non_head_node.node_id)==head_node.node_links.end()){
+						if(head_node.node_links.find(non_head_node.node_id)==head_node.node_links.end()){
 							if(head_d_nodes_found_by_symbol.empty()==false){//TODO: cover other branches for non_head_d_nodes
 								//3)Loop over head_d_nodes_found_by_symbol
 								for(l=head_d_nodes_found_by_symbol.begin();l!=head_d_nodes_found_by_symbol.end();++l){
-									if(non_head_d_nodes_found_by_symbol.empty()==false){
-										//4)Loop over non_head_d_nodes_found_by_symbol
-										for(m=non_head_d_nodes_found_by_symbol.begin();m!=non_head_d_nodes_found_by_symbol.end();++m){
-											functors=is_valid_expression(head_node,non_head_node,get_private_node_info(*l),get_private_node_info(*m));
-										}
-									}
-									else{
-										???
-									}
+									functors=is_valid_expression(head_node,get_private_node_info(*l),non_head_node);
 								}
 							}
-							else{???
-								functors=is_valid_expression(head_node,non_head_node,empty_nodeinfo,empty_nodeinfo);
+							if(non_head_d_nodes_found_by_symbol.empty()==false){
+								//4)Loop over non_head_d_nodes_found_by_symbol
+								for(m=non_head_d_nodes_found_by_symbol.begin();m!=non_head_d_nodes_found_by_symbol.end();++m){
+									functors=is_valid_expression(non_head_node,get_private_node_info(*m),head_node);
+								}
 							}
 						}
 					}
@@ -1237,146 +793,266 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 	if(functors!=NULL) valid_combination=true;
 	delete functors;
 	delete rule_to_rule_map_result;
-	//END OF universal head driven approach
-
-/*
-	const node_info& head_node=get_node_info(get_head_node(left_node));
-	if(head_node.symbol=="V"){
-		const node_info& object_node=get_node_info(get_object_node(right_node));
-		if(right_node.symbol=="NP"){
-			if(object_node.expression.empty()==false){
-				sqlite=is_valid_expression_of_type(object_node.expression);
-				if(sqlite==NULL){
-					return false;
-				}
-				options_field_value=sqlite->get_field_value(0,"options");
-				command=options_field_value;
-			}
-			Get all entries for relation in head node
-			sqlite=is_valid_expression_of_type(head_node.expression,"RELATIONS");
-			if(sqlite==NULL){
-				return false;
-			}
-			for(i=0;i<sqlite->result_size();++i){
-				At least one entry must exist for the transitive verb with no preposition specified
-				preposition_field_value=sqlite->get_field_value(i,"preposition");
-				if(preposition_field_value.empty()==true){
-					preposition_matched[i]=1;Mark with 1 if preposition matches
-					valid_combination=true;
-				}
-				else{
-					preposition_matched[i]=0;
-					valid_combination=false;
-				}
-			}
-			Check entries where preposition matched
-			for(i=0;i<sqlite->result_size();++i){
-				if(preposition_matched[i]==1){
-					argument_field_value=sqlite->get_field_value(i,"argument");
-					if(argument_field_value==object_node.expression){
-						valid_combination=true;
-						command_field_value=sqlite->get_field_value(i,"command");
-						if(command.empty()==true)command=command_field_value;
-						else command+=command_field_value;
-						if(object_node.right_child!=0)set_command(command,get_node_info(object_node.right_child).expression,"");
-						else set_command(command,"","");
-						break;
-					}
-				}
-			}
-		}
-		else if(right_node.symbol=="PP"){
-			Get all entries for relation in head node
-			sqlite=is_valid_expression_of_type(head_node.expression,"RELATIONS");
-			if(sqlite==NULL){
-				return false;
-			}
-			const node_info& PP_head_node=get_node_info(get_head_node(right_node));
-			for(i=0;i<sqlite->result_size();++i){
-				At least one entry must exist for the transitive verb with the preposition specified in PP_head_node
-				preposition_field_value=sqlite->get_field_value(i,"preposition");
-				if(preposition_field_value==PP_head_node.expression){
-					preposition_matched[i]=1;Mark with 1 if preposition matches
-					valid_combination=true;
-				}
-				else{
-					preposition_matched[i]=0;
-					valid_combination=false;
-				}
-			}
-			Check entries where preposition matched
-			for(i=0;i<sqlite->result_size();++i){
-				if(preposition_matched[i]==1){
-					if(object_node.expression.empty()==false){
-						argument_field_value=sqlite->get_field_value(i,"argument");
-						if(argument_field_value==object_node.expression){
-							valid_combination=true;
-							command_field_value=sqlite->get_field_value(i,"command");
-							command=command_field_value;
-							if(object_node.right_child!=0)constant=get_node_info(object_node.right_child).expression;
-							break;
-						}
-					}
-					else{
-						if(argument.empty()==true){
-							argument_field_value=sqlite->get_field_value(i,"argument");
-							argument=argument_field_value;
-							command_field_value=sqlite->get_field_value(i,"command");
-							command=command_field_value;
-							if(object_node.right_child!=0)constant=get_node_info(object_node.right_child).expression;
-							valid_combination=true;
-						}
-						else{
-							argument_field_value=sqlite->get_field_value(i,"argument");
-							if(argument_field_value!=argument){
-								valid_combination=false;
-								break;
-							}
-						}
-					}
-				}
-			}
-			if(valid_combination==true)set_command(command,constant,PP_head_node.expression);
-			else return false;
-		}
-		else return false;
-	}
-	else{Entity tree traversal considering left_node->expression specific and object_node->expression general
-		const node_info& object_node=get_node_info(get_object_node(right_node));
-		entity=left_node.expression;
-		do{
-			sqlite=is_valid_expression_of_type(entity,"ENTITIES");
-			if(sqlite==NULL){
-				break;
-			}
-			entity_field_value=sqlite->get_field_value(0,"entity");
-			is_a_field_value=sqlite->get_field_value(0,"is_a");
-			entity=is_a_field_value;
-			if(object_node.expression==entity) valid_combination=true;
-			else valid_combination=false;
-		}while(valid_combination==false&&entity_field_value!=is_a_field_value);
-		if(valid_combination==false){
-			Entity tree traversal considering left_node->expression general and object_node->expression specific
-			entity=object_node.expression;
-			do{
-				sqlite=is_valid_expression_of_type(entity,"ENTITIES");
-				if(sqlite==NULL) break;
-				entity_field_value=sqlite->get_field_value(0,"entity");
-				is_a_field_value=sqlite->get_field_value(0,"is_a");
-				entity=is_a_field_value;
-				if(left_node.expression==entity) valid_combination=true;
-				else valid_combination=false;
-			}while(valid_combination==false&&entity_field_value!=is_a_field_value);
-		}
-		if(valid_combination==true){
-			options_field_value=sqlite->get_field_value(0,"options");
-			options=options_field_value;
-			set_options(options);
-		}
-	}
-*/
 	return valid_combination;
 }
+
+//bool interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
+//	std::string entity,argument,command,constant,options,options_field_value, preposition_field_value,
+//				argument_field_value, command_field_value, entity_field_value, is_a_field_value, lexeme;
+//	bool valid_combination=false;
+//	unsigned int preposition_matched[256],rule_to_rule_map_entry_index=0;
+//	db *sqlite=NULL;
+//	rule_to_rule_map rule_to_rule_map_entry={};
+//	query_result *functors=NULL, *rule_to_rule_map_result=NULL;
+//	std::map<unsigned int,unsigned int> dependency_validation_matrix;//uint1:row_index of dependency entry, uint2: true=validated node
+//	std::multimap<unsigned int,field>::const_iterator i;
+//	std::vector<unsigned int>::const_iterator j,k,l,m;
+//	std::vector<unsigned int> head_nodes_found_by_symbol,head_d_nodes_found_by_symbol,non_head_nodes_found_by_symbol,non_head_d_nodes_found_by_symbol;
+//	node_info empty_nodeinfo={};
+//
+//	sqlite=db::get_instance();
+//	rule_to_rule_map_result=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
+//	//TODO: Each and every combination must have a rule_to_rule_map entry, otherwise the combined nodes cannot be validated i.e. the node_links in the corresponding nodes
+//	//won't be crossreferenced. Thus later, checking for dependencies would not take into account such nodes that aren't referenced in node_links. Therefore, is_valid_expression()
+//	//must be extended in a way that each base node-non base node combination looks up their dependencies as well.
+//	if(rule_to_rule_map_result==NULL) exit(EXIT_FAILURE);
+//	const std::multimap<unsigned int,field>& rule_to_rule_map=rule_to_rule_map_result->result_set();
+//	for(i=rule_to_rule_map.begin();i!=rule_to_rule_map.end();++i){
+//		if(i->second.field_name=="parent_symbol"){
+//			rule_to_rule_map_entry.parent_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="head_root_symbol"){
+//			rule_to_rule_map_entry.head_root_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="non_head_root_symbol"){
+//			rule_to_rule_map_entry.non_head_root_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="step"){
+//			rule_to_rule_map_entry.step=std::atoi(i->second.field_value.c_str());
+//		}
+//		else if(i->second.field_name=="head_node_symbol"){
+//			rule_to_rule_map_entry.head_node_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="head_d_node_symbol"){
+//			rule_to_rule_map_entry.head_d_node_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="head_dependency_lookup_root"){
+//			rule_to_rule_map_entry.head_dependency_lookup_root=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="non_head_node_symbol"){
+//			rule_to_rule_map_entry.non_head_node_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="non_head_d_node_symbol"){
+//			rule_to_rule_map_entry.non_head_d_node_symbol=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="non_head_dependency_lookup_root"){
+//			rule_to_rule_map_entry.non_head_dependency_lookup_root=i->second.field_value;
+//		}
+//		else if(i->second.field_name=="lid"){
+//			rule_to_rule_map_entry.lid=i->second.field_value;
+//			++rule_to_rule_map_entry_index;
+//		}
+//		else exit(EXIT_FAILURE);
+//		if(rule_to_rule_map_entry_index>0&&rule_to_rule_map_entry_index==i->first+1){
+//			if(rule_to_rule_map_entry.head_root_symbol==new_phrase_head_root.symbol&&rule_to_rule_map_entry.non_head_root_symbol==new_phrase_non_head_root.symbol){
+//				get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_node_symbol,head_nodes_found_by_symbol);
+//				get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_node_symbol,non_head_nodes_found_by_symbol);
+//				if(rule_to_rule_map_entry.head_d_node_symbol.empty()==false){
+//					if(rule_to_rule_map_entry.head_dependency_lookup_root=="H")
+//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
+//					else if(rule_to_rule_map_entry.head_dependency_lookup_root=="N")
+//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
+//					else{
+//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
+//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
+//					}
+//				}
+//				if(rule_to_rule_map_entry.non_head_d_node_symbol.empty()==false){
+//					if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="H")
+//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
+//					else if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="N")
+//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
+//					else{
+//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
+//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
+//					}
+//				}
+//				//1)Loop over head_nodes_found_by_symbol
+//				for(j=head_nodes_found_by_symbol.begin();j!=head_nodes_found_by_symbol.end();++j){
+//					std::cout<<"loop pass on head_nodes_found_by_symbol:"<<*j<<std::endl;
+//					node_info& head_node=get_private_node_info(*j);
+//					//2)Loop over non_head_nodes_found_by_symbol where non_head_node is NOT in current_head_node.node_links
+//					for(k=non_head_nodes_found_by_symbol.begin();k!=non_head_nodes_found_by_symbol.end();++k){
+//						std::cout<<"loop pass on non_head_nodes_found_by_symbol:"<<*k<<std::endl;
+//						node_info& non_head_node=get_private_node_info(*k);
+//						if(head_node.node_links.find(non_head_node.node_id)==head_node.node_links.end()){
+//							if(head_d_nodes_found_by_symbol.empty()==false){//TODO: cover other branches for non_head_d_nodes
+//								//3)Loop over head_d_nodes_found_by_symbol
+//								for(l=head_d_nodes_found_by_symbol.begin();l!=head_d_nodes_found_by_symbol.end();++l){
+//									if(non_head_d_nodes_found_by_symbol.empty()==false){
+//										//4)Loop over non_head_d_nodes_found_by_symbol
+//										for(m=non_head_d_nodes_found_by_symbol.begin();m!=non_head_d_nodes_found_by_symbol.end();++m){
+//											functors=is_valid_expression(head_node,non_head_node,get_private_node_info(*l),get_private_node_info(*m));
+//										}
+//									}
+//									else{//TODO: figure out what to do here later, this is probably not enough
+//										functors=is_valid_expression(head_node,non_head_node,get_private_node_info(*l),empty_nodeinfo);
+//									}
+//								}
+//							}
+//							else{//TODO: figure out what to do here later, this is probably not enough
+//								functors=is_valid_expression(head_node,non_head_node,empty_nodeinfo,empty_nodeinfo);
+//							}
+//						}
+//					}
+//				}
+//			}
+//			else exit(EXIT_FAILURE);//TODO: throw exception
+//		}
+//	}
+//	if(functors!=NULL) valid_combination=true;
+//	delete functors;
+//	delete rule_to_rule_map_result;
+//	//END OF universal head driven approach
+//
+///*
+//	const node_info& head_node=get_node_info(get_head_node(left_node));
+//	if(head_node.symbol=="V"){
+//		const node_info& object_node=get_node_info(get_object_node(right_node));
+//		if(right_node.symbol=="NP"){
+//			if(object_node.expression.empty()==false){
+//				sqlite=is_valid_expression_of_type(object_node.expression);
+//				if(sqlite==NULL){
+//					return false;
+//				}
+//				options_field_value=sqlite->get_field_value(0,"options");
+//				command=options_field_value;
+//			}
+//			Get all entries for relation in head node
+//			sqlite=is_valid_expression_of_type(head_node.expression,"RELATIONS");
+//			if(sqlite==NULL){
+//				return false;
+//			}
+//			for(i=0;i<sqlite->result_size();++i){
+//				At least one entry must exist for the transitive verb with no preposition specified
+//				preposition_field_value=sqlite->get_field_value(i,"preposition");
+//				if(preposition_field_value.empty()==true){
+//					preposition_matched[i]=1;Mark with 1 if preposition matches
+//					valid_combination=true;
+//				}
+//				else{
+//					preposition_matched[i]=0;
+//					valid_combination=false;
+//				}
+//			}
+//			Check entries where preposition matched
+//			for(i=0;i<sqlite->result_size();++i){
+//				if(preposition_matched[i]==1){
+//					argument_field_value=sqlite->get_field_value(i,"argument");
+//					if(argument_field_value==object_node.expression){
+//						valid_combination=true;
+//						command_field_value=sqlite->get_field_value(i,"command");
+//						if(command.empty()==true)command=command_field_value;
+//						else command+=command_field_value;
+//						if(object_node.right_child!=0)set_command(command,get_node_info(object_node.right_child).expression,"");
+//						else set_command(command,"","");
+//						break;
+//					}
+//				}
+//			}
+//		}
+//		else if(right_node.symbol=="PP"){
+//			Get all entries for relation in head node
+//			sqlite=is_valid_expression_of_type(head_node.expression,"RELATIONS");
+//			if(sqlite==NULL){
+//				return false;
+//			}
+//			const node_info& PP_head_node=get_node_info(get_head_node(right_node));
+//			for(i=0;i<sqlite->result_size();++i){
+//				At least one entry must exist for the transitive verb with the preposition specified in PP_head_node
+//				preposition_field_value=sqlite->get_field_value(i,"preposition");
+//				if(preposition_field_value==PP_head_node.expression){
+//					preposition_matched[i]=1;Mark with 1 if preposition matches
+//					valid_combination=true;
+//				}
+//				else{
+//					preposition_matched[i]=0;
+//					valid_combination=false;
+//				}
+//			}
+//			Check entries where preposition matched
+//			for(i=0;i<sqlite->result_size();++i){
+//				if(preposition_matched[i]==1){
+//					if(object_node.expression.empty()==false){
+//						argument_field_value=sqlite->get_field_value(i,"argument");
+//						if(argument_field_value==object_node.expression){
+//							valid_combination=true;
+//							command_field_value=sqlite->get_field_value(i,"command");
+//							command=command_field_value;
+//							if(object_node.right_child!=0)constant=get_node_info(object_node.right_child).expression;
+//							break;
+//						}
+//					}
+//					else{
+//						if(argument.empty()==true){
+//							argument_field_value=sqlite->get_field_value(i,"argument");
+//							argument=argument_field_value;
+//							command_field_value=sqlite->get_field_value(i,"command");
+//							command=command_field_value;
+//							if(object_node.right_child!=0)constant=get_node_info(object_node.right_child).expression;
+//							valid_combination=true;
+//						}
+//						else{
+//							argument_field_value=sqlite->get_field_value(i,"argument");
+//							if(argument_field_value!=argument){
+//								valid_combination=false;
+//								break;
+//							}
+//						}
+//					}
+//				}
+//			}
+//			if(valid_combination==true)set_command(command,constant,PP_head_node.expression);
+//			else return false;
+//		}
+//		else return false;
+//	}
+//	else{Entity tree traversal considering left_node->expression specific and object_node->expression general
+//		const node_info& object_node=get_node_info(get_object_node(right_node));
+//		entity=left_node.expression;
+//		do{
+//			sqlite=is_valid_expression_of_type(entity,"ENTITIES");
+//			if(sqlite==NULL){
+//				break;
+//			}
+//			entity_field_value=sqlite->get_field_value(0,"entity");
+//			is_a_field_value=sqlite->get_field_value(0,"is_a");
+//			entity=is_a_field_value;
+//			if(object_node.expression==entity) valid_combination=true;
+//			else valid_combination=false;
+//		}while(valid_combination==false&&entity_field_value!=is_a_field_value);
+//		if(valid_combination==false){
+//			Entity tree traversal considering left_node->expression general and object_node->expression specific
+//			entity=object_node.expression;
+//			do{
+//				sqlite=is_valid_expression_of_type(entity,"ENTITIES");
+//				if(sqlite==NULL) break;
+//				entity_field_value=sqlite->get_field_value(0,"entity");
+//				is_a_field_value=sqlite->get_field_value(0,"is_a");
+//				entity=is_a_field_value;
+//				if(left_node.expression==entity) valid_combination=true;
+//				else valid_combination=false;
+//			}while(valid_combination==false&&entity_field_value!=is_a_field_value);
+//		}
+//		if(valid_combination==true){
+//			options_field_value=sqlite->get_field_value(0,"options");
+//			options=options_field_value;
+//			set_options(options);
+//		}
+//	}
+//*/
+//	return valid_combination;
+//}
 
 /*
 std::vector<std::string> interpreter::find_ev_occurence_in(const std::string& script){

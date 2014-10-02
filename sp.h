@@ -4,22 +4,25 @@
 	#include <string>
 	#include <vector>
 
-	typedef struct relation_functor{
-		std::string functor;
-		unsigned int d_key;
-		std::string io_type;
-		std::string argument;
-		unsigned int definition_type;
-		std::string definition;
-	}relation_functor;
-
-	typedef struct entity_functor{
-		std::string functor;
-		unsigned int d_key;
-		std::string io_type;
-		std::string argument;
-		std::string definition;
-	}entity_functor;
+	typedef struct functor_data{
+		struct{
+			std::string functor;
+			unsigned int d_key;
+			std::string argument;
+			std::string definition;
+		}common;
+		struct{
+			unsigned int definition_type;
+		}rel_adj_adv;
+		struct{
+			std::string io_type;
+		}rel_adj_ent;
+		struct{
+			std::string relation_functor;
+			unsigned int relation_d_key;
+			std::string relation_io_type;
+		}adv;
+	}functor_data;
 
 	typedef struct dependency_validation_pair{
 		unsigned int dependent_node_id;//the expression in the node contains the lexeme that matches the semantic_dependency field value in the dependencies of the base node
@@ -34,7 +37,7 @@
 		unsigned int right_child;/*argument node*/
 		std::map<unsigned int,unsigned int> node_links;//uint1:node_id,uint2:seq.nr.;historical sequence of semantically validated nodes (syntactic validation is carried out by bison and is recorded in the tree)
 		std::multimap<unsigned int,dependency_validation_pair> dependency_validation_matrix;//uint1:row_index of dependency entry in expression.dependencies
-		relation_functor command;
+		functor_data functor_attributes;
 	}node_info;
 
 
@@ -55,6 +58,7 @@
 		std::string non_head_node_symbol;
 		std::string non_head_d_node_symbol;
 		std::string non_head_dependency_lookup_root;
+		std::string lid;
 	}rule_to_rule_map;
 
 	typedef struct depolex{
@@ -72,9 +76,16 @@
 			node_info& get_private_node_info(unsigned int);
 			unsigned int get_head_node(const node_info&);
 			void get_nodes_by_symbol(const node_info&, const std::string, std::vector<unsigned int>&);
-			query_result *is_valid_expression(node_info&, node_info&, node_info&, node_info&);
+			//query_result *is_valid_expression(node_info&, node_info&, node_info&, node_info&);
+			query_result *is_valid_expression(node_info&, node_info&, node_info&);
 			bool is_valid_combination(const std::string&, const node_info&, const node_info&);
-			std::vector<std::string> find_ev_occurence_in(const std::string&);
+			//void find_functor_for_dependencies(const unsigned int, const unsigned int, const std::multimap<unsigned int, depolex>&, const std::multimap<std::string,std::string>&, node_info&, query_result&);
+			bool find_functors_for_dependency(const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
+			query_result* functors_found_for_dependencies(const node_info&, const node_info&, node_info&);
+			std::map<unsigned int,std::pair<unsigned int,unsigned int> > dependencies_found_for_root_node();
+			bool check_dependencies_for_functor(const unsigned int, const std::string&, const std::string&, const query_result&, unsigned int&, unsigned int&);
+			//void set_functorless_node_dependencies(const unsigned int, const unsigned int, query_result&, const std::multimap<unsigned int, depolex>&, node_info&);
+			//std::vector<std::string> find_ev_occurence_in(const std::string&);
 			//void set_command(const std::string&, const std::string&, const std::string&);
 			//void set_options(const std::string&);
 			//void find_ev_definitions(const std::string&, std::vector<std::string>&);
@@ -92,6 +103,7 @@
 			int set_node_info(const lexicon&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
+			bool is_longest_match_for_semantic_rules_found(std::pair<std::string,unsigned int>&);
 			//std::string get_command();
 	};
 

@@ -3,6 +3,7 @@
 
 	#include <stdbool.h>
 	#include "fomalib.h"
+	#include "morphan_result.h"
 	#include <string>
 	#include <vector>
 

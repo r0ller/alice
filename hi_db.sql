@@ -14,18 +14,22 @@ language varchar(128),
 head_position smallint /*0: undefined e.g. programming languages like bash, 1: head first, 2: head last*/
 );
 
-create table GCAT(
-gcat varchar(12) primary key,
+create table GCAT(/*Eventually, table for terminal symbols, i.e. to which yacc tokens can be assigned*/
+gcat varchar(12), /*references SYMBOLS(symbol),*/
+feature varchar(12), /*references SYMBOLS(symbol),*/
 lid varchar(3) references LANGUAGES(lid),
-description varchar(128)
-);
-
-create table LINGFEAS(
-gcat varchar(12) references GCAT(gcat),
-lid varchar(3) references LANGUAGES(lid),
-feature varchar(12)
+token smallint,
 description varchar(128),
-PRIMARY KEY(gcat, lid, feature)
+PRIMARY KEY(gcat, feature, lid, token) /*gcat, feature, lid, token are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
+FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
+);
+/*create unique index i_gcat_lid on GCAT(gcat, lid);*/
+
+create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
+symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
+lid varchar(3) references LANGUAGES(lid),
+PRIMARY KEY(symbol, lid)
 );
 
 /*See commenting reasons after the RELATION_FUNCTORS table
@@ -41,49 +45,64 @@ xlink varchar(32) //association, composition, aggregation
 */
 
 create table LEXEMES(
-lexeme varchar(47) primary key /*TODO: Connect lexeme with the concatenation of LEXICON(lexeme,lid,gcat)*/
+lexeme varchar(47), /*TODO: Connect lexeme with the concatenation of LEXICON(lexeme,lid,gcat)*/
+d_key smallint, /*smallest value: 1*/
+PRIMARY KEY(lexeme, d_key)
 );
 
 /*handles semantic dependencies like e.g. kick the bucket=kick|1|1|the;kick|1|2|bucket; and so on like look|1|1|up;look|2|1|after;*/
-/*It also stores semantic dependencies of lexemes and morphemes like: küldd el=küld|1|1|d;küld|1|2|el;*/
+/*It also stores semantic dependencies of lexemes and morphemes like: kï¿½ldd el=kï¿½ld|1|1|d;kï¿½ld|1|2|el;*/
+/*That is, it is to store dependencies within one semantic unit (szÃ³tÃ¡ri egysÃ©g)*/
 /*Does NOT contain dependencies with modifiers i.e. entries that fit in ATTRIBUTE_FUNCTORS or ADVERB_FUNCTORS like: yellow stone, play slowly, etc.*/
 create table DEPOLEX(
-lexeme varchar(47) references LEXEMES(lexeme),
+lexeme varchar(47),
 d_key smallint, /*smallest value: 1*/
 d_counter smallint, /*smallest value: 1*/
 manner smallint,/*0-absent, 1-mandatory, 2-optional*/
-semantic_dependency varchar(47) references LEXEMES(lexeme) DEFERRABLE INITIALLY DEFERRED, /*dependencies (which means the word has no dependencies i.e. can stand on its own)
-must be stored explicitly (full key entry with NULL semantic_dependecy value), otherwise noone can tell if a functor (word) can stand on its own or only together with other words*/
-ref_d_key smallint,/*d_key of semantic_dependency*/
+semantic_dependency varchar(47), /*dependencies must be stored explicitly (which means if a word has no dependencies i.e. can stand on its own,
+must be stored with full key entry with NULL semantic_dependecy value), otherwise noone can tell if a functor (word) can stand on its own or only together with other words*/
+ref_d_key smallint,/*belongs to the field semantic_dependency in this table*/
 functor_d_key smallint, /*d_key of functor which identifies the corresponding entry in the functor table with which the dependency is paired*/
 PRIMARY KEY(lexeme, d_key, d_counter)
+FOREIGN KEY(lexeme, d_key) REFERENCES LEXEMES(lexeme, d_key)
+FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES LEXEMES(lexeme, d_key) DEFERRABLE INITIALLY DEFERRED
 );
-create unique index i_depolex_lexeme_d_key on DEPOLEX(lexeme, d_key);
+/*TODO: with sqlite3.8.0 partial index is supported so a unique index could be created with 'where d_counter'*/
+/*create unique index i_depolex_lexeme_d_key on DEPOLEX(lexeme, d_key) where d_counter;*/
 
 /*Maps each syntactic rule to a semantic rule (note: semantic combination rules are divided into different steps due to
 technical reasons)*/
 create table RULE_TO_RULE_MAP(
-parent_symbol varchar(12) references GCAT(gcat),
-head_root_symbol varchar(12) references GCAT(gcat),
-non_head_root_symbol varchar(12) references GCAT(gcat),
+parent_symbol varchar(12),/* references SYMBOLS(symbol),*/
+head_root_symbol varchar(12),/* references SYMBOLS(symbol),*/
+non_head_root_symbol varchar(12),/* references SYMBOLS(symbol),*/
 step smallint,
-head_node_symbol varchar(12) references GCAT(gcat),
-head_d_node_symbol varchar(12) references GCAT(gcat),/*another field is necessary that tells in which root (head or non-head) the dependency should be looked for*/
+head_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
+head_d_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
 head_dependency_lookup_root varchar(1) references ROOT_TYPE(root_type), 
-non_head_node_symbol varchar(12) references GCAT(gcat),
-non_head_d_node_symbol varchar(12) references GCAT(gcat),/*another field is necessary that tells in which root (head or non-head) the dependency should be looked for*/
+non_head_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
+non_head_d_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
 non_head_dependency_lookup_root varchar(1) references ROOT_TYPE(root_type), 
+lid varchar(3) references LANGUAGES(lid),/*TODO: check it in coding when reading the table, this was added later so in the code nowhere expects such a field to exist*/
 /*Is non_head_d_node_symbol necessary? There may be syntactic rules that go hand in hand not only with semantic rules
 that are accompanied by a head dependency but a non-head dependency as well.*/
 PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
+FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(non_head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(head_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(head_d_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(non_head_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(non_head_d_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 ); 
 
 create table LEXICON(
 word varchar(256),
 lid varchar(3) references LANGUAGES(lid),
-gcat varchar(12) references GCAT(gcat),
+gcat varchar(12),
 lexeme varchar(32),
 PRIMARY KEY(word, lid, gcat)
+FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid) /*TODO: figure out how to refer to GCAT(gcat, lid) to make sure that only terminals are allowed here*/
 );
 
 create table ENTITIES(
@@ -92,7 +111,7 @@ d_key smallint,
 is_a_entity varchar(47),
 is_a_d_key smallint,
 PRIMARY KEY(entity, d_key)
-FOREIGN KEY(entity, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(entity, d_key) REFERENCES LEXEMES(lexeme, d_key)
 FOREIGN KEY(is_a_entity, is_a_d_key) REFERENCES ENTITIES(entity, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 create unique index i_entities_entity on ENTITIES(entity);
@@ -101,10 +120,10 @@ create table ENTITY_FUNCTORS(
 functor varchar(47),
 d_key smallint,
 io_type varchar(47) references ENTITIES(entity), /*io_type is same as the functor in case of entities*/
-argument varchar(47) references LEXEME(lexeme),
+argument varchar(47) references LEXEMES(lexeme),
 definition text,
 PRIMARY KEY(functor, d_key)/*io_type and argument are the same as functor in case of entities, so it's enough to have the functor and d_key as primary key*/
-FOREIGN KEY(functor, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 );
 
 /*Semantic tree for adjectives e.g. 'red','blue',etc. are derived from 'coloured'*/
@@ -114,7 +133,7 @@ d_key smallint,
 is_attribute varchar(47),
 is_d_key smallint,
 PRIMARY KEY(attribute, d_key)
-FOREIGN KEY(attribute, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(attribute, d_key) REFERENCES LEXEMES(lexeme, d_key)
 FOREIGN KEY(is_attribute, is_d_key) REFERENCES ATTRIBUTES(attribute, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 create unique index i_attributes_attribute on ATTRIBUTES(attribute);
@@ -123,11 +142,11 @@ create table ATTRIBUTE_FUNCTORS(
 functor varchar(47),
 d_key smallint,
 io_type varchar(47) references ENTITIES(entity),
-argument varchar(47) references LEXEME(lexeme),
+argument varchar(47) references LEXEMES(lexeme),
 definition_type smallint references DEFTYPE(deftype),/*If option is set as definition_type, the definition contains*/
 definition text,/*a script code snippet that may take into consideration the argument and the whole snippet is set as a value of a generated environment variable. The env.var. is then taken into account in the entity functor.*/
 PRIMARY KEY(functor, d_key, io_type, argument)
-FOREIGN KEY(functor, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 );
 
 /*
@@ -144,7 +163,7 @@ d_key smallint,/*dependency counter: 1,2,3...*/
 means_adverb varchar(47),
 means_d_key smallint,
 PRIMARY KEY(adverb, d_key)
-FOREIGN KEY(adverb, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(adverb, d_key) REFERENCES LEXEMES(lexeme, d_key)
 FOREIGN KEY(means_adverb, means_d_key) REFERENCES ADVERBS(adverb, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 create unique index i_adverbs_adverb on ADVERBS(adverb);
@@ -155,11 +174,11 @@ d_key smallint,
 relation_functor varchar(47),
 relation_d_key smallint,
 relation_io_type varchar(47),
-argument varchar(47) references LEXEME(lexeme),/*e.g. the lexeme could be 'percentage' in case of "play 50% louder" where '50%' is the constant to be passed in as argument*/
+argument varchar(47) references LEXEMES(lexeme),/*e.g. the lexeme could be 'percentage' in case of "play 50% louder" where '50%' is the constant to be passed in as argument*/
 definition_type smallint references DEFTYPE(deftype),/*If option is set as definition_type, the definition contains*/
 definition text,/*a script code snippet that may take into consideration the argument and the whole snippet is set as a value of a generated environment variable. The env.var. is then taken into account in the entity functor.*/
 PRIMARY KEY(functor, d_key, relation_functor, relation_d_key, relation_io_type, argument)
-FOREIGN KEY(functor, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 FOREIGN KEY(relation_functor, relation_d_key, relation_io_type) REFERENCES RELATION_FUNCTORS(functor, d_key, io_type)
 );
 
@@ -169,7 +188,7 @@ d_key smallint,
 entails_relation varchar(47),
 entails_d_key smallint,
 PRIMARY KEY(relation, d_key)
-FOREIGN KEY(relation, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(relation, d_key) REFERENCES LEXEMES(lexeme, d_key)
 FOREIGN KEY(entails_relation, entails_d_key) REFERENCES RELATIONS(relation, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 create unique index i_relations_relation on RELATIONS(relation);
@@ -189,7 +208,7 @@ argument varchar(47) references ENTITIES(entity),
 definition_type smallint references DEFTYPE(deftype),
 definition text,
 PRIMARY KEY(functor, d_key, io_type)
-FOREIGN KEY(functor, d_key) REFERENCES DEPOLEX(lexeme, d_key)
+FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 );
 
 /*Taken out from RELATION_FUNCTORS because it seems better to have a separate features tables like: part_whole_relations, etc. Then a mapping table could be
@@ -213,25 +232,37 @@ insert into LANGUAGES values('ENG', 'English', '1');
 insert into LANGUAGES values('BSH', 'BASH', '0');
 insert into LANGUAGES values('WPS', 'Windows PowerShell', '0');
 
-insert into GCAT values('V', 'ENG', 'Verb');
-insert into GCAT values('N', 'ENG', 'Noun');
-insert into GCAT values('A', 'ENG', 'Adjective');
-insert into GCAT values('ADV', 'ENG', 'Adverb');
-insert into GCAT values('CNP', 'ENG', 'Common Noun Phrase');
-insert into GCAT values('CON', 'ENG', 'Constant');
-insert into GCAT values('PREP', 'ENG', 'Preposition');
-insert into GCAT values('QPRO', 'ENG', 'Quantifier Pronoun');
-insert into GCAT values('ADVP', 'ENG', 'Adverbial Phrase');
-insert into GCAT values('NP', 'ENG', 'Noun Phrase');
-insert into GCAT values('PP', 'ENG', 'Prepositional Phrase');
-insert into GCAT values('VBAR1', 'ENG', 'Intermediate Technical V-VP phase1');
-insert into GCAT values('VBAR2', 'ENG', 'Intermediate Technical V-VP phase2');
-insert into GCAT values('VBAR3', 'ENG', 'Intermediate Technical V-VP phase3');
-insert into GCAT values('VP', 'ENG', 'Verb Phrase');
-insert into GCAT values('S', 'ENG', 'Sentence');
+/*TODO: remove ENG_ prefix later from non-terminals*/
+insert into SYMBOLS values('A', 'ENG');
+insert into SYMBOLS values('ADV', 'ENG');
+insert into SYMBOLS values('DET', 'ENG');
+insert into SYMBOLS values('N', 'ENG');
+insert into SYMBOLS values('ENG_NP', 'ENG');
+insert into SYMBOLS values('ENG_PP', 'ENG');
+insert into SYMBOLS values('Stem', 'ENG');
+insert into SYMBOLS values('Pl', 'ENG');
+insert into SYMBOLS values('Sg', 'ENG');
+insert into SYMBOLS values('PREP', 'ENG');
+insert into SYMBOLS values('QPRO', 'ENG');
+insert into SYMBOLS values('V', 'ENG');
+insert into SYMBOLS values('ENG_VBAR1', 'ENG');
+insert into SYMBOLS values('ENG_VBAR2', 'ENG');
 
-insert into LINGFEAS values('V', 'ENG', 'Sg', 'Singular noun');
-insert into LINGFEAS values('V', 'ENG', 'Pl', 'Plural noun');
+
+/*Constant has hardcoded token value: 1, so all other tokens must be greater*/
+/*TODO: Think over if the feature field for all gcats shall at least be 'Stem' or not?
+For exmaple, DET is considered as well to have a stem? How is it analysed by Foma?*/
+insert into GCAT values('A', NULL, 'ENG', '1', 'Adjective');
+insert into GCAT values('ADV', NULL, 'ENG', '2', 'Adverb');
+insert into GCAT values('DET', NULL, 'ENG', '3', 'Determiner');
+insert into GCAT values('N', NULL, 'ENG', '4', 'Noun');
+insert into GCAT values('N', 'Stem', 'ENG', '5', 'Noun');
+insert into GCAT values('N', 'Pl', 'ENG', '6', 'Plural Noun');
+insert into GCAT values('N', 'Sg', 'ENG', '7', 'Singular Noun');
+insert into GCAT values('PREP', NULL, 'ENG', '8', 'Preposition');
+insert into GCAT values('QPRO', NULL, 'ENG', '9', 'Quantifier Pronoun');
+insert into GCAT values('V', 'Stem', 'ENG', '10', 'Verb');
+
 /*
 insert into CARDINALITY values('01', '0..1');
 insert into CARDINALITY values('11', '1..1');
@@ -243,51 +274,55 @@ insert into XLINKS values('1', 'Aggregation');
 insert into XLINKS values('2', 'Composition');//Composition means 'life cycle dependency'!
 */
 
-insert into LEXEMES values('ACTENGV');
-insert into LEXEMES values('ALLENGQPRO');
-insert into LEXEMES values('CHANGEENGV');
-insert into LEXEMES values('COPYENGV');
-insert into LEXEMES values('CREATEENGV');
-insert into LEXEMES values('DELETEENGV');
-insert into LEXEMES values('DIRECTORYENGN');
-insert into LEXEMES values('ENTITYENGN');
-insert into LEXEMES values('EXECUTABLEENGA');
-insert into LEXEMES values('FILEENGN');
-insert into LEXEMES values('FROMENGPREP');
-insert into LEXEMES values('INENGPREP');
-insert into LEXEMES values('LISTENGV');
-insert into LEXEMES values('MAKEENGV');
-insert into LEXEMES values('MOVEENGV');
-insert into LEXEMES values('NON-EXECUTABLEENGA');
-insert into LEXEMES values('REMOVEENGV');
-insert into LEXEMES values('TOENGPREP');
-insert into LEXEMES values('SHUTENGV');
-insert into LEXEMES values('DOWNENGADV');
+insert into LEXEMES values('ACTENGV', '1');
+insert into LEXEMES values('ALLENGQPRO', '1');
+insert into LEXEMES values('CHANGEENGV', '1');
+insert into LEXEMES values('COPYENGV', '1');
+insert into LEXEMES values('CREATEENGV', '1');
+insert into LEXEMES values('DELETEENGV', '1');
+insert into LEXEMES values('DIRECTORYENGN', '1');
+insert into LEXEMES values('ENTITYENGN', '1');
+insert into LEXEMES values('EXECUTABLEENGA', '1');
+insert into LEXEMES values('FILEENGN', '1');
+insert into LEXEMES values('FROMENGPREP', '1');
+insert into LEXEMES values('INENGPREP', '1');
+insert into LEXEMES values('LISTENGV', '1');
+insert into LEXEMES values('LISTENGV', '2');
+insert into LEXEMES values('MAKEENGV', '1');
+insert into LEXEMES values('MOVEENGV', '1');
+insert into LEXEMES values('NON-EXECUTABLEENGA', '1');
+insert into LEXEMES values('REMOVEENGV', '1');
+insert into LEXEMES values('TOENGPREP', '1');
+insert into LEXEMES values('SHUTENGV', '1');
+insert into LEXEMES values('DOWNENGADV', '1');
 
 /*no value in the semantic_dependency field means no dependency*/
-insert into DEPOLEX values('ACTENGV', '1', '1', NULL);
-insert into DEPOLEX values('ALLENGQPRO', '1', '1', NULL);
-insert into DEPOLEX values('CHANGEENGV', '1', '1', NULL);
-insert into DEPOLEX values('COPYENGV', '1', '1', NULL);
-insert into DEPOLEX values('CREATEENGV', '1', '1', NULL);
-insert into DEPOLEX values('DELETEENGV', '1', '1', NULL);
-insert into DEPOLEX values('DIRECTORYENGN', '1', '1', NULL);
-insert into DEPOLEX values('ENTITYENGN', '1', '1', NULL);
-insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', NULL);
-insert into DEPOLEX values('FILEENGN', '1', '1', NULL);
-insert into DEPOLEX values('FROMENGPREP', '1', '1', NULL);
-insert into DEPOLEX values('INENGPREP', '1', '1', NULL);
-insert into DEPOLEX values('LISTENGV', '1', '1', NULL);
-insert into DEPOLEX values('LISTENGV', '2', '1', 'INENGPREP');
-insert into DEPOLEX values('MAKEENGV', '1', '1', NULL);
-insert into DEPOLEX values('MOVEENGV', '1', '1', NULL);
-insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL);
-insert into DEPOLEX values('REMOVEENGV', '1', '1', NULL);
-insert into DEPOLEX values('TOENGPREP', '1', '1', NULL);
-insert into DEPOLEX values('SHUTENGV', '1', '1', 'DOWNENGADV');
-insert into DEPOLEX values('DOWNENGADV', '1', '1', NULL);
+insert into DEPOLEX values('ACTENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('ALLENGQPRO', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('CHANGEENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('COPYENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('CREATEENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('DELETEENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('DIRECTORYENGN', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('ENTITYENGN', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('FILEENGN', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('FROMENGPREP', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('INENGPREP', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('LISTENGV', '1', '1', '1', 'FILEENGN', '1', '1');
+insert into DEPOLEX values('LISTENGV', '2', '1', '1', 'INENGPREP', '1', '2');
+insert into DEPOLEX values('LISTENGV', '2', '2', '1', 'DIRECTORYENGN', '1', '2');
+insert into DEPOLEX values('MAKEENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('MOVEENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('REMOVEENGV', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('TOENGPREP', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('SHUTENGV', '1', '1', '0', 'DOWNENGADV', '1', '1');
+insert into DEPOLEX values('DOWNENGADV', '1', '1', '0', NULL, NULL, '1');
 
-insert into RULE_TO_RULE_MAP values( 'VBAR1', 'V', 'NP', '1', 'V', NULL, NULL, 'N', NULL, NULL);
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '1', 'V', 'N', 'N', 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '1', 'V', 'PREP', 'N', 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '2', 'V', 'N', 'N', 'N', NULL, NULL, 'ENG');
 
 insert into LEXICON values('list', 'ENG', 'V', 'LIST');
 insert into LEXICON values('copy', 'ENG', 'V', 'COPY');
@@ -321,7 +356,8 @@ insert into RELATIONS values('MAKEENGV', '1', 'CREATEENGV', '1');
 insert into RELATIONS values('COPYENGV', '1', 'CREATEENGV', '1');
 insert into RELATIONS values('LISTENGV', '1', 'ACTENGV', '1');
 
-insert into RELATION_FUNCTORS values('LISTENGV', '1', 'FILEENGN', '1', NULL, '0', '');
+insert into RELATION_FUNCTORS values('LISTENGV', '1', 'FILEENGN', NULL, '0', '');
+insert into RELATION_FUNCTORS values('LISTENGV', '2', 'DIRECTORYENGN', NULL, '1', '');
 COMMIT;
 
 /*Old relation functor definitions for later reference:

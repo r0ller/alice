@@ -1,6 +1,6 @@
 !!!english.lexc!!!
 
-Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +Prep[gcat] +Adv[gcat] +A[gcat]
+Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat]
 
 LEXICON Root
 
@@ -42,7 +42,7 @@ from Pinf;
 
 LEXICON Pinf
 
-[stem]+Prep[gcat]:0 #;
+[stem]+PREP[gcat]:0 #;
 
 LEXICON Adverb
 
@@ -50,4 +50,4 @@ down Advinf;
 
 LEXICON Advinf
 
-[stem]+Adv[gcat]:0 #;
+[stem]+ADV[gcat]:0 #;

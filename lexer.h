@@ -5,17 +5,20 @@
 	#include "morphan.h"
 	#include <vector>
 	#include <deque>
+//	#include <algorithm>
 
 	class lexer{
 		private:
-			std::deque<unsigned int> store_word(morphan_result&);
-			void destroy_words();
 			std::vector<lexicon> words;
 			unsigned int nr_of_words;
 			std::string human_input;
 			std::string::iterator human_input_iterator;
 			morphan *stemmer;
 			std::deque<unsigned int> token_deque;
+			std::deque<unsigned int> store_word(morphan_result&);
+			void destroy_words();
+			query_result* dependencies_read_for_functor(const std::string&);
+			void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 		public:
 			lexer(const char *);
 			~lexer();
