@@ -2,24 +2,26 @@
 	#define LEXER_H
 
 	#include "db.h"
+	#include "morphan.h"
 	#include <vector>
+	#include <deque>
 
 	class lexer{
 		private:
-			int store_word(const std::string&);
-			std::string prepare_query(const std::string&);
+			std::deque<unsigned int> store_word(morphan_result&);
 			void destroy_words();
-			std::vector<lexicon> words;	//consider if needs to be changed to map
+			std::vector<lexicon> words;
 			unsigned int nr_of_words;
 			std::string human_input;
 			std::string::iterator human_input_iterator;
-			std::string last_word;
+			morphan *stemmer;
+			std::deque<unsigned int> token_deque;
 		public:
 			lexer(const char *);
 			~lexer();
-			int next_token();
-			lexicon get_word_by_token(unsigned int);
-			const std::string& last_word_scanned();
+			unsigned int next_token();
+			lexicon last_word_scanned();
+			lexicon get_word_by_lexeme(const std::string);
 	};
 
 	class lexer_error:public std::exception{

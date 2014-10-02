@@ -7,44 +7,37 @@
 	#include <iterator>
 	#include <utility>
 	#include <exception>
+	#include "query_result.h"
+	#include <deque>
+	#include "morphan_result.h"
 
 	typedef struct{
-		unsigned int rowid;
+		unsigned int token;
 		std::string word;
+		std::string lid;
 		std::string gcat;
 		std::string lexeme;
+		query_result *dependencies;
+		morphan_result *morphalytics;
 	}lexicon;
-
-	typedef struct{
-		std::string field_name;
-		std::string field_value;
-	}field;
 
 	class db{
 		private:
 			db();
-			static int store_row_data(void *, int, char **, char**);
-			void destroy_result();
+			static int store_row_data(void *, int, char **, char **);
 			sqlite3 *sqlite;
-			static int (*fptr_store_row_data)(void *, int, char **, char**);
+			static int (*fptr_store_row_data)(void *, int, char **, char **);
 			static db *singleton_instance;
-			std::multimap<unsigned int,field> result_set;
-			unsigned int result_set_size;
 		public:
 			~db();
 			static db *get_instance(){
-				if(db::singleton_instance==NULL)
-					db::singleton_instance=new db;
+				if(db::singleton_instance==NULL) db::singleton_instance=new db;
 				return db::singleton_instance;
 			};
 			void open(const std::string&);
 			void close();
 			const std::string error_message();
-			const std::multimap<unsigned int,field>& exec_sql(const std::string&);
-			std::multimap<unsigned int,field>::const_iterator get_row(unsigned int);
-			const std::string& get_field_value(unsigned int, const std::string&);
-			const std::multimap<unsigned int,field>& query_result_set();
-			unsigned int result_size();
+			query_result *exec_sql(const std::string&);
 	};
 
 	class db_error:public std::exception{

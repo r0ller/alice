@@ -4,30 +4,83 @@
 	#include <string>
 	#include <vector>
 
+	typedef struct relation_functor{
+		std::string functor;
+		unsigned int d_key;
+		std::string io_type;
+		std::string argument;
+		unsigned int definition_type;
+		std::string definition;
+	}relation_functor;
+
+	typedef struct entity_functor{
+		std::string functor;
+		unsigned int d_key;
+		std::string io_type;
+		std::string argument;
+		std::string definition;
+	}entity_functor;
+
+	typedef struct dependency_validation_pair{
+		unsigned int dependent_node_id;//the expression in the node contains the lexeme that matches the semantic_dependency field value in the dependencies of the base node
+		unsigned int validator_node_id;
+	}dependency_validation_pair;
+
 	typedef struct node_info{
 		unsigned int node_id;
 		std::string symbol;
-		std::string expression;/*lexeme or constant*/
+		lexicon expression;/*lexeme or constant*/
 		unsigned int left_child;
 		unsigned int right_child;/*argument node*/
+		std::map<unsigned int,unsigned int> node_links;//uint1:node_id,uint2:seq.nr.;historical sequence of semantically validated nodes (syntactic validation is carried out by bison and is recorded in the tree)
+		std::multimap<unsigned int,dependency_validation_pair> dependency_validation_matrix;//uint1:row_index of dependency entry in expression.dependencies
+		relation_functor command;
 	}node_info;
+
 
 	typedef struct ev_name_value_pair{
 		std::string name;
 		std::string value;
 	}ev_name_value_pair;
 
-		class interpreter{
+	typedef struct rule_to_rule_map{
+		//unsigned int node_id;
+		std::string parent_symbol;
+		std::string head_root_symbol;
+		std::string non_head_root_symbol;
+		unsigned int step;
+		std::string head_node_symbol;
+		std::string head_d_node_symbol;
+		std::string head_dependency_lookup_root;
+		std::string non_head_node_symbol;
+		std::string non_head_d_node_symbol;
+		std::string non_head_dependency_lookup_root;
+	}rule_to_rule_map;
+
+	typedef struct depolex{
+		std::string lexeme;
+		unsigned int d_key;
+		unsigned int d_counter;
+		unsigned int manner;
+		std::string semantic_dependency;
+		unsigned int ref_d_key;
+		unsigned int functor_d_key;
+	}depolex;
+
+	class interpreter{
 		private:
-			db *is_valid_expression_of_type(const std::string&, const std::string&);
-			bool is_valid_combination(const node_info&, const node_info&);
+			node_info& get_private_node_info(unsigned int);
+			unsigned int get_head_node(const node_info&);
+			void get_nodes_by_symbol(const node_info&, const std::string, std::vector<unsigned int>&);
+			query_result *is_valid_expression(node_info&, node_info&, node_info&, node_info&);
+			bool is_valid_combination(const std::string&, const node_info&, const node_info&);
 			std::vector<std::string> find_ev_occurence_in(const std::string&);
-			void set_command(const std::string&, const std::string&, const std::string&);
-			void set_options(const std::string&);
-			void find_ev_definitions(const std::string&, std::vector<std::string>&);
-			void find_ev_definitions(const std::string&, std::vector<ev_name_value_pair>&);
-			void delete_ev_redefinitions(const std::string&, std::string&);
-			std::string resolve_ev_redefinitions(const std::string&, const std::string&);
+			//void set_command(const std::string&, const std::string&, const std::string&);
+			//void set_options(const std::string&);
+			//void find_ev_definitions(const std::string&, std::vector<std::string>&);
+			//void find_ev_definitions(const std::string&, std::vector<ev_name_value_pair>&);
+			//void delete_ev_redefinitions(const std::string&, std::string&);
+			//std::string resolve_ev_redefinitions(const std::string&, const std::string&);
 			void destroy_node_infos();
 			std::vector<node_info> node_infos;
 			unsigned int nr_of_nodes;
@@ -36,12 +89,10 @@
 		public:
 			interpreter();
 			~interpreter();
-			int set_node_info(const std::string&, const std::string&, const node_info&);
+			int set_node_info(const lexicon&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
-			unsigned int get_object_node(const node_info&);
-			unsigned int get_head_node(const node_info&);
-			std::string get_command();
+			//std::string get_command();
 	};
 
 	class semper_error:public std::exception{

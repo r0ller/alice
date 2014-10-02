@@ -1,0 +1,53 @@
+!!!english.lexc!!!
+
+Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +Prep[gcat] +Adv[gcat] +A[gcat]
+
+LEXICON Root
+
+Noun ;
+Verb ;
+Preposition ;
+Adverb ;
+
+LEXICON Noun
+
+file Ninf;
+directory Ninf;
+
+LEXICON Verb
+
+change Vinf;
+copy   Vinf;
+delete Vinf;
+list   Vinf;
+make   Vinf;
+move   Vinf;
+remove Vinf;
+shut   Vinf;
+
+LEXICON Ninf
+
+[stem]+N[gcat]+Sg[lfea]:0   #;
+[stem]+N[gcat]+Pl[lfea]:^s  #;
+
+LEXICON Vinf
+
+[stem]+V[gcat]:0 #;
+
+LEXICON Preposition
+
+to   Pinf;
+in   Pinf;
+from Pinf;
+
+LEXICON Pinf
+
+[stem]+Prep[gcat]:0 #;
+
+LEXICON Adverb
+
+down Advinf;
+
+LEXICON Advinf
+
+[stem]+Adv[gcat]:0 #;

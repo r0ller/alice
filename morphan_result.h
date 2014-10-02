@@ -1,0 +1,23 @@
+#ifndef MORPHAN_RESULT_H
+	#define MORPHAN_RESULT_H
+
+	#include <string>
+	#include <vector>
+
+	class morphan_result{
+		private:
+			std::string word_stem;
+			std::string word_gcat;
+			std::vector<std::string> word_morphemes;
+			std::string word_form;
+		public:
+			morphan_result(const std::string&, const std::vector<std::string>&);
+			~morphan_result();
+			const std::string& stem() const;
+			const std::string& gcat() const;
+			const std::vector<std::string>& morphemes() const;
+			//prefix();
+			//suffix();
+			//infix();
+	};
+#endif

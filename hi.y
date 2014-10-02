@@ -9,7 +9,10 @@
 	#include <iostream>
 	#include "sqlite3.h"
 	#include "db.h"
+	#include "query_result.cpp"
 	#include "db.cpp"
+	#include "morphan.cpp"
+	morphan *stemmer=NULL;
 	#include "lexer.h"
 	lexer *lex=NULL;
 	#include "lexer.cpp"
@@ -42,60 +45,118 @@
 %token	hiMOVE 16
 %token	hiIN 17
 %token	hiMAKE 18
+%token	hiDOWN 19
+%token	hiSHUT 20
+%token	hiCOMPUTER 21
+%token	hiTHE 22
 %%
-S	:	NP VP
+S	:	VP
 {
-				const node_info& VP=sparser->get_node_info($2);
-				std::cout<<"S->NP VP"<<std::endl;
+				const node_info& VP=sparser->get_node_info($1);
+				std::cout<<"S->VP"<<std::endl;
 				return 0;
 };
-VP	:	Vt
+VP	:	Vbar1
 {
-				const node_info& Vt=sparser->get_node_info($1);
-				$$=sparser->set_node_info("VP","",Vt);
-				std::cout<<"VP->Vt"<<std::endl;
+				lexicon word;
+
+				const node_info& Vbar1=sparser->get_node_info($1);
+				word.gcat="VP";
+				$$=sparser->set_node_info(word,Vbar1);
+				std::cout<<"VP->Vbar1"<<std::endl;
 }
-	|	Vdt
+	|	Vbar1 AdvP
 {
-				const node_info& Vdt=sparser->get_node_info($1);
-				$$=sparser->set_node_info("VP","",Vdt);
-				std::cout<<"VP->Vdt"<<std::endl;
-}
-	|	Vdt PP
-{
-				const node_info& Vdt=sparser->get_node_info($1);
-				const node_info& PP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("VP",Vdt,PP);
+				const node_info& Vbar1=sparser->get_node_info($1);
+				const node_info& AdvP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VP",Vbar1,AdvP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
 					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"VP->Vdt PP"<<std::endl;
-};
-Vdt	:	Vt PP
+				std::cout<<"VP->Vbar1 AdvP"<<std::endl;
+}
+	|	Vbar2
 {
-				const node_info& Vt=sparser->get_node_info($1);
+				lexicon word;
+
+				const node_info& Vbar2=sparser->get_node_info($1);
+				word.gcat="VP";
+				$$=sparser->set_node_info(word,Vbar2);
+				std::cout<<"VP->Vbar2"<<std::endl;
+}
+	|	Vbar2 PP
+{
+				const node_info& Vbar2=sparser->get_node_info($1);
 				const node_info& PP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("Vdt",Vt,PP);
+				$$=sparser->combine_nodes("VP",Vbar2,PP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vt->left_child->expression,object_node->expression);*/
+					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"Vdt->Vt PP"<<std::endl;
+				std::cout<<"VP->Vbar2 PP"<<std::endl;
+}
+	|	Vbar3 NP
+{
+				const node_info& Vbar3=sparser->get_node_info($1);
+				const node_info& NP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VP",Vbar3,NP);
+				if($$<0){
+					/*object_node=sparser->public.get_object_node(sparser,PP);
+					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
+					return -1;
+				}
+				std::cout<<"VP->Vbar3 NP"<<std::endl;
 };
-Vt	:	V NP
+Vbar3	:	V AdvP
 {
 				const node_info& V=sparser->get_node_info($1);
-				const node_info& NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("Vt",V,NP);
+				const node_info& AdvP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VBAR3",V,AdvP);
 				if($$<0){
 					//object_node=sparser->get_object_node(NP);
 					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
 					return -1;
 				}
-				std::cout<<"Vt->V NP"<<std::endl;
+				std::cout<<"Vbar3->V AdvP"<<std::endl;
+};
+Vbar2	:	Vbar1 PP
+{
+				const node_info& Vbar1=sparser->get_node_info($1);
+				const node_info& PP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VBAR2",Vbar1,PP);
+				if($$<0){
+					//object_node=sparser->get_object_node(NP);
+					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
+					return -1;
+				}
+				std::cout<<"Vbar2->Vbar1 PP"<<std::endl;
+}
+		|	Vbar1 NP
+{
+				const node_info& Vbar1=sparser->get_node_info($1);
+				const node_info& NP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VBAR2",Vbar1,NP);
+				if($$<0){
+					//object_node=sparser->get_object_node(NP);
+					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
+					return -1;
+				}
+				std::cout<<"Vbar2->Vbar1 NP"<<std::endl;
+};
+Vbar1	:	V NP
+{
+				const node_info& V=sparser->get_node_info($1);
+				const node_info& NP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VBAR1",V,NP);
+				if($$<0){
+					//object_node=sparser->get_object_node(NP);
+					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
+					return -1;
+				}
+				std::cout<<"Vbar1->V NP"<<std::endl;
 };
 PP	:	Prep NP
 {
@@ -111,8 +172,11 @@ PP	:	Prep NP
 };
 NP	:	CNP
 {
+				lexicon word;
+
 				const node_info& CNP=sparser->get_node_info($1);
-				$$=sparser->set_node_info("NP","",CNP);
+				word.gcat="NP";
+				$$=sparser->set_node_info(word,CNP);
 				std::cout<<"NP->CNP"<<std::endl;
 }
 	|	QPro CNP
@@ -121,38 +185,50 @@ NP	:	CNP
 				const node_info& CNP=sparser->get_node_info($2);
 				/*	TODO: really need to check if there's a constant ?
 					Currently, it's done to make functor argument diff easier.*/
-				const node_info& object_node=sparser->get_node_info(sparser->get_object_node(CNP));
+				/*const node_info& object_node=sparser->get_node_info(sparser->get_object_node(CNP));
 				if(object_node.right_child!=0){
 					//printf("Syntax error: constants like %s cannot be quantified!\n",sparser->get_node_info(object_node.right_child).expression.c_str());
 					return -1;
-				}
+				}*/
 				$$=sparser->combine_nodes("NP",Det,CNP);
 				/* No check for $$<0 since quantifier pronouns are not validated as
 				 * everything in the current model seems to be countable.*/
-				std::cout<<"NP->QPro CNP:"<<Det.expression<<std::endl;
-}
-	|	Pro
+				std::cout<<"NP->QPro CNP:"<<Det.expression.lexeme<<std::endl;
+};
+/*	|	Pro
 {
 				std::cout<<"NP->Pro"<<std::endl;
-};
+};*/
 CNP	:	A CNP
 {
 				const node_info& A=sparser->get_node_info($1);
 				const node_info& CNP=sparser->get_node_info($2);
-				/*TODO: ellenÅ‘rizni, hogy ha a CNP paramÃ©teres akkor hiba mint a QPro CNP-nÃ©l!*/
+				/*TODO: ellenõrizni, hogy ha a CNP paraméteres akkor hiba mint a QPro CNP-nál!*/
 				$$=sparser->combine_nodes("CNP",A,CNP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,CNP);
 					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);*/
 					return -1;
 				}
-				std::cout<<"CNP->A CNP:"<<A.expression<<std::endl;
+				std::cout<<"CNP->A CNP:"<<A.expression.lexeme<<std::endl;
 }
 	|	N
 {
+				lexicon word;
+
 				const node_info& N=sparser->get_node_info($1);
-				$$=sparser->set_node_info("CNP","",N);
-				std::cout<<"CNP->N:"<<N.expression<<std::endl;
+				word.gcat="CNP";
+				$$=sparser->set_node_info(word,N);
+				std::cout<<"CNP->N:"<<N.expression.lexeme<<std::endl;
+};
+AdvP : Adv
+{
+				lexicon word;
+
+				const node_info& Adv=sparser->get_node_info($1);
+				word.gcat="ADVP";
+				$$=sparser->set_node_info(word,Adv);
+				std::cout<<"AdvP->Adv:"<<Adv.expression.lexeme<<std::endl;
 };
 V	:	hiLIST
 {
@@ -160,61 +236,7 @@ V	:	hiLIST
 				const node_info empty_node_info={};
 
 				word=lex->get_word_by_token(hiLIST-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiCOPY
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiCOPY-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiREMOVE
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiREMOVE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiDELETE
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiDELETE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiCHANGE
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiCHANGE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiMOVE
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiMOVE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiMAKE
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiMAKE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 QPro	:	hiALL
@@ -224,125 +246,154 @@ QPro	:	hiALL
 
 				word=lex->get_word_by_token(hiALL-1);
 				/*TODO: consider what if quantifiers like ALL are handled as functors?*/
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
-N	:	hiFILE Con
+ENG_N	:	ENG_N_Sg
 {
 				lexicon word;
 	
-				word=lex->get_word_by_token(hiFILE-1);
-				const node_info& Con=sparser->get_node_info($2);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,Con);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<" "<<Con.expression<<std::endl;
+				const node_info& ENG_N_Sg=sparser->get_node_info($1);
+				word.gcat="ENG_N";
+				$$=sparser->set_node_info(word,ENG_N_Sg);
+				std::cout<<"ENG_N->ENG_N_Sg:"<<ENG_N_Sg.expression.lexeme<<std::endl;
 }
-	|	hiFILES
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiFILES-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiDIRECTORY
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiDIRECTORY-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiDIRECTORY Con
+	|	ENG_N_Pl
 {
 				lexicon word;
 
-				word=lex->get_word_by_token(hiDIRECTORY-1);
-				const node_info& Con=sparser->get_node_info($2);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,Con);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<" "<<Con.expression<<std::endl;
-}
-	|	hiDIRECTORIES
-{
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->get_word_by_token(hiDIRECTORIES-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	Con
-{
-				const node_info& Con=sparser->get_node_info($1);
-				$$=sparser->set_node_info("N","",Con);
-				std::cout<<"N->"<<Con.expression<<std::endl;
+				const node_info& ENG_N_Pl=sparser->get_node_info($1);
+				word.gcat="ENG_N";
+				$$=sparser->set_node_info(word,ENG_N_Pl);
+				std::cout<<"ENG_N->ENG_N_Pl:"<<ENG_N_Pl.expression.lexeme<<std::endl;
 };
-A	:	hiEXECUTABLE
+ENG_N_Sg	:	ENG_N_stem
 {
 				lexicon word;
-				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiEXECUTABLE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+				const node_info& ENG_N_stem=sparser->get_node_info($1);
+				word.gcat="ENG_N_stem";
+				$$=sparser->set_node_info(word,ENG_N_stem);
+				std::cout<<"ENG_N->ENG_N_Sg:"<<ENG_N_stem.expression.lexeme<<std::endl;
 }
-	|	hiNONEXECUTABLE
+	|	ENG_Con
+{
+				lexicon word;
+
+				const node_info& ENG_Con=sparser->get_node_info($1);
+				word.gcat="ENG_Con";
+				$$=sparser->set_node_info(word,ENG_Con);
+				std::cout<<"ENG_N->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
+};
+ENG_N_Pl	:	ENG_N_stem	ENG_N_Pl
+{
+}
+	|	ENG_N_Sg	ENG_Con
+				//TODO: create an implementaion for set_node_info() that accepts two node_infos as input parameters
+				//Question: what to do if both the stem and an affix have/can have functors like 'non' in 'nonexecutable'?
+				//Shall combine_nodes() be called in such cases instead of set_node_info()? If so, how to decide when
+				//any of these methods should be called? Can it be grasped at syntactic level? E.g. introducing a new
+				//symbol for PREFIX and creating a rule like N: PREFIX N_stem in which we can decide if set_node_info()
+				//or combine_nodes() should be called, depending on the prefix having a functor or not. If combine_nodes()
+				//needs to be called, it must be enhanced (or the underlying parts) to be able to validate affixes
+				//(all kinds:prefix, infix, suffix, circumfix) against verbs.
+{
+}
+	|	ENG_N_Pl	ENG_Con
+{
+};
+ENG_N_stem	: t_ENG_N_stem
 {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->get_word_by_token(hiNONEXECUTABLE-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
-Prep:	hiTO
+ENG_N_lfea_Sg	: t_ENG_N_lfea_Sg
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();//TODO: it's unnecessary to duplicate the word info for each node that is related to an affix of the stem of the last scanned word
+				//Create a method that returns the info only about the affix in question. Hint: create a method 'lexicon lexer::get_lexicon_info_by_token( uint token )' which
+				//would return everything what last_word_scanned() returns but: if the token belongs to a stem it equals to calling last_word_scanned()
+				//if the token belongs to an lfea, every field is the same as when calling last_word_scanned() but: the token field would contain the token of the lfea,
+				//and if the affix has a functor, then the gcat is the corresponding PREFIX/INFIX/SUFFIX and the lexeme corresponds to that of the affix
+				//if the affix does not have a functor, then the gcat is again either PREFIX/INFIX/SUFFIX but the lexeme field is empty
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_N_lfea_Pl	: t_ENG_N_lfea_Pl
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_A	:	t_ENG_A
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_Prep:	t_ENG_Prep
 {
 				lexicon word;
 				const node_info empty_node_info={};
 			
-				word=lex->get_word_by_token(hiTO-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiFROM
-{
-				lexicon word;
-				const node_info empty_node_info={};
-			
-				word=lex->get_word_by_token(hiFROM-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-	|	hiIN
-{
-				lexicon word;
-				const node_info empty_node_info={};
-			
-				word=lex->get_word_by_token(hiIN-1);
-				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
-Pro	:	/*empty*/
+/*Pro	:	//empty
 {
 				std::cout<<"Pro->null"<<std::endl;
-};
-Con	:	hiCONSTANT
+};*/
+ENG_Con	:	t_ENG_Con
 {
 				const node_info empty_node_info={};
+				lexicon word;
 
-				const std::string& constant=lex->last_word_scanned();
-				$$=sparser->set_node_info("Con",constant,empty_node_info);
-				std::cout<<"Constant:"<<constant<<std::endl;
+				word=lex->last_word_scanned();
+				word.gcat="CON";
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<"Constant:"<<word.word<<std::endl;
+};
+ENG_Adv	:	t_ENG_Adv
+{
+				lexicon word;
+				const node_info empty_node_info={};
+			
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_Det :	t_ENG_Det
+{
+				lexicon word;
+				const node_info empty_node_info={};
+			
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 %%
 
 int yylex(void){
 	int token;
+	lexicon word={};
 
 	token=lex->next_token();
-	if(token==0&&lex->last_word_scanned().empty()==true) return 0;//Historic indicator of YACC about end of input stream
-	else return token+1;
+	word=lex->last_word_scanned();//Check if any word was scanned
+	if(token==0&&word.word.empty()==true) return 0;//Return 0 (historic indicator of YACC about end of input stream) only if no word was scanned last time where as a corollary token = 0 as well
+	else return token+1;//return token+1 if a word was scanned but could not be tokenized (token=0)->consider it a constant (yacc %token for constant is 1)
 }
 
 void yyerror(char *s){
@@ -365,7 +416,8 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			sqlite=db::get_instance();
 			sqlite->open("hi.db");
 			sparser=new interpreter;
-			if(yyparse()==0)shell_command=sparser->get_command();
+			if(yyparse()==0)std::cout<<"TRUE";//shell_command=sparser->get_command();
+			else std::cout<<"FALSE";
 			delete sparser;
 			sparser=NULL;
 			delete lex;
