@@ -38,6 +38,7 @@ unsigned int lexer::next_token(){
 				new_word.word=last_word;
 				new_word.gcat="CON";
 				new_word.lexeme=last_word;
+				new_word.dependencies=dependencies_read_for_functor("CON");
 				words.push_back(new_word);
 				++nr_of_words;
 				return 0;
@@ -173,7 +174,7 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	unsigned int n=0;
 
 	sqlite=db::get_instance();
-	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"';");
+	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER, D_FAILOVER;");
 	for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
 		ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
@@ -188,17 +189,26 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 	db *sqlite=NULL;
 	query_result *result=NULL;
 	std::string semantic_dependency,ref_d_key;
-	unsigned int n;
+	unsigned int n=0;
+	const std::pair<const unsigned int,field> *dependency=NULL;
 
 	sqlite=db::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"';");
-//	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
+	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"'  ORDER BY LEXEME, D_KEY, D_COUNTER, D_FAILOVER;");
+	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
 	dependencies->append(*result);
 	for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");
 		ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
 		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
-			read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+			dependency=dependencies->first_value_for_field_name_found("lexeme",semantic_dependency);
+			while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key
+					&&*dependencies->field_value_at_row_position(dependency->first,"d_counter")!=*result->field_value_at_row_position(i,"d_counter")
+					&&*dependencies->field_value_at_row_position(dependency->first,"d_failover")!=*result->field_value_at_row_position(i,"d_failover")){
+				dependency=dependencies->value_for_field_name_found_after_row_position(dependency->first,"lexeme",semantic_dependency);
+			}
+			if(dependency==NULL){
+				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+			}
 		}
 	}
 	return;

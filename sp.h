@@ -38,6 +38,7 @@
 			query_result* functors_found_for_dependencies(const node_info&, node_info&);
 			void find_dependencies_for_node(const unsigned int, std::map<std::pair<unsigned int,unsigned int>,std::pair<unsigned int,unsigned int> >&);
 			bool find_dependencies_for_functor(const unsigned int, const std::string&, std::map<std::pair<unsigned int,unsigned int>,std::pair<unsigned int,unsigned int> >&);
+			bool find_dependencies_for_functor(const unsigned int, const std::string&, const std::string&, const std::string&, std::map<std::pair<unsigned int,unsigned int>,std::pair<unsigned int,unsigned int> >&, std::set<std::pair<std::string,unsigned int> >&);
 			//std::vector<std::string> find_ev_occurence_in(const std::string&);
 			//void set_command(const std::string&, const std::string&, const std::string&);
 			//void set_options(const std::string&);

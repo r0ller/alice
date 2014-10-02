@@ -270,22 +270,21 @@ ENG_N_Sg_0Con	:	ENG_N_Stem	ENG_N_lfea_Sg
 				}
 				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 };
-//TODO: ENG_N_Sg does not cover a case when only constants are listed like in 'delete file1'
 ENG_N_Sg	:	ENG_N_Sg_0Con	ENG_1Con
 {
-				//TODO: create an implementaion for set_node_info() that accepts two node_infos as input parameters
-				//Question: what to do if both the stem and an affix have/can have functors like 'non' in 'nonexecutable'?
-				//Shall combine_nodes() be called in such cases instead of set_node_info()? If so, how to decide when
-				//any of these methods should be called? Can it be grasped at syntactic level? E.g. introducing a new
-				//symbol for PREFIX and creating a rule like N: PREFIX N_stem in which we can decide if set_node_info()
-				//or combine_nodes() should be called, depending on the prefix having a functor or not. If combine_nodes()
-				//needs to be called, it must be enhanced (or the underlying parts) to be able to validate affixes
-				//(all kinds:prefix, infix, suffix, circumfix) against verbs.
-
 				const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
 				const node_info& ENG_1Con=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con ENG_1Con"<<std::endl;
+}
+	|	ENG_1Con
+{
+				lexicon word;
+
+				const node_info& ENG_1Con=sparser->get_node_info($1);
+				word.gcat="ENG_N_Sg";
+				$$=sparser->set_node_info(word,ENG_1Con);
+				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
 };
 ENG_N_Pl_0Con	:	ENG_N_Stem	ENG_N_lfea_Pl
 {
@@ -304,7 +303,7 @@ ENG_1Con	:	ENG_Con
 				lexicon word;
 
 				const node_info& ENG_Con=sparser->get_node_info($1);
-				word.gcat="CON";
+				word.gcat="ENG_1Con";
 				$$=sparser->set_node_info(word,ENG_Con);
 				std::cout<<"ENG_1Con->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
 };
@@ -332,7 +331,6 @@ ENG_nCon	:	ENG_1Con	ENG_Con
 				}
 				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 };
-//TODO: ENG_N_Pl does not cover a case when only constants are listed like in 'delete file1 file2 file3'
 ENG_N_Pl	:	ENG_N_Pl_0Con
 {
 				lexicon word;
@@ -353,6 +351,15 @@ ENG_N_Pl	:	ENG_N_Pl_0Con
 					return -1;
 				}
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con ENG_nCon"<<std::endl;
+}
+	|	ENG_nCon
+{
+				lexicon word;
+
+				const node_info& ENG_nCon=sparser->get_node_info($1);
+				word.gcat="ENG_N_Pl";
+				$$=sparser->set_node_info(word,ENG_nCon);
+				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
 };
 ENG_N_Stem	: t_ENG_N_stem
 {
