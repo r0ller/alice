@@ -8,6 +8,7 @@ Noun ;
 Verb ;
 Preposition ;
 Adverb ;
+Adjective ;
 
 LEXICON Noun
 
@@ -51,3 +52,11 @@ down Advinf;
 LEXICON Advinf
 
 [stem]+ADV[gcat]:0 #;
+
+LEXICON Adjective
+
+executable Adjinf;
+
+LEXICON Adjinf
+
+[stem]+A[gcat]:0 #;

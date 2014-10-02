@@ -35,13 +35,12 @@
 %token	t_ENG_A 2
 %token	t_ENG_Adv 3
 %token	t_ENG_Det 4
-%token	t_ENG_N 5
-%token	t_ENG_N_stem 6
-%token	t_ENG_N_lfea_Pl 7
-%token	t_ENG_N_lfea_Sg 8
-%token	t_ENG_Prep 9
-%token	t_ENG_QPro 10
-%token	t_ENG_V_stem 11
+%token	t_ENG_N_stem 5
+%token	t_ENG_N_lfea_Pl 6
+%token	t_ENG_N_lfea_Sg 7
+%token	t_ENG_Prep 8
+%token	t_ENG_QPro 9
+%token	t_ENG_V_stem 10
 %%
 S	:	ENG_VP
 {
@@ -467,7 +466,6 @@ int yywrap(){
 const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
 	std::string shell_command;
 	db *sqlite=NULL;
-	std::pair<std::string,unsigned int> functor_found;
 
 	try{
 		if(human_input!=NULL){
@@ -476,7 +474,7 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			sqlite->open("hi.db");
 			sparser=new interpreter;
 			if(yyparse()==0){
-				if(sparser->is_longest_match_for_semantic_rules_found(functor_found)==true)
+				if(sparser->is_longest_match_for_semantic_rules_found()==true)
 					std::cout<<"TRUE";
 					//shell_command=sparser->get_command();
 				else std::cout<<"FALSE";

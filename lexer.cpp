@@ -116,7 +116,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 				new_word.gcat=field_position->second.field_value;
 			else if(field_position->second.field_name=="lexeme"){
 				new_word.lexeme=field_position->second.field_value;
-				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme+new_word.lid+new_word.gcat);
+				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme);
 				new_word.morphalytics=&morphalytics;
 				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = 'ENG';");
 				morphemes=morphalytics.morphemes();
@@ -130,6 +130,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 							//TODO: throw exception
 							exit(EXIT_FAILURE);
 						}
+						//std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 						tokens.push_back(token);
 					}
@@ -144,6 +145,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 										exit(EXIT_FAILURE);
 									}
 							}
+							//std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 							tokens.push_back(token);
 						}

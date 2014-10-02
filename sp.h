@@ -5,24 +5,10 @@
 	#include <vector>
 
 	typedef struct functor_data{
-		struct{
-			std::string functor;
-			unsigned int d_key;
-			unsigned int functor_id;
-		}common;
-		struct{
-			std::string io_type;
-		}adj_ent;
-		struct{
-			std::string relation_functor;
-			unsigned int relation_d_key;
-		}adv;
+		std::string functor;
+		unsigned int d_key;
+		unsigned int functor_id;
 	}functor_data;
-
-	typedef struct dependency_validation_pair{
-		unsigned int dependent_node_id;//the expression in the node contains the lexeme that matches the semantic_dependency field value in the dependencies of the base node
-		unsigned int validator_node_id;
-	}dependency_validation_pair;
 
 	typedef struct node_info{
 		unsigned int node_id;
@@ -31,7 +17,7 @@
 		unsigned int left_child;
 		unsigned int right_child;/*argument node*/
 		std::map<unsigned int,unsigned int> node_links;//uint1:node_id,uint2:seq.nr.;historical sequence of semantically validated nodes (syntactic validation is carried out by bison and is recorded in the tree)
-		std::multimap<unsigned int,dependency_validation_pair> dependency_validation_matrix;//uint1:row_index of dependency entry in expression.dependencies
+		std::multimap<unsigned int,unsigned int> dependency_validation_matrix;//uint1:row_index of dependency entry in expression.dependencies, uint2: dependent node id
 		functor_data functor_attributes;
 	}node_info;
 
@@ -50,8 +36,8 @@
 			bool is_valid_combination(const std::string&, const node_info&, const node_info&);
 			bool find_functors_for_dependency(const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			query_result* functors_found_for_dependencies(const node_info&, node_info&);
-			std::map<unsigned int,std::pair<unsigned int,unsigned int> > dependencies_found_for_root_node();
-			bool check_dependencies_for_functor(const unsigned int, const std::string&, const std::string&, const query_result&, unsigned int&, unsigned int&);
+			void find_dependencies_for_node(const unsigned int, std::map<std::pair<unsigned int,unsigned int>,std::pair<unsigned int,unsigned int> >&);
+			bool find_dependencies_for_functor(const unsigned int, const std::string&, std::map<std::pair<unsigned int,unsigned int>,std::pair<unsigned int,unsigned int> >&);
 			//std::vector<std::string> find_ev_occurence_in(const std::string&);
 			//void set_command(const std::string&, const std::string&, const std::string&);
 			//void set_options(const std::string&);
@@ -70,7 +56,7 @@
 			int set_node_info(const lexicon&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
-			bool is_longest_match_for_semantic_rules_found(std::pair<std::string,unsigned int>&);
+			bool is_longest_match_for_semantic_rules_found();
 			//std::string get_command();
 	};
 
