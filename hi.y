@@ -1,20 +1,22 @@
 %{
-#define YACC
-#include <stdio.h>
-#include "sqlite3.h"
-#include <stdlib.h>
-#include "db.h"
-db *sqlite=NULL;
-#include "db.c"
-#include "lexer.h"
-lexer *lex=NULL;
-#include "lexer.c"
-#include "sp.h"
-sp *sparser=NULL;
-#include "sp.c"
-char *input_stream=NULL;
-int yylex(void);
-#include "lex.yy.c"
+	extern "C"{
+		int yyparse(void);
+		int yylex(void);
+		void yyerror(char *);
+		int yywrap(void);
+	}
+
+	#include <iostream>
+	#include "sqlite3.h"
+	#include "db.h"
+	#include "db.cpp"
+	#include "lexer.h"
+	lexer *lex=NULL;
+	#include "lexer.cpp"
+	#include "sp.h"
+	interpreter *sparser=NULL;
+	#include "sp.cpp"
+	int line=0;
 %}
 
 /* TODO: check if rules can be set up without defining constants for tokens here.
@@ -43,308 +45,308 @@ int yylex(void);
 %%
 S	:	NP VP
 {
-				const node_info *VP;
-
-				VP=sparser->public.get_node_info(sparser,$2);
-				printf("S->NP VP\n");
+				const node_info& VP=sparser->get_node_info($2);
+				std::cout<<"S->NP VP"<<std::endl;
 				return 0;
 };
 VP	:	Vt
 {
-				const node_info *Vt;
-
-				Vt=sparser->public.get_node_info(sparser,$1);
-				$$=sparser->public.set_node_info(sparser,"VP",NULL,Vt);
-				printf("VP->Vt\n");
+				const node_info& Vt=sparser->get_node_info($1);
+				$$=sparser->set_node_info("VP","",Vt);
+				std::cout<<"VP->Vt"<<std::endl;
 }
 	|	Vdt
 {
-				const node_info *Vdt;
-
-				Vdt=sparser->public.get_node_info(sparser,$1);
-				$$=sparser->public.set_node_info(sparser,"VP",NULL,Vdt);
-				printf("VP->Vdt\n");
+				const node_info& Vdt=sparser->get_node_info($1);
+				$$=sparser->set_node_info("VP","",Vdt);
+				std::cout<<"VP->Vdt"<<std::endl;
 }
 	|	Vdt PP
 {
-				const node_info *Vdt, *PP, *object_node;
-		
-				Vdt=sparser->public.get_node_info(sparser,$1);
-				PP=sparser->public.get_node_info(sparser,$2);
-				$$=sparser->public.combine_nodes(sparser,"VP",Vdt,PP);
+				const node_info& Vdt=sparser->get_node_info($1);
+				const node_info& PP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("VP",Vdt,PP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
 					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				printf("VP->Vdt PP\n");
+				std::cout<<"VP->Vdt PP"<<std::endl;
 };
 Vdt	:	Vt PP
 {
-				const node_info *Vt, *PP, *object_node;
-			
-				Vt=sparser->public.get_node_info(sparser,$1);
-				PP=sparser->public.get_node_info(sparser,$2);
-				$$=sparser->public.combine_nodes(sparser,"Vdt",Vt,PP);
+				const node_info& Vt=sparser->get_node_info($1);
+				const node_info& PP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("Vdt",Vt,PP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,PP);
 					printf("Error: cannot interpret %s %s.\n",Vt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
-				printf("Vdt->Vt PP\n");
+				std::cout<<"Vdt->Vt PP"<<std::endl;
 };
 Vt	:	V NP
 {
-				const node_info *V, *NP, *object_node;
-
-				V=sparser->public.get_node_info(sparser,$1);
-				NP=sparser->public.get_node_info(sparser,$2);
-				$$=sparser->public.combine_nodes(sparser,"Vt",V,NP);
+				const node_info& V=sparser->get_node_info($1);
+				const node_info& NP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("Vt",V,NP);
 				if($$<0){
-					/*object_node=sparser->public.get_object_node(sparser,NP);
-					printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					//object_node=sparser->get_object_node(NP);
+					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
 					return -1;
 				}
-				printf("Vt->V NP\n");
+				std::cout<<"Vt->V NP"<<std::endl;
 };
 PP	:	Prep NP
 {
-				const node_info *Prep, *NP, *object_node;
-
-				Prep=sparser->public.get_node_info(sparser,$1);
-				NP=sparser->public.get_node_info(sparser,$2);
-				$$=sparser->public.combine_nodes(sparser,"PP",Prep,NP);
+				const node_info& Prep=sparser->get_node_info($1);
+				const node_info& NP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("PP",Prep,NP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,NP);
 					printf("Error: cannot interpret %s %s.\n",Prep->expression,object_node->expression);*/
 					return -1;
 				}
-				printf("PP->Prep NP\n");
+				std::cout<<"PP->Prep NP"<<std::endl;
 };
 NP	:	CNP
 {
-				const node_info *CNP;
-
-				CNP=sparser->public.get_node_info(sparser,$1);
-				$$=sparser->public.set_node_info(sparser,"NP",NULL,CNP);
-				printf("NP->CNP\n");
+				const node_info& CNP=sparser->get_node_info($1);
+				$$=sparser->set_node_info("NP","",CNP);
+				std::cout<<"NP->CNP"<<std::endl;
 }
 	|	QPro CNP
 {
-				const node_info *Det, *CNP, *object_node;
-
-				Det=sparser->public.get_node_info(sparser,$1);
-				CNP=sparser->public.get_node_info(sparser,$2);
+				const node_info& Det=sparser->get_node_info($1);
+				const node_info& CNP=sparser->get_node_info($2);
 				/*	TODO: really need to check if there's a constant ?
 					Currently, it's done to make functor argument diff easier.*/
-				object_node=sparser->public.get_object_node(sparser,CNP);
-				if(object_node->right_child!=NULL){
-					/*printf("Syntax error: constants like %s cannot be quantified!\n",object_node->right_child->expression);*/
+				const node_info& object_node=sparser->get_node_info(sparser->get_object_node(CNP));
+				if(object_node.right_child!=0){
+					//printf("Syntax error: constants like %s cannot be quantified!\n",sparser->get_node_info(object_node.right_child).expression.c_str());
 					return -1;
 				}
-				$$=sparser->public.combine_nodes(sparser,"NP",Det,CNP);
+				$$=sparser->combine_nodes("NP",Det,CNP);
 				/* No check for $$<0 since quantifier pronouns are not validated as
 				 * everything in the current model seems to be countable.*/
-				printf("NP->QPro CNP:%s\n",Det->expression);
+				std::cout<<"NP->QPro CNP:"<<Det.expression<<std::endl;
 }
 	|	Pro
 {
-				printf("NP->Pro\n");
+				std::cout<<"NP->Pro"<<std::endl;
 };
 CNP	:	A CNP
 {
-				const node_info *CNP, *A, *object_node;
-
-				A=sparser->public.get_node_info(sparser,$1);
-				CNP=sparser->public.get_node_info(sparser,$2);
+				const node_info& A=sparser->get_node_info($1);
+				const node_info& CNP=sparser->get_node_info($2);
 				/*TODO: ellenőrizni, hogy ha a CNP paraméteres akkor hiba mint a QPro CNP-nél!*/
-				$$=sparser->public.combine_nodes(sparser,"CNP",A,CNP);
+				$$=sparser->combine_nodes("CNP",A,CNP);
 				if($$<0){
 					/*object_node=sparser->public.get_object_node(sparser,CNP);
 					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);*/
 					return -1;
 				}
-				printf("CNP->A CNP:%s\n",A->expression);
+				std::cout<<"CNP->A CNP:"<<A.expression<<std::endl;
 }
 	|	N
 {
-				const node_info *N;
-
-				N=sparser->public.get_node_info(sparser,$1);
-				$$=sparser->public.set_node_info(sparser,"CNP",NULL,N);
-				printf("CNP->N:%s\n",N->expression);
+				const node_info& N=sparser->get_node_info($1);
+				$$=sparser->set_node_info("CNP","",N);
+				std::cout<<"CNP->N:"<<N.expression<<std::endl;
 };
 V	:	hiLIST
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiLIST-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiLIST-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiCOPY
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiCOPY-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiCOPY-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiREMOVE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiREMOVE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiREMOVE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiDELETE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiDELETE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiDELETE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiCHANGE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiCHANGE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiCHANGE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiMOVE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiMOVE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiMOVE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiMAKE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiMAKE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiMAKE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 QPro	:	hiALL
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiALL-1);
+				word=lex->get_word_by_token(hiALL-1);
 				/*TODO: consider what if quantifiers like ALL are handled as functors?*/
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 N	:	hiFILE Con
 {
 				lexicon word;
-				const node_info *Con;
 	
-				word=lex->public.get_word_by_token(lex,hiFILE-1);
-				Con=sparser->public.get_node_info(sparser,$2);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,Con);
-				printf("%s->%s %s\n",word.gcat,word.lexeme,Con->expression);
+				word=lex->get_word_by_token(hiFILE-1);
+				const node_info& Con=sparser->get_node_info($2);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,Con);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<" "<<Con.expression<<std::endl;
 }
 	|	hiFILES
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiFILES-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiFILES-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiDIRECTORY
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiDIRECTORY-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiDIRECTORY-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiDIRECTORY Con
 {
 				lexicon word;
-				const node_info *Con;
 
-				word=lex->public.get_word_by_token(lex,hiDIRECTORY-1);
-				Con=sparser->public.get_node_info(sparser,$2);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,Con);
-				printf("%s->%s %s\n",word.gcat,word.lexeme,Con->expression);
+				word=lex->get_word_by_token(hiDIRECTORY-1);
+				const node_info& Con=sparser->get_node_info($2);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,Con);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<" "<<Con.expression<<std::endl;
 }
 	|	hiDIRECTORIES
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiDIRECTORIES-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiDIRECTORIES-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	Con
 {
-				const node_info *Con;
-
-				Con=sparser->public.get_node_info(sparser,$1);
-				$$=sparser->public.set_node_info(sparser,"N",NULL,Con);
-				printf("N->%s\n",Con->expression);
+				const node_info& Con=sparser->get_node_info($1);
+				$$=sparser->set_node_info("N","",Con);
+				std::cout<<"N->"<<Con.expression<<std::endl;
 };
 A	:	hiEXECUTABLE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiEXECUTABLE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiEXECUTABLE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiNONEXECUTABLE
 {
 				lexicon word;
+				const node_info empty_node_info={};
 
-				word=lex->public.get_word_by_token(lex,hiNONEXECUTABLE-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiNONEXECUTABLE-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 Prep:	hiTO
 {
 				lexicon word;
+				const node_info empty_node_info={};
 			
-				word=lex->public.get_word_by_token(lex,hiTO-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiTO-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiFROM
 {
 				lexicon word;
+				const node_info empty_node_info={};
 			
-				word=lex->public.get_word_by_token(lex,hiFROM-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiFROM-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
 	|	hiIN
 {
 				lexicon word;
+				const node_info empty_node_info={};
 			
-				word=lex->public.get_word_by_token(lex,hiIN-1);
-				$$=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				word=lex->get_word_by_token(hiIN-1);
+				$$=sparser->set_node_info(word.gcat,word.lexeme,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 Pro	:	/*empty*/
 {
-				printf("Pro->null\n");
+				std::cout<<"Pro->null"<<std::endl;
 };
 Con	:	hiCONSTANT
 {
-				/*if(sparser->private.nr_of_nodes==0)return -1;*/
-				$$=sparser->public.set_node_info(sparser,"Con",yytext,NULL);
-				printf("Constant:%s\n",yytext);
+				const node_info empty_node_info={};
+
+				const std::string& constant=lex->last_word_scanned();
+				$$=sparser->set_node_info("Con",constant,empty_node_info);
+				std::cout<<"Constant:"<<constant<<std::endl;
 };
 %%
 
+int yylex(void){
+	int token;
+
+	token=lex->next_token();
+	if(token==0&&lex->last_word_scanned().empty()==true) return 0;//Historic indicator of YACC about end of input stream
+	else return token+1;
+}
+
 void yyerror(char *s){
-	/*fprintf(stderr,"%s in command\n",s);*/
+	//fprintf(stderr,"%s in command\n",s);
 	line=0;
 	return;
 }
@@ -353,31 +355,65 @@ int yywrap(){
 	return 1;
 }
 
-const char *hi(const char *human_command){
-const char *shell_command=NULL;
+const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
+	std::string shell_command;
+	db *sqlite=NULL;
 
-	if(human_command!=NULL){
-		if(human_command[strlen(human_command)]!='!'){
-			input_stream=malloc(strlen(human_command)+3);
-			sprintf(input_stream,"%s!\n",human_command);
-			}
-		else{
-			input_stream=malloc(strlen(human_command)+2);
-			sprintf(input_stream,"%s\n",human_command);
-			}
-		sqlite=new_db();
-		if(sqlite->public.open(sqlite,"hi.db")){
-			/*fprintf(stderr, "Can't open database: %s\n", sqlite->public.get_errmsg(sqlite));*/
-			sqlite->public.close(sqlite);
-			exit(EXIT_FAILURE);
+	try{
+		if(human_input!=NULL){
+			lex=new lexer(human_input);
+			sqlite=db::get_instance();
+			sqlite->open("hi.db");
+			sparser=new interpreter;
+			if(yyparse()==0)shell_command=sparser->get_command();
+			delete sparser;
+			sparser=NULL;
+			delete lex;
+			lex=NULL;
+			sqlite->close();
+			delete sqlite;
+			sqlite=NULL;
+			return shell_command.c_str();
 		}
-		sparser=new_sp();
-		if(yyparse()==0)shell_command=sparser->public.get_command(sparser);
-		destroy_sp(&sparser);
-		destroy_lexer(&lex);
-		sqlite->public.close(sqlite);
-		destroy_db(&sqlite);
-		free(input_stream);
-		return shell_command;
+	}
+	catch(sql_execution_error& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(failed_to_open_db& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(failed_to_close_db& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(lexicon_type_and_db_table_schema_mismatch& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(more_than_one_token_found& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(object_node_missing& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(head_node_missing& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(invalid_combination& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(std::exception& exception){
+		std::cout<<exception.what()<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	catch(...){
+		std::cout<<"Unexpected error ..."<<std::endl;
+		exit(EXIT_FAILURE);
 	}
 }

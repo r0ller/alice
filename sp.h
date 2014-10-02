@@ -1,43 +1,113 @@
 #ifndef SP_H
 	#define SP_H
 
-	struct cl_interpreter;
-	typedef struct cl_interpreter sp;
+	#include <string>
+	#include <vector>
+
 	typedef struct node_info{
 		unsigned int node_id;
-		char symbol[10];
-		char expression[256];/*lexeme or constant*/
-		struct node_info *left_child;
-		struct node_info *right_child;/*argument node*/
+		std::string symbol;
+		std::string expression;/*lexeme or constant*/
+		unsigned int left_child;
+		unsigned int right_child;/*argument node*/
 	}node_info;
 
-	/*PUBLIC*/
-	sp *new_sp(void);
+	typedef struct ev_name_value_pair{
+		std::string name;
+		std::string value;
+	}ev_name_value_pair;
 
-	void destroy_sp(sp **);
+		class interpreter{
+		private:
+			db *is_valid_expression_of_type(const std::string&, const std::string&);
+			bool is_valid_combination(const node_info&, const node_info&);
+			std::vector<std::string> find_ev_occurence_in(const std::string&);
+			void set_command(const std::string&, const std::string&, const std::string&);
+			void set_options(const std::string&);
+			void find_ev_definitions(const std::string&, std::vector<std::string>&);
+			void find_ev_definitions(const std::string&, std::vector<ev_name_value_pair>&);
+			void delete_ev_redefinitions(const std::string&, std::string&);
+			std::string resolve_ev_redefinitions(const std::string&, const std::string&);
+			void destroy_node_infos();
+			std::vector<node_info> node_infos;
+			unsigned int nr_of_nodes;
+			std::string command;
+			std::string options;
+		public:
+			interpreter();
+			~interpreter();
+			int set_node_info(const std::string&, const std::string&, const node_info&);
+			const node_info& get_node_info(unsigned int);
+			int combine_nodes(const std::string&, const node_info&, const node_info&);
+			unsigned int get_object_node(const node_info&);
+			unsigned int get_head_node(const node_info&);
+			std::string get_command();
+	};
 
-	int hi_set_node_info(sp *, char *, char *, const node_info *);
+	class semper_error:public std::exception{
+		public:
+			virtual const char *what() const throw(){
+				return "Error during semantic parsing\n";
+			}
+	};
 
-	const node_info *hi_get_node_info(sp *, unsigned int);
+	class object_node_missing:public semper_error{
+		private:
+			std::string left_node;
+			std::string right_node;
+		public:
+			object_node_missing(std::string, std::string);
+			~object_node_missing() throw() {};
+			virtual const char *what() const throw(){
+				std::string message;
 
-	int hi_combine_nodes(sp *, char *, const node_info *, const node_info *);
+				message="Object node missing, cannot interpret: "+left_node+right_node;
+				return message.c_str();
+			}
+	};
 
-	const node_info *hi_get_object_node(sp *, const node_info *);
+	object_node_missing::object_node_missing(std::string left, std::string right){
+		left_node=left;
+		right_node=right;
+	}
 
-	const node_info *hi_get_head_node(sp *, const node_info *);
+	class head_node_missing:public semper_error{
+		private:
+			std::string left_node;
+			std::string right_node;
+		public:
+			head_node_missing(std::string, std::string);
+			~head_node_missing() throw() {};
+			virtual const char *what() const throw(){
+				std::string message;
 
-	const char *hi_get_command(sp *);
+				message="Head node missing, cannot interpret: "+left_node+right_node;
+				return message.c_str();
+			}
+	};
 
-	/*PRIVATE*/
-	int hi_validate_by_type(sp *, const char *, const char *, char *);
+	head_node_missing::head_node_missing(std::string left, std::string right){
+		left_node=left;
+		right_node=right;
+	}
 
-	int hi_validate_combination(sp *, const node_info *, const node_info *, char *);
+	class invalid_combination:public semper_error{
+		private:
+			std::string left_node;
+			std::string right_node;
+		public:
+			invalid_combination(std::string, std::string);
+			~invalid_combination() throw() {};
+			virtual const char *what() const throw(){
+				std::string message;
 
-	void hi_set_command(sp *, char *, char *, const char *);
+				message="Invalid combination, cannot interpret: "+left_node+right_node;
+				return message.c_str();
+			}
+	};
 
-	void hi_set_options(sp *, char *);
-
-	char *hi_resolve_ev_redefinitions(sp *, const char *, const char *);
-
-	void hi_destroy_node_infos(sp *);
+	invalid_combination::invalid_combination(std::string left, std::string right){
+		left_node=left;
+		right_node=right;
+	}
 #endif

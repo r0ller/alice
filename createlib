@@ -1,4 +1,3 @@
-flex -l hi.l;
-bison -y hi.y;
-gcc -c y.tab.c -o hilib.o;
+yacc hi.y;
+g++ -ansi -pedantic -Wall -I/usr/pkg/include -c y.tab.c -o hilib.o;
 ar rcs libhilib.a hilib.o;
