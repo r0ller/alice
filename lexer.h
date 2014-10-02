@@ -5,13 +5,15 @@
 	typedef struct cl_lexer lexer;
 
 	/*PUBLIC*/
-	lexer *new_lexer(void);
+	lexer *new_lexer(char *);
 
 	void destroy_lexer(lexer **);
 
 	int hi_scan(lexer *, const char *, char **);
 
 	lexicon hi_get_word_by_token(lexer *, unsigned int);
+
+	const char hi_get_char(lexer *);
 
 	/*PRIVATE*/
 	int hi_store_word(lexer *, db *);

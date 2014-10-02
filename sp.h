@@ -26,10 +26,18 @@
 
 	const node_info *hi_get_head_node(sp *, const node_info *);
 
+	const char *hi_get_command(sp *);
+
 	/*PRIVATE*/
 	int hi_validate_by_type(sp *, const char *, const char *, char *);
 
 	int hi_validate_combination(sp *, const node_info *, const node_info *, char *);
+
+	void hi_set_command(sp *, char *, char *, const char *);
+
+	void hi_set_options(sp *, char *);
+
+	char *hi_resolve_ev_redefinitions(sp *, const char *, const char *);
 
 	void hi_destroy_node_infos(sp *);
 #endif

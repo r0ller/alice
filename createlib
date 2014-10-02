@@ -1,0 +1,4 @@
+flex -l hi.l;
+bison -y hi.y;
+gcc -c y.tab.c -o hilib.o;
+ar rcs libhilib.a hilib.o;

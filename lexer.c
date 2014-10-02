@@ -6,6 +6,7 @@ struct cl_lexer{
 	struct public_lex{
 		int (*scan)(lexer *, const char *, char **);
 		lexicon (*get_word_by_token)(lexer *, unsigned int);/*mainly for yacc to avoid repetitive db read*/
+		const char(*get_char)(lexer *);
 		}public;
 	struct private_lex{
 		int (*store_word)(lexer *, db *);
@@ -13,24 +14,25 @@ struct cl_lexer{
 		void (*destroy_words)(lexer *);
 		lexicon **words;
 		unsigned int nr_of_words;
-		unsigned char newline_set;
+		char *input_stream;
 		}private;
 };
 
 /*PUBLIC*/
-lexer *new_lexer(void){
+lexer *new_lexer(char *in_stream){
 	/*static*/ lexer *plex=NULL;
 
 	/*if(lexer==NULL){*/
 		plex=malloc(sizeof(lexer));
 		plex->public.scan=&hi_scan;
 		plex->public.get_word_by_token=&hi_get_word_by_token;
+		plex->public.get_char=&hi_get_char;
 		plex->private.store_word=&hi_store_word;
 		plex->private.prepare_query=&hi_prepare_lex_query;
 		plex->private.destroy_words=&hi_destroy_words;
 		plex->private.words=NULL;
 		plex->private.nr_of_words=0;
-		plex->private.newline_set=0;
+		plex->private.input_stream=in_stream;
 		/*}*/
 	return plex;
 }
@@ -38,6 +40,7 @@ lexer *new_lexer(void){
 void destroy_lexer(lexer **this){
 	if(*this!=NULL){
 		(*this)->private.destroy_words(*this);
+		if((*this)->private.input_stream!=NULL)(*this)->private.input_stream=NULL;
 		free(*this);
 		*this=NULL;
 	}
@@ -62,16 +65,28 @@ lexicon hi_get_word_by_token(lexer *this, unsigned int token){
 
 	if(token>0){
 		for(i=0;i<this->private.nr_of_words;i++){
-			if(token==(*this->private.words[i]).rowid){
-				word.rowid=(*this->private.words[i]).rowid;
-				strcpy(word.word,(*this->private.words[i]).word);
-				strcpy(word.gcat,(*this->private.words[i]).gcat);
-				strcpy(word.lexeme,(*this->private.words[i]).lexeme);
-				strcpy(word.functor,(*this->private.words[i]).functor);
+			if(token==(this->private.words[i])->rowid){
+				word.rowid=(this->private.words[i])->rowid;
+				strcpy(word.word,(this->private.words[i])->word);
+				strcpy(word.gcat,(this->private.words[i])->gcat);
+				strcpy(word.lexeme,(this->private.words[i])->lexeme);
 			}
 		}
 	}
 	return word;
+}
+
+const char hi_get_char(lexer *this){
+	char c=0;
+
+	if(this->private.input_stream!=NULL){
+		if(*this->private.input_stream!='\0'){
+			c=*this->private.input_stream;
+			++this->private.input_stream;
+		}
+		else c='\0';
+	}
+	return c;
 }
 
 /*PRIVATE*/
@@ -79,8 +94,8 @@ int hi_store_word(lexer *this, db *sqlite){/*return: -1:hiba (pl. tobb mint 1 to
 	int i=0, verb_index=-1, token=0;
 	lexicon **words=NULL;
 
-	if(sqlite->public.result_size/5>0){
-		this->private.words=realloc(this->private.words,(this->private.nr_of_words+sqlite->public.result_size/5)*sizeof(lexicon *));
+	if(sqlite->public.result_size/4>0){
+		this->private.words=realloc(this->private.words,(this->private.nr_of_words+sqlite->public.result_size/4)*sizeof(lexicon *));
 		words=this->private.words+this->private.nr_of_words;
 		do{
 			*words=malloc(sizeof(lexicon));
@@ -89,16 +104,14 @@ int hi_store_word(lexer *this, db *sqlite){/*return: -1:hiba (pl. tobb mint 1 to
 			strcpy((*words)->word,sqlite->public.query_result_values[i]);
 			i++;
 			strcpy((*words)->gcat,sqlite->public.query_result_values[i]);
-			if((*words)->gcat[0]=='V') verb_index=this->private.nr_of_words+i/5;
+			if((*words)->gcat[0]=='V') verb_index=this->private.nr_of_words+i/4;
 			i++;
 			strcpy((*words)->lexeme,sqlite->public.query_result_values[i]);
 			i++;
-			strcpy((*words)->functor,sqlite->public.query_result_values[i]);
-			i++;
 			words++;
 		}while(i<sqlite->public.result_size);
-		if(sqlite->public.result_size/5>1){
-			for(i=0;i<sqlite->public.result_size/5;i++){
+		if(sqlite->public.result_size/4>1){
+			for(i=0;i<sqlite->public.result_size/4;i++){
 				if(this->private.nr_of_words==0 && verb_index==i){
 					/*more than 1 token found but due to the word position*/
 					/*we take the one with the grammatical category 'verb'*/
@@ -109,13 +122,14 @@ int hi_store_word(lexer *this, db *sqlite){/*return: -1:hiba (pl. tobb mint 1 to
 			}
 		}
 		else token=this->private.words[this->private.nr_of_words]->rowid;
-		this->private.nr_of_words+=sqlite->public.result_size/5;
+		this->private.nr_of_words+=sqlite->public.result_size/4;
 	}
+	/*else token=-1;*/
 	return token;
 }
 
 char *hi_prepare_lex_query(lexer *this, const char *word){
-	char *query=NULL, length, *string="SELECT ROWID, WORD, GCAT, LEXEME, FUNCTOR FROM LEXICON WHERE WORD = '";
+	char *query=NULL, length, *string="SELECT ROWID, WORD, GCAT, LEXEME FROM LEXICON WHERE WORD = '";
 
 	length=strlen(string)+strlen(word)+3;
 	query=realloc(query,length);
@@ -135,7 +149,6 @@ void hi_destroy_words(lexer *this){
 		free(this->private.words);
 		this->private.words=NULL;
 		this->private.nr_of_words=0;
-		this->private.newline_set=0;
 	}
 	return;
 }

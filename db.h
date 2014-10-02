@@ -8,7 +8,6 @@
 		char word[255];
 		char gcat[12];
 		char lexeme[32];
-		char functor[32];
 	}lexicon;
 
 	/*PUBLIC*/

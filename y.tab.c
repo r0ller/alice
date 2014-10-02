@@ -1,10 +1,9 @@
-
-/* A Bison parser, made by GNU Bison 2.4.1.  */
+/* A Bison parser, made by GNU Bison 2.4.2.  */
 
 /* Skeleton implementation for Bison's Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2006, 2009-2010 Free Software
+   Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,7 +45,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.4.1"
+#define YYBISON_VERSION "2.4.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -83,6 +82,7 @@ lexer *lex=NULL;
 #include "sp.h"
 sp *sparser=NULL;
 #include "sp.c"
+char *input_stream=NULL;
 int yylex(void);
 #include "lex.yy.c"
 
@@ -116,32 +116,44 @@ int yylex(void);
       know about them.  */
    enum yytokentype {
      hiCONSTANT = 1,
-     hiLIST1 = 2,
-     hiLIST2 = 3,
-     hiCOPY = 4,
-     hiDIRECTORY = 5,
-     hiDIRECTORIES = 6,
-     hiEXECUTABLE = 7,
-     hiNONEXECUTABLE = 8,
-     hiALL = 9,
-     hiFILE = 10,
-     hiFILES = 11,
-     hiTO = 12
+     hiLIST = 2,
+     hiCOPY = 3,
+     hiDIRECTORY = 4,
+     hiDIRECTORIES = 5,
+     hiEXECUTABLE = 6,
+     hiNONEXECUTABLE = 7,
+     hiALL = 8,
+     hiFILE = 9,
+     hiFILES = 10,
+     hiTO = 11,
+     hiREMOVE = 12,
+     hiDELETE = 13,
+     hiFROM = 14,
+     hiCHANGE = 15,
+     hiMOVE = 16,
+     hiIN = 17,
+     hiMAKE = 18
    };
 #endif
 /* Tokens.  */
 #define hiCONSTANT 1
-#define hiLIST1 2
-#define hiLIST2 3
-#define hiCOPY 4
-#define hiDIRECTORY 5
-#define hiDIRECTORIES 6
-#define hiEXECUTABLE 7
-#define hiNONEXECUTABLE 8
-#define hiALL 9
-#define hiFILE 10
-#define hiFILES 11
-#define hiTO 12
+#define hiLIST 2
+#define hiCOPY 3
+#define hiDIRECTORY 4
+#define hiDIRECTORIES 5
+#define hiEXECUTABLE 6
+#define hiNONEXECUTABLE 7
+#define hiALL 8
+#define hiFILE 9
+#define hiFILES 10
+#define hiTO 11
+#define hiREMOVE 12
+#define hiDELETE 13
+#define hiFROM 14
+#define hiCHANGE 15
+#define hiMOVE 16
+#define hiIN 17
+#define hiMAKE 18
 
 
 
@@ -158,7 +170,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 162 "y.tab.c"
+#line 174 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -208,7 +220,7 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
-# if YYENABLE_NLS
+# if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -373,16 +385,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  19
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   27
+#define YYLAST   38
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  15
+#define YYNTOKENS  21
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  15
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  26
+#define YYNRULES  34
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  33
+#define YYNSTATES  41
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -395,7 +407,7 @@ union yyalloc
 static const yytype_uint8 yytranslate[] =
 {
        0,     3,     4,     5,     6,     7,     8,     9,    10,    11,
-      12,    13,    14,     2,     2,     2,     2,     2,     2,     2,
+      12,    13,    14,    15,    16,    17,    18,    19,    20,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -427,29 +439,32 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     6,     9,    12,    15,    17,    20,    22,
-      25,    27,    30,    32,    34,    36,    38,    40,    42,    45,
-      48,    50,    52,    54,    56,    58,    59
+       0,     0,     3,     6,     8,    10,    13,    16,    19,    22,
+      24,    27,    29,    32,    34,    36,    38,    40,    42,    44,
+      46,    48,    50,    53,    55,    57,    60,    62,    64,    66,
+      68,    70,    72,    74,    75
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      16,     0,    -1,    21,    17,    -1,    19,    21,    -1,    18,
-      20,    -1,    19,    21,    -1,    23,    -1,    27,    21,    -1,
-      22,    -1,    24,    22,    -1,    28,    -1,    26,    22,    -1,
-      25,    -1,     4,    -1,     6,    -1,    11,    -1,    12,    -1,
-      13,    -1,    12,    29,    -1,     7,    29,    -1,     8,    -1,
-      29,    -1,     9,    -1,    10,    -1,    14,    -1,    -1,     3,
-      -1
+      22,     0,    -1,    27,    23,    -1,    25,    -1,    24,    -1,
+      24,    26,    -1,    25,    26,    -1,    29,    27,    -1,    33,
+      27,    -1,    28,    -1,    30,    28,    -1,    34,    -1,    32,
+      28,    -1,    31,    -1,     4,    -1,     5,    -1,    14,    -1,
+      15,    -1,    17,    -1,    18,    -1,    20,    -1,    10,    -1,
+      11,    35,    -1,    12,    -1,     6,    -1,     6,    35,    -1,
+       7,    -1,    35,    -1,     8,    -1,     9,    -1,    13,    -1,
+      16,    -1,    19,    -1,    -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    37,    37,    45,    59,    73,    87,    95,   104,   112,
-     129,   133,   148,   156,   164,   172,   181,   189,   197,   207,
-     217,   225,   233,   241,   249,   258,   261
+       0,    44,    44,    52,    60,    68,    82,    96,   110,   124,
+     132,   150,   154,   169,   177,   185,   193,   201,   209,   217,
+     225,   233,   242,   252,   260,   268,   278,   286,   294,   302,
+     310,   318,   326,   335,   338
 };
 #endif
 
@@ -458,11 +473,11 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "hiCONSTANT", "hiLIST1", "hiLIST2",
-  "hiCOPY", "hiDIRECTORY", "hiDIRECTORIES", "hiEXECUTABLE",
-  "hiNONEXECUTABLE", "hiALL", "hiFILE", "hiFILES", "hiTO", "$accept", "S",
-  "VP", "Vdt", "Vt", "PP", "NP", "CNP", "V", "QPro", "N", "A", "Prep",
-  "Pro", "Con", 0
+  "$end", "error", "$undefined", "hiCONSTANT", "hiLIST", "hiCOPY",
+  "hiDIRECTORY", "hiDIRECTORIES", "hiEXECUTABLE", "hiNONEXECUTABLE",
+  "hiALL", "hiFILE", "hiFILES", "hiTO", "hiREMOVE", "hiDELETE", "hiFROM",
+  "hiCHANGE", "hiMOVE", "hiIN", "hiMAKE", "$accept", "S", "VP", "Vdt",
+  "Vt", "PP", "NP", "CNP", "V", "QPro", "N", "A", "Prep", "Pro", "Con", 0
 };
 #endif
 
@@ -472,24 +487,27 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    12
+       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
+      18
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    15,    16,    17,    17,    18,    19,    20,    21,    21,
-      21,    22,    22,    23,    23,    24,    25,    25,    25,    25,
-      25,    25,    26,    26,    27,    28,    29
+       0,    21,    22,    23,    23,    23,    24,    25,    26,    27,
+      27,    27,    28,    28,    29,    29,    29,    29,    29,    29,
+      29,    30,    31,    31,    31,    31,    31,    31,    32,    32,
+      33,    33,    33,    34,    35
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     2,     2,     2,     1,     2,     1,     2,
-       1,     2,     1,     1,     1,     1,     1,     1,     2,     2,
-       1,     1,     1,     1,     1,     0,     1
+       0,     2,     2,     1,     1,     2,     2,     2,     2,     1,
+       2,     1,     2,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     2,     1,     1,     2,     1,     1,     1,     1,
+       1,     1,     1,     0,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -497,64 +515,69 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-      25,    26,     0,    20,    22,    23,    15,    16,    17,     0,
-       0,     8,     0,    12,     0,    10,    21,    19,    18,     1,
-      13,    14,     2,     0,    25,     6,     9,    11,    24,     4,
-      25,     3,     7
+      33,    34,    24,    26,    28,    29,    21,     0,    23,     0,
+       0,     9,     0,    13,     0,    11,    27,    25,    22,     1,
+      14,    15,    16,    17,    18,    19,    20,     2,     4,     3,
+      33,    10,    12,    30,    31,    32,     5,    33,     6,     7,
+       8
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     9,    22,    23,    24,    29,    10,    11,    25,    12,
-      13,    14,    30,    15,    16
+      -1,     9,    27,    28,    29,    36,    10,    11,    30,    12,
+      13,    14,    37,    15,    16
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -12
+#define YYPACT_NINF -29
 static const yytype_int8 yypact[] =
 {
-      -3,   -12,    -2,   -12,   -12,   -12,   -12,    -2,   -12,     2,
-      19,   -12,     8,   -12,     8,   -12,   -12,   -12,   -12,   -12,
-     -12,   -12,   -12,    10,    -3,   -12,   -12,   -12,   -12,   -12,
-      -3,    12,   -12
+      12,   -29,     2,   -29,   -29,   -29,   -29,     2,   -29,     7,
+      -4,   -29,    22,   -29,    22,   -29,   -29,   -29,   -29,   -29,
+     -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,    19,    19,
+      12,   -29,   -29,   -29,   -29,   -29,   -29,    12,   -29,   -29,
+     -29
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -12,   -12,   -12,   -12,   -12,   -12,   -11,     0,   -12,   -12,
-     -12,   -12,   -12,   -12,    20
+     -29,   -29,   -29,   -29,   -29,   -17,   -28,    -8,   -29,   -29,
+     -29,   -29,   -29,   -29,     1
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -6
-static const yytype_int8 yytable[] =
+#define YYTABLE_NINF -1
+static const yytype_uint8 yytable[] =
 {
-       1,     1,    19,     0,     2,     3,     4,     5,     6,     7,
-       8,     1,    26,    31,    27,     2,     3,     4,     5,    32,
-       7,     8,    17,    20,    28,    21,    -5,    18
+      20,    21,    39,    17,    31,     1,    32,    19,    18,    40,
+      22,    23,    38,    24,    25,     1,    26,     0,     2,     3,
+       4,     5,     6,     7,     8,     1,     0,     0,     2,     3,
+       4,     5,    33,     7,     8,    34,     0,     0,    35
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     3,     0,    -1,     7,     8,     9,    10,    11,    12,
-      13,     3,    12,    24,    14,     7,     8,     9,    10,    30,
-      12,    13,     2,     4,    14,     6,    14,     7
+       4,     5,    30,     2,    12,     3,    14,     0,     7,    37,
+      14,    15,    29,    17,    18,     3,    20,    -1,     6,     7,
+       8,     9,    10,    11,    12,     3,    -1,    -1,     6,     7,
+       8,     9,    13,    11,    12,    16,    -1,    -1,    19
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     7,     8,     9,    10,    11,    12,    13,    16,
-      21,    22,    24,    25,    26,    28,    29,    29,    29,     0,
-       4,     6,    17,    18,    19,    23,    22,    22,    14,    20,
-      27,    21,    21
+       0,     3,     6,     7,     8,     9,    10,    11,    12,    22,
+      27,    28,    30,    31,    32,    34,    35,    35,    35,     0,
+       4,     5,    14,    15,    17,    18,    20,    23,    24,    25,
+      29,    28,    28,    13,    16,    19,    26,    33,    26,    27,
+      27
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -569,9 +592,18 @@ static const yytype_uint8 yystos[] =
 
 /* Like YYERROR except do call yyerror.  This remains here temporarily
    to ease the transition to the new meaning of YYERROR, for GCC.
-   Once GCC version 2 has supplanted version 1, this can go.  */
+   Once GCC version 2 has supplanted version 1, this can go.  However,
+   YYFAIL appears to be in use.  Nevertheless, it is formally deprecated
+   in Bison 2.4.2's NEWS entry, where a plan to phase it out is
+   discussed.  */
 
 #define YYFAIL		goto yyerrlab
+#if defined YYFAIL
+  /* This is here to suppress warnings from the GCC cpp's
+     -Wunused-macros.  Normally we don't worry about that warning, but
+     some users do, and we want to make it easy for users to remove
+     YYFAIL uses, which will produce warnings from Bison 2.5.  */
+#endif
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
@@ -628,7 +660,7 @@ while (YYID (0))
    we won't break user code: when these are the locations we know.  */
 
 #ifndef YY_LOCATION_PRINT
-# if YYLTYPE_IS_TRIVIAL
+# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
 #  define YY_LOCATION_PRINT(File, Loc)			\
      fprintf (File, "%d.%d-%d.%d",			\
 	      (Loc).first_line, (Loc).first_column,	\
@@ -1367,8 +1399,8 @@ yyreduce:
     {
         case 2:
 
-/* Line 1455 of yacc.c  */
-#line 38 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 45 "hi.y"
     {
 				const node_info *VP;
 
@@ -1380,27 +1412,34 @@ yyreduce:
 
   case 3:
 
-/* Line 1455 of yacc.c  */
-#line 46 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 53 "hi.y"
     {
-				const node_info *NP, *Vt, *object_node;
+				const node_info *Vt;
 
-				Vt=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
-				NP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
-				(yyval)=sparser->public.combine_nodes(sparser,"VP",Vt,NP);
-				if((yyval)<0){
-					object_node=sparser->public.get_object_node(sparser,NP);
-					printf("Error: cannot interpret %s %s.\n",Vt->expression,object_node->expression);
-					return -1;
-				}
-				printf("VP->Vt NP\n");
+				Vt=sparser->public.get_node_info(sparser,(yyvsp[(1) - (1)]));
+				(yyval)=sparser->public.set_node_info(sparser,"VP",NULL,Vt);
+				printf("VP->Vt\n");
 }
     break;
 
   case 4:
 
-/* Line 1455 of yacc.c  */
-#line 60 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 61 "hi.y"
+    {
+				const node_info *Vdt;
+
+				Vdt=sparser->public.get_node_info(sparser,(yyvsp[(1) - (1)]));
+				(yyval)=sparser->public.set_node_info(sparser,"VP",NULL,Vdt);
+				printf("VP->Vdt\n");
+}
+    break;
+
+  case 5:
+
+/* Line 1464 of yacc.c  */
+#line 69 "hi.y"
     {
 				const node_info *Vdt, *PP, *object_node;
 		
@@ -1408,64 +1447,75 @@ yyreduce:
 				PP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
 				(yyval)=sparser->public.combine_nodes(sparser,"VP",Vdt,PP);
 				if((yyval)<0){
-					object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);
+					/*object_node=sparser->public.get_object_node(sparser,PP);
+					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
 					return -1;
 				}
 				printf("VP->Vdt PP\n");
 }
     break;
 
-  case 5:
-
-/* Line 1455 of yacc.c  */
-#line 74 "hi.y"
-    {
-				const node_info *NP, *Vt, *object_node;
-			
-				Vt=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
-				NP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
-				(yyval)=sparser->public.combine_nodes(sparser,"Vdt",Vt,NP);
-				if((yyval)<0){
-					object_node=sparser->public.get_object_node(sparser,NP);
-					printf("Error: cannot interpret %s %s.\n",Vt->expression,object_node->expression);
-					return -1;
-				}
-				printf("Vdt->Vt NP\n");
-}
-    break;
-
   case 6:
 
-/* Line 1455 of yacc.c  */
-#line 88 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 83 "hi.y"
     {
-				const node_info *V;
+				const node_info *Vt, *PP, *object_node;
 			
-				V=sparser->public.get_node_info(sparser,(yyvsp[(1) - (1)]));
-				(yyval)=sparser->public.set_node_info(sparser,"Vt",NULL,V);
-				printf("Vt->V\n");
+				Vt=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
+				PP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
+				(yyval)=sparser->public.combine_nodes(sparser,"Vdt",Vt,PP);
+				if((yyval)<0){
+					/*object_node=sparser->public.get_object_node(sparser,PP);
+					printf("Error: cannot interpret %s %s.\n",Vt->left_child->expression,object_node->expression);*/
+					return -1;
+				}
+				printf("Vdt->Vt PP\n");
 }
     break;
 
   case 7:
 
-/* Line 1455 of yacc.c  */
-#line 96 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 97 "hi.y"
     {
-				const node_info *Prep, *NP;
+				const node_info *V, *NP, *object_node;
 
-				Prep=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
+				V=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
 				NP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
-				(yyval)=sparser->public.set_node_info(sparser,"PP",NULL,NP);
-				printf("PP->Prep NP\n");
+				(yyval)=sparser->public.combine_nodes(sparser,"Vt",V,NP);
+				if((yyval)<0){
+					/*object_node=sparser->public.get_object_node(sparser,NP);
+					printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);*/
+					return -1;
+				}
+				printf("Vt->V NP\n");
 }
     break;
 
   case 8:
 
-/* Line 1455 of yacc.c  */
-#line 105 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 111 "hi.y"
+    {
+				const node_info *Prep, *NP, *object_node;
+
+				Prep=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
+				NP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
+				(yyval)=sparser->public.combine_nodes(sparser,"PP",Prep,NP);
+				if((yyval)<0){
+					/*object_node=sparser->public.get_object_node(sparser,NP);
+					printf("Error: cannot interpret %s %s.\n",Prep->expression,object_node->expression);*/
+					return -1;
+				}
+				printf("PP->Prep NP\n");
+}
+    break;
+
+  case 9:
+
+/* Line 1464 of yacc.c  */
+#line 125 "hi.y"
     {
 				const node_info *CNP;
 
@@ -1475,21 +1525,22 @@ yyreduce:
 }
     break;
 
-  case 9:
+  case 10:
 
-/* Line 1455 of yacc.c  */
-#line 113 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 133 "hi.y"
     {
 				const node_info *Det, *CNP, *object_node;
 
 				Det=sparser->public.get_node_info(sparser,(yyvsp[(1) - (2)]));
 				CNP=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
-				/*TODO: kell ellenőrizni, hogy van-e konstans?
+				/*	TODO: really need to check if there's a constant ?
+					Currently, it's done to make functor argument diff easier.*/
 				object_node=sparser->public.get_object_node(sparser,CNP);
 				if(object_node->right_child!=NULL){
-					printf("Syntax error: constants like %s cannot be quantified!\n",(*object_node->right_child)->expression);
-					return 0;
-				}*/
+					/*printf("Syntax error: constants like %s cannot be quantified!\n",object_node->right_child->expression);*/
+					return -1;
+				}
 				(yyval)=sparser->public.combine_nodes(sparser,"NP",Det,CNP);
 				/* No check for $$<0 since quantifier pronouns are not validated as
 				 * everything in the current model seems to be countable.*/
@@ -1497,19 +1548,19 @@ yyreduce:
 }
     break;
 
-  case 10:
+  case 11:
 
-/* Line 1455 of yacc.c  */
-#line 130 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 151 "hi.y"
     {
 				printf("NP->Pro\n");
 }
     break;
 
-  case 11:
+  case 12:
 
-/* Line 1455 of yacc.c  */
-#line 134 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 155 "hi.y"
     {
 				const node_info *CNP, *A, *object_node;
 
@@ -1518,18 +1569,18 @@ yyreduce:
 				/*TODO: ellenőrizni, hogy ha a CNP paraméteres akkor hiba mint a QPro CNP-nél!*/
 				(yyval)=sparser->public.combine_nodes(sparser,"CNP",A,CNP);
 				if((yyval)<0){
-					object_node=sparser->public.get_object_node(sparser,CNP);
-					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);
+					/*object_node=sparser->public.get_object_node(sparser,CNP);
+					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);*/
 					return -1;
 				}
 				printf("CNP->A CNP:%s\n",A->expression);
 }
     break;
 
-  case 12:
+  case 13:
 
-/* Line 1455 of yacc.c  */
-#line 149 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 170 "hi.y"
     {
 				const node_info *N;
 
@@ -1539,23 +1590,23 @@ yyreduce:
 }
     break;
 
-  case 13:
+  case 14:
 
-/* Line 1455 of yacc.c  */
-#line 157 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 178 "hi.y"
     {
 				lexicon word;
 
-				word=lex->public.get_word_by_token(lex,hiLIST1-1);
+				word=lex->public.get_word_by_token(lex,hiLIST-1);
 				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
 				printf("%s->%s\n",word.gcat,word.lexeme);
 }
     break;
 
-  case 14:
+  case 15:
 
-/* Line 1455 of yacc.c  */
-#line 165 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 186 "hi.y"
     {
 				lexicon word;
 
@@ -1565,10 +1616,75 @@ yyreduce:
 }
     break;
 
-  case 15:
+  case 16:
 
-/* Line 1455 of yacc.c  */
-#line 173 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 194 "hi.y"
+    {
+				lexicon word;
+
+				word=lex->public.get_word_by_token(lex,hiREMOVE-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 17:
+
+/* Line 1464 of yacc.c  */
+#line 202 "hi.y"
+    {
+				lexicon word;
+
+				word=lex->public.get_word_by_token(lex,hiDELETE-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 18:
+
+/* Line 1464 of yacc.c  */
+#line 210 "hi.y"
+    {
+				lexicon word;
+
+				word=lex->public.get_word_by_token(lex,hiCHANGE-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 19:
+
+/* Line 1464 of yacc.c  */
+#line 218 "hi.y"
+    {
+				lexicon word;
+
+				word=lex->public.get_word_by_token(lex,hiMOVE-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 20:
+
+/* Line 1464 of yacc.c  */
+#line 226 "hi.y"
+    {
+				lexicon word;
+
+				word=lex->public.get_word_by_token(lex,hiMAKE-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 21:
+
+/* Line 1464 of yacc.c  */
+#line 234 "hi.y"
     {
 				lexicon word;
 
@@ -1579,23 +1695,25 @@ yyreduce:
 }
     break;
 
-  case 16:
+  case 22:
 
-/* Line 1455 of yacc.c  */
-#line 182 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 243 "hi.y"
     {
 				lexicon word;
-
+				const node_info *Con;
+	
 				word=lex->public.get_word_by_token(lex,hiFILE-1);
-				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
-				printf("%s->%s\n",word.gcat,word.lexeme);
+				Con=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,Con);
+				printf("%s->%s %s\n",word.gcat,word.lexeme,Con->expression);
 }
     break;
 
-  case 17:
+  case 23:
 
-/* Line 1455 of yacc.c  */
-#line 190 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 253 "hi.y"
     {
 				lexicon word;
 
@@ -1605,25 +1723,23 @@ yyreduce:
 }
     break;
 
-  case 18:
+  case 24:
 
-/* Line 1455 of yacc.c  */
-#line 198 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 261 "hi.y"
     {
 				lexicon word;
-				const node_info *Con;
 
-				word=lex->public.get_word_by_token(lex,hiFILE-1);
-				Con=sparser->public.get_node_info(sparser,(yyvsp[(2) - (2)]));
-				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,Con);
-				printf("%s->%s %s\n",word.gcat,word.lexeme,Con->expression);
+				word=lex->public.get_word_by_token(lex,hiDIRECTORY-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
 }
     break;
 
-  case 19:
+  case 25:
 
-/* Line 1455 of yacc.c  */
-#line 208 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 269 "hi.y"
     {
 				lexicon word;
 				const node_info *Con;
@@ -1635,10 +1751,10 @@ yyreduce:
 }
     break;
 
-  case 20:
+  case 26:
 
-/* Line 1455 of yacc.c  */
-#line 218 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 279 "hi.y"
     {
 				lexicon word;
 
@@ -1648,10 +1764,10 @@ yyreduce:
 }
     break;
 
-  case 21:
+  case 27:
 
-/* Line 1455 of yacc.c  */
-#line 226 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 287 "hi.y"
     {
 				const node_info *Con;
 
@@ -1661,10 +1777,10 @@ yyreduce:
 }
     break;
 
-  case 22:
+  case 28:
 
-/* Line 1455 of yacc.c  */
-#line 234 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 295 "hi.y"
     {
 				lexicon word;
 
@@ -1674,10 +1790,10 @@ yyreduce:
 }
     break;
 
-  case 23:
+  case 29:
 
-/* Line 1455 of yacc.c  */
-#line 242 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 303 "hi.y"
     {
 				lexicon word;
 
@@ -1687,10 +1803,10 @@ yyreduce:
 }
     break;
 
-  case 24:
+  case 30:
 
-/* Line 1455 of yacc.c  */
-#line 250 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 311 "hi.y"
     {
 				lexicon word;
 			
@@ -1700,20 +1816,47 @@ yyreduce:
 }
     break;
 
-  case 25:
+  case 31:
 
-/* Line 1455 of yacc.c  */
-#line 258 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 319 "hi.y"
+    {
+				lexicon word;
+			
+				word=lex->public.get_word_by_token(lex,hiFROM-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 32:
+
+/* Line 1464 of yacc.c  */
+#line 327 "hi.y"
+    {
+				lexicon word;
+			
+				word=lex->public.get_word_by_token(lex,hiIN-1);
+				(yyval)=sparser->public.set_node_info(sparser,word.gcat,word.lexeme,NULL);
+				printf("%s->%s\n",word.gcat,word.lexeme);
+}
+    break;
+
+  case 33:
+
+/* Line 1464 of yacc.c  */
+#line 335 "hi.y"
     {
 				printf("Pro->null\n");
 }
     break;
 
-  case 26:
+  case 34:
 
-/* Line 1455 of yacc.c  */
-#line 262 "hi.y"
+/* Line 1464 of yacc.c  */
+#line 339 "hi.y"
     {
+				/*if(sparser->private.nr_of_nodes==0)return -1;*/
 				(yyval)=sparser->public.set_node_info(sparser,"Con",yytext,NULL);
 				printf("Constant:%s\n",yytext);
 }
@@ -1721,8 +1864,8 @@ yyreduce:
 
 
 
-/* Line 1455 of yacc.c  */
-#line 1726 "y.tab.c"
+/* Line 1464 of yacc.c  */
+#line 1869 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1933,12 +2076,12 @@ yyreturn:
 
 
 
-/* Line 1675 of yacc.c  */
-#line 266 "hi.y"
+/* Line 1684 of yacc.c  */
+#line 344 "hi.y"
 
 
 void yyerror(char *s){
-	fprintf(stderr,"%s in command\n",s);
+	/*fprintf(stderr,"%s in command\n",s);*/
 	line=0;
 	return;
 }
@@ -1947,26 +2090,32 @@ int yywrap(){
 	return 1;
 }
 
-int main(void){
+const char *hi(const char *human_command){
+const char *shell_command=NULL;
 
-	sqlite=new_db();
-	if(sqlite->public.open(sqlite,"hi.db")){
-		fprintf(stderr, "Can't open database: %s\n", sqlite->public.get_errmsg(sqlite));
-		sqlite->public.close(sqlite);
-		exit(EXIT_FAILURE);
-	}
-	sparser=new_sp();
-	while(!yyparse()){
-		printf("VALID COMMAND\n");
-		destroy_lexer(&lex);
-		destroy_sp(&sparser);
-		sparser=new_sp();
+	if(human_command!=NULL){
+		if(human_command[strlen(human_command)]!='!'){
+			input_stream=malloc(strlen(human_command)+3);
+			sprintf(input_stream,"%s!\n",human_command);
+			}
+		else{
+			input_stream=malloc(strlen(human_command)+2);
+			sprintf(input_stream,"%s\n",human_command);
+			}
+		sqlite=new_db();
+		if(sqlite->public.open(sqlite,"hi.db")){
+			/*fprintf(stderr, "Can't open database: %s\n", sqlite->public.get_errmsg(sqlite));*/
+			sqlite->public.close(sqlite);
+			exit(EXIT_FAILURE);
 		}
-	printf("INVALID COMMAND\n");
-	destroy_sp(&sparser);
-	destroy_lexer(&lex);
-	sqlite->public.close(sqlite);
-	destroy_db(&sqlite);
-	return 0;
+		sparser=new_sp();
+		if(yyparse()==0)shell_command=sparser->public.get_command(sparser);
+		destroy_sp(&sparser);
+		destroy_lexer(&lex);
+		sqlite->public.close(sqlite);
+		destroy_db(&sqlite);
+		free(input_stream);
+		return shell_command;
+	}
 }
 
