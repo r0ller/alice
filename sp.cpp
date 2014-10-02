@@ -134,6 +134,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	if(new_phrase_head_root.node_id!=0&&new_phrase_non_head_root.node_id!=0){
 		sqlite=db::get_instance();
 		rule_to_rule_map_result=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
+		//TODO:Check how to find out CON iotype so that CONs can be part of a combination
 		if(rule_to_rule_map_result!=NULL&&new_phrase_head_root.symbol!="CON"&&new_phrase_non_head_root.symbol!="CON"){
 		/* TODO: Instead of the current validation, the head node needs to be validated against
 		 * all child nodes of the right_node having a non-empty expression. This would ensure that
@@ -301,71 +302,75 @@ std::string interpreter::resolve_ev_redefinitions(const std::string& in, const s
 }
 */
 
-query_result *interpreter::is_valid_expression(node_info& main_node, node_info& dependent_node, node_info& validator_node){
+query_result *interpreter::is_valid_expression(node_info& main_node, node_info& dependent_node){
 	unsigned int rowid=0;
 	query_result *functors=NULL;
 
-	if(main_node.expression.lexeme.empty()==false){//&&validator_node.expression.lexeme.empty()==false){//testing for leaves being leaves indeed
+	if(main_node.expression.lexeme.empty()==false){//testing for leaves being leaves indeed
 		if(dependent_node.node_id!=0){
-			functors=functors_found_for_dependencies(dependent_node,validator_node,main_node);
-			if(functors->nr_of_result_rows()==1){
-				if(main_node.functor_attributes.common.functor.empty()==true){
+			functors=functors_found_for_dependencies(dependent_node,main_node);
+			if(functors!=NULL){
+				if(functors->nr_of_result_rows()==1){
 					rowid=functors->result_set().begin()->first;
-					main_node.functor_attributes.common.functor=*(functors->field_value_at_row_position(rowid,"functor"));
-					main_node.functor_attributes.common.d_key=std::atoi(functors->field_value_at_row_position(rowid,"d_key")->c_str());
-					main_node.functor_attributes.common.argument=*(functors->field_value_at_row_position(rowid,"argument"));
-					main_node.functor_attributes.common.definition=*(functors->field_value_at_row_position(rowid,"definition"));
-					if(main_node.symbol=="N"){
-						main_node.functor_attributes.rel_adj_ent.io_type=*(functors->field_value_at_row_position(rowid,"io_type"));
+					if(functors->field_value_at_row_position(rowid,"functor")!=NULL){
+						if(main_node.functor_attributes.common.functor.empty()==true){
+							main_node.functor_attributes.common.functor=*functors->field_value_at_row_position(rowid,"functor");
+							main_node.functor_attributes.common.d_key=std::atoi(functors->field_value_at_row_position(rowid,"d_key")->c_str());
+							main_node.functor_attributes.common.d_key=std::atoi(functors->field_value_at_row_position(rowid,"functor_id")->c_str());
+							if(main_node.symbol=="N"){
+								main_node.functor_attributes.adj_ent.io_type=*functors->field_value_at_row_position(rowid,"io_type");
+							}
+							else if(main_node.symbol=="ADJ"){
+								main_node.functor_attributes.adj_ent.io_type=*functors->field_value_at_row_position(rowid,"io_type");
+							}
+							else if(main_node.symbol=="V"){
+							}
+							else if(main_node.symbol=="ADV"){
+								main_node.functor_attributes.adv.relation_functor=*(functors->field_value_at_row_position(rowid,"relation_functor"));
+								main_node.functor_attributes.adv.relation_d_key=std::atoi(functors->field_value_at_row_position(rowid,"relation_d_key")->c_str());
+							}
+						}
+						else if(main_node.functor_attributes.common.functor!=*functors->field_value_at_row_position(rowid,"functor")
+								&&main_node.functor_attributes.common.d_key!=std::atoi(functors->field_value_at_row_position(rowid,"d_key")->c_str())){
+							exit(EXIT_FAILURE);//TODO:Throw exception
+						}
 					}
-					else if(main_node.symbol=="ADJ"){
-						main_node.functor_attributes.rel_adj_ent.io_type=*(functors->field_value_at_row_position(rowid,"io_type"));
-						main_node.functor_attributes.rel_adj_adv.definition_type=std::atoi(functors->field_value_at_row_position(rowid,"definition_type")->c_str());
-					}
-					else if(main_node.symbol=="V"){
-						main_node.functor_attributes.rel_adj_ent.io_type=*(functors->field_value_at_row_position(rowid,"io_type"));
-						main_node.functor_attributes.rel_adj_adv.definition_type=std::atoi(functors->field_value_at_row_position(rowid,"definition_type")->c_str());
-					}
-					else if(main_node.symbol=="ADV"){
-						main_node.functor_attributes.rel_adj_adv.definition_type=std::atoi(functors->field_value_at_row_position(rowid,"definition_type")->c_str());
-						main_node.functor_attributes.adv.relation_functor=*(functors->field_value_at_row_position(rowid,"relation_functor"));
-						main_node.functor_attributes.adv.relation_d_key=std::atoi(functors->field_value_at_row_position(rowid,"relation_d_key")->c_str());
-						main_node.functor_attributes.adv.relation_io_type=*(functors->field_value_at_row_position(rowid,"relation_io_type"));
-					}
+					else if(functors->field_value_at_row_position(rowid,"lexeme")==NULL) exit(EXIT_FAILURE);//TODO:Throw exception
 				}
-				else if(main_node.functor_attributes.common.functor!=*(functors->field_value_at_row_position(rowid,"functor"))
-						&&main_node.functor_attributes.common.d_key!=std::atoi(functors->field_value_at_row_position(rowid,"d_key")->c_str())){
+				else if(functors->nr_of_result_rows()>1){//More than one functor is acceptable as an intermediate result
+				}
+				else{
 					exit(EXIT_FAILURE);//TODO:Throw exception
 				}
+				dependent_node.node_links.insert(std::make_pair(main_node.node_id,dependent_node.node_links.size()+1));
+				main_node.node_links.insert(std::make_pair(dependent_node.node_id,main_node.node_links.size()+1));
 			}
-			else if(functors->nr_of_result_rows()>1){//More than one functor is acceptable as an intermediate result
-			}
-			else exit(EXIT_FAILURE);//TODO:Throw exception
-			dependent_node.node_links.insert(std::make_pair(main_node.node_id,dependent_node.node_links.size()+1));
-			main_node.node_links.insert(std::make_pair(dependent_node.node_id,main_node.node_links.size()+1));
 		}
 	}
 	return functors;
 }
 
-
-query_result* interpreter::functors_found_for_dependencies(const node_info& dependent_node, const node_info& validator_node, node_info& main_node){
+query_result* interpreter::functors_found_for_dependencies(const node_info& dependent_node, node_info& main_node){
 	dependency_validation_pair dependency_pair;
 	std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > functors_found;
 	std::string d_key_list,functor;
-	query_result *functors=NULL;
+	query_result *functors=NULL,*ncat_functors=NULL;
 	std::vector<std::pair<unsigned int,std::string> > dependency_stack;
 	db *sqlite=NULL;
+	field field;
+	std::ostringstream out;
 
 	functor=main_node.expression.lexeme+main_node.expression.lid+main_node.expression.gcat;
+//	std::cout<<"functor to be found for dependencies: "<<functor<<std::endl;
 	find_functors_for_dependency(dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat,*main_node.expression.dependencies,functors_found,dependency_stack);
-	if(functors_found.empty()==true) exit(EXIT_FAILURE);//TODO:Throw exception
+	if(functors_found.empty()==true){
+		return functors;
+	}
 	//generate d_key_list string which lists the d_keys of functors_found like: ('1', '2', ..., '3')
 	d_key_list="(";
 	for(std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >::const_iterator j=functors_found.begin();
 			j!=functors_found.end();++j){
-		if(j->first.first!=functor) exit(EXIT_FAILURE);//TODO:Throw exception
-		if(d_key_list.find("'"+j->first.second+"'")==std::string::npos){
+		if(j->first.first==functor&&d_key_list.find("'"+j->first.second+"'")==std::string::npos){
 			d_key_list+="'"+j->first.second+"',";
 		}
 	}
@@ -388,12 +393,28 @@ query_result* interpreter::functors_found_for_dependencies(const node_info& depe
 		functors=sqlite->exec_sql("SELECT * FROM ADVERB_FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+";");
 		if(functors==NULL) exit(EXIT_FAILURE);
 	}
+	else{//TODO: Find out a proper solution for uncategorized functors. Currently, functors pointer is only checked for being NULL later,
+		// so here it is just filled from the lexemes table according to the functors found in depolex.
+		functors=sqlite->exec_sql("SELECT * FROM LEXEMES WHERE LEXEME = '"+functor+"' AND D_KEY IN "+d_key_list+";");
+		if(functors==NULL) exit(EXIT_FAILURE);
+	}
 	for(std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >::const_iterator i=functors_found.begin();
 			i!=functors_found.end();++i){
 		dependency_pair.dependent_node_id=dependent_node.node_id;
-		dependency_pair.validator_node_id=validator_node.node_id;
+		dependency_pair.validator_node_id=0;//TODO:get rid of it, not used any more
 		main_node.dependency_validation_matrix.insert(std::make_pair(i->second.first,dependency_pair));
-		std::cout<<"dependency "<<i->second.second<<" for functor "<<i->first.first<<" found"<<std::endl;
+		out.str(std::string());
+		out.clear();
+		out<<dependent_node.node_id;
+		std::cout<<"dependency "<<i->second.second<<" with node id "<<out.str();
+		out.str(std::string());
+		out.clear();
+		out<<i->second.first;
+		std::cout<<" and depolex row id "<<out.str();
+		out.str(std::string());
+		out.clear();
+		out<<main_node.node_id;
+		std::cout<<" for functor "<<i->first.first<<" with node id "<<out.str()<<" found"<<std::endl;
 	}
 	return functors;
 }
@@ -403,159 +424,26 @@ bool interpreter::find_functors_for_dependency(const std::string& dependency, co
 		std::vector<std::pair<unsigned int,std::string> >& dependency_stack){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string lexeme,d_key;
+	std::ostringstream out;
 
 	depolex_entry=dependencies.first_value_for_field_name_found("semantic_dependency",dependency);
 	if(depolex_entry==NULL) return true;
 	while(depolex_entry!=NULL){
+		std::cout<<"looking for functor with dependency "<<dependency<<std::endl;
 		lexeme=*dependencies.field_value_at_row_position(depolex_entry->first,"lexeme");
 		d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"d_key");
 		dependency_stack.push_back(std::make_pair(depolex_entry->first,depolex_entry->second.field_value));
 		if(find_functors_for_dependency(lexeme,dependencies,functors_found,dependency_stack)==true){
+			out.str(std::string());
+			out.clear();
+			out<<dependency_stack.begin()->first;
+			std::cout<<"inserting in functors_found an entry with row id "<<out.str()<<", functor="<<lexeme<<" d_key="<<d_key<<std::endl;
 			functors_found.insert(std::make_pair(std::make_pair(lexeme,d_key),*dependency_stack.begin()));
 		}
 		dependency_stack.pop_back();
 		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 	}
 }
-
-//void interpreter::set_functorless_node_dependencies(const unsigned int dependent_node_id,const unsigned int validator_node_id,
-//		query_result& functors,const std::multimap<unsigned int,depolex>& dependencies, node_info& node){
-//	unsigned int nr_of_functors=0;
-//	std::multimap<unsigned int,depolex>::const_iterator j;
-//	dependency_validation_pair dependency_pair;
-//
-//	nr_of_functors=functors.result_rows();
-//	for(j=dependencies.begin();j!=dependencies.end();++j){
-//		for(unsigned int i=0;i<nr_of_functors;++i){
-//			if(*(functors.get_field_value(i,"functor"))==j->second.lexeme
-//					&&std::atoi(functors.get_field_value(i,"d_key")->c_str())==j->second.functor_d_key){
-//				//TODO: Shall any further checks be performed for duplicate entries in the
-//				//dependency_validation_matrix?
-//				dependency_pair.dependent_node_id=dependent_node_id;
-//				dependency_pair.validator_node_id=validator_node_id;
-//				node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
-//			}
-//		}
-//	}
-//}
-
-//void interpreter::find_functor_for_dependencies(const unsigned int dependent_node_id, const unsigned int validator_node_id,const std::multimap<unsigned int,depolex>& dependencies,const std::multimap<std::string,std::string>& functor_criteria,
-//		node_info& node,query_result& functors){
-//	std::multimap<std::string,std::string>::const_iterator l;
-//	std::multimap<unsigned int,depolex>::const_iterator j;
-//	unsigned int rowid_of_functor_found=0,previous_iteration_d_key,nr_of_functors=0;
-//	std::set<unsigned int> rowids_to_keep;
-//	bool complete_dependency_found,partial_dependency_found;
-//	node_info dependent_node;
-//	dependency_validation_pair dependency_pair;
-//	std::multimap<unsigned int,dependency_validation_pair>::const_iterator m;
-//	//std::pair <std::multimap<std::string,std::string>::const_iterator,std::multimap<std::string,std::string>::const_iterator> range;
-//
-//	//if all the d_counter dependency entries of a dependency of a functor belonging to a relation_functor
-//	//entry can be found in head_node.dependency_validation_matrix in pair with the non_head_node:
-//	//check if head_node.command already contains an executable relation_functor entry with a different key
-//	//and if so, throw exception, otherwise insert the relation_functor entry just validated.
-//	//Remark: This way that the dependencies are put together with the noun in the validation matrix,
-//	//the first noun with all the dependencies of the verb that match an executable relation_functor
-//	//gets validated. If nouns were not stored together with the dependencies in the matrix, different
-//	//iterations with different nouns would validate dependencies which would result in
-//	//a wrong relation_functor.
-//	complete_dependency_found=true;
-//	for(j=dependencies.begin(),previous_iteration_d_key=j->second.d_key;j!=dependencies.end();++j){
-//		std::cout<<"checking dependency "<<j->second.semantic_dependency<<" for functors of "<<node.expression.lexeme+node.expression.lid+node.expression.gcat<<std::endl;
-//		if(previous_iteration_d_key==j->second.d_key){
-//			if(complete_dependency_found==true){
-//				dependent_node=get_node_info(dependent_node_id);
-//				if(j->second.lexeme==node.expression.lexeme+node.expression.lid+node.expression.gcat
-//						&&j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
-//					//read functor table with functor criteria
-//					//and d_key=d_key of current iteration
-//					//into relation_functor_found;
-//					nr_of_functors=functors.result_rows();
-//					for(unsigned int k=0;k<nr_of_functors;++k){
-//						if(std::atoi(functors.get_field_value(k,"d_key")->c_str())==j->second.functor_d_key){
-//							for(l=functor_criteria.begin();l!=functor_criteria.end();++l){
-//								if(l->first!="d_key"&&*(functors.get_field_value(k,l->first))!=l->second) break;//check functor criterion but passing in D_KEY criterion is illegal, ignore if it comes in
-//							}
-//							if(l==functor_criteria.end()){
-//								rowid_of_functor_found=k;
-//								dependency_pair.dependent_node_id=dependent_node_id;
-//								dependency_pair.validator_node_id=validator_node_id;
-//								node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
-//								std::cout<<"dependency "<<j->second.semantic_dependency<<" for functor "<<node.expression.lexeme+node.expression.lid+node.expression.gcat<<" found"<<std::endl;
-//								break;
-//							}
-//						}
-//					}
-//				}
-//				else{
-//					partial_dependency_found=false;
-//					for(m=node.dependency_validation_matrix.lower_bound(j->first);m!=node.dependency_validation_matrix.upper_bound(j->first);++m){
-//						if(m->second.validator_node_id==validator_node_id){
-//							dependent_node=get_node_info(m->second.dependent_node_id);
-//							if(j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
-//								partial_dependency_found=true;
-//								break;
-//							}
-//						}
-//					}
-//					if(partial_dependency_found==false)
-//						complete_dependency_found=false;
-//				}
-//			}
-//		}
-//		else{
-//			if(complete_dependency_found==true){
-//				rowids_to_keep.insert(rowid_of_functor_found);
-//				functors.keep(rowids_to_keep);
-//				//TODO:This does NOT guarantee that the entry for the functor with the d_key found is executable
-//				//i.e. that the definition_type=0. So the executable entry needs to be looked up later...
-//				break;
-//			}
-//			else{
-//				complete_dependency_found=true;
-//				dependent_node=get_node_info(dependent_node_id);
-//				if(j->second.lexeme==node.expression.lexeme+node.expression.lid+node.expression.gcat
-//						&&j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
-//					//read functor table with functor criteria
-//					//and d_key=d_key of current iteration
-//					//into relation_functor_found;
-//					nr_of_functors=functors.result_rows();
-//					for(unsigned int k=0;k<nr_of_functors;++k){
-//						if(std::atoi(functors.get_field_value(k,"d_key")->c_str())==j->second.functor_d_key){
-//							for(l=functor_criteria.begin();l!=functor_criteria.end();++l){
-//								if(l->first!="d_key"&&*(functors.get_field_value(k,l->first))!=l->second) break;//check functor criterion but passing in D_KEY criterion is illegal, ignore if it comes in
-//							}
-//							if(l==functor_criteria.end()){
-//								rowid_of_functor_found=k;
-//								dependency_pair.dependent_node_id=dependent_node_id;
-//								dependency_pair.validator_node_id=validator_node_id;
-//								node.dependency_validation_matrix.insert(std::make_pair(j->first,dependency_pair));
-//								std::cout<<"dependency "<<j->second.semantic_dependency<<" for functor "<<node.expression.lexeme+node.expression.lid+node.expression.gcat<<" found"<<std::endl;
-//								break;
-//							}
-//						}
-//					}
-//				}
-//				else{
-//					partial_dependency_found=false;
-//					for(m=node.dependency_validation_matrix.lower_bound(j->first);m!=node.dependency_validation_matrix.upper_bound(j->first);++m){
-//						if(m->second.validator_node_id==validator_node_id){
-//							dependent_node=get_node_info(m->second.dependent_node_id);
-//							if(j->second.semantic_dependency==dependent_node.expression.lexeme+dependent_node.expression.lid+dependent_node.expression.gcat){
-//								partial_dependency_found=true;
-//								break;
-//							}
-//						}
-//					}
-//					if(partial_dependency_found==false)
-//						complete_dependency_found=false;
-//				}
-//			}
-//		}
-//		previous_iteration_d_key=j->second.d_key;
-//	}
-//}
 
 void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::string symbol, std::vector<unsigned int>& nodes_found){
 	//root_node: root node of the subtree in which the node should be found by the symbol
@@ -576,7 +464,7 @@ std::map<unsigned int,std::pair<unsigned int,unsigned int> > interpreter::depend
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> > dependencies_found;
 	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
 	unsigned int nr_of_dependencies_found=0,nr_of_dependencies=0;
-	std::string functor,d_key;
+	std::string functor,d_key="0";
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::vector<unsigned int> verbs_found;
 
@@ -586,19 +474,20 @@ std::map<unsigned int,std::pair<unsigned int,unsigned int> > interpreter::depend
 	const node_info& verb=get_node_info(*verbs_found.begin());
 	functor=verb.expression.lexeme+verb.expression.lid+verb.expression.gcat;
 	depolex_entry=verb.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
-	d_key=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
-	dependency_for_d_key_found.first=0;
-	dependency_for_d_key_found.second=0;
-	while(depolex_entry!=NULL){
-		check_dependencies_for_functor(verb.node_id,functor,*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key"),*verb.expression.dependencies,nr_of_dependencies_found,nr_of_dependencies);
+	while(depolex_entry!=NULL&&functor==*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
+			&&d_key!=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
+		nr_of_dependencies_found=0;
+		nr_of_dependencies=0;
+		dependency_for_d_key_found.first=0;
+		dependency_for_d_key_found.second=0;
+		d_key=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+		std::cout<<"checking top level entry for functor "<<functor<<" d_key "<<d_key<<std::endl;
+		check_dependencies_for_functor(verb.node_id,functor,d_key,*verb.expression.dependencies,nr_of_dependencies_found,nr_of_dependencies);
 		dependency_for_d_key_found.first=dependency_for_d_key_found.first+nr_of_dependencies_found;
 		dependency_for_d_key_found.second=dependency_for_d_key_found.second+nr_of_dependencies;
-		depolex_entry=verb.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
-		if(depolex_entry!=NULL){
-			if(d_key!=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
-				dependencies_found.insert(std::make_pair(std::atoi(d_key.c_str()),dependency_for_d_key_found));
-				d_key=*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
-			}
+		dependencies_found.insert(std::make_pair(std::atoi(d_key.c_str()),dependency_for_d_key_found));
+		while(depolex_entry!=NULL&&*verb.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")==d_key){
+			depolex_entry=verb.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
 		}
 	}
 	return dependencies_found;
@@ -606,41 +495,59 @@ std::map<unsigned int,std::pair<unsigned int,unsigned int> > interpreter::depend
 
 bool interpreter::check_dependencies_for_functor(const unsigned int node_id, const std::string& functor, const std::string& d_key, const query_result& dependencies, unsigned int& nr_of_dependencies_found, unsigned int& nr_of_dependencies){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
-	std::string semantic_dependency,ref_d_key,d_counter;
+	std::string semantic_dependency,ref_d_key,d_counter="0",manner;
 	std::multimap<unsigned int,dependency_validation_pair>::const_iterator dependency_matrix_entry;
+	std::ostringstream out;
 
-	std::cout<<"checking dependency for functor "<<functor<<std::endl;
+	std::cout<<"checking dependency for functor "<<functor<<" d_key "<<d_key<<std::endl;
 	depolex_entry=dependencies.first_value_for_field_name_found("lexeme",functor);
-	if(depolex_entry==NULL) return false;
+	if(depolex_entry==NULL){
+		std::cout<<"exiting, no dependency entry found for functor "<<functor<<std::endl;
+		//TODO: throw exception as for each functor there must be one entry with at least NULL dependency
+		exit(EXIT_FAILURE);
+	}
 	while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")!=d_key){
 		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
 	}
-	d_counter=*dependencies.field_value_at_row_position(depolex_entry->first,"d_counter");
 	while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")==d_key
-			&&std::atoi(dependencies.field_value_at_row_position(depolex_entry->first,"d_counter")->c_str())>=std::atoi(d_counter.c_str())){
+			&&std::atoi(dependencies.field_value_at_row_position(depolex_entry->first,"d_counter")->c_str())>std::atoi(d_counter.c_str())){
+		d_counter=*dependencies.field_value_at_row_position(depolex_entry->first,"d_counter");
 		semantic_dependency=*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency");
 		ref_d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key");
-		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
+		manner=*dependencies.field_value_at_row_position(depolex_entry->first,"manner");
+		std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<functor<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
+		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner=="1"||manner=="2")){
 			++nr_of_dependencies;
 			const node_info& node=get_node_info(node_id);
+			out.str(std::string());
+			out.clear();
+			out<<depolex_entry->first;
+			std::cout<<"looking up depolex entry with row id "<<out.str()<<" in dep.val.matrix"<<std::endl;
 			dependency_matrix_entry=node.dependency_validation_matrix.find(depolex_entry->first);
 			if(dependency_matrix_entry!=node.dependency_validation_matrix.end()){
 				//If the row_id of the depolex_entry is found among the row_ids stored in the dep.vld.matrix
 				//then the field values match as well since both row_ids refer to the corresponding
 				//field in the node.expression.dependencies attribute.
 				++nr_of_dependencies_found;
-				if(check_dependencies_for_functor(dependency_matrix_entry->second.dependent_node_id,semantic_dependency,ref_d_key,dependencies,nr_of_dependencies_found,nr_of_dependencies)==false){
+				std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<std::endl;
+				const node_info& dependent_node=get_node_info(dependency_matrix_entry->second.dependent_node_id);
+				if(check_dependencies_for_functor(dependency_matrix_entry->second.dependent_node_id,semantic_dependency,ref_d_key,*dependent_node.expression.dependencies,nr_of_dependencies_found,nr_of_dependencies)==false){
+					std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<functor<<std::endl;
 					return false;
 				}
 			}
-			else{
+			else if(manner=="1"){
 				return false;
+			}
+			else if(manner=="2"){
+				--nr_of_dependencies;
 			}
 		}
 		else{
 			//TODO:a leaf in the dependency tree is found so the semantic dependency is empty. As such, there's no
 			//functor-dependency pair to be checked in the dep.vld.matrix
 			//what to return? As there's nothing to check, only one level above, just return true.
+			std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<" but has no further dependency"<<std::endl;
 			return true;
 		}
 		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
@@ -661,398 +568,88 @@ bool interpreter::is_longest_match_for_semantic_rules_found(std::pair<std::strin
 			i!=dependencies_found.end();++i){
 		out.str(std::string());
 		out.clear();
+		out<<i->first;
+		std::cout<<"nr_of_dependencies_found for d_key "<<out.str();
+		out.str(std::string());
+		out.clear();
 		out<<i->second.first;
-		std::cout<<"nr_of_dependencies_found:"<<out.str()<<std::endl;
+		std::cout<<":"<<out.str()<<std::endl;
+		out.str(std::string());
+		out.clear();
+		out<<i->first;
+		std::cout<<"nr_of_dependencies for d_key "<<out.str();
 		out.str(std::string());
 		out.clear();
 		out<<i->second.second;
-		std::cout<<"nr_of_dependencies:"<<out.str()<<std::endl;
+		std::cout<<":"<<out.str()<<std::endl;
 		if(i->second.first==i->second.second&&longest_match<i->second.first){
 			functor.second=i->first;
 			longest_match=i->second.first;
 		}
-		else if(i->second.first==i->second.second&&longest_match==i->first) return false;
+		else if(i->second.first==i->second.second&&longest_match>0&&longest_match==i->first) return false;
 	}
 	if(longest_match>0) return true;
 	else return false;
 }
 
 bool interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
-	std::string entity,argument,command,constant,options,options_field_value, preposition_field_value,
-				argument_field_value, command_field_value, entity_field_value, is_a_field_value, lexeme;
 	bool valid_combination=false;
-	unsigned int rule_to_rule_map_entry_index=0;
 	db *sqlite=NULL;
-	rule_to_rule_map rule_to_rule_map_entry={};
-	query_result *functors=NULL, *rule_to_rule_map_result=NULL;
-	std::map<unsigned int,unsigned int> dependency_validation_matrix;//uint1:row_index of dependency entry, uint2: true=validated node
-	std::multimap<unsigned int,field>::const_iterator i;
+	query_result *functors=NULL, *rule_to_rule_map=NULL;
+	std::map<unsigned int,unsigned int> dependency_validation_matrix;
 	std::vector<unsigned int>::const_iterator j,k,l,m;
-	std::vector<unsigned int> head_nodes_found_by_symbol,head_d_nodes_found_by_symbol,non_head_nodes_found_by_symbol,non_head_d_nodes_found_by_symbol;
-	node_info empty_nodeinfo={};
+	std::vector<unsigned int> main_nodes_found_by_symbol,dependent_nodes_found_by_symbol;
+	unsigned int n=0;
 
 	sqlite=db::get_instance();
-	rule_to_rule_map_result=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
+	rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
 	//TODO: Each and every combination must have a rule_to_rule_map entry, otherwise the combined nodes cannot be validated i.e. the node_links in the corresponding nodes
 	//won't be crossreferenced. Thus later, checking for dependencies would not take into account such nodes that aren't referenced in node_links. Therefore, is_valid_expression()
 	//must be extended in a way that each base node-non base node combination looks up their dependencies as well.
-	if(rule_to_rule_map_result==NULL) exit(EXIT_FAILURE);
-	const std::multimap<unsigned int,field>& rule_to_rule_map=rule_to_rule_map_result->result_set();
-	for(i=rule_to_rule_map.begin();i!=rule_to_rule_map.end();++i){
-		if(i->second.field_name=="parent_symbol"){
-			rule_to_rule_map_entry.parent_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="head_root_symbol"){
-			rule_to_rule_map_entry.head_root_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="non_head_root_symbol"){
-			rule_to_rule_map_entry.non_head_root_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="step"){
-			rule_to_rule_map_entry.step=std::atoi(i->second.field_value.c_str());
-		}
-		else if(i->second.field_name=="head_node_symbol"){
-			rule_to_rule_map_entry.head_node_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="head_d_node_symbol"){
-			rule_to_rule_map_entry.head_d_node_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="head_dependency_lookup_root"){
-			rule_to_rule_map_entry.head_dependency_lookup_root=i->second.field_value;
-		}
-		else if(i->second.field_name=="non_head_node_symbol"){
-			rule_to_rule_map_entry.non_head_node_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="non_head_d_node_symbol"){
-			rule_to_rule_map_entry.non_head_d_node_symbol=i->second.field_value;
-		}
-		else if(i->second.field_name=="non_head_dependency_lookup_root"){
-			rule_to_rule_map_entry.non_head_dependency_lookup_root=i->second.field_value;
-		}
-		else if(i->second.field_name=="lid"){
-			rule_to_rule_map_entry.lid=i->second.field_value;
-			++rule_to_rule_map_entry_index;
-		}
-		else exit(EXIT_FAILURE);
-		if(rule_to_rule_map_entry_index>0&&rule_to_rule_map_entry_index==i->first+1){
-			head_nodes_found_by_symbol.clear();
-			head_d_nodes_found_by_symbol.clear();
-			non_head_nodes_found_by_symbol.clear();
-			non_head_d_nodes_found_by_symbol.clear();
-			if(rule_to_rule_map_entry.head_root_symbol==new_phrase_head_root.symbol&&rule_to_rule_map_entry.non_head_root_symbol==new_phrase_non_head_root.symbol){
-				get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_node_symbol,head_nodes_found_by_symbol);
-				get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_node_symbol,non_head_nodes_found_by_symbol);
-				if(rule_to_rule_map_entry.head_d_node_symbol.empty()==false){
-					if(rule_to_rule_map_entry.head_dependency_lookup_root=="H")
-						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-					else if(rule_to_rule_map_entry.head_dependency_lookup_root=="N")
-						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-					else{
-						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-					}
-				}
-				if(rule_to_rule_map_entry.non_head_d_node_symbol.empty()==false){
-					if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="H")
-						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-					else if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="N")
-						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-					else{
-						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-					}
-				}
-				//1)Loop over head_nodes_found_by_symbol
-				for(j=head_nodes_found_by_symbol.begin();j!=head_nodes_found_by_symbol.end();++j){
-					std::cout<<"loop pass on head_nodes_found_by_symbol:"<<*j<<std::endl;
-					node_info& head_node=get_private_node_info(*j);
-					//2)Loop over non_head_nodes_found_by_symbol where non_head_node is NOT in current_head_node.node_links
-					for(k=non_head_nodes_found_by_symbol.begin();k!=non_head_nodes_found_by_symbol.end();++k){
-						std::cout<<"loop pass on non_head_nodes_found_by_symbol:"<<*k<<std::endl;
-						node_info& non_head_node=get_private_node_info(*k);
-						if(head_node.node_links.find(non_head_node.node_id)==head_node.node_links.end()){
-							if(head_d_nodes_found_by_symbol.empty()==false){//TODO: cover other branches for non_head_d_nodes
-								//3)Loop over head_d_nodes_found_by_symbol
-								for(l=head_d_nodes_found_by_symbol.begin();l!=head_d_nodes_found_by_symbol.end();++l){
-									functors=is_valid_expression(head_node,get_private_node_info(*l),non_head_node);
-								}
-							}
-							if(non_head_d_nodes_found_by_symbol.empty()==false){
-								//4)Loop over non_head_d_nodes_found_by_symbol
-								for(m=non_head_d_nodes_found_by_symbol.begin();m!=non_head_d_nodes_found_by_symbol.end();++m){
-									functors=is_valid_expression(non_head_node,get_private_node_info(*m),head_node);
-								}
-							}
-						}
+	if(rule_to_rule_map==NULL) exit(EXIT_FAILURE);//TODO: throw exception
+	for(unsigned int i=0, n=rule_to_rule_map->nr_of_result_rows();i<n;++i){
+		main_nodes_found_by_symbol.clear();
+		dependent_nodes_found_by_symbol.clear();
+		if(*rule_to_rule_map->field_value_at_row_position(i,"head_root_symbol")==new_phrase_head_root.symbol&&*rule_to_rule_map->field_value_at_row_position(i,"non_head_root_symbol")==new_phrase_non_head_root.symbol){
+			if(*rule_to_rule_map->field_value_at_row_position(i,"main_lookup_root")=="H")
+				get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(i,"main_node_symbol"),main_nodes_found_by_symbol);
+			else if(*rule_to_rule_map->field_value_at_row_position(i,"main_lookup_root")=="N")
+				get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(i,"main_node_symbol"),main_nodes_found_by_symbol);
+			else{
+				get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(i,"main_node_symbol"),main_nodes_found_by_symbol);
+				get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(i,"main_node_symbol"),main_nodes_found_by_symbol);
+			}
+			if(*rule_to_rule_map->field_value_at_row_position(i,"dependency_lookup_root")=="H")
+				get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(i,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
+			else if(*rule_to_rule_map->field_value_at_row_position(i,"dependency_lookup_root")=="N")
+				get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(i,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
+			else{
+				get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(i,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
+				get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(i,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
+			}
+			//1)Loop over main_nodes_found_by_symbol
+			for(j=main_nodes_found_by_symbol.begin();j!=main_nodes_found_by_symbol.end();++j){
+				std::cout<<"loop pass on main_nodes_found_by_symbol:"<<*j<<std::endl;
+				node_info& main_node=get_private_node_info(*j);
+				//2)Loop over dependent_nodes_found_by_symbol where dependent_node is NOT in current_main_node.node_links
+				for(k=dependent_nodes_found_by_symbol.begin();k!=dependent_nodes_found_by_symbol.end();++k){
+					std::cout<<"loop pass on dependent_nodes_found_by_symbol:"<<*k<<std::endl;
+					node_info& dependent_node=get_private_node_info(*k);
+					if(main_node.node_links.find(dependent_node.node_id)==main_node.node_links.end()){
+						functors=is_valid_expression(main_node,dependent_node);
 					}
 				}
 			}
-			else exit(EXIT_FAILURE);//TODO: throw exception
+		}
+		else{
+			exit(EXIT_FAILURE);//TODO: throw exception
 		}
 	}
 	if(functors!=NULL) valid_combination=true;
 	delete functors;
-	delete rule_to_rule_map_result;
+	delete rule_to_rule_map;
 	return valid_combination;
 }
-
-//bool interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
-//	std::string entity,argument,command,constant,options,options_field_value, preposition_field_value,
-//				argument_field_value, command_field_value, entity_field_value, is_a_field_value, lexeme;
-//	bool valid_combination=false;
-//	unsigned int preposition_matched[256],rule_to_rule_map_entry_index=0;
-//	db *sqlite=NULL;
-//	rule_to_rule_map rule_to_rule_map_entry={};
-//	query_result *functors=NULL, *rule_to_rule_map_result=NULL;
-//	std::map<unsigned int,unsigned int> dependency_validation_matrix;//uint1:row_index of dependency entry, uint2: true=validated node
-//	std::multimap<unsigned int,field>::const_iterator i;
-//	std::vector<unsigned int>::const_iterator j,k,l,m;
-//	std::vector<unsigned int> head_nodes_found_by_symbol,head_d_nodes_found_by_symbol,non_head_nodes_found_by_symbol,non_head_d_nodes_found_by_symbol;
-//	node_info empty_nodeinfo={};
-//
-//	sqlite=db::get_instance();
-//	rule_to_rule_map_result=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
-//	//TODO: Each and every combination must have a rule_to_rule_map entry, otherwise the combined nodes cannot be validated i.e. the node_links in the corresponding nodes
-//	//won't be crossreferenced. Thus later, checking for dependencies would not take into account such nodes that aren't referenced in node_links. Therefore, is_valid_expression()
-//	//must be extended in a way that each base node-non base node combination looks up their dependencies as well.
-//	if(rule_to_rule_map_result==NULL) exit(EXIT_FAILURE);
-//	const std::multimap<unsigned int,field>& rule_to_rule_map=rule_to_rule_map_result->result_set();
-//	for(i=rule_to_rule_map.begin();i!=rule_to_rule_map.end();++i){
-//		if(i->second.field_name=="parent_symbol"){
-//			rule_to_rule_map_entry.parent_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="head_root_symbol"){
-//			rule_to_rule_map_entry.head_root_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="non_head_root_symbol"){
-//			rule_to_rule_map_entry.non_head_root_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="step"){
-//			rule_to_rule_map_entry.step=std::atoi(i->second.field_value.c_str());
-//		}
-//		else if(i->second.field_name=="head_node_symbol"){
-//			rule_to_rule_map_entry.head_node_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="head_d_node_symbol"){
-//			rule_to_rule_map_entry.head_d_node_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="head_dependency_lookup_root"){
-//			rule_to_rule_map_entry.head_dependency_lookup_root=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="non_head_node_symbol"){
-//			rule_to_rule_map_entry.non_head_node_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="non_head_d_node_symbol"){
-//			rule_to_rule_map_entry.non_head_d_node_symbol=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="non_head_dependency_lookup_root"){
-//			rule_to_rule_map_entry.non_head_dependency_lookup_root=i->second.field_value;
-//		}
-//		else if(i->second.field_name=="lid"){
-//			rule_to_rule_map_entry.lid=i->second.field_value;
-//			++rule_to_rule_map_entry_index;
-//		}
-//		else exit(EXIT_FAILURE);
-//		if(rule_to_rule_map_entry_index>0&&rule_to_rule_map_entry_index==i->first+1){
-//			if(rule_to_rule_map_entry.head_root_symbol==new_phrase_head_root.symbol&&rule_to_rule_map_entry.non_head_root_symbol==new_phrase_non_head_root.symbol){
-//				get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_node_symbol,head_nodes_found_by_symbol);
-//				get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_node_symbol,non_head_nodes_found_by_symbol);
-//				if(rule_to_rule_map_entry.head_d_node_symbol.empty()==false){
-//					if(rule_to_rule_map_entry.head_dependency_lookup_root=="H")
-//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-//					else if(rule_to_rule_map_entry.head_dependency_lookup_root=="N")
-//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-//					else{
-//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.head_d_node_symbol,head_d_nodes_found_by_symbol);
-//					}
-//				}
-//				if(rule_to_rule_map_entry.non_head_d_node_symbol.empty()==false){
-//					if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="H")
-//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-//					else if(rule_to_rule_map_entry.non_head_dependency_lookup_root=="N")
-//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-//					else{
-//						get_nodes_by_symbol(new_phrase_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-//						get_nodes_by_symbol(new_phrase_non_head_root,rule_to_rule_map_entry.non_head_d_node_symbol,non_head_d_nodes_found_by_symbol);
-//					}
-//				}
-//				//1)Loop over head_nodes_found_by_symbol
-//				for(j=head_nodes_found_by_symbol.begin();j!=head_nodes_found_by_symbol.end();++j){
-//					std::cout<<"loop pass on head_nodes_found_by_symbol:"<<*j<<std::endl;
-//					node_info& head_node=get_private_node_info(*j);
-//					//2)Loop over non_head_nodes_found_by_symbol where non_head_node is NOT in current_head_node.node_links
-//					for(k=non_head_nodes_found_by_symbol.begin();k!=non_head_nodes_found_by_symbol.end();++k){
-//						std::cout<<"loop pass on non_head_nodes_found_by_symbol:"<<*k<<std::endl;
-//						node_info& non_head_node=get_private_node_info(*k);
-//						if(head_node.node_links.find(non_head_node.node_id)==head_node.node_links.end()){
-//							if(head_d_nodes_found_by_symbol.empty()==false){//TODO: cover other branches for non_head_d_nodes
-//								//3)Loop over head_d_nodes_found_by_symbol
-//								for(l=head_d_nodes_found_by_symbol.begin();l!=head_d_nodes_found_by_symbol.end();++l){
-//									if(non_head_d_nodes_found_by_symbol.empty()==false){
-//										//4)Loop over non_head_d_nodes_found_by_symbol
-//										for(m=non_head_d_nodes_found_by_symbol.begin();m!=non_head_d_nodes_found_by_symbol.end();++m){
-//											functors=is_valid_expression(head_node,non_head_node,get_private_node_info(*l),get_private_node_info(*m));
-//										}
-//									}
-//									else{//TODO: figure out what to do here later, this is probably not enough
-//										functors=is_valid_expression(head_node,non_head_node,get_private_node_info(*l),empty_nodeinfo);
-//									}
-//								}
-//							}
-//							else{//TODO: figure out what to do here later, this is probably not enough
-//								functors=is_valid_expression(head_node,non_head_node,empty_nodeinfo,empty_nodeinfo);
-//							}
-//						}
-//					}
-//				}
-//			}
-//			else exit(EXIT_FAILURE);//TODO: throw exception
-//		}
-//	}
-//	if(functors!=NULL) valid_combination=true;
-//	delete functors;
-//	delete rule_to_rule_map_result;
-//	//END OF universal head driven approach
-//
-///*
-//	const node_info& head_node=get_node_info(get_head_node(left_node));
-//	if(head_node.symbol=="V"){
-//		const node_info& object_node=get_node_info(get_object_node(right_node));
-//		if(right_node.symbol=="NP"){
-//			if(object_node.expression.empty()==false){
-//				sqlite=is_valid_expression_of_type(object_node.expression);
-//				if(sqlite==NULL){
-//					return false;
-//				}
-//				options_field_value=sqlite->get_field_value(0,"options");
-//				command=options_field_value;
-//			}
-//			Get all entries for relation in head node
-//			sqlite=is_valid_expression_of_type(head_node.expression,"RELATIONS");
-//			if(sqlite==NULL){
-//				return false;
-//			}
-//			for(i=0;i<sqlite->result_size();++i){
-//				At least one entry must exist for the transitive verb with no preposition specified
-//				preposition_field_value=sqlite->get_field_value(i,"preposition");
-//				if(preposition_field_value.empty()==true){
-//					preposition_matched[i]=1;Mark with 1 if preposition matches
-//					valid_combination=true;
-//				}
-//				else{
-//					preposition_matched[i]=0;
-//					valid_combination=false;
-//				}
-//			}
-//			Check entries where preposition matched
-//			for(i=0;i<sqlite->result_size();++i){
-//				if(preposition_matched[i]==1){
-//					argument_field_value=sqlite->get_field_value(i,"argument");
-//					if(argument_field_value==object_node.expression){
-//						valid_combination=true;
-//						command_field_value=sqlite->get_field_value(i,"command");
-//						if(command.empty()==true)command=command_field_value;
-//						else command+=command_field_value;
-//						if(object_node.right_child!=0)set_command(command,get_node_info(object_node.right_child).expression,"");
-//						else set_command(command,"","");
-//						break;
-//					}
-//				}
-//			}
-//		}
-//		else if(right_node.symbol=="PP"){
-//			Get all entries for relation in head node
-//			sqlite=is_valid_expression_of_type(head_node.expression,"RELATIONS");
-//			if(sqlite==NULL){
-//				return false;
-//			}
-//			const node_info& PP_head_node=get_node_info(get_head_node(right_node));
-//			for(i=0;i<sqlite->result_size();++i){
-//				At least one entry must exist for the transitive verb with the preposition specified in PP_head_node
-//				preposition_field_value=sqlite->get_field_value(i,"preposition");
-//				if(preposition_field_value==PP_head_node.expression){
-//					preposition_matched[i]=1;Mark with 1 if preposition matches
-//					valid_combination=true;
-//				}
-//				else{
-//					preposition_matched[i]=0;
-//					valid_combination=false;
-//				}
-//			}
-//			Check entries where preposition matched
-//			for(i=0;i<sqlite->result_size();++i){
-//				if(preposition_matched[i]==1){
-//					if(object_node.expression.empty()==false){
-//						argument_field_value=sqlite->get_field_value(i,"argument");
-//						if(argument_field_value==object_node.expression){
-//							valid_combination=true;
-//							command_field_value=sqlite->get_field_value(i,"command");
-//							command=command_field_value;
-//							if(object_node.right_child!=0)constant=get_node_info(object_node.right_child).expression;
-//							break;
-//						}
-//					}
-//					else{
-//						if(argument.empty()==true){
-//							argument_field_value=sqlite->get_field_value(i,"argument");
-//							argument=argument_field_value;
-//							command_field_value=sqlite->get_field_value(i,"command");
-//							command=command_field_value;
-//							if(object_node.right_child!=0)constant=get_node_info(object_node.right_child).expression;
-//							valid_combination=true;
-//						}
-//						else{
-//							argument_field_value=sqlite->get_field_value(i,"argument");
-//							if(argument_field_value!=argument){
-//								valid_combination=false;
-//								break;
-//							}
-//						}
-//					}
-//				}
-//			}
-//			if(valid_combination==true)set_command(command,constant,PP_head_node.expression);
-//			else return false;
-//		}
-//		else return false;
-//	}
-//	else{Entity tree traversal considering left_node->expression specific and object_node->expression general
-//		const node_info& object_node=get_node_info(get_object_node(right_node));
-//		entity=left_node.expression;
-//		do{
-//			sqlite=is_valid_expression_of_type(entity,"ENTITIES");
-//			if(sqlite==NULL){
-//				break;
-//			}
-//			entity_field_value=sqlite->get_field_value(0,"entity");
-//			is_a_field_value=sqlite->get_field_value(0,"is_a");
-//			entity=is_a_field_value;
-//			if(object_node.expression==entity) valid_combination=true;
-//			else valid_combination=false;
-//		}while(valid_combination==false&&entity_field_value!=is_a_field_value);
-//		if(valid_combination==false){
-//			Entity tree traversal considering left_node->expression general and object_node->expression specific
-//			entity=object_node.expression;
-//			do{
-//				sqlite=is_valid_expression_of_type(entity,"ENTITIES");
-//				if(sqlite==NULL) break;
-//				entity_field_value=sqlite->get_field_value(0,"entity");
-//				is_a_field_value=sqlite->get_field_value(0,"is_a");
-//				entity=is_a_field_value;
-//				if(left_node.expression==entity) valid_combination=true;
-//				else valid_combination=false;
-//			}while(valid_combination==false&&entity_field_value!=is_a_field_value);
-//		}
-//		if(valid_combination==true){
-//			options_field_value=sqlite->get_field_value(0,"options");
-//			options=options_field_value;
-//			set_options(options);
-//		}
-//	}
-//*/
-//	return valid_combination;
-//}
 
 /*
 std::vector<std::string> interpreter::find_ev_occurence_in(const std::string& script){

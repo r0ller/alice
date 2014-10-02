@@ -116,7 +116,6 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 				new_word.gcat=field_position->second.field_value;
 			else if(field_position->second.field_name=="lexeme"){
 				new_word.lexeme=field_position->second.field_value;
-				//new_word.dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+new_word.lexeme+new_word.lid+new_word.gcat+"';");
 				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme+new_word.lid+new_word.gcat);
 				new_word.morphalytics=&morphalytics;
 				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = 'ENG';");
@@ -191,6 +190,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 
 	sqlite=db::get_instance();
 	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"';");
+//	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
 	dependencies->append(*result);
 	for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");

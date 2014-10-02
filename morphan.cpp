@@ -29,6 +29,7 @@ morphan_result *morphan::analyze(const std::string& word){
 	std::string morphemes;
 	morphan_result *analysis=NULL;
 
+//	std::cout<<"analyzing word "<<word<<std::endl;
 	c_word.assign(word.begin(),word.end());
 	c_word.push_back('\0');
 	result=apply_up(morphan::morphan_handle, &c_word[0]);

@@ -77,23 +77,17 @@ parent_symbol varchar(12),/* references SYMBOLS(symbol),*/
 head_root_symbol varchar(12),/* references SYMBOLS(symbol),*/
 non_head_root_symbol varchar(12),/* references SYMBOLS(symbol),*/
 step smallint,
-head_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
-head_d_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
-head_dependency_lookup_root varchar(1) references ROOT_TYPE(root_type), 
-non_head_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
-non_head_d_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
-non_head_dependency_lookup_root varchar(1) references ROOT_TYPE(root_type), 
+main_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
+main_lookup_root varchar(1) references ROOT_TYPE(root_type), 
+dependent_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
+dependency_lookup_root varchar(1) references ROOT_TYPE(root_type), 
 lid varchar(3) references LANGUAGES(lid),/*TODO: check it in coding when reading the table, this was added later so in the code nowhere expects such a field to exist*/
-/*Is non_head_d_node_symbol necessary? There may be syntactic rules that go hand in hand not only with semantic rules
-that are accompanied by a head dependency but a non-head dependency as well.*/
 PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(head_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(head_d_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(non_head_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(non_head_d_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(main_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(dependent_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 ); 
 
 create table LEXICON(
@@ -103,6 +97,13 @@ gcat varchar(12),
 lexeme varchar(32),
 PRIMARY KEY(word, lid, gcat)
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid) /*TODO: figure out how to refer to GCAT(gcat, lid) to make sure that only terminals are allowed here*/
+);
+
+create table FUNCTORS(
+functor_id int,
+definition_type smallint references DEFTYPE(deftype),
+definition text,
+PRIMARY KEY(functor_id)
 );
 
 create table ENTITIES(
@@ -119,10 +120,9 @@ create unique index i_entities_entity on ENTITIES(entity);
 create table ENTITY_FUNCTORS(
 functor varchar(47),
 d_key smallint,
-io_type varchar(47) references ENTITIES(entity), /*io_type is same as the functor in case of entities*/
-argument varchar(47) references LEXEMES(lexeme),
-definition text,
-PRIMARY KEY(functor, d_key)/*io_type and argument are the same as functor in case of entities, so it's enough to have the functor and d_key as primary key*/
+io_type varchar(47) references ENTITIES(entity),
+functor_id int,
+PRIMARY KEY(functor, d_key)
 FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 );
 
@@ -142,10 +142,8 @@ create table ATTRIBUTE_FUNCTORS(
 functor varchar(47),
 d_key smallint,
 io_type varchar(47) references ENTITIES(entity),
-argument varchar(47) references LEXEMES(lexeme),
-definition_type smallint references DEFTYPE(deftype),/*If option is set as definition_type, the definition contains*/
-definition text,/*a script code snippet that may take into consideration the argument and the whole snippet is set as a value of a generated environment variable. The env.var. is then taken into account in the entity functor.*/
-PRIMARY KEY(functor, d_key, io_type, argument)
+functor_id int,
+PRIMARY KEY(functor, d_key, io_type)
 FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 );
 
@@ -173,13 +171,10 @@ functor varchar(47),
 d_key smallint,
 relation_functor varchar(47),
 relation_d_key smallint,
-relation_io_type varchar(47),
-argument varchar(47) references LEXEMES(lexeme),/*e.g. the lexeme could be 'percentage' in case of "play 50% louder" where '50%' is the constant to be passed in as argument*/
-definition_type smallint references DEFTYPE(deftype),/*If option is set as definition_type, the definition contains*/
-definition text,/*a script code snippet that may take into consideration the argument and the whole snippet is set as a value of a generated environment variable. The env.var. is then taken into account in the entity functor.*/
-PRIMARY KEY(functor, d_key, relation_functor, relation_d_key, relation_io_type, argument)
+functor_id int,
+PRIMARY KEY(functor, d_key, relation_functor, relation_d_key)
 FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
-FOREIGN KEY(relation_functor, relation_d_key, relation_io_type) REFERENCES RELATION_FUNCTORS(functor, d_key, io_type)
+FOREIGN KEY(relation_functor, relation_d_key) REFERENCES RELATION_FUNCTORS(functor, d_key)
 );
 
 create table RELATIONS(/*Semantic tree for verbs e.g. 'fly' entails 'move'*/
@@ -196,18 +191,8 @@ create unique index i_relations_relation on RELATIONS(relation);
 create table RELATION_FUNCTORS(
 functor varchar(47),
 d_key smallint,
-io_type varchar(47) references ENTITIES(entity),/*entity (direct object) on which the functor operates i.e. input/output type*/ 
-/*io_type_d_key smallint, NOTE: commented as introducing io_type d_key here would mean that for each wordform of an io_type, one entry should be added in relation_functors.
-The other way i.e., if io_type=<whatever> io_type_d_key=<empty> were used for general validation and additional io_type_d_key values for specific validation, would not be
-good either as then exceptions for general validation should be stored somehow which would probably result in adding a new field for indicating 'exception'. But then the
-question of handling other exceptions emerge: e.g. if a certain relation applies to an entity with one exception then other exceptions may come up in some circumstances like
-in this fake example (the word 'runningbird' is not built from dependencies): 'birds fly' is okay, but if 'runningbirds fly' was an exception for the fake dependency 'running'
-then 'youngbirds fly' would be another exception for another (fake) dependency just for a period of time. Handling exceptions should be done in an other way. Conclusion:
-don't introduce io_type_d_key.*/
-argument varchar(47) references ENTITIES(entity),
-definition_type smallint references DEFTYPE(deftype),
-definition text,
-PRIMARY KEY(functor, d_key, io_type)
+functor_id int,
+PRIMARY KEY(functor, d_key)
 FOREIGN KEY(functor, d_key) REFERENCES LEXEMES(lexeme, d_key)
 );
 
@@ -308,10 +293,11 @@ insert into DEPOLEX values('ENTITYENGN', '1', '1', '0', NULL, NULL, '1');
 insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', '0', NULL, NULL, '1');
 insert into DEPOLEX values('FILEENGN', '1', '1', '0', NULL, NULL, '1');
 insert into DEPOLEX values('FROMENGPREP', '1', '1', '0', NULL, NULL, '1');
-insert into DEPOLEX values('INENGPREP', '1', '1', '0', NULL, NULL, '1');
+insert into DEPOLEX values('INENGPREP', '1', '1', '1', 'DIRECTORYENGN', '1', '1');
 insert into DEPOLEX values('LISTENGV', '1', '1', '1', 'FILEENGN', '1', '1');
-insert into DEPOLEX values('LISTENGV', '2', '1', '1', 'INENGPREP', '1', '2');
-insert into DEPOLEX values('LISTENGV', '2', '2', '1', 'DIRECTORYENGN', '1', '2');
+insert into DEPOLEX values('LISTENGV', '1', '2', '2', 'INENGPREP', '1', '1');
+insert into DEPOLEX values('LISTENGV', '2', '1', '1', 'DIRECTORYENGN', '1', '1');
+insert into DEPOLEX values('LISTENGV', '2', '2', '2', 'INENGPREP', '1', '1');
 insert into DEPOLEX values('MAKEENGV', '1', '1', '0', NULL, NULL, '1');
 insert into DEPOLEX values('MOVEENGV', '1', '1', '0', NULL, NULL, '1');
 insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', '0', NULL, NULL, '1');
@@ -320,9 +306,9 @@ insert into DEPOLEX values('TOENGPREP', '1', '1', '0', NULL, NULL, '1');
 insert into DEPOLEX values('SHUTENGV', '1', '1', '0', 'DOWNENGADV', '1', '1');
 insert into DEPOLEX values('DOWNENGADV', '1', '1', '0', NULL, NULL, '1');
 
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '1', 'V', 'N', 'N', 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '1', 'V', 'PREP', 'N', 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '2', 'V', 'N', 'N', 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '1', 'V', 'H', 'N', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '1', 'V', 'H', 'PREP', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', 'PREP', 'H', 'N', 'N', 'ENG');
 
 insert into LEXICON values('list', 'ENG', 'V', 'LIST');
 insert into LEXICON values('copy', 'ENG', 'V', 'COPY');
@@ -356,8 +342,8 @@ insert into RELATIONS values('MAKEENGV', '1', 'CREATEENGV', '1');
 insert into RELATIONS values('COPYENGV', '1', 'CREATEENGV', '1');
 insert into RELATIONS values('LISTENGV', '1', 'ACTENGV', '1');
 
-insert into RELATION_FUNCTORS values('LISTENGV', '1', 'FILEENGN', NULL, '0', '');
-insert into RELATION_FUNCTORS values('LISTENGV', '2', 'DIRECTORYENGN', NULL, '1', '');
+insert into RELATION_FUNCTORS values('LISTENGV', '1', NULL);
+insert into RELATION_FUNCTORS values('LISTENGV', '2', NULL);
 COMMIT;
 
 /*Old relation functor definitions for later reference:
