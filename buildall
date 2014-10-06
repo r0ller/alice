@@ -1,8 +1,0 @@
-rm hi;
-rm hil;
-rm lex.yy.c;
-rm y.tab.c;
-rm y.output;
-lex hi.l;
-yacc hi.y;
-gcc -Wall -pedantic -I/usr/pkg/include -L/usr/pkg/lib y.tab.c -o hi -lsqlite3;
