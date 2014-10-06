@@ -1,1 +1,0 @@
-g++ -ansi -pedantic -Wall -o hi hi.cpp -L. -lhilib -lsqlite3
