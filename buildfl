@@ -1,1 +1,0 @@
-g++ -I/usr/include/freetype2 -L. -O2 -pipe -D_THREAD_SAFE -D_REENTRANT -o hi hi.cxx -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -lsqlite3 -lhilib /usr/lib/libfltk.a -lXft -lpthread -lfontconfig -lXext -lX11
