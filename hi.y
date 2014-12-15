@@ -360,6 +360,13 @@ ENG_N_Pl	:	ENG_N_Pl_0Con
 				word.gcat="ENG_N_Pl";
 				$$=sparser->set_node_info(word,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
+}
+	|	ENG_N_Sg	ENG_nCon
+{
+				//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
+				//that a singular noun cannot combine with more than one constant like in 'list file abc def'
+				//TODO: Any better solution???
+				return -1;
 };
 ENG_N_Stem	: t_ENG_N_stem
 {

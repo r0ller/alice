@@ -1,5 +1,4 @@
 #include "query_result.h"
-#include <sstream>
 
 /*PUBLIC*/
 query_result::query_result(){
@@ -47,24 +46,17 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 	std::set<unsigned int> keys_found;
 	bool entry_already_exists=false;
 	std::multimap<unsigned int,field>::iterator upper_bound,erase_invalidation_iterator_copy;
-	std::ostringstream out;
 
 	if(raw_result_set.empty()==false){
 		//check to avoid inserting a value for an existing field with the same name with the same row id
 		if(field_value_at_row_position(row.first,row.second.field_name)==NULL){
 			row_buffer.insert(row);
-//			out.str(std::string());
-//			out.clear();
-//			out<<row.first;
-//			std::cout<<"inserting with rowid "<<out.str()<<":"<<row.second.field_name<<"="<<row.second.field_value<<" into row buffer"<<std::endl;
+//			std::cout<<"inserting with rowid "<<row.first<<":"<<row.second.field_name<<"="<<row.second.field_value<<" into row buffer"<<std::endl;
 		}
 	}
 	else{
 		row_buffer.insert(row);
-//		out.str(std::string());
-//		out.clear();
-//		out<<row.first;
-//		std::cout<<"inserting with rowid "<<out.str()<<":"<<row.second.field_name<<"="<<row.second.field_value<<" into row buffer"<<std::endl;
+//		std::cout<<"inserting with rowid "<<row.first<<":"<<row.second.field_name<<"="<<row.second.field_value<<" into row buffer"<<std::endl;
 	}
 	nr_of_inserted_columns=row_buffer.count(row.first);
 	if(nr_of_inserted_columns==nr_of_columns){
@@ -78,10 +70,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 				while(field_found!=NULL){
 					fields_found.insert(*field_found);
 					keys_found.insert(field_found->first);
-//					out.str(std::string());
-//					out.clear();
-//					out<<field_found->first;
-//					std::cout<<i->second.field_name<<"="<<i->second.field_value<<" found in result set in row "<<out.str()<<std::endl;
+//					std::cout<<i->second.field_name<<"="<<i->second.field_value<<" found in result set in row "<<field_found->first<<std::endl;
 					field_found=value_for_field_name_found_after_row_position(field_found->first,i->second.field_name,i->second.field_value);
 				}
 			}
@@ -93,10 +82,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 			if(fields_found.count(*i)==nr_of_columns){
 				entry_already_exists=true;
 				row_buffer.erase(row.first);
-//				out.str(std::string());
-//				out.clear();
-//				out<<*i;
-//				std::cout<<"entry already exists in result set with row id "<<out.str()<<std::endl;
+//				std::cout<<"entry already exists in result set with row id "<<*i<<std::endl;
 				break;
 			}
 		}
@@ -105,10 +91,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
  				upper_bound=row_buffer.upper_bound(row.first);
 				i!=upper_bound;++i){
 				raw_result_set.insert(*i);
-//				out.str(std::string());
-//				out.clear();
-//				out<<i->first;
-//				std::cout<<"inserting with rowid "<<out.str()<<":"<<i->second.field_name<<"="<<i->second.field_value<<" from row buffer into result set"<<std::endl;
+//				std::cout<<"inserting with rowid "<<i->first<<":"<<i->second.field_name<<"="<<i->second.field_value<<" from row buffer into result set"<<std::endl;
 			}
 			row_buffer.erase(row.first);
 		}

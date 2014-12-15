@@ -10,7 +10,6 @@
 	class lexer{
 		private:
 			std::vector<lexicon> words;
-			unsigned int nr_of_words;
 			std::string human_input;
 			std::string::iterator human_input_iterator;
 			morphan *stemmer;
@@ -25,6 +24,7 @@
 			unsigned int next_token();
 			lexicon last_word_scanned();
 			lexicon get_word_by_lexeme(const std::string);
+			unsigned int nr_of_words();
 	};
 
 	class lexer_error:public std::exception{

@@ -1,7 +1,8 @@
 #ifndef MORPHAN_H
 	#define MORPHAN_H
 
-	#include <stdbool.h>
+//	#include <stdbool.h>
+	typedef bool _Bool;
 	#include "fomalib.h"
 	#include "morphan_result.h"
 	#include <string>

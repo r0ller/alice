@@ -52,12 +52,14 @@ create table DEPOLEX(
 lexeme varchar(47),
 d_key smallint, /*smallest value: 1*/
 d_counter smallint, /*smallest value: 1*/
-d_failover smallint, /*smallest value: 1; a failover dependency is only executed if the previous d_failover fails*/
+optional_parent_allowed smallint, /*0:false, otherwise:true; note that NULL is evaulated as 0*/
+d_failover smallint, /*NULL or 0 means end of dependency chain; a failover dependency points to a d_counter (> than current d_counter) and is only executed if the current d_counter dependency check failed*/
+d_successor smallint, /*NULL or 0 means end of dependency chain; a successor dependency points to a d_counter (> than current d_counter) and is only executed if the current d_counter dependency check was successful*/
 manner smallint,/*0-absent, 1-mandatory: exactly once; 2-optional: if exists, exactly once; 3-mandatory: at least once; 4-optional: if exists, at least once; 5-mandatory: more than once; 6-optional: if exists, more than once;*/
 semantic_dependency varchar(47), /*dependencies must be stored explicitly (which means if a word has no dependencies i.e. can stand on its own,
 must be stored with full key entry with NULL semantic_dependecy value), otherwise noone can tell if a functor (word) can stand on its own or only together with other words*/
 ref_d_key smallint,/*belongs to the field semantic_dependency in this table*/
-PRIMARY KEY(lexeme, d_key, d_counter, d_failover)
+PRIMARY KEY(lexeme, d_key, d_counter)
 FOREIGN KEY(lexeme, d_key) REFERENCES FUNCTORS(functor, d_key)
 FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
 );
@@ -71,14 +73,14 @@ parent_symbol varchar(12),/* references SYMBOLS(symbol),*/
 head_root_symbol varchar(12),/* references SYMBOLS(symbol),*/
 non_head_root_symbol varchar(12),/* references SYMBOLS(symbol),*/
 step smallint, /*smallest value: 1*/
-substep smallint, /*smallest value: 1;a substep is only executed if the previous substep failed (i.e. symbols are not found)*/
-optional smallint, /*Refers to the complete step NOT the substep i.e. handled at step level. 0: false, otherwise: true */
+failover smallint, /*smallest value: 1; NULL or 0 means end of rule chain. A failover step is only executed if the current step failed (e.g. either symbols or functors are not found)*/
+successor smallint, /*smallest value: 1; NULL or 0 means end of rule chain. A successor step is only executed if the current step succeeded*/
 main_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
 main_lookup_root varchar(1) references ROOT_TYPE(root_type), 
 dependent_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
 dependency_lookup_root varchar(1) references ROOT_TYPE(root_type),
 lid varchar(3) references LANGUAGES(lid),/*TODO: check it in coding when reading the table, this was added later so in the code nowhere expects such a field to exist*/
-PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step, substep)
+PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
@@ -240,14 +242,14 @@ insert into XLINKS values('1', 'Aggregation');
 insert into XLINKS values('2', 'Composition');//Composition means 'life cycle dependency'!
 */
 
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '1', '1', '1', 'N', 'N', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '2', '1', '0', 'V', 'H', 'N', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '2', '2', NULL, 'V', 'H', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '1', NULL, '0', 'N', 'H', 'PREP', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'A', 'ENG_CNP', '1', NULL, '0', 'A', 'H', 'N', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', '1', '1', 'N', 'N', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', '1', '0', 'PREP', 'H', 'N', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', '2', NULL, 'PREP', 'H', 'CON', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '1', '2', '3', 'N', 'N', 'CON', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '2', '3', NULL, 'V', 'H', 'CON', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'V', 'ENG_NP', '3', NULL, NULL, 'V', 'H', 'N', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '1', NULL, NULL, 'V', 'H', 'PREP', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'A', 'ENG_CNP', '1', NULL, NULL, 'A', 'H', 'N', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', '2', '3', 'PREP', 'H', 'N', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', NULL, NULL, 'PREP', 'H', 'CON', 'N', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '3', NULL, NULL, 'N', 'N', 'CON', 'N', 'ENG');
 
 insert into FUNCTORS values('ALLENGQPRO', '1', NULL);
 insert into FUNCTORS values('CHANGEENGV', '1', NULL);
@@ -258,6 +260,7 @@ insert into FUNCTORS values('DELETEENGV', '1', NULL);
 insert into FUNCTORS values('DIRECTORYENGN', '1', NULL);
 insert into FUNCTORS values('EXECUTABLEENGA', '1', NULL);
 insert into FUNCTORS values('FILEENGN', '1', NULL);
+insert into FUNCTORS values('FILEENGN', '2', NULL);
 insert into FUNCTORS values('FROMENGPREP', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', NULL);
 insert into FUNCTORS values('LISTENGV', '1', NULL);
@@ -305,32 +308,31 @@ insert into RELATIONS values('LISTENGV', '1', 'ACTENGV', '1');
 */
 
 /*no value in the semantic_dependency field means no dependency*/
-insert into DEPOLEX values('ALLENGQPRO', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('CHANGEENGV', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('CON', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('COPYENGV', '1', '1', NULL, '1', 'FILEENGN', '1');
-insert into DEPOLEX values('COPYENGV', '1', '2', NULL, '1', 'FROMENGPREP', '1');
-insert into DEPOLEX values('COPYENGV', '1', '3', NULL, '1', 'TOENGPREP', '1');
-insert into DEPOLEX values('COPYENGV', '2', '1', NULL, '1', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('COPYENGV', '2', '2', NULL, '1', 'FROMENGPREP', '1');
-insert into DEPOLEX values('COPYENGV', '2', '3', NULL, '1', 'TOENGPREP', '1');
-insert into DEPOLEX values('DELETEENGV', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('DIRECTORYENGN', '1', '1', '1', '2', 'INENGPREP', '1');
-insert into DEPOLEX values('DIRECTORYENGN', '1', '1', '2', '4', 'CON', '1');
-insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', NULL, '1', 'FILEENGN', '1');
-insert into DEPOLEX values('FILEENGN', '1', '1', '1', '2', 'INENGPREP', '1');
-insert into DEPOLEX values('FILEENGN', '1', '1', '2', '4', 'CON', '1');
-insert into DEPOLEX values('FROMENGPREP', '1', '1', NULL, '1', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('INENGPREP', '1', '1', NULL, '2', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('LISTENGV', '1', '1', NULL, '2', 'FILEENGN', '1');
-insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '2', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('MAKEENGV', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('MOVEENGV', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('REMOVEENGV', '1', '1', NULL, '0', NULL, NULL);
-insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, '1', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('SHUTENGV', '1', '1', NULL, '1', 'DOWNENGADV', '1');
-insert into DEPOLEX values('DOWNENGADV', '1', '1', NULL, '0', NULL, NULL);
+insert into DEPOLEX values('ALLENGQPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('CHANGEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('COPYENGV', '1', '1', NULL, '1', NULL, '0', 'FILEENGN', '2');
+insert into DEPOLEX values('COPYENGV', '2', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
+insert into DEPOLEX values('DELETEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('DIRECTORYENGN', '1', '1', '1', NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', 'FILEENGN', '1');
+insert into DEPOLEX values('FILEENGN', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('FILEENGN', '2', '1', '1', NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('FROMENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
+insert into DEPOLEX values('INENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
+insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, '2', '0', 'FILEENGN', '1');
+insert into DEPOLEX values('LISTENGV', '1', '2', NULL, '3', NULL, '0', 'INENGPREP', '1');
+insert into DEPOLEX values('LISTENGV', '1', '3', NULL, NULL, NULL, '0', 'FROMENGPREP', '1');
+insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '2', '2', '0', 'DIRECTORYENGN', '1');
+insert into DEPOLEX values('LISTENGV', '2', '2', NULL, '3', NULL, '0', 'INENGPREP', '1');
+insert into DEPOLEX values('LISTENGV', '2', '3', NULL, NULL, NULL, '0', 'FROMENGPREP', '1');
+insert into DEPOLEX values('MAKEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('MOVEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('REMOVEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, '0', 'DIRECTORYENGN', '1');
+insert into DEPOLEX values('SHUTENGV', '1', '1', NULL, NULL, NULL, '0', 'DOWNENGADV', '1');
+insert into DEPOLEX values('DOWNENGADV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 COMMIT;
 
 /*Old relation functor definitions for later reference:

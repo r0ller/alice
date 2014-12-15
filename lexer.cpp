@@ -3,7 +3,6 @@
 
 /*PUBLIC*/
 lexer::lexer(const char *input_string){
-		nr_of_words=0;
 		human_input=std::string (input_string);
 		human_input_iterator=human_input.begin();
 		stemmer=morphan::get_instance();
@@ -40,7 +39,6 @@ unsigned int lexer::next_token(){
 				new_word.lexeme=last_word;
 				new_word.dependencies=dependencies_read_for_functor("CON");
 				words.push_back(new_word);
-				++nr_of_words;
 				return 0;
 			}
 			token_deque=store_word(*morphalytics);
@@ -58,7 +56,9 @@ unsigned int lexer::next_token(){
 
 lexicon lexer::last_word_scanned(){
 	lexicon word;
+	unsigned int nr_of_words;
 
+	nr_of_words=words.size();
 	if(human_input_iterator!=human_input.end()){
 		word.token=words[nr_of_words-1].token;
 		word.word=words[nr_of_words-1].word;
@@ -73,8 +73,9 @@ lexicon lexer::last_word_scanned(){
 
 lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 	lexicon word;
-	unsigned int i;
+	unsigned int i,nr_of_words;
 
+	nr_of_words=words.size();
 	if(lexeme.empty()==false){
 		for(i=0;i<nr_of_words;i++){
 			if(lexeme==words[i].lexeme+words[i].lid+words[i].gcat){
@@ -160,7 +161,6 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 			}
 		}
 //		std::cout<<"nr of dependencies="<<words.rbegin()->dependencies->result_rows()<<std::endl;
-		nr_of_words+=lexeme->nr_of_result_rows();
 		delete lexeme;
 		delete gcats_and_lingfeas;
 	}
@@ -174,7 +174,7 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	unsigned int n=0;
 
 	sqlite=db::get_instance();
-	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER, D_FAILOVER;");
+	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
 		ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
@@ -193,8 +193,8 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 	const std::pair<const unsigned int,field> *dependency=NULL;
 
 	sqlite=db::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"'  ORDER BY LEXEME, D_KEY, D_COUNTER, D_FAILOVER;");
-	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
+	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"'  ORDER BY LEXEME, D_KEY, D_COUNTER;");
+//	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
 	dependencies->append(*result);
 	for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");
@@ -202,8 +202,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
 			dependency=dependencies->first_value_for_field_name_found("lexeme",semantic_dependency);
 			while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key
-					&&*dependencies->field_value_at_row_position(dependency->first,"d_counter")!=*result->field_value_at_row_position(i,"d_counter")
-					&&*dependencies->field_value_at_row_position(dependency->first,"d_failover")!=*result->field_value_at_row_position(i,"d_failover")){
+					&&*dependencies->field_value_at_row_position(dependency->first,"d_counter")!=*result->field_value_at_row_position(i,"d_counter")){
 				dependency=dependencies->value_for_field_name_found_after_row_position(dependency->first,"lexeme",semantic_dependency);
 			}
 			if(dependency==NULL){
@@ -214,11 +213,14 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 	return;
 }
 
+unsigned int lexer::nr_of_words(){
+	return words.size();
+}
+
 void lexer::destroy_words(){
 
 	if(words.empty()==false){
 		words.clear();
-		nr_of_words=0;
 	}
 	return;
 }
