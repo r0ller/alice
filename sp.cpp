@@ -430,25 +430,100 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, std::ma
 	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
 	std::string d_key="0";
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
+	std::vector<p_m1_node_id_m2_d_key> node_d_key_route;
+	p_m1_node_id_m2_d_key parent_node;
 
 	const node_info& node=get_node_info(node_id);
-	node_dependency_traversal_stack.push(node_id);
 	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
 	while(depolex_entry!=NULL&&node.expression.lexeme==*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
 			&&d_key!=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
 		d_key=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
 //		std::cout<<"checking top level entry for functor "<<node.expression.lexeme<<" d_key "<<d_key<<std::endl;
+		if(node_dependency_traversal_stack.empty()==false){
+			parent_node=node_dependency_traversal_stack.top();
+			auto traversal_node=node_dependency_traversal_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
+			if(traversal_node!=node_dependency_traversal_tree.end()){
+				traversal_node->second.push_back(std::make_pair(node_id,std::atoi(d_key.c_str())));
+//				std::cout<<"push_back to vector of node_id "<<parent_node.first<<" with d_key "<<parent_node.second<<" the node_id "<<node_id<<" with d_key "<<d_key<<std::endl;
+			}
+			if(dependencies_found.empty()==false){
+				auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
+				if(traversal_node_dependencies==node_dependency_traversals.end()){
+					node_dependency_traversals.insert(std::make_pair(parent_node,dependencies_found));
+				}
+				else{
+					traversal_node_dependencies->second.clear();
+					traversal_node_dependencies->second.insert(dependencies_found.begin(),dependencies_found.end());
+				}
+			}
+			if(optional_dependencies_checked.empty()==false){
+				auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
+				if(traversal_node_odependencies==node_odependency_traversals.end()){
+					node_odependency_traversals.insert(std::make_pair(parent_node,optional_dependencies_checked));
+				}
+				else{
+					traversal_node_odependencies->second.clear();
+					traversal_node_odependencies->second.insert(optional_dependencies_checked.begin(),optional_dependencies_checked.end());
+				}
+			}
+		}
+		dependencies_found.clear();
+		optional_dependencies_checked.clear();
+		node_dependency_traversal_stack.push(std::make_pair(node_id,std::atoi(d_key.c_str())));
+//		std::cout<<"pushed to stack node_id "<<node_id<<" with d_key "<<d_key<<std::endl;
+		auto traversal_node=node_dependency_traversal_tree.find(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))));
+		if(traversal_node==node_dependency_traversal_tree.end()){
+			node_d_key_route.clear();
+			node_dependency_traversal_tree.insert(std::make_pair(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))),node_d_key_route));
+//			std::cout<<"inserting in traversal tree at level "<<node_dependency_traversal_stack.size()<<": node_id "<<node_id<<" with d_key "<<d_key<<" the node_d_key_route"<<std::endl;
+		}
+		else{
+			//TODO: figure out what should happen in this case: a previously processed node with its functor/d_key gets processed again...
+			exit(EXIT_FAILURE);
+		}
 		find_dependencies_for_functor(node.node_id,d_key,dependencies_found,optional_dependencies_checked);
-		if(node_dependency_traversal_stack.size()==1){
-			node_dependency_traversals.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),dependencies_found));
+		parent_node=node_dependency_traversal_stack.top();
+		if(dependencies_found.empty()==false){
+			auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
+			if(traversal_node_dependencies==node_dependency_traversals.end()){
+				node_dependency_traversals.insert(std::make_pair(parent_node,dependencies_found));
+			}
+			else{
+				traversal_node_dependencies->second.clear();
+				traversal_node_dependencies->second.insert(dependencies_found.begin(),dependencies_found.end());
+			}
+		}
+		dependencies_found.clear();
+		if(optional_dependencies_checked.empty()==false){
+			auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
+			if(traversal_node_odependencies==node_odependency_traversals.end()){
+				node_odependency_traversals.insert(std::make_pair(parent_node,optional_dependencies_checked));
+			}
+			else{
+				traversal_node_odependencies->second.clear();
+				traversal_node_odependencies->second.insert(optional_dependencies_checked.begin(),optional_dependencies_checked.end());
+			}
+		}
+		optional_dependencies_checked.clear();
+		node_dependency_traversal_stack.pop();
+//		std::cout<<"popped stack"<<std::endl;
+		if(node_dependency_traversal_stack.empty()==false){//restore dependencies_found and optional_dependencies_checked using node_dependency_traversal_stack.top()
+			parent_node=node_dependency_traversal_stack.top();
+			auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
+			auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
 			dependencies_found.clear();
+			if(traversal_node_dependencies!=node_dependency_traversals.end()){
+				dependencies_found.insert(traversal_node_dependencies->second.begin(),traversal_node_dependencies->second.end());
+			}
 			optional_dependencies_checked.clear();
+			if(traversal_node_odependencies!=node_odependency_traversals.end()){
+				optional_dependencies_checked.insert(traversal_node_odependencies->second.begin(),traversal_node_odependencies->second.end());
+			}
 		}
 		while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")==d_key){
 			depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.lexeme);
 		}
 	}
-	node_dependency_traversal_stack.pop();
 }
 
 const std::pair<const unsigned int,field>* interpreter::followup_dependency(const unsigned int previous_dependency_row_index,const std::string& lexeme,const std::string& d_key,const bool previous_dependency_found,const query_result& dependencies){
@@ -480,7 +555,8 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 	std::map<unsigned int,unsigned int>::const_iterator j;
 	std::map<std::pair<unsigned int,unsigned int>,unsigned int>::iterator dependencies_found_entry;
 	std::set<unsigned int> d_counter_validated_dependencies,d_key_validated_dependencies;
-	bool dependency_found_for_functor=false;
+	bool dependency_found_for_functor=false,node_being_processed=false;
+	std::stack<p_m1_node_id_m2_d_key> traversal_stack;
 
 	const node_info& node=get_node_info(node_id);
 //	std::cout<<"checking dependency for functor "<<node.expression.lexeme<<" d_key "<<d_key<<std::endl;
@@ -546,7 +622,6 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 			if(dependency_found_for_functor==true){
 				if(dependencies_found_entry!=dependencies_found.end()){
 					if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
-//						++dependencies_found_entry->second;
 						dependencies_found_entry->second+=d_counter_validated_dependencies.size();
 					}
 					else{
@@ -572,8 +647,7 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 //			std::cout<<"leaf dependency "<<semantic_dependency<<" checked for functor "<<node.expression.lexeme<<" and has no further dependency"<<std::endl;
 			dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(d_key.c_str())));
 			if(dependencies_found_entry!=dependencies_found.end()){
-				//Don't increase the number of dependencies, NULL dependency is considered as found but not counted
-				//++dependencies_found_entry->second;
+				//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
 //				dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 			}
 			else{
@@ -594,10 +668,31 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 		}
 	}
 	for(j=node.node_links.begin();j!=node.node_links.end();++j){
+		node_being_processed=false;
 		for(dependencies_found_entry=dependencies_found.begin();dependencies_found_entry!=dependencies_found.end();++dependencies_found_entry){
-			if(dependencies_found_entry->first.first==j->first) break;
+			if(dependencies_found_entry->first.first==j->first){
+				node_being_processed=true;
+				break;
+			}
 		}
-		if(dependencies_found_entry==dependencies_found.end()){
+		if(node_being_processed==false){
+			traversal_stack=node_dependency_traversal_stack;
+			while(traversal_stack.empty()==false){
+				auto stack_top_node=traversal_stack.top();
+				auto stack_top_node_dependencies=node_dependency_traversals.find(stack_top_node);
+				if(stack_top_node_dependencies!=node_dependency_traversals.end()){
+					for(auto dependency_entry=stack_top_node_dependencies->second.begin();dependency_entry!=stack_top_node_dependencies->second.end();++dependency_entry){
+						if(dependency_entry->first.first==j->first){
+							node_being_processed=true;
+							break;
+						}
+					}
+					if(node_being_processed==true) break;
+				}
+				traversal_stack.pop();
+			}
+		}
+		if(node_being_processed==false){
 			find_dependencies_for_node(j->first,dependencies_found,optional_dependencies_checked);
 		}
 	}
@@ -682,7 +777,6 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 				if(dependency_found_for_functor==true){
 					if(dependencies_found_entry!=dependencies_found.end()){
 						if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
-//							++dependencies_found_entry->second;
 							dependencies_found_entry->second+=d_counter_validated_dependencies.size();
 						}
 						else{
@@ -708,8 +802,7 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 //				std::cout<<"leaf dependency "<<semantic_dependency<<" checked for functor "<<functor<<" and has no further dependency"<<std::endl;
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependencies_found_entry!=dependencies_found.end()){
-					//Don't increase the number of dependencies, NULL dependency is considered as found but not counted
-					//++dependencies_found_entry->second;
+					//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
 //					dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 				}
 				else{
@@ -732,9 +825,10 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 //		std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<" but has no further dependency"<<std::endl;
 		dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 		if(dependencies_found_entry!=dependencies_found.end()){
-			//Don't increase the number of dependencies, NULL dependency is considered as found but not counted
+			//Don't increase the number of dependencies as earlier:
 			//++dependencies_found_entry->second.first;
 			//++dependencies_found_entry->second.second;
+			//as NULL dependency is considered as found but not counted
 		}
 		else{
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),0));
@@ -747,58 +841,25 @@ bool interpreter::is_longest_match_for_semantic_rules_found(){
 	std::map<std::pair<unsigned int,unsigned int>,unsigned int> dependencies_found;
 	std::map<std::pair<std::string,unsigned int>,unsigned int> optional_dependencies_checked;
 	std::vector<unsigned int> verbs_found;
-	std::map<unsigned int,std::pair<unsigned int,unsigned int> > node_ids_with_longest_match;
-	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match;
+	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
+	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
 	std::set<unsigned int> nodes_to_be_validated;
 	std::map<unsigned int,unsigned int> longest_traversals;
 	unsigned int nr_of_dependencies_found=0,nr_of_dependencies_to_be_found=0,d_key=0;
+	t_node_dependency_traversal *node_dependency_traversal=NULL;
+	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
+	std::pair<p_m1_node_id_m2_d_key,unsigned int> functor_found;
 
 	const node_info& root_node=get_node_info(nr_of_nodes);
 	get_nodes_by_symbol(root_node,"V",verbs_found);
 	if(verbs_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
 	const node_info& node=get_node_info(*verbs_found.begin());
 	find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
-	for(auto&& j:node_dependency_traversals){
-		for(std::map<std::pair<unsigned int,unsigned int>,unsigned int>::const_iterator i=j.second.begin();
-				i!=j.second.end();++i){
-			if(node_ids_with_longest_match.find(i->first.first)==node_ids_with_longest_match.end()
-				&&nodes_to_be_validated.find(i->first.first)==nodes_to_be_validated.end()){
-				nodes_to_be_validated.insert(i->first.first);
-			}
-//			std::cout<<"for node id "<<i->first.first<<" with functor "<<get_node_info(i->first.first).expression.lexeme<<" and d_key "<<i->first.second;
-//			std::cout<<" the nr_of_dependencies_found is: "<<i->second<<std::endl;
-			node_id_with_longest_match=node_ids_with_longest_match.find(i->first.first);
-			if(node_id_with_longest_match!=node_ids_with_longest_match.end()){
-				if(node_id_with_longest_match->second.first<i->second){
-					node_id_with_longest_match->second.first=i->second;
-					node_id_with_longest_match->second.second=i->first.second;
-				}
-				else if(node_id_with_longest_match->second.first>0&&node_id_with_longest_match->second.first==i->second) return false;
-			}
-			else{
-				node_ids_with_longest_match.insert(std::make_pair(i->first.first,std::make_pair(i->second,i->first.second)));
-				nodes_to_be_validated.erase(i->first.first);
-			}
-		}
-		if(nodes_to_be_validated.empty()==true){
-			std::cout<<"dependencies with longest match:"<<std::endl;
-			for(auto&& i:node_ids_with_longest_match){
-				std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<":"<<i.second.first<<std::endl;
-				nr_of_dependencies_found+=i.second.first;
-			}
-			longest_traversals.insert(std::make_pair(j.first.second,nr_of_dependencies_found));
-		}
-		nodes_to_be_validated.clear();
-		node_ids_with_longest_match.clear();
-		nr_of_dependencies_found=0;
-	}
-	nr_of_dependencies_found=0;
-	for(auto&& k:longest_traversals){
-		if(k.second>nr_of_dependencies_found){
-			nr_of_dependencies_found=k.second;
-			d_key=k.first;
-		}
-	}
+//	TODO: instead of this simple logic, the node_dependency_traversal_tree should be traversed to sum up the nr of deps for each path from root to leaf
+//	If that's done, the logic above (after find_dependencies_for_node()) can be deleted
+	functor_found=calculate_longest_matching_dependency_route();
+	d_key=functor_found.first.second;
+	nr_of_dependencies_found=functor_found.second;
 	nr_of_dependencies_to_be_found=lex->nr_of_words()-1;
 	std::cout<<"number of dependencies to be found:"<<nr_of_dependencies_to_be_found<<std::endl;
 	if(nr_of_dependencies_found==nr_of_dependencies_to_be_found){
@@ -809,6 +870,91 @@ bool interpreter::is_longest_match_for_semantic_rules_found(){
 		std::cout<<"no matching nr of dependencies found for functor "<<node.expression.lexeme<<" with any d_key "<<std::endl;
 		return false;
 	}
+}
+
+std::pair<p_m1_node_id_m2_d_key,unsigned int> interpreter::calculate_longest_matching_dependency_route(){
+	unsigned int node_level=1,nr_of_deps;
+	p_m1_node_id_m2_d_key functor_node;
+	std::pair<p_m1_node_id_m2_d_key,unsigned int> functor_found;
+	t_map_of_node_ids_and_d_keys_to_nr_of_deps longest_traversals;
+
+	for(auto&& i:node_dependency_traversal_tree){
+		if(i.first.first==node_level){
+			nr_of_deps=0;
+			functor_node=i.first.second;
+			nr_of_deps=calculate_longest_matching_dependency_route(node_level,functor_node);
+			longest_traversals.insert(std::make_pair(functor_node,nr_of_deps));
+		}
+	}
+	functor_found.second=0;
+	for(auto&& i:longest_traversals){
+		if(i.second>functor_found.second){
+			functor_found.first=i.first;
+			functor_found.second=i.second;
+		}
+	}
+	return functor_found;
+}
+
+unsigned int interpreter::calculate_longest_matching_dependency_route(const unsigned int node_level, const p_m1_node_id_m2_d_key& functor_node){
+	p_m1_tree_level_m2_p_m1_node_id_m2_d_key tree_level_and_functor_node;
+	std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> >::const_iterator functor_node_found;
+	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
+	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
+	std::set<unsigned int> nodes_to_be_validated;
+	t_node_dependency_traversals::const_iterator functor_node_dependencies;
+	t_node_dependency_traversal *node_dependency_traversal=NULL;
+	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
+	unsigned int nr_of_deps_found=0;
+
+	tree_level_and_functor_node.first=node_level;
+	tree_level_and_functor_node.second=functor_node;
+	functor_node_found=node_dependency_traversal_tree.find(tree_level_and_functor_node);
+	if(functor_node_found==node_dependency_traversal_tree.end()) exit(EXIT_FAILURE);//TODO: throw exception
+	functor_node_dependencies=node_dependency_traversals.find(functor_node);
+	if(functor_node_dependencies==node_dependency_traversals.end()) exit(EXIT_FAILURE);//TODO: throw exception
+	//TODO: 1) loop over functor_node_dependencies.map_of_node_ids_and_d_keys_to_nr_of_deps to get the longest matching deps and sum them up
+	node_dependency_traversal=new t_node_dependency_traversal(functor_node_dependencies);
+	for(t_map_of_node_ids_and_d_keys_to_nr_of_deps::const_iterator i=node_dependency_traversal->map_of_node_ids_and_d_keys_to_nr_of_deps.begin();
+			i!=node_dependency_traversal->map_of_node_ids_and_d_keys_to_nr_of_deps.end();++i){
+		node_id_and_d_key_with_nr_of_deps=new t_pair_of_node_id_and_d_key_with_nr_of_deps(i);
+		if(map_of_node_ids_to_total_nr_of_deps_and_d_key.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)==map_of_node_ids_to_total_nr_of_deps_and_d_key.end()
+			&&nodes_to_be_validated.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)==nodes_to_be_validated.end()){
+			nodes_to_be_validated.insert(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
+		}
+//		std::cout<<"for node id "<<i->first.first<<" with functor "<<get_node_info(i->first.first).expression.lexeme<<" and d_key "<<i->first.second;
+//		std::cout<<" the nr_of_dependencies_found is: "<<i->second<<std::endl;
+		node_id_with_longest_match_and_d_key=map_of_node_ids_to_total_nr_of_deps_and_d_key.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
+		if(node_id_with_longest_match_and_d_key!=map_of_node_ids_to_total_nr_of_deps_and_d_key.end()){
+			if(node_id_with_longest_match_and_d_key->second.first<node_id_and_d_key_with_nr_of_deps->nr_of_deps){
+				node_id_with_longest_match_and_d_key->second.first=node_id_and_d_key_with_nr_of_deps->nr_of_deps;
+				node_id_with_longest_match_and_d_key->second.second=node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.second;
+			}
+			else if(node_id_with_longest_match_and_d_key->second.first>0&&node_id_with_longest_match_and_d_key->second.first==node_id_and_d_key_with_nr_of_deps->nr_of_deps) return false;
+		}
+		else{
+			map_of_node_ids_to_total_nr_of_deps_and_d_key.insert(std::make_pair(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first,std::make_pair(node_id_and_d_key_with_nr_of_deps->nr_of_deps,node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.second)));
+			nodes_to_be_validated.erase(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
+		}
+		delete node_id_and_d_key_with_nr_of_deps;
+		node_id_and_d_key_with_nr_of_deps=NULL;
+	}
+	delete node_dependency_traversal;
+	node_dependency_traversal=NULL;
+	nr_of_deps_found=0;
+	if(nodes_to_be_validated.empty()==true){
+		std::cout<<"dependencies with longest match:"<<std::endl;
+		for(auto&& i:map_of_node_ids_to_total_nr_of_deps_and_d_key){
+			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<":"<<i.second.first<<std::endl;
+			nr_of_deps_found+=i.second.first;
+		}
+	}
+	else exit(EXIT_FAILURE);//TODO: debug what happened...
+	//2) loop over functor_node_found.second (vector of children) and call recursively for each the method itself
+	for(auto&& i:functor_node_found->second){
+		nr_of_deps_found+=calculate_longest_matching_dependency_route(node_level+1,i);
+	}
+	return nr_of_deps_found;
 }
 
 bool interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){

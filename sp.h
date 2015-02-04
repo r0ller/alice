@@ -29,6 +29,34 @@
 		std::string value;
 	}ev_name_value_pair;
 
+//Best practice for renaming first and second in pairs (for later reference):
+//	typedef map<Vertex, Edge> AdjacencyList;
+//	struct adjacency
+//	{
+//	    adjacency(AdjacencyList::iterator& it)
+//	      : vertex(it->first), edge(it->second) {}
+//	    Vertex& vertex;
+//	    Edge& edge;
+//	};
+//
+//	And then:
+//	Vertex v = adjacency(it).vertex;
+
+	typedef std::pair<unsigned int,unsigned int> p_m1_node_id_m2_d_key;
+	typedef std::pair<unsigned int,p_m1_node_id_m2_d_key> p_m1_tree_level_m2_p_m1_node_id_m2_d_key;
+	typedef std::map<p_m1_node_id_m2_d_key,unsigned int> t_map_of_node_ids_and_d_keys_to_nr_of_deps;
+	struct t_pair_of_node_id_and_d_key_with_nr_of_deps{
+		t_pair_of_node_id_and_d_key_with_nr_of_deps(t_map_of_node_ids_and_d_keys_to_nr_of_deps::const_iterator& i) : node_id_and_d_key(i->first), nr_of_deps(i->second) {};
+		const p_m1_node_id_m2_d_key& node_id_and_d_key;
+		const unsigned int& nr_of_deps;
+	};
+	typedef std::map<p_m1_node_id_m2_d_key,t_map_of_node_ids_and_d_keys_to_nr_of_deps> t_node_dependency_traversals;
+	struct t_node_dependency_traversal{
+		t_node_dependency_traversal(t_node_dependency_traversals::const_iterator& i) : node_id_and_d_key(i->first), map_of_node_ids_and_d_keys_to_nr_of_deps(i->second) {}
+		const p_m1_node_id_m2_d_key& node_id_and_d_key;
+		const t_map_of_node_ids_and_d_keys_to_nr_of_deps& map_of_node_ids_and_d_keys_to_nr_of_deps;
+	};
+
 	class interpreter{
 		private:
 			node_info& get_private_node_info(unsigned int);
@@ -42,6 +70,8 @@
 			void find_dependencies_for_functor(const unsigned int, const std::string&, std::map<std::pair<unsigned int,unsigned int>,unsigned int>&,std::map<std::pair<std::string,unsigned int>,unsigned int>&);
 			void find_dependencies_for_functor(const unsigned int, const std::string&, const std::string&, const std::string&, std::map<std::pair<unsigned int,unsigned int>,unsigned int>&, std::map<std::pair<std::string,unsigned int>,unsigned int>&);
 			const std::pair<const unsigned int,field>* followup_dependency(const unsigned int, const std::string&, const std::string&, const bool, const query_result&);
+			std::pair<p_m1_node_id_m2_d_key,unsigned int> calculate_longest_matching_dependency_route();
+			unsigned int calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&);
 			//std::vector<std::string> find_ev_occurence_in(const std::string&);
 			//void set_command(const std::string&, const std::string&, const std::string&);
 			//void set_options(const std::string&);
@@ -54,8 +84,10 @@
 			unsigned int nr_of_nodes;
 			std::string command;
 			std::string options;
-			std::stack<unsigned int> node_dependency_traversal_stack;
-			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<unsigned int,unsigned int>,unsigned int> >  node_dependency_traversals;
+			std::stack<p_m1_node_id_m2_d_key> node_dependency_traversal_stack;
+			std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> > node_dependency_traversal_tree;
+			t_node_dependency_traversals  node_dependency_traversals;
+			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<std::string,unsigned int>,unsigned int> >  node_odependency_traversals;
 		public:
 			interpreter();
 			~interpreter();
