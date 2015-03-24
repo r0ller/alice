@@ -1,6 +1,6 @@
 !!!english.lexc!!!
 
-Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat]
+Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +State[lfea] +RPRO[gcat] +Relative[lfea]
 
 LEXICON Root
 
@@ -9,6 +9,7 @@ Verb ;
 Preposition ;
 Adverb ;
 Adjective ;
+Pronoun ;
 
 LEXICON Noun
 
@@ -25,6 +26,7 @@ make   Vinf;
 move   Vinf;
 remove Vinf;
 shut   Vinf;
+begin  Vstate;
 
 LEXICON Ninf
 
@@ -35,11 +37,16 @@ LEXICON Vinf
 
 [stem]+V[gcat]:0 #;
 
+LEXICON Vstate
+
+[stem]+V[gcat]+State[lfea]:0 #;
+
 LEXICON Preposition
 
 to   Pinf;
 in   Pinf;
 from Pinf;
+with Pinf;
 
 LEXICON Pinf
 
@@ -60,3 +67,11 @@ executable Adjinf;
 LEXICON Adjinf
 
 [stem]+A[gcat]:0 #;
+
+LEXICON Pronoun
+
+that RPro;
+
+LEXICON RPro
+
+[stem]+RPRO[gcat]+Relative[lfea]:0 #;

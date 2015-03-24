@@ -14,6 +14,7 @@
 
 	typedef struct node_info{
 		unsigned int node_id;
+		unsigned int ref_node_id;//node id of referenced node;
 		std::string symbol;
 		lexicon expression;/*lexeme or constant*/
 		unsigned int left_child;
@@ -72,6 +73,7 @@
 			const std::pair<const unsigned int,field>* followup_dependency(const unsigned int, const std::string&, const std::string&, const bool, const query_result&);
 			std::pair<p_m1_node_id_m2_d_key,unsigned int> calculate_longest_matching_dependency_route();
 			unsigned int calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&);
+			unsigned int nr_of_dependencies_to_be_found();
 			//std::vector<std::string> find_ev_occurence_in(const std::string&);
 			//void set_command(const std::string&, const std::string&, const std::string&);
 			//void set_options(const std::string&);

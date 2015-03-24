@@ -24,6 +24,7 @@ int interpreter::set_node_info(const lexicon& word, const node_info& node){
 	lexicon constant_word;
 
 	nodeinfo.node_id=++nr_of_nodes;
+	nodeinfo.ref_node_id=0;
 	if(word.gcat.empty()==true) exit(EXIT_FAILURE);//TODO: throw exception
 	nodeinfo.symbol=word.gcat;
 	if(word.lexeme.empty()==true){
@@ -414,9 +415,10 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	//root_node: root node of the subtree in which the node should be found by the symbol
 	//symbol: symbol of the node by which the node should be found
 	//nodes_found: node ids of the nodes found
+	//std::cout<<"symbol: "<<symbol<<std::endl;
 	if(symbol.empty()==false){
 		if(root_node.symbol==symbol){
-//			std::cout<<"node_found_by_symbol '"<<symbol<<"':"<<root_node.node_id<<std::endl;
+			//std::cout<<"node_found_by_symbol '"<<symbol<<"':"<<root_node.node_id<<std::endl;
 			nodes_found.push_back(root_node.node_id);
 		}
 		if(root_node.left_child!=0)get_nodes_by_symbol(get_node_info(root_node.left_child),symbol,nodes_found);
@@ -648,11 +650,11 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 			dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(d_key.c_str())));
 			if(dependencies_found_entry!=dependencies_found.end()){
 				//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
-//				dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
+				//dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 			}
 			else{
 				dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),0));
-//				dependency_found_for_functor=false;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
+				//dependency_found_for_functor=false;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 			}
 			dependency_found_for_functor=true;
 		}
@@ -803,11 +805,11 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependencies_found_entry!=dependencies_found.end()){
 					//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
-//					dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
+					//dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 				}
 				else{
 					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),0));
-//					dependency_found_for_functor=false;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
+					//dependency_found_for_functor=false;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 				}
 				dependency_found_for_functor=true;
 			}
@@ -836,33 +838,55 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 	}
 }
 
+unsigned int interpreter::nr_of_dependencies_to_be_found(){
+	unsigned int nr_of_non_ref_leafs=0;
+	db *sqlite=NULL;
+	query_result *gcats=NULL;
+
+	sqlite=db::get_instance();
+	gcats=sqlite->exec_sql("SELECT DISTINCT GCAT FROM GCAT;");
+	if(gcats==NULL){
+		//TODO: throw exception
+		exit(EXIT_FAILURE);
+	}
+	for(auto&& i:node_infos){
+		if(i.expression.lexeme.empty()==false&&i.ref_node_id==0&&gcats->first_value_for_field_name_found("gcat",i.expression.gcat)!=NULL){
+			++nr_of_non_ref_leafs;
+//			std::cout<<"Dependency to be found:"<<i.expression.lexeme<<std::endl;
+		}
+	}
+	return nr_of_non_ref_leafs;
+}
+
 bool interpreter::is_longest_match_for_semantic_rules_found(){
 	//uint1:node id, uint2:d_key, uint3:nr_of_dependencies_found, uint4:nr_of_dependencies
 	std::map<std::pair<unsigned int,unsigned int>,unsigned int> dependencies_found;
 	std::map<std::pair<std::string,unsigned int>,unsigned int> optional_dependencies_checked;
-	std::vector<unsigned int> verbs_found;
+	std::vector<unsigned int> vbar_found,verbs_found;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
 	std::set<unsigned int> nodes_to_be_validated;
 	std::map<unsigned int,unsigned int> longest_traversals;
-	unsigned int nr_of_dependencies_found=0,nr_of_dependencies_to_be_found=0,d_key=0;
+	unsigned int nr_of_dependencies_found=0,total_nr_of_dependencies=0,d_key=0;
 	t_node_dependency_traversal *node_dependency_traversal=NULL;
 	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
 	std::pair<p_m1_node_id_m2_d_key,unsigned int> functor_found;
 
 	const node_info& root_node=get_node_info(nr_of_nodes);
-	get_nodes_by_symbol(root_node,"V",verbs_found);
+	get_nodes_by_symbol(root_node,"ENG_VBAR1",vbar_found);//TODO: create a db customizing table where the symbols for looking up predicates can be listed
+	if(vbar_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
+	const node_info& vbar_node=get_node_info(*vbar_found.begin());
+	get_nodes_by_symbol(vbar_node,"V",verbs_found);
 	if(verbs_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
 	const node_info& node=get_node_info(*verbs_found.begin());
 	find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
-//	TODO: instead of this simple logic, the node_dependency_traversal_tree should be traversed to sum up the nr of deps for each path from root to leaf
-//	If that's done, the logic above (after find_dependencies_for_node()) can be deleted
 	functor_found=calculate_longest_matching_dependency_route();
 	d_key=functor_found.first.second;
 	nr_of_dependencies_found=functor_found.second;
-	nr_of_dependencies_to_be_found=lex->nr_of_words()-1;
-	std::cout<<"number of dependencies to be found:"<<nr_of_dependencies_to_be_found<<std::endl;
-	if(nr_of_dependencies_found==nr_of_dependencies_to_be_found){
+	total_nr_of_dependencies=nr_of_dependencies_to_be_found()-1;
+//	nr_of_dependencies_to_be_found=lex->nr_of_words()-1;
+	std::cout<<"Total number of dependencies:"<<total_nr_of_dependencies<<std::endl;
+	if(nr_of_dependencies_found==total_nr_of_dependencies){
 		std::cout<<"matching nr of dependencies found for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<":"<<nr_of_dependencies_found<<std::endl;
 		return true;
 	}
@@ -968,6 +992,7 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 	const std::pair<const unsigned int,field> *rule_entry=NULL;
 	unsigned int current_step=0,successor=0,failover=0;
 	std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
+	node_info *main_node=NULL,*dependent_node=NULL;
 
 	sqlite=db::get_instance();
 	rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"' ORDER BY STEP;");
@@ -1011,46 +1036,81 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 				//1)Loop over main_nodes_found_by_symbol
 				for(j=main_nodes_found_by_symbol.begin();j!=main_nodes_found_by_symbol.end();++j){
 //					std::cout<<"loop pass on main_nodes_found_by_symbol:"<<*j<<std::endl;
-					node_info& main_node=get_private_node_info(*j);
+					main_node=&get_private_node_info(*j);
+					if(main_node->ref_node_id!=0){
+						main_node=&get_private_node_info(main_node->ref_node_id);
+					}
 					//2)Loop over dependent_nodes_found_by_symbol where dependent_node is NOT in current_main_node.node_links
 					for(k=dependent_nodes_found_by_symbol.begin();k!=dependent_nodes_found_by_symbol.end();++k){
 //						std::cout<<"loop pass on dependent_nodes_found_by_symbol:"<<*k<<std::endl;
-						node_info& dependent_node=get_private_node_info(*k);
-						for(l=main_node.dependency_validation_matrix.begin();l!=main_node.dependency_validation_matrix.end();++l){
-							if(l->second==dependent_node.node_id) break;
+						dependent_node=&get_private_node_info(*k);
+						if(dependent_node->ref_node_id!=0){
+							dependent_node=&get_private_node_info(dependent_node->ref_node_id);
 						}
-						if(l==main_node.dependency_validation_matrix.end()){
-							functors_found=is_valid_expression(main_node,dependent_node);
-							if(functors_found!=NULL){
+						for(l=main_node->dependency_validation_matrix.begin();l!=main_node->dependency_validation_matrix.end();++l){
+							if(l->second==dependent_node->node_id) break;
+						}
+						if(l==main_node->dependency_validation_matrix.end()){
+							if(dependent_node->expression.morphalytics!=NULL
+								&&dependent_node->expression.morphalytics->has_feature("Relative")==true&&dependent_node->ref_node_id==0){
+								dependent_node->ref_node_id=main_node->node_id;
 								valid_combination=true;
-								for(auto&& m:*functors_found){
-									functors_validated_for_nodes.insert(std::make_pair(main_node.node_id,std::make_pair(m.second.first,dependent_node.node_id)));
-								}
-								delete functors_found;
 							}
 							else{
-								if(failover==0||failover<current_step) valid_combination=false;
+								functors_found=is_valid_expression(*main_node,*dependent_node);
+								if(functors_found!=NULL){
+									valid_combination=true;
+									for(auto&& m:*functors_found){
+										functors_validated_for_nodes.insert(std::make_pair(main_node->node_id,std::make_pair(m.second.first,dependent_node->node_id)));
+									}
+									delete functors_found;
+								}
+								else{
+									if(failover==0||failover<current_step) valid_combination=false;
+								}
 							}
 						}
 					}
 				}
 			}
-//				else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
-//						&&main_nodes_found_by_symbol.empty()==false
-//						&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==true
-//						&&dependent_nodes_found_by_symbol.empty()==true
-//						||rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==true
-//						&&main_nodes_found_by_symbol.empty()==true
-//						&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
-//						&&dependent_nodes_found_by_symbol.empty()==false){
-//					//This experimental branch allows checking for symbols only in a subtree but not sure
-//					//if it just lets customizing to become complicated
-//					//???
-//				}
+			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
+					&&main_nodes_found_by_symbol.empty()==false
+					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==true
+					&&dependent_nodes_found_by_symbol.empty()==true
+					||rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==true
+					&&main_nodes_found_by_symbol.empty()==true
+					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
+					&&dependent_nodes_found_by_symbol.empty()==false){//This branch allows checking just for symbol existence in a subtree
+					if(successor==0||successor<=current_step){
+						valid_combination=false;
+						break;
+ 					}
+					else{
+						valid_combination=true;
+					}
+			}
+			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
+					&&main_nodes_found_by_symbol.empty()==true
+					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==true
+					&&dependent_nodes_found_by_symbol.empty()==true
+					||rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==true
+					&&main_nodes_found_by_symbol.empty()==true
+					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
+					&&dependent_nodes_found_by_symbol.empty()==true){//This branch allows checking just for symbol absence in a subtree
+					if(failover==0||failover<=current_step){
+						valid_combination=false;
+						break;
+					}
+					else{
+						valid_combination=false;
+					}
+			}
 			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
 				&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
 				&&(main_nodes_found_by_symbol.empty()==true||dependent_nodes_found_by_symbol.empty()==true)){
-				if(failover==0||failover<current_step) valid_combination=false;
+				if(failover==0||failover<current_step){
+					valid_combination=false;
+				}
 			}
 			else{
 				exit(EXIT_FAILURE);//TODO: throw exception
@@ -1081,11 +1141,11 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 	}
 	if(valid_combination==true){
 		for(auto&& i:functors_validated_for_nodes){
-			node_info& main_node=get_private_node_info(i.first);
-			node_info& dependent_node=get_private_node_info(i.second.second);
-			main_node.dependency_validation_matrix.insert(i.second);
-			if(dependent_node.node_links.find(main_node.node_id)==dependent_node.node_links.end()){
-				dependent_node.node_links.insert(std::make_pair(main_node.node_id,0));//TODO:get rid of second member in node_links
+			main_node=&get_private_node_info(i.first);
+			dependent_node=&get_private_node_info(i.second.second);
+			main_node->dependency_validation_matrix.insert(i.second);
+			if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
+				dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
 			}
 		}
 	}

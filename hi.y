@@ -41,6 +41,9 @@
 %token	t_ENG_Prep 8
 %token	t_ENG_QPro 9
 %token	t_ENG_V_stem 10
+%token	t_ENG_V_lfea_state 11
+%token	t_ENG_RPro_stem 12
+%token	t_ENG_RPro_lfea_relative 13
 %%
 S	:	ENG_VP
 {
@@ -100,6 +103,25 @@ ENG_VP	:	ENG_Vbar1
 					return -1;
 				}
 				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
+}
+	|	ENG_Vbar1 ENG_RC
+{
+				const node_info& ENG_Vbar1=sparser->get_node_info($1);
+				const node_info& ENG_RC=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
+				std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
+};
+ENG_IVP	:	ENG_V ENG_PP
+{
+				const node_info& ENG_V=sparser->get_node_info($1);
+				const node_info& ENG_PP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
+				if($$<0){
+					//object_node=sparser->get_object_node(NP);
+					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
+					return -1;
+				}
+				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
 };
 ENG_Vbar3	:	ENG_V ENG_AdvP
 {
@@ -221,12 +243,38 @@ ENG_AdvP : ENG_Adv
 				$$=sparser->set_node_info(word,ENG_Adv);
 				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
 };
-ENG_V	:	t_ENG_V_stem
+ENG_V	:	ENG_V_stem
+{
+				lexicon word;
+
+				const node_info& ENG_V_Stem=sparser->get_node_info($1);
+				word.gcat="ENG_V";
+				$$=sparser->set_node_info(word,ENG_V_Stem);
+				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
+}
+	|	ENG_V_stem ENG_V_lfea_state
+{
+				const node_info& ENG_V_stem=sparser->get_node_info($1);
+				const node_info& ENG_V_lfea_state=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_state);
+				std::cout<<"ENG_V->ENG_V_stem ENG_V_state"<<std::endl;
+};
+ENG_V_stem	: t_ENG_V_stem
 {
 				lexicon word;
 				const node_info empty_node_info={};
 
 				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_V_lfea_state	: t_ENG_V_lfea_state
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();
+				word.gcat="State";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -443,6 +491,55 @@ ENG_Adv	:	t_ENG_Adv
 				word=lex->last_word_scanned();
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_RPro:		ENG_RPro_stem ENG_RPro_lfea_relative
+{
+				const node_info& ENG_RPro_stem=sparser->get_node_info($1);
+				const node_info& ENG_RPro_lfea_relative=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_RPRO",ENG_RPro_stem,ENG_RPro_lfea_relative);
+				std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
+};
+ENG_RPro_stem : t_ENG_RPro_stem
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_RPro_lfea_relative	: t_ENG_RPro_lfea_relative
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();
+				word.gcat="Relative";
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_T	:		//empty for the time being
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word.gcat="T";
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<"ENG_T->null"<<std::endl;
+};
+ENG_TP	:	ENG_T ENG_IVP
+{
+				const node_info& ENG_T=sparser->get_node_info($1);
+				const node_info& ENG_IVP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_TP",ENG_T,ENG_IVP);
+				std::cout<<"ENG_TP->ENG_T ENG_IVP"<<std::endl;
+};
+ENG_RC:		ENG_RPro ENG_TP
+{
+				const node_info& ENG_RPro=sparser->get_node_info($1);
+				const node_info& ENG_TP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_TP);
+				std::cout<<"ENG_RC->ENG_RPro ENG_TP"<<std::endl;
 };
 /*Exclude Det for now so now "Shut down THE comupter" won't work
 ENG_Det :	t_ENG_Det

@@ -10,12 +10,14 @@
 			std::string word_gcat;
 			std::vector<std::string> word_morphemes;
 			std::string word_form;
+			std::set<std::string> features;
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&);
 			~morphan_result();
 			const std::string& stem() const;
 			const std::string& gcat() const;
 			const std::vector<std::string>& morphemes() const;
+			bool has_feature(const std::string) const;
 			//prefix();
 			//suffix();
 			//infix();

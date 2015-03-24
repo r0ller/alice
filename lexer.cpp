@@ -128,7 +128,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 					if(tag_position!=std::string::npos){
 						lingfea=morphemes[i].substr(0,tag_position);
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
-						if(field->second.field_value.empty()==true){
+						if(field==NULL||field->second.field_value.empty()==true){
 							//TODO: throw exception
 							exit(EXIT_FAILURE);
 						}
