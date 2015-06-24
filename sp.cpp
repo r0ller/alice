@@ -24,7 +24,6 @@ int interpreter::set_node_info(const lexicon& word, const node_info& node){
 	lexicon constant_word;
 
 	nodeinfo.node_id=++nr_of_nodes;
-	nodeinfo.ref_node_id=0;
 	if(word.gcat.empty()==true) exit(EXIT_FAILURE);//TODO: throw exception
 	nodeinfo.symbol=word.gcat;
 	if(word.lexeme.empty()==true){
@@ -159,22 +158,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	return nodeinfo.node_id;
 }
 
-//unsigned int interpreter::get_head_node(const node_info& node){
-//	unsigned int head_node_id=0;
-//
-//	if(node.expression.lexeme.empty()==false){
-//		std::cout<<"head_node:"<<node.node_id<<std::endl;
-//		return node.node_id;
-//	}
-//	if(node.left_child!=0)head_node_id=get_head_node(get_node_info(node.left_child));
-//	/* Stop if head_node is already found on the left since English is a 'head first' language
-//	 * with a left-to-right word order!*/
-//	if(node.right_child!=0&&head_node_id==0)head_node_id=get_head_node(get_node_info(node.right_child));
-//	return head_node_id;
-//}
-
-
-//std::string interpreter::get_command(){
+//??? interpreter::translate(??? formula){
 //	std::string command,environment_variable;
 //	std::vector<std::string> environment_variables;
 //
@@ -329,7 +313,6 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 				else{
 					exit(EXIT_FAILURE);//TODO:Throw exception
 				}
-//				dependent_node.node_links.insert(std::make_pair(main_node.node_id,0));//TODO:get rid of second member in node_links
 			}
 		}
 	}
@@ -411,26 +394,27 @@ bool interpreter::find_functors_for_dependency(const std::string& dependency, co
 	return true;
 }
 
-void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::string symbol, std::vector<unsigned int>& nodes_found){
+void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::string symbol, const std::string lexeme, std::vector<unsigned int>& nodes_found){
 	//root_node: root node of the subtree in which the node should be found by the symbol
 	//symbol: symbol of the node by which the node should be found
 	//nodes_found: node ids of the nodes found
 	//std::cout<<"symbol: "<<symbol<<std::endl;
 	if(symbol.empty()==false){
-		if(root_node.symbol==symbol){
+		if(root_node.symbol==symbol&&lexeme.empty()==true||root_node.symbol==symbol&&lexeme.empty()==false&&root_node.expression.lexeme==lexeme){
 			//std::cout<<"node_found_by_symbol '"<<symbol<<"':"<<root_node.node_id<<std::endl;
 			nodes_found.push_back(root_node.node_id);
 		}
-		if(root_node.left_child!=0)get_nodes_by_symbol(get_node_info(root_node.left_child),symbol,nodes_found);
-		if(root_node.right_child!=0)get_nodes_by_symbol(get_node_info(root_node.right_child),symbol,nodes_found);
+		if(root_node.left_child!=0)get_nodes_by_symbol(get_node_info(root_node.left_child),symbol,lexeme,nodes_found);
+		if(root_node.right_child!=0)get_nodes_by_symbol(get_node_info(root_node.right_child),symbol,lexeme,nodes_found);
 	}
 	else exit(EXIT_FAILURE);//TODO: throw exception, symbol cannot be empty
 }
 
-void interpreter::find_dependencies_for_node(const unsigned int node_id, std::map<std::pair<unsigned int,unsigned int>,unsigned int>& dependencies_found,
-		std::map<std::pair<std::string,unsigned int>,unsigned int>& optional_dependencies_checked){
+void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
+		std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >& optional_dependencies_checked){
 	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
 	std::string d_key="0";
+	unsigned int d_counter=0;
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::vector<p_m1_node_id_m2_d_key> node_d_key_route;
 	p_m1_node_id_m2_d_key parent_node;
@@ -440,11 +424,12 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, std::ma
 	while(depolex_entry!=NULL&&node.expression.lexeme==*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
 			&&d_key!=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
 		d_key=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+		d_counter=std::atoi(node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")->c_str());
 //		std::cout<<"checking top level entry for functor "<<node.expression.lexeme<<" d_key "<<d_key<<std::endl;
 		if(node_dependency_traversal_stack.empty()==false){
 			parent_node=node_dependency_traversal_stack.top();
-			auto traversal_node=node_dependency_traversal_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
-			if(traversal_node!=node_dependency_traversal_tree.end()){
+			auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
+			if(traversal_node!=node_dependency_traversal_stack_tree.end()){
 				traversal_node->second.push_back(std::make_pair(node_id,std::atoi(d_key.c_str())));
 //				std::cout<<"push_back to vector of node_id "<<parent_node.first<<" with d_key "<<parent_node.second<<" the node_id "<<node_id<<" with d_key "<<d_key<<std::endl;
 			}
@@ -473,17 +458,17 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, std::ma
 		optional_dependencies_checked.clear();
 		node_dependency_traversal_stack.push(std::make_pair(node_id,std::atoi(d_key.c_str())));
 //		std::cout<<"pushed to stack node_id "<<node_id<<" with d_key "<<d_key<<std::endl;
-		auto traversal_node=node_dependency_traversal_tree.find(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))));
-		if(traversal_node==node_dependency_traversal_tree.end()){
+		auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))));
+		if(traversal_node==node_dependency_traversal_stack_tree.end()){
 			node_d_key_route.clear();
-			node_dependency_traversal_tree.insert(std::make_pair(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))),node_d_key_route));
+			node_dependency_traversal_stack_tree.insert(std::make_pair(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))),node_d_key_route));
 //			std::cout<<"inserting in traversal tree at level "<<node_dependency_traversal_stack.size()<<": node_id "<<node_id<<" with d_key "<<d_key<<" the node_d_key_route"<<std::endl;
 		}
 		else{
 			//TODO: figure out what should happen in this case: a previously processed node with its functor/d_key gets processed again...
 			exit(EXIT_FAILURE);
 		}
-		find_dependencies_for_functor(node.node_id,d_key,dependencies_found,optional_dependencies_checked);
+		find_dependencies_for_functor(std::to_string(node.node_id),d_key,d_counter,node.node_id,d_key,dependencies_found,optional_dependencies_checked);
 		parent_node=node_dependency_traversal_stack.top();
 		if(dependencies_found.empty()==false){
 			auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
@@ -548,14 +533,15 @@ const std::pair<const unsigned int,field>* interpreter::followup_dependency(cons
 	return depolex_entry;
 }
 
-void interpreter::find_dependencies_for_functor(const unsigned int node_id, const std::string& d_key,
-		std::map<std::pair<unsigned int,unsigned int>,unsigned int>& dependencies_found,
-		std::map<std::pair<std::string,unsigned int>,unsigned int>& optional_dependencies_checked){
+void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key, const unsigned int parent_d_counter,
+		const unsigned int node_id, const std::string& d_key,
+		t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
+		std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >& optional_dependencies_checked){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string semantic_dependency,ref_d_key,d_counter="0",manner,d_failover,d_successor;
 	std::multimap<unsigned int,unsigned int>::const_iterator dependency_matrix_entry;
 	std::map<unsigned int,unsigned int>::const_iterator j;
-	std::map<std::pair<unsigned int,unsigned int>,unsigned int>::iterator dependencies_found_entry;
+	t_map_of_node_ids_and_d_keys_to_nr_of_deps::iterator dependencies_found_entry;
 	std::set<unsigned int> d_counter_validated_dependencies,d_key_validated_dependencies;
 	bool dependency_found_for_functor=false,node_being_processed=false;
 	std::stack<p_m1_node_id_m2_d_key> traversal_stack;
@@ -584,11 +570,11 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 		d_failover=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 		d_successor=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_successor");
 //		std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<node.expression.lexeme<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
-		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner=="0"||manner=="1"||manner=="2")){
+		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
 //			std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
 			d_counter_validated_dependencies.clear();
 			//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
-			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),0));
+			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
 			for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 					dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 					++dependency_matrix_entry){
@@ -598,21 +584,21 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 				if(d_key_validated_dependencies.find(dependency_matrix_entry->second)==d_key_validated_dependencies.end()){
 					d_counter_validated_dependencies.insert(dependency_matrix_entry->second);
 					d_key_validated_dependencies.insert(dependency_matrix_entry->second);
-					find_dependencies_for_functor(get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked);
+					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked);
 				}
 			}
-			if(manner=="0"&&d_counter_validated_dependencies.size()==1
+			if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
 					||manner=="1"&&d_counter_validated_dependencies.size()>=1
 					||manner=="2"&&d_counter_validated_dependencies.size()>1){
 //				std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<node.expression.lexeme<<std::endl;
 				dependency_found_for_functor=true;
 			}
-			else if(manner=="0"&&d_counter_validated_dependencies.size()!=1
+			else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()!=1
 					||manner=="1"&&d_counter_validated_dependencies.size()<1
 					||manner=="2"&&d_counter_validated_dependencies.size()<=1){
 //				std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<std::endl;
 				if(std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str())){
-					find_dependencies_for_functor(node_id,d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked);
+					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),node_id,d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked);
 				}
 				dependency_found_for_functor=false;
 			}
@@ -623,23 +609,36 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 			dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(d_key.c_str())));
 			if(dependency_found_for_functor==true){
 				if(dependencies_found_entry!=dependencies_found.end()){
+					std::get<2>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
+//					dependencies_found_entry->second.second+=d_counter_validated_dependencies.size();
 					if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
-						dependencies_found_entry->second+=d_counter_validated_dependencies.size();
+						std::get<1>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
+//						dependencies_found_entry->second.first+=d_counter_validated_dependencies.size();
 					}
 					else{
 						//Don't increase counter for found dependencies: this indicates a deliberate error on the success branch
 					}
 				}
 				else{
-					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),1));
+					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,d_counter_validated_dependencies.size(),d_counter_validated_dependencies.size(),std::atoi(parent_d_key.c_str()),parent_d_counter)));
 				}
 			}
 			else{
+				if(d_failover.empty()==true||d_failover=="0"||std::atoi(d_failover.c_str())<std::atoi(d_counter.c_str())){
+					if(manner.empty()==true||manner=="0"||manner=="1"){
+						std::get<2>(dependencies_found_entry->second)+=1;
+//						dependencies_found_entry->second.second+=1;
+					}
+					else if(manner=="2"){
+						std::get<2>(dependencies_found_entry->second)+=2;
+//						dependencies_found_entry->second.second+=2;
+					}
+				}
 				if(dependencies_found_entry!=dependencies_found.end()){
 					//No manner condition was fulfilled, nothing to add
 				}
 				else{
-					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),0));
+					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
 				}
 			}
 		}
@@ -653,7 +652,7 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 				//dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 			}
 			else{
-				dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),0));
+				dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
 				//dependency_found_for_functor=false;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 			}
 			dependency_found_for_functor=true;
@@ -700,14 +699,15 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 	}
 }
 
-void interpreter::find_dependencies_for_functor(const unsigned int node_id, const std::string& node_d_key, const std::string& functor, const std::string& d_key,
-		std::map<std::pair<unsigned int,unsigned int>,unsigned int>& dependencies_found,
-		std::map<std::pair<std::string,unsigned int>,unsigned int>& optional_dependencies_checked){
+void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key,const unsigned int parent_d_counter,
+		const unsigned int node_id, const std::string& node_d_key, const std::string& functor, const std::string& d_key,
+		t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
+		std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >& optional_dependencies_checked){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string semantic_dependency,ref_d_key,d_counter="0",manner,d_failover,d_successor;
 	std::multimap<unsigned int,unsigned int>::const_iterator dependency_matrix_entry;
 	std::map<unsigned int,unsigned int>::const_iterator j;
-	std::map<std::pair<unsigned int,unsigned int>,unsigned int>::iterator dependencies_found_entry;
+	t_map_of_node_ids_and_d_keys_to_nr_of_deps::iterator dependencies_found_entry;
 	std::set<unsigned int> d_counter_validated_dependencies,d_key_validated_dependencies,checked_d_counters;
 	bool dependency_found_for_functor=false;
 	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0;
@@ -738,11 +738,11 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 			d_failover=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 			d_successor=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_successor");
 //			std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<functor<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
-			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner=="0"||manner=="1"||manner=="2")){
+			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
 //				std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
 				d_counter_validated_dependencies.clear();
 				//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
-				optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),0));
+				optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,std::atoi(parent_d_key.c_str()),parent_d_counter)));
 				for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 						dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 						++dependency_matrix_entry){
@@ -752,22 +752,22 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 					if(d_key_validated_dependencies.find(dependency_matrix_entry->second)==d_key_validated_dependencies.end()){
 						d_counter_validated_dependencies.insert(dependency_matrix_entry->second);
 						d_key_validated_dependencies.insert(dependency_matrix_entry->second);
-						find_dependencies_for_functor(get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked);
+						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked);
 					}
 				}
-				if(manner=="0"&&d_counter_validated_dependencies.size()==1
+				if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
 						||manner=="1"&&d_counter_validated_dependencies.size()>=1
 						||manner=="2"&&d_counter_validated_dependencies.size()>1){
 //					std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<std::endl;
 					dependency_found_for_functor=true;
 				}
-				else if(manner=="0"&&d_counter_validated_dependencies.size()!=1
+				else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()!=1
 						||manner=="1"&&d_counter_validated_dependencies.size()<1
 						||manner=="2"&&d_counter_validated_dependencies.size()<=1){
 //					std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<functor<<" with d_key "<<d_key<<std::endl;
 					if((std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str()))
 						&&optional_dependencies_checked.find(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())))==optional_dependencies_checked.end()){
-						find_dependencies_for_functor(node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked);
+						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked);
 					}
 					dependency_found_for_functor=false;
 				}
@@ -778,23 +778,26 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependency_found_for_functor==true){
 					if(dependencies_found_entry!=dependencies_found.end()){
+						std::get<2>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
+//						dependencies_found_entry->second.second+=d_counter_validated_dependencies.size();
 						if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
-							dependencies_found_entry->second+=d_counter_validated_dependencies.size();
+							std::get<1>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
+//							dependencies_found_entry->second.first+=d_counter_validated_dependencies.size();
 						}
 						else{
 							//Don't increase counter for found dependencies: this indicates a deliberate error on the success branch
 						}
 					}
 					else{
-						dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),1));
+						dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(parent_node_id,d_counter_validated_dependencies.size(),d_counter_validated_dependencies.size(),std::atoi(parent_d_key.c_str()),parent_d_counter)));
 					}
 				}
-				else{
+				else{//Don't increase dependencies_found_entry.second.second i.e. the counter for expected dependecies to be found as nothing is expected to be found for an optional dependency
 					if(dependencies_found_entry!=dependencies_found.end()){
 						//No manner condition was fulfilled, nothing to add
 					}
 					else{
-						dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),0));
+						dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(std::string(),0,0,0,0)));
 					}
 				}
 			}
@@ -808,7 +811,7 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 					//dependency_found_for_functor=true;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 				}
 				else{
-					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),0));
+					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(std::string(),0,0,0,0)));
 					//dependency_found_for_functor=false;//TODO: consider if setting this flag is ok here or should it be set to true anyway for leaves?
 				}
 				dependency_found_for_functor=true;
@@ -833,7 +836,7 @@ void interpreter::find_dependencies_for_functor(const unsigned int node_id, cons
 			//as NULL dependency is considered as found but not counted
 		}
 		else{
-			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),0));
+			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(std::string(),0,0,0,0)));
 		}
 	}
 }
@@ -850,7 +853,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 		exit(EXIT_FAILURE);
 	}
 	for(auto&& i:node_infos){
-		if(i.expression.lexeme.empty()==false&&i.ref_node_id==0&&gcats->first_value_for_field_name_found("gcat",i.expression.gcat)!=NULL){
+		if(i.expression.lexeme.empty()==false&&i.ref_node_ids.empty()==true&&gcats->first_value_for_field_name_found("gcat",i.expression.gcat)!=NULL){
 			++nr_of_non_ref_leafs;
 //			std::cout<<"Dependency to be found:"<<i.expression.lexeme<<std::endl;
 		}
@@ -858,86 +861,93 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 	return nr_of_non_ref_leafs;
 }
 
-bool interpreter::is_longest_match_for_semantic_rules_found(){
-	//uint1:node id, uint2:d_key, uint3:nr_of_dependencies_found, uint4:nr_of_dependencies
-	std::map<std::pair<unsigned int,unsigned int>,unsigned int> dependencies_found;
-	std::map<std::pair<std::string,unsigned int>,unsigned int> optional_dependencies_checked;
+transgraph* interpreter::longest_match_for_semantic_rules_found(){
+	t_map_of_node_ids_and_d_keys_to_nr_of_deps dependencies_found;
+	std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> > optional_dependencies_checked;
 	std::vector<unsigned int> vbar_found,verbs_found;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
 	std::set<unsigned int> nodes_to_be_validated;
-	std::map<unsigned int,unsigned int> longest_traversals;
-	unsigned int nr_of_dependencies_found=0,total_nr_of_dependencies=0,d_key=0;
+	unsigned int nr_of_dependencies_found=0,total_nr_of_dependencies=0,d_key=0,min_nr_of_deps=0;
 	t_node_dependency_traversal *node_dependency_traversal=NULL;
 	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
-	std::pair<p_m1_node_id_m2_d_key,unsigned int> functor_found;
+	std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> functor_found;
+	std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > > longest_traversals;
 
 	const node_info& root_node=get_node_info(nr_of_nodes);
-	get_nodes_by_symbol(root_node,"ENG_VBAR1",vbar_found);//TODO: create a db customizing table where the symbols for looking up predicates can be listed
+	get_nodes_by_symbol(root_node,"ENG_VBAR1",std::string(),vbar_found);//TODO: create a db customizing table where the symbols for looking up predicates can be listed
 	if(vbar_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
 	const node_info& vbar_node=get_node_info(*vbar_found.begin());
-	get_nodes_by_symbol(vbar_node,"V",verbs_found);
+	get_nodes_by_symbol(vbar_node,"V",std::string(),verbs_found);
 	if(verbs_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
 	const node_info& node=get_node_info(*verbs_found.begin());
 	find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
-	functor_found=calculate_longest_matching_dependency_route();
+	functor_found=calculate_longest_matching_dependency_route(longest_traversals);
 	d_key=functor_found.first.second;
-	nr_of_dependencies_found=functor_found.second;
+	min_nr_of_deps=std::get<2>(functor_found.second);
+	std::cout<<"Minimum number of dependencies to match:"<<min_nr_of_deps<<std::endl;
+	nr_of_dependencies_found=std::get<1>(functor_found.second);
 	total_nr_of_dependencies=nr_of_dependencies_to_be_found()-1;
-//	nr_of_dependencies_to_be_found=lex->nr_of_words()-1;
 	std::cout<<"Total number of dependencies:"<<total_nr_of_dependencies<<std::endl;
-	if(nr_of_dependencies_found==total_nr_of_dependencies){
-		std::cout<<"matching nr of dependencies found for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<":"<<nr_of_dependencies_found<<std::endl;
-		return true;
+	if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps){
+		std::cout<<"Matching nr of dependencies found for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<":"<<nr_of_dependencies_found<<std::endl;
+		return build_transgraph(functor_found.first,std::make_pair(std::to_string(functor_found.first.first),functor_found.first.second),longest_traversals);
 	}
 	else{
-		std::cout<<"no matching nr of dependencies found for functor "<<node.expression.lexeme<<" with any d_key "<<std::endl;
-		return false;
+		std::cout<<"No matching nr of dependencies found for functor "<<node.expression.lexeme<<" with any d_key "<<std::endl;
+		return NULL;
 	}
 }
 
-std::pair<p_m1_node_id_m2_d_key,unsigned int> interpreter::calculate_longest_matching_dependency_route(){
-	unsigned int node_level=1,nr_of_deps;
+std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> interpreter::calculate_longest_matching_dependency_route(std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >& longest_traversals){
+	unsigned int node_level=1;
+	t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter nr_of_deps;
 	p_m1_node_id_m2_d_key functor_node;
-	std::pair<p_m1_node_id_m2_d_key,unsigned int> functor_found;
-	t_map_of_node_ids_and_d_keys_to_nr_of_deps longest_traversals;
+	std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> functor_found;
+	std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 
-	for(auto&& i:node_dependency_traversal_tree){
+	for(auto&& i:node_dependency_traversal_stack_tree){
 		if(i.first.first==node_level){
-			nr_of_deps=0;
+			std::get<1>(nr_of_deps)=0;
+			std::get<2>(nr_of_deps)=0;
 			functor_node=i.first.second;
-			nr_of_deps=calculate_longest_matching_dependency_route(node_level,functor_node);
-			longest_traversals.insert(std::make_pair(functor_node,nr_of_deps));
+			map_of_node_ids_to_total_nr_of_deps_and_d_key.clear();
+			nr_of_deps=calculate_longest_matching_dependency_route(node_level,functor_node,map_of_node_ids_to_total_nr_of_deps_and_d_key);
+			longest_traversals.insert(std::make_pair(functor_node,std::make_pair(nr_of_deps,map_of_node_ids_to_total_nr_of_deps_and_d_key)));
 		}
 	}
-	functor_found.second=0;
+	std::get<1>(functor_found.second)=0;
+	std::get<2>(functor_found.second)=0;
 	for(auto&& i:longest_traversals){
-		if(i.second>functor_found.second){
+//TODO: two interpretations with the same number of deps must not be allowed.
+//The only exception is when the scripts behind the functors are the same.
+//This logic is missing though here.
+		if(std::get<1>(i.second.first)>std::get<1>(functor_found.second)){
 			functor_found.first=i.first;
-			functor_found.second=i.second;
+			functor_found.second=i.second.first;
 		}
 	}
 	return functor_found;
 }
 
-unsigned int interpreter::calculate_longest_matching_dependency_route(const unsigned int node_level, const p_m1_node_id_m2_d_key& functor_node){
+t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter interpreter::calculate_longest_matching_dependency_route(const unsigned int node_level, const p_m1_node_id_m2_d_key& functor_node,
+		std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >& map_of_node_ids_to_total_nr_of_deps_and_d_key){
 	p_m1_tree_level_m2_p_m1_node_id_m2_d_key tree_level_and_functor_node;
 	std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> >::const_iterator functor_node_found;
-	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
-	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
+	std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
 	std::set<unsigned int> nodes_to_be_validated;
 	t_node_dependency_traversals::const_iterator functor_node_dependencies;
 	t_node_dependency_traversal *node_dependency_traversal=NULL;
 	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
-	unsigned int nr_of_deps_found=0;
+	t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter nr_of_deps_found,nr_of_deps_found_tmp;
 
 	tree_level_and_functor_node.first=node_level;
 	tree_level_and_functor_node.second=functor_node;
-	functor_node_found=node_dependency_traversal_tree.find(tree_level_and_functor_node);
-	if(functor_node_found==node_dependency_traversal_tree.end()) exit(EXIT_FAILURE);//TODO: throw exception
+	functor_node_found=node_dependency_traversal_stack_tree.find(tree_level_and_functor_node);
+	if(functor_node_found==node_dependency_traversal_stack_tree.end()) exit(EXIT_FAILURE);//TODO: throw exception
 	functor_node_dependencies=node_dependency_traversals.find(functor_node);
 	if(functor_node_dependencies==node_dependency_traversals.end()) exit(EXIT_FAILURE);//TODO: throw exception
-	//TODO: 1) loop over functor_node_dependencies.map_of_node_ids_and_d_keys_to_nr_of_deps to get the longest matching deps and sum them up
+	//1) loop over functor_node_dependencies.map_of_node_ids_and_d_keys_to_nr_of_deps to get the longest matching deps and sum them up
 	node_dependency_traversal=new t_node_dependency_traversal(functor_node_dependencies);
 	for(t_map_of_node_ids_and_d_keys_to_nr_of_deps::const_iterator i=node_dependency_traversal->map_of_node_ids_and_d_keys_to_nr_of_deps.begin();
 			i!=node_dependency_traversal->map_of_node_ids_and_d_keys_to_nr_of_deps.end();++i){
@@ -950,11 +960,17 @@ unsigned int interpreter::calculate_longest_matching_dependency_route(const unsi
 //		std::cout<<" the nr_of_dependencies_found is: "<<i->second<<std::endl;
 		node_id_with_longest_match_and_d_key=map_of_node_ids_to_total_nr_of_deps_and_d_key.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
 		if(node_id_with_longest_match_and_d_key!=map_of_node_ids_to_total_nr_of_deps_and_d_key.end()){
-			if(node_id_with_longest_match_and_d_key->second.first<node_id_and_d_key_with_nr_of_deps->nr_of_deps){
+			if(std::get<1>(node_id_with_longest_match_and_d_key->second.first)<std::get<1>(node_id_and_d_key_with_nr_of_deps->nr_of_deps)){
 				node_id_with_longest_match_and_d_key->second.first=node_id_and_d_key_with_nr_of_deps->nr_of_deps;
 				node_id_with_longest_match_and_d_key->second.second=node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.second;
 			}
-			else if(node_id_with_longest_match_and_d_key->second.first>0&&node_id_with_longest_match_and_d_key->second.first==node_id_and_d_key_with_nr_of_deps->nr_of_deps) return false;
+			else if(std::get<1>(node_id_with_longest_match_and_d_key->second.first)>0&&std::get<1>(node_id_with_longest_match_and_d_key->second.first)==std::get<1>(node_id_and_d_key_with_nr_of_deps->nr_of_deps)){
+				//TODO: consider: before changing the return type to a pair, this function used to return an unsigned int.
+				//Only after the change I noticed that here a boolean false was returned so even before the uint return type there must have been a boolean return type
+				//that got changed. So, try to figure out why false was returned here originally and what shall be returned now that a pair should be returned.
+				//For the time being, I just return the equivalent of an uint converted false in the pair i.e. (0,0).
+				return std::make_tuple(std::to_string(0),0,0,0,0);
+			}
 		}
 		else{
 			map_of_node_ids_to_total_nr_of_deps_and_d_key.insert(std::make_pair(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first,std::make_pair(node_id_and_d_key_with_nr_of_deps->nr_of_deps,node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.second)));
@@ -965,18 +981,22 @@ unsigned int interpreter::calculate_longest_matching_dependency_route(const unsi
 	}
 	delete node_dependency_traversal;
 	node_dependency_traversal=NULL;
-	nr_of_deps_found=0;
+	std::get<1>(nr_of_deps_found)=0;
+	std::get<2>(nr_of_deps_found)=0;
 	if(nodes_to_be_validated.empty()==true){
 		std::cout<<"dependencies with longest match:"<<std::endl;
 		for(auto&& i:map_of_node_ids_to_total_nr_of_deps_and_d_key){
-			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<":"<<i.second.first<<std::endl;
-			nr_of_deps_found+=i.second.first;
+			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<":"<<std::get<1>(i.second.first)<<"/"<<std::get<2>(i.second.first)<<std::endl;
+			std::get<1>(nr_of_deps_found)+=std::get<1>(i.second.first);
+			std::get<2>(nr_of_deps_found)+=std::get<2>(i.second.first);
 		}
 	}
 	else exit(EXIT_FAILURE);//TODO: debug what happened...
 	//2) loop over functor_node_found.second (vector of children) and call recursively for each the method itself
 	for(auto&& i:functor_node_found->second){
-		nr_of_deps_found+=calculate_longest_matching_dependency_route(node_level+1,i);
+		nr_of_deps_found_tmp=calculate_longest_matching_dependency_route(node_level+1,i,map_of_node_ids_to_total_nr_of_deps_and_d_key);
+		std::get<1>(nr_of_deps_found)+=std::get<1>(nr_of_deps_found_tmp);
+		std::get<2>(nr_of_deps_found)+=std::get<2>(nr_of_deps_found_tmp);
 	}
 	return nr_of_deps_found;
 }
@@ -988,11 +1008,13 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 	std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors_found=NULL;
 	std::multimap<unsigned int,unsigned int>::const_iterator l;
 	std::vector<unsigned int>::const_iterator j,k;
-	std::vector<unsigned int> main_nodes_found_by_symbol,dependent_nodes_found_by_symbol;
+	std::vector<unsigned int> main_nodes_found_by_symbol,dependent_nodes_found_by_symbol,main_subtree_nodes_found_by_symbol,dependency_subtree_nodes_found_by_symbol;
 	const std::pair<const unsigned int,field> *rule_entry=NULL;
-	unsigned int current_step=0,successor=0,failover=0;
+	unsigned int current_step=0,successor=0,failover=0,main_node_id=0,dep_node_id=0;
 	std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
 	node_info *main_node=NULL,*dependent_node=NULL;
+	std::multimap<unsigned int,unsigned int> ref_node_ids_to_set;
+	std::set<unsigned int>::const_iterator main_ref_node_id,dep_ref_node_id;
 
 	sqlite=db::get_instance();
 	rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"' ORDER BY STEP;");
@@ -1007,69 +1029,152 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 //		std::cout<<"successor:"<<successor<<std::endl;
 		main_nodes_found_by_symbol.clear();
 		dependent_nodes_found_by_symbol.clear();
+		main_subtree_nodes_found_by_symbol.clear();
+		dependency_subtree_nodes_found_by_symbol.clear();
 		if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"head_root_symbol")==new_phrase_head_root.symbol
 			&&*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"non_head_root_symbol")==new_phrase_non_head_root.symbol){
 			if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false){
-				if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root")=="H")
-					get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),main_nodes_found_by_symbol);
-				else if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root")=="N")
-					get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),main_nodes_found_by_symbol);
+				if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root")=="H"){
+					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol")->empty()==true)
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+					else{
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						for(auto&& main_subtree_node:main_subtree_nodes_found_by_symbol){
+							get_nodes_by_symbol(get_node_info(main_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+						}
+					}
+				}
+				else if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root")=="N"){
+					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol")->empty()==true)
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+					else{
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						for(auto&& main_subtree_node:main_subtree_nodes_found_by_symbol){
+							get_nodes_by_symbol(get_node_info(main_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+						}
+					}
+				}
 				else{
-					get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),main_nodes_found_by_symbol);
-					get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),main_nodes_found_by_symbol);
+					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol")->empty()==true){
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+					}
+					else{
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						for(auto&& main_subtree_node:main_subtree_nodes_found_by_symbol){
+							get_nodes_by_symbol(get_node_info(main_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+						}
+					}
 				}
 			}
 			if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false){
-				if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root")=="H")
-					get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
-				else if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root")=="N")
-					get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
+				if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root")=="H"){
+					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol")->empty()==true)
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+					else{
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						for(auto&& dependency_subtree_node:dependency_subtree_nodes_found_by_symbol){
+							get_nodes_by_symbol(get_node_info(dependency_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+						}
+					}
+				}
+				else if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root")=="N"){
+					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol")->empty()==true)
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+					else{
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						for(auto&& dependency_subtree_node:dependency_subtree_nodes_found_by_symbol){
+							get_nodes_by_symbol(get_node_info(dependency_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+						}
+					}
+				}
 				else{
-					get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
-					get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),dependent_nodes_found_by_symbol);
+					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol")->empty()==true){
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+					}
+					else{
+						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						for(auto&& dependency_subtree_node:dependency_subtree_nodes_found_by_symbol){
+							get_nodes_by_symbol(get_node_info(dependency_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+						}
+					}
 				}
 			}
 			if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
 				&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
 				&&main_nodes_found_by_symbol.empty()==false
 				&&dependent_nodes_found_by_symbol.empty()==false){
+				for(auto&& i:ref_node_ids_to_set){
+					dependent_node=&get_private_node_info(i.first);
+					if(dependent_node->ref_node_ids.empty()==false){
+						if(dependent_node->ref_node_ids.find(i.second)==dependent_node->ref_node_ids.end())
+							dependent_node->ref_node_ids.insert(i.second);
+					}
+					else dependent_node->ref_node_ids.insert(i.second);
+				}
 				//1)Loop over main_nodes_found_by_symbol
 				for(j=main_nodes_found_by_symbol.begin();j!=main_nodes_found_by_symbol.end();++j){
 //					std::cout<<"loop pass on main_nodes_found_by_symbol:"<<*j<<std::endl;
 					main_node=&get_private_node_info(*j);
-					if(main_node->ref_node_id!=0){
-						main_node=&get_private_node_info(main_node->ref_node_id);
+//					std::cout<<"main node lexeme:"<<main_node->expression.lexeme<<std::endl;
+					if(main_node->ref_node_ids.empty()==true) main_node_id=main_node->node_id;
+					else{
+						main_ref_node_id=main_node->ref_node_ids.begin();
+						main_node_id=*main_ref_node_id;
 					}
-					//2)Loop over dependent_nodes_found_by_symbol where dependent_node is NOT in current_main_node.node_links
-					for(k=dependent_nodes_found_by_symbol.begin();k!=dependent_nodes_found_by_symbol.end();++k){
-//						std::cout<<"loop pass on dependent_nodes_found_by_symbol:"<<*k<<std::endl;
-						dependent_node=&get_private_node_info(*k);
-						if(dependent_node->ref_node_id!=0){
-							dependent_node=&get_private_node_info(dependent_node->ref_node_id);
-						}
-						for(l=main_node->dependency_validation_matrix.begin();l!=main_node->dependency_validation_matrix.end();++l){
-							if(l->second==dependent_node->node_id) break;
-						}
-						if(l==main_node->dependency_validation_matrix.end()){
-							if(dependent_node->expression.morphalytics!=NULL
-								&&dependent_node->expression.morphalytics->has_feature("Relative")==true&&dependent_node->ref_node_id==0){
-								dependent_node->ref_node_id=main_node->node_id;
-								valid_combination=true;
-							}
+					while(main_node_id!=0){
+						main_node=&get_private_node_info(main_node_id);
+//						std::cout<<"main node refnode lexeme:"<<main_node->expression.lexeme<<std::endl;
+						//2)Loop over dependent_nodes_found_by_symbol where dependent_node is NOT in current_main_node.node_links
+						for(k=dependent_nodes_found_by_symbol.begin();k!=dependent_nodes_found_by_symbol.end();++k){
+//							std::cout<<"loop pass on dependent_nodes_found_by_symbol:"<<*k<<std::endl;
+							dependent_node=&get_private_node_info(*k);
+//							std::cout<<"dependent node lexeme:"<<dependent_node->expression.lexeme<<std::endl;
+							if(dependent_node->ref_node_ids.empty()==true) dep_node_id=dependent_node->node_id;
 							else{
-								functors_found=is_valid_expression(*main_node,*dependent_node);
-								if(functors_found!=NULL){
-									valid_combination=true;
-									for(auto&& m:*functors_found){
-										functors_validated_for_nodes.insert(std::make_pair(main_node->node_id,std::make_pair(m.second.first,dependent_node->node_id)));
+								dep_ref_node_id=dependent_node->ref_node_ids.begin();
+								dep_node_id=*dep_ref_node_id;
+							}
+							while(dep_node_id!=0){
+								dependent_node=&get_private_node_info(dep_node_id);
+//								std::cout<<"dependent node refnode lexeme:"<<dependent_node->expression.lexeme<<std::endl;
+								for(l=main_node->dependency_validation_matrix.begin();l!=main_node->dependency_validation_matrix.end();++l){
+									//TODO:Consider if this logic is ok:
+									//If a node is already registered in the main nodes's dvm for a dependency,
+									//don't give a chance to register it for another dependency as well.
+									if(l->second==dependent_node->node_id) break;
+								}
+								if(l==main_node->dependency_validation_matrix.end()){
+									if(dependent_node->expression.morphalytics!=NULL
+										&&dependent_node->expression.morphalytics->has_feature("Relative")==true){
+										ref_node_ids_to_set.insert(std::make_pair(dependent_node->node_id,main_node->node_id));
+										valid_combination=true;
 									}
-									delete functors_found;
+									else{
+										functors_found=is_valid_expression(*main_node,*dependent_node);
+										if(functors_found!=NULL){
+											valid_combination=true;
+											for(auto&& m:*functors_found){
+												functors_validated_for_nodes.insert(std::make_pair(main_node->node_id,std::make_pair(m.second.first,dependent_node->node_id)));
+											}
+											delete functors_found;
+										}
+										else{
+											if(failover==0||failover<current_step) valid_combination=false;
+										}
+									}
 								}
-								else{
-									if(failover==0||failover<current_step) valid_combination=false;
-								}
+								if(dep_node_id!=*k&&++dep_ref_node_id!=dependent_node->ref_node_ids.end())
+									dep_node_id=*dep_ref_node_id;
+								else dep_node_id=0;
 							}
 						}
+						if(main_node_id!=*j&&++main_ref_node_id!=main_node->ref_node_ids.end())
+							main_node_id=*main_ref_node_id;
+						else main_node_id=0;
 					}
 				}
 			}
@@ -1081,10 +1186,14 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 					&&main_nodes_found_by_symbol.empty()==true
 					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
 					&&dependent_nodes_found_by_symbol.empty()==false){//This branch allows checking just for symbol existence in a subtree
-					if(successor==0||successor<=current_step){
+					if(successor==0||successor<current_step){
 						valid_combination=false;
 						break;
  					}
+					else if(successor==current_step){
+						valid_combination=true;
+						break;
+					}
 					else{
 						valid_combination=true;
 					}
@@ -1097,8 +1206,12 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 					&&main_nodes_found_by_symbol.empty()==true
 					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
 					&&dependent_nodes_found_by_symbol.empty()==true){//This branch allows checking just for symbol absence in a subtree
-					if(failover==0||failover<=current_step){
+					if(failover==0||failover<current_step){
 						valid_combination=false;
+						break;
+					}
+					else if(failover==current_step){
+						valid_combination=true;
 						break;
 					}
 					else{
@@ -1131,7 +1244,7 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 				else if(failover!=0&&failover<current_step) exit(EXIT_FAILURE);//TODO: throw exception
 				else{
 					rule_entry=NULL;
-					if(failover==current_step&&rule_to_rule_map->nr_of_result_rows()==1) valid_combination=true;
+					if(failover==current_step&&rule_to_rule_map->nr_of_result_rows()==current_step) valid_combination=true;
 				}
 			}
 		}
@@ -1149,8 +1262,75 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 			}
 		}
 	}
+	else{
+		for(auto&& i:ref_node_ids_to_set){
+			dependent_node=&get_private_node_info(i.first);
+			dependent_node->ref_node_ids.erase(i.second);
+		}
+	}
 	delete rule_to_rule_map;
 	return valid_combination;
+}
+
+transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, const std::pair<std::string,unsigned int>& parent,
+		std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >& longest_traversals,
+		const unsigned int node_level){
+	p_m1_tree_level_m2_p_m1_node_id_m2_d_key tree_level_and_functor_node;
+	std::set<std::pair<std::string,unsigned int> > functors_processed;
+	transgraph *functor_transgraph=NULL;
+
+//	std::cout<<"parent.first:"<<parent.first<<", parent.second:"<<parent.second<<std::endl;
+	auto root_found=longest_traversals.find(root);
+	if(root_found==longest_traversals.end()) exit(EXIT_FAILURE);//TODO: throw exception
+	if(std::atoi(parent.first.c_str())>0){
+//		std::cout<<get_node_info(std::atoi(parent.first.c_str())).expression.lexeme<<"_"<<parent.second<<std::endl;
+		functor_transgraph=new transgraph(std::make_pair(get_node_info(std::atoi(parent.first.c_str())).expression.lexeme,parent.second));
+	}
+	else{
+//		std::cout<<parent.first<<"_"<<parent.second<<std::endl;
+		functor_transgraph=new transgraph(std::make_pair(parent.first,parent.second));
+	}
+	for(auto&& i:root_found->second.second){
+//		std::cout<<"debug lexeme:"<<get_node_info(i.first).expression.lexeme<<", d_key (i.second.second):"<<i.second.second<<
+//		" parent node:"<<std::get<0>(i.second.first)<<
+//		" parent d_key:"<<std::get<3>(i.second.first)<<
+//		", i.first:"<<i.first<<std::endl;
+		if(std::get<0>(i.second.first)==parent.first&&std::get<3>(i.second.first)==parent.second
+		&&(i.first!=std::atoi(parent.first.c_str())||i.first==std::atoi(parent.first.c_str())&&i.second.second!=parent.second)){
+			if(functors_processed.find(std::make_pair(std::to_string(i.first),i.second.second))==functors_processed.end()){
+//				std::cout<<"recursive call 1"<<std::endl;
+//				std::cout<<"debug lexeme:"<<get_node_info(i.first).expression.lexeme;
+//				std::cout<<", d_key (i.second.second):"<<i.second.second;
+//				std::cout<<", parent node:"<<std::get<0>(i.second.first);
+//				std::cout<<", parent d_key:"<<std::get<3>(i.second.first);
+//				std::cout<<", i.first:"<<i.first<<std::endl;
+				functor_transgraph->insert(std::get<4>(i.second.first),build_transgraph(root,std::make_pair(std::to_string(i.first),i.second.second),longest_traversals,node_level));
+				functors_processed.insert(std::make_pair(std::to_string(i.first),i.second.second));
+//				std::cout<<"recursive return 1"<<std::endl;
+			}
+		}
+		else if(std::all_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){//checking for parent being string indeed
+			tree_level_and_functor_node.first=node_level;
+			tree_level_and_functor_node.second=root;
+			auto functor_node_found=node_dependency_traversal_stack_tree.find(tree_level_and_functor_node);
+			if(functor_node_found==node_dependency_traversal_stack_tree.end()) exit(EXIT_FAILURE);//TODO: throw exception
+			auto functor_node_odependencies=node_odependency_traversals.find(functor_node_found->first.second);
+			if(functor_node_odependencies==node_odependency_traversals.end()) exit(EXIT_FAILURE);//TODO: throw exception
+			for(auto&& i:functor_node_odependencies->second){
+				if(std::get<0>(i.second)==parent.first&&std::get<1>(i.second)==parent.second){
+					if(functors_processed.find(std::make_pair(i.first.first,i.first.second))==functors_processed.end()){
+//						std::cout<<"recursive call 2"<<std::endl;
+//						std::cout<<"debug lexeme:"<<i.first.first<<", d_key:"<<i.first.second<<
+//						", parent node:"<<i.second.first<<", parent d_key:"<<i.second.second<<std::endl;
+						functor_transgraph->insert(std::get<2>(i.second),build_transgraph(root,std::make_pair(i.first.first,i.first.second),longest_traversals,node_level));
+						functors_processed.insert(std::make_pair(i.first.first,i.first.second));
+//						std::cout<<"recursive return 2"<<std::endl;
+					}
+				}
+			}
+		}
+	}
+	return functor_transgraph;
 }
 
 /*

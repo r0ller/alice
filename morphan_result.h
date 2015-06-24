@@ -3,6 +3,7 @@
 
 	#include <string>
 	#include <vector>
+	#include <set>
 
 	class morphan_result{
 		private:

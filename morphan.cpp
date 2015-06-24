@@ -19,6 +19,7 @@ morphan::morphan(){
 morphan::~morphan(){
 	apply_clear(morphan::morphan_handle);
 	fsm_destroy(morphan::fst);
+	morphan::singleton_instance=NULL;
 }
 
 morphan_result *morphan::analyze(const std::string& word){

@@ -10,21 +10,26 @@ int main(void){
 	const char *translation;
 
 	//TODO:Environment variables should be taken from config file (DB table read by the library on first call)
-	putenv("source=.");
-	putenv("target=.");
+//	putenv("source=.");
+//	putenv("target=.");
 	fgets(command,4096,stdin);
-	while(true){
+	while(command[0]!='\n'){
 		translation=hi(command);
 		if(!translation)printf("Invalid command\n");
 		else{
-			sprintf(script,"%s",translation);
-			fp=popen(script,"r");
-			printf("%s\n",script);
-			while(fgets(line,sizeof line,fp))
-			{
-				printf("%s",line);
-			}
-		pclose(fp);
+			sprintf(script,"#!/usr/pkg/bin/bash\n%s",translation);
+//			fp=popen(script,"r");
+//			printf("%s\n",script);
+//			while(fgets(line,sizeof line,fp))
+//			{
+//				printf("%s",line);
+//			}
+//			pclose(fp);
+			fp=fopen("script","w");
+			fprintf(fp,"%s",script);
+			fclose(fp);
+			fp=popen("./script","r");
+			pclose(fp);
 		}
 	//printf("$source=%s\n",getenv("source"));
 	fgets(command,4096,stdin);

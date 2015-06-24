@@ -33,6 +33,8 @@ unsigned int lexer::next_token(){
 		if(last_word.empty()==false){
 			morphalytics=stemmer->analyze(last_word);//What if there're >1 analyses for the same word form???
 			if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
+				new_word.morphalytics=NULL;
+				new_word.dependencies=NULL;
 				new_word.token=0;
 				new_word.word=last_word;
 				new_word.gcat="CON";
@@ -132,7 +134,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 							//TODO: throw exception
 							exit(EXIT_FAILURE);
 						}
-						//std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
+//						std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 						tokens.push_back(token);
 					}
@@ -147,7 +149,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 										exit(EXIT_FAILURE);
 									}
 							}
-							//std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
+//							std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 							tokens.push_back(token);
 						}
@@ -193,7 +195,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 	const std::pair<const unsigned int,field> *dependency=NULL;
 
 	sqlite=db::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"'  ORDER BY LEXEME, D_KEY, D_COUNTER;");
+	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 //	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
 	dependencies->append(*result);
 	for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){

@@ -1,8 +1,8 @@
 PRAGMA foreign_keys = ON;
 
-create table DEFTYPE(
-deftype smallint primary key /*0:function definition, 1:option definition*/
-);
+/*create table DEFTYPE(*/
+/*deftype smallint primary key*/ /*0:function definition, 1:option definition*/
+/*);*/
 
 create table ROOT_TYPE(
 root_type varchar(1) primary key /*h:head root, n:non head root*/
@@ -52,10 +52,10 @@ create table DEPOLEX(
 lexeme varchar(47),
 d_key smallint, /*smallest value: 1*/
 d_counter smallint, /*smallest value: 1*/
-optional_parent_allowed smallint, /*0:false, otherwise:true; note that NULL is evaulated as 0*/
+optional_parent_allowed smallint, /*if true, dependency entry is taken into account as well even if the lexeme was not found as dependency one level above; 0:false, otherwise:true; note that NULL is evaulated as 0*/
 d_failover smallint, /*NULL or 0 means end of dependency chain; a failover dependency points to a d_counter (> than current d_counter) and is only executed if the current d_counter dependency check failed*/
 d_successor smallint, /*NULL or 0 means end of dependency chain; a successor dependency points to a d_counter (> than current d_counter) and is only executed if the current d_counter dependency check was successful*/
-manner smallint,/*0-absent, 1-mandatory: exactly once; 2-optional: if exists, exactly once; 3-mandatory: at least once; 4-optional: if exists, at least once; 5-mandatory: more than once; 6-optional: if exists, more than once;*/
+manner smallint,/*0:exactly once, 1:at least once; 2:more than once*/
 semantic_dependency varchar(47), /*dependencies must be stored explicitly (which means if a word has no dependencies i.e. can stand on its own,
 must be stored with full key entry with NULL semantic_dependecy value), otherwise noone can tell if a functor (word) can stand on its own or only together with other words*/
 ref_d_key smallint,/*belongs to the field semantic_dependency in this table*/
@@ -76,16 +76,24 @@ step smallint, /*smallest value: 1*/
 failover smallint, /*smallest value: 1; NULL or 0 means end of rule chain. A failover step is only executed if the current step failed (e.g. either symbols or functors are not found)*/
 successor smallint, /*smallest value: 1; NULL or 0 means end of rule chain. A successor step is only executed if the current step succeeded*/
 main_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
-main_lookup_root varchar(1) references ROOT_TYPE(root_type), 
+main_node_lexeme varchar(47),
+main_lookup_root varchar(1) references ROOT_TYPE(root_type),
+main_lookup_subtree_symbol varchar(12),/* references SYMBOLS(symbol),*/
 dependent_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
+dependent_node_lexeme varchar(47),
 dependency_lookup_root varchar(1) references ROOT_TYPE(root_type),
+dependency_lookup_subtree_symbol varchar(12),/* references SYMBOLS(symbol),*/
 lid varchar(3) references LANGUAGES(lid),/*TODO: check it in coding when reading the table, this was added later so in the code nowhere expects such a field to exist*/
 PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(main_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+/*FOREIGN KEY(main_node_lexeme) REFERENCES FUNCTORS(functor) No foreign key check possible as d_key makes functors unique*/
+FOREIGN KEY(main_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(dependent_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+/*FOREIGN KEY(dependent_node_lexeme) REFERENCES FUNCTORS(functor)  No foreign key check possible as d_key makes functors unique*/
+FOREIGN KEY(dependency_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 ); 
 
 create table LEXICON(
@@ -99,8 +107,8 @@ FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid) /*TODO: figure out how to
 );
 
 create table FUNCTOR_DEFS(
-functor_id int,
-definition_type smallint references DEFTYPE(deftype),
+functor_id varchar(51),
+/*definition_type smallint references DEFTYPE(deftype),*/
 definition text,
 PRIMARY KEY(functor_id)
 );
@@ -171,7 +179,7 @@ create unique index i_relations_relation on RELATIONS(relation);
 create table FUNCTORS(
 functor varchar(47),
 d_key smallint,
-functor_id int,
+functor_id varchar(51),
 PRIMARY KEY(functor, d_key)
 FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
 );
@@ -183,212 +191,4 @@ part_role varchar(47) references ENTITIES(entity),//defines who takes the part r
 p_cardinality varchar(2) references CARDINALITY(cid),//part cardinality
 w_cardinality varchar(2) references CARDINALITY(cid),//whole cardinality
 xlink smallint references XLINKS(xid), 
-*/
-
-BEGIN;
-insert into DEFTYPE values('0');
-insert into DEFTYPE values('1');
-
-insert into ROOT_TYPE values('H');
-insert into ROOT_TYPE values('N');
-
-insert into LANGUAGES values('HUN', 'Hungarian', '1');
-insert into LANGUAGES values('ENG', 'English', '1');
-insert into LANGUAGES values('BSH', 'BASH', '0');
-insert into LANGUAGES values('WPS', 'Windows PowerShell', '0');
-
-/*TODO: remove ENG_ prefix later from non-terminals*/
-insert into SYMBOLS values('A', 'ENG');
-insert into SYMBOLS values('ADV', 'ENG');
-insert into SYMBOLS values('CON', 'ENG');
-insert into SYMBOLS values('DET', 'ENG');
-insert into SYMBOLS values('N', 'ENG');
-insert into SYMBOLS values('ENG_VP', 'ENG');
-insert into SYMBOLS values('ENG_NP', 'ENG');
-insert into SYMBOLS values('ENG_CNP', 'ENG');
-insert into SYMBOLS values('ENG_PP', 'ENG');
-insert into SYMBOLS values('Stem', 'ENG');
-insert into SYMBOLS values('Pl', 'ENG');
-insert into SYMBOLS values('Sg', 'ENG');
-insert into SYMBOLS values('PREP', 'ENG');
-insert into SYMBOLS values('QPRO', 'ENG');
-insert into SYMBOLS values('V', 'ENG');
-insert into SYMBOLS values('ENG_VBAR1', 'ENG');
-insert into SYMBOLS values('ENG_VBAR2', 'ENG');
-insert into SYMBOLS values('ENG_VBAR3', 'ENG');
-insert into SYMBOLS values('RPRO', 'ENG');
-insert into SYMBOLS values('Relative', 'ENG');
-insert into SYMBOLS values('State', 'ENG');
-insert into SYMBOLS values('ENG_RC', 'ENG');
-insert into SYMBOLS values('ENG_IVP', 'ENG');
-insert into SYMBOLS values('ENG_V', 'ENG');
-insert into SYMBOLS values('ENG_TP', 'ENG');
-insert into SYMBOLS values('ENG_RPRO', 'ENG');
-
-/*Constant has hardcoded token value 1 in the yacc source but to avoid collision, the values here are increased
-by 1 during runtime so, the smallest value here must at least be 1*/
-/*TODO: Think over if the feature field for all gcats shall at least be 'Stem' or not?
-For exmaple, DET is considered as well to have a stem? How is it analysed by Foma?*/
-insert into GCAT values('CON', NULL, 'ENG', '0', 'Constant');/*Plays role only when checking for terminal symbols*/
-insert into GCAT values('A', 'Stem', 'ENG', '1', 'Adjective');
-insert into GCAT values('ADV', NULL, 'ENG', '2', 'Adverb');
-insert into GCAT values('DET', NULL, 'ENG', '3', 'Determiner');
-insert into GCAT values('N', 'Stem', 'ENG', '4', 'Noun');
-insert into GCAT values('N', 'Pl', 'ENG', '5', 'Plural Noun');
-insert into GCAT values('N', 'Sg', 'ENG', '6', 'Singular Noun');
-insert into GCAT values('PREP', NULL, 'ENG', '7', 'Preposition');
-insert into GCAT values('QPRO', NULL, 'ENG', '8', 'Quantifier Pronoun');
-insert into GCAT values('V', 'Stem', 'ENG', '9', 'Verb');
-insert into GCAT values('V', 'State', 'ENG', '10', 'Report/modify state of affairs');
-insert into GCAT values('RPRO', NULL, 'ENG', '11', 'Relative Pronoun');
-insert into GCAT values('RPRO', 'Relative', 'ENG', '12', 'Relativizer feature');
-
-/*
-insert into CARDINALITY values('01', '0..1');
-insert into CARDINALITY values('11', '1..1');
-insert into CARDINALITY values('0N', '0..N');
-insert into CARDINALITY values('1N', '1..N');
-
-insert into XLINKS values('0', 'Association');
-insert into XLINKS values('1', 'Aggregation');
-insert into XLINKS values('2', 'Composition');//Composition means 'life cycle dependency'!
-*/
-
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'State', 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', 'N', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', 'H', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '4', NULL, NULL, 'V', 'H', 'N', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR2', 'ENG_VBAR1', 'ENG_PP', '1', NULL, NULL, 'V', 'H', 'PREP', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'A', 'ENG_CNP', '1', NULL, NULL, 'A', 'H', 'N', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', '2', '3', 'PREP', 'H', 'N', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', NULL, NULL, 'PREP', 'H', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '3', NULL, NULL, 'N', 'N', 'CON', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '1', NULL, '2', 'N', 'H', 'RPRO', 'N', 'ENG');
-/*insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '2', NULL, '3', 'V', 'N', 'RPRO', 'N', 'ENG');*/
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '2', NULL, '3', 'State', 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '3', NULL, NULL, 'RPRO', 'N', 'V', 'N', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', 'H', 'PREP', 'N', 'ENG');
-
-insert into FUNCTORS values('ALLENGQPRO', '1', NULL);
-insert into FUNCTORS values('CHANGEENGV', '1', NULL);
-insert into FUNCTORS values('CON', '1', NULL);
-insert into FUNCTORS values('COPYENGV', '1', NULL);
-insert into FUNCTORS values('COPYENGV', '2', NULL);
-insert into FUNCTORS values('DELETEENGV', '1', NULL);
-insert into FUNCTORS values('DIRECTORYENGN', '1', NULL);
-insert into FUNCTORS values('EXECUTABLEENGA', '1', NULL);
-insert into FUNCTORS values('FILEENGN', '1', NULL);
-insert into FUNCTORS values('FILEENGN', '2', NULL);
-insert into FUNCTORS values('FROMENGPREP', '1', NULL);
-insert into FUNCTORS values('INENGPREP', '1', NULL);
-insert into FUNCTORS values('LISTENGV', '1', NULL);
-insert into FUNCTORS values('LISTENGV', '2', NULL);
-insert into FUNCTORS values('MAKEENGV', '1', NULL);
-insert into FUNCTORS values('MOVEENGV', '1', NULL);
-insert into FUNCTORS values('NON-EXECUTABLEENGA', '1', NULL);
-insert into FUNCTORS values('REMOVEENGV', '1', NULL);
-insert into FUNCTORS values('TOENGPREP', '1', NULL);
-insert into FUNCTORS values('SHUTENGV', '1', NULL);
-insert into FUNCTORS values('DOWNENGADV', '1', NULL);
-insert into FUNCTORS values('THATENGRPRO', '1', NULL);
-insert into FUNCTORS values('BEGINENGV', '1', NULL);
-insert into FUNCTORS values('WITHENGPREP', '1', NULL);
-
-insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
-insert into LEXICON values('copy', 'ENG', 'V', 'COPYENGV');
-insert into LEXICON values('directory', 'ENG', 'N', 'DIRECTORYENGN');
-insert into LEXICON values('directories', 'ENG', 'N', 'DIRECTORYENGN');
-insert into LEXICON values('executable', 'ENG', 'A', 'EXECUTABLEENGA');
-insert into LEXICON values('non-executable', 'ENG', 'A', 'NON-EXECUTABLEENGA');
-insert into LEXICON values('all', 'ENG', 'QPRO', 'ALLENGQPRO');
-insert into LEXICON values('file', 'ENG', 'N', 'FILEENGN');
-insert into LEXICON values('files', 'ENG', 'N', 'FILEENGN');
-insert into LEXICON values('to', 'ENG', 'PREP', 'TOENGPREP');
-insert into LEXICON values('remove', 'ENG', 'V', 'REMOVEENGV');
-insert into LEXICON values('delete', 'ENG', 'V', 'DELETEENGV');
-insert into LEXICON values('from', 'ENG', 'PREP', 'FROMENGPREP');
-insert into LEXICON values('change', 'ENG', 'V', 'CHANGEENGV');
-insert into LEXICON values('move', 'ENG', 'V', 'MOVEENGV');
-insert into LEXICON values('in', 'ENG', 'PREP', 'INENGPREP');
-insert into LEXICON values('make', 'ENG', 'V', 'MAKEENGV');
-insert into LEXICON values('shut', 'ENG', 'V', 'SHUTENGV');
-insert into LEXICON values('down', 'ENG', 'ADV', 'DOWNENGADV');
-insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
-insert into LEXICON values('begin', 'ENG', 'V', 'BEGINENGV');
-insert into LEXICON values('with', 'ENG', 'PREP', 'WITHENGPREP');
-
-/*Remove attributives from ENTITIES like executable,etc., leave only pure nouns*/
-/*
-insert into ENTITIES values('ENTITYENGN', '1', 'ENTITYENGN', '1');
-insert into ENTITIES values('FILEENGN', '1', 'ENTITYENGN', '1');
-insert into ENTITIES values('DIRECTORYENGN', '1', 'FILEENGN', '1');
-
-insert into RELATIONS values('ACTENGV', '1', 'ACTENGV', '1');
-insert into RELATIONS values('CHANGEENGV', '1', 'ACTENGV', '1');
-insert into RELATIONS values('CREATEENGV', '1', 'ACTENGV', '1');
-insert into RELATIONS values('MAKEENGV', '1', 'CREATEENGV', '1');
-insert into RELATIONS values('COPYENGV', '1', 'CREATEENGV', '1');
-insert into RELATIONS values('LISTENGV', '1', 'ACTENGV', '1');
-*/
-
-/*no value in the semantic_dependency field means no dependency*/
-insert into DEPOLEX values('ALLENGQPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('CHANGEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('COPYENGV', '1', '1', NULL, '1', NULL, '0', 'FILEENGN', '2');
-insert into DEPOLEX values('COPYENGV', '2', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('DELETEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('DIRECTORYENGN', '1', '1', '1', NULL, NULL, '1', 'CON', '1');
-insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', 'FILEENGN', '1');
-insert into DEPOLEX values('FILEENGN', '1', '1', NULL, NULL, NULL, '1', 'BEGINENGV', '1');
-insert into DEPOLEX values('FILEENGN', '2', '1', '1', NULL, NULL, '1', 'CON', '1');
-insert into DEPOLEX values('FROMENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('INENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, '2', '0', 'FILEENGN', '1');
-insert into DEPOLEX values('LISTENGV', '1', '2', NULL, '3', NULL, '0', 'INENGPREP', '1');
-insert into DEPOLEX values('LISTENGV', '1', '3', NULL, NULL, NULL, '0', 'FROMENGPREP', '1');
-insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '2', '2', '0', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('LISTENGV', '2', '2', NULL, '3', NULL, '0', 'INENGPREP', '1');
-insert into DEPOLEX values('LISTENGV', '2', '3', NULL, NULL, NULL, '0', 'FROMENGPREP', '1');
-insert into DEPOLEX values('MAKEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('MOVEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('REMOVEENGV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, '0', 'DIRECTORYENGN', '1');
-insert into DEPOLEX values('SHUTENGV', '1', '1', NULL, NULL, NULL, '0', 'DOWNENGADV', '1');
-insert into DEPOLEX values('DOWNENGADV', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-/*insert into DEPOLEX values('BEGINENGV', '1', '1', NULL, NULL, '2', '0', 'FILEENGN', '1');*/
-insert into DEPOLEX values('BEGINENGV', '1', '1', NULL, NULL, NULL, '0', 'WITHENGPREP', '1');
-insert into DEPOLEX values('WITHENGPREP', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
-COMMIT;
-
-/*Old relation functor definitions for later reference:
-insert into RELATIONS values('LIST', '', '', 'options=''-maxdepth 1'';find $source$delim$constant $options;constant=;');
-insert into RELATIONS values('LIST', '', 'DIRECTORY', 'export source;export delim;export constant;export tests;export options=''-maxdepth 1'';echo -e ''if [ -z $constant ]\nthen\nfind $source$delim$constant $options $tests\nelse\nfind $source$delim$constant $options\nfi'' 1>command;chmod a+x command;./command;constant=;');
-insert into RELATIONS values('LIST', '', 'FILE', 'options=''-maxdepth 1'';find $source$delim$constant $options $tests;constant=;');
-insert into RELATIONS values('COPY', '', '', 'cp -f $source$delim$constant $target;constant=;');
-insert into RELATIONS values('COPY', '', 'FILE', 'export source;export delim;export constant;export tests;export options=''-maxdepth 1'';export target;echo -e ''files="$(find $source$delim$constant $options $tests)";\nfor f in $files\ndo\ncp -f $f $target\ndone'' 1>command;chmod a+x command;./command;constant=;');
-insert into RELATIONS values('COPY', '', 'DIRECTORY', 'cp -f $source$delim$constant $target;constant=;');
-insert into RELATIONS values('REMOVE', '', '', 'rm $source$delim$constant;constant=;');
-insert into RELATIONS values('REMOVE', '', 'DIRECTORY', 'rmdir $source$delim$constant;constant=;');
-insert into RELATIONS values('REMOVE', '', 'FILE', 'find $source$delim$constant $options $tests -exec rm ''{}'' +;constant=;');
-insert into RELATIONS values('DELETE', '', '', 'rm $source$delim$constant;constant=;');
-insert into RELATIONS values('DELETE', '', 'DIRECTORY', 'rmdir $source$delim$constant;constant=;');
-insert into RELATIONS values('DELETE', '', 'FILE', 'find $source$delim$constant $options $tests -exec rm ''{}'' +;constant=;');
-insert into RELATIONS values('CHANGE', '', 'DIRECTORY', 'source=$constant;constant=;');
-insert into RELATIONS values('MAKE', '', 'DIRECTORY', 'mkdir $target$delim$constant;constant=;');
-insert into RELATIONS values('MOVE', '', '', 'mv -f $source$delim$constant $target;constant=;');
-insert into RELATIONS values('MOVE', '', 'DIRECTORY', 'mv -f $source$delim$constant $target;constant=;');
-insert into RELATIONS values('MOVE', '', 'FILE', 'export source;export delim;export constant;export tests;export options=''-maxdepth 1'';export target;echo -e ''files="$(find $source$delim$constant $options $tests)";\nfor f in $files\ndo\nmv -f $f $target\ndone'' 1>command;chmod a+x command;./command;constant=;');
-insert into RELATIONS values('LIST', 'TO', 'FILE', 'target=/dev/stdout;');
-insert into RELATIONS values('LIST', 'IN', 'DIRECTORY', 'source=.;delim=/;');
-insert into RELATIONS values('COPY', 'FROM', 'DIRECTORY', 'source=.;delim=/;');
-insert into RELATIONS values('COPY', 'TO', 'DIRECTORY', 'target=.;');
-insert into RELATIONS values('REMOVE', 'FROM', 'DIRECTORY', 'source=.;delim=/;');
-insert into RELATIONS values('DELETE', 'FROM', 'DIRECTORY', 'source=.;delim=/;');
-insert into RELATIONS values('CHANGE', 'TO', 'DIRECTORY', 'source=$constant;');
-insert into RELATIONS values('MOVE', 'FROM', 'DIRECTORY', 'source=.;delim=/;');
-insert into RELATIONS values('MOVE', 'TO', 'DIRECTORY', 'target=.;');
-insert into RELATIONS values('MAKE', 'IN', 'DIRECTORY', 'target=.;delim=/;');
 */

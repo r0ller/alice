@@ -5,6 +5,9 @@
 	#include <string>
 	#include <vector>
 	#include <stack>
+	#include <utility>
+	#include <tuple>
+	#include "transgraph.h"
 
 	typedef struct functor_data{
 		std::string functor;
@@ -14,7 +17,7 @@
 
 	typedef struct node_info{
 		unsigned int node_id;
-		unsigned int ref_node_id;//node id of referenced node;
+		std::set<unsigned int> ref_node_ids;//node ids of referenced nodes;
 		std::string symbol;
 		lexicon expression;/*lexeme or constant*/
 		unsigned int left_child;
@@ -44,12 +47,14 @@
 //	Vertex v = adjacency(it).vertex;
 
 	typedef std::pair<unsigned int,unsigned int> p_m1_node_id_m2_d_key;
+//	typedef std::pair<unsigned int,unsigned int> p_m1_nr_of_deps_m2_nr_of_deps_to_find;
+	typedef std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int> t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter;
 	typedef std::pair<unsigned int,p_m1_node_id_m2_d_key> p_m1_tree_level_m2_p_m1_node_id_m2_d_key;
-	typedef std::map<p_m1_node_id_m2_d_key,unsigned int> t_map_of_node_ids_and_d_keys_to_nr_of_deps;
+	typedef std::map<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> t_map_of_node_ids_and_d_keys_to_nr_of_deps;
 	struct t_pair_of_node_id_and_d_key_with_nr_of_deps{
-		t_pair_of_node_id_and_d_key_with_nr_of_deps(t_map_of_node_ids_and_d_keys_to_nr_of_deps::const_iterator& i) : node_id_and_d_key(i->first), nr_of_deps(i->second) {};
+		t_pair_of_node_id_and_d_key_with_nr_of_deps(t_map_of_node_ids_and_d_keys_to_nr_of_deps::const_iterator& i) : node_id_and_d_key(i->first), nr_of_deps(i->second) {}
 		const p_m1_node_id_m2_d_key& node_id_and_d_key;
-		const unsigned int& nr_of_deps;
+		const t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter& nr_of_deps;
 	};
 	typedef std::map<p_m1_node_id_m2_d_key,t_map_of_node_ids_and_d_keys_to_nr_of_deps> t_node_dependency_traversals;
 	struct t_node_dependency_traversal{
@@ -62,18 +67,21 @@
 		private:
 			node_info& get_private_node_info(unsigned int);
 			unsigned int get_head_node(const node_info&);
-			void get_nodes_by_symbol(const node_info&, const std::string, std::vector<unsigned int>&);
+			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
 			bool is_valid_combination(const std::string&, const node_info&, const node_info&);
 			bool find_functors_for_dependency(const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* functors_found_for_dependencies(const node_info&, node_info&);
-			void find_dependencies_for_node(const unsigned int, std::map<std::pair<unsigned int,unsigned int>,unsigned int>&, std::map<std::pair<std::string,unsigned int>,unsigned int>&);
-			void find_dependencies_for_functor(const unsigned int, const std::string&, std::map<std::pair<unsigned int,unsigned int>,unsigned int>&,std::map<std::pair<std::string,unsigned int>,unsigned int>&);
-			void find_dependencies_for_functor(const unsigned int, const std::string&, const std::string&, const std::string&, std::map<std::pair<unsigned int,unsigned int>,unsigned int>&, std::map<std::pair<std::string,unsigned int>,unsigned int>&);
+			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
+			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&,std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
+			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, const std::string&, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
 			const std::pair<const unsigned int,field>* followup_dependency(const unsigned int, const std::string&, const std::string&, const bool, const query_result&);
-			std::pair<p_m1_node_id_m2_d_key,unsigned int> calculate_longest_matching_dependency_route();
-			unsigned int calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&);
+			std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> calculate_longest_matching_dependency_route(std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&);
+			t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&, std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
 			unsigned int nr_of_dependencies_to_be_found();
+			transgraph* build_transgraph(const p_m1_node_id_m2_d_key&, const std::pair<std::string,unsigned int>&,
+					std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&,
+					const unsigned int = 1);
 			//std::vector<std::string> find_ev_occurence_in(const std::string&);
 			//void set_command(const std::string&, const std::string&, const std::string&);
 			//void set_options(const std::string&);
@@ -87,17 +95,17 @@
 			std::string command;
 			std::string options;
 			std::stack<p_m1_node_id_m2_d_key> node_dependency_traversal_stack;
-			std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> > node_dependency_traversal_tree;
+			std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> > node_dependency_traversal_stack_tree;
 			t_node_dependency_traversals  node_dependency_traversals;
-			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<std::string,unsigned int>,unsigned int> >  node_odependency_traversals;
+			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> > >  node_odependency_traversals;
 		public:
 			interpreter();
 			~interpreter();
 			int set_node_info(const lexicon&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
-			bool is_longest_match_for_semantic_rules_found();
-			//std::string get_command();
+			transgraph* longest_match_for_semantic_rules_found();
+			//std::string translate();
 	};
 
 	class semper_error:public std::exception{

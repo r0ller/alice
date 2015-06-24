@@ -20,6 +20,7 @@
 	#include "sp.h"
 	interpreter *sparser=NULL;
 	#include "sp.cpp"
+	#include "transgraph.cpp";
 	int line=0;
 %}
 
@@ -44,6 +45,7 @@
 %token	t_ENG_V_lfea_state 11
 %token	t_ENG_RPro_stem 12
 %token	t_ENG_RPro_lfea_relative 13
+%token	t_ENG_Neg 14
 %%
 S	:	ENG_VP
 {
@@ -110,6 +112,13 @@ ENG_VP	:	ENG_Vbar1
 				const node_info& ENG_RC=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
+}
+	|	ENG_Vbar2 ENG_RC
+{
+				const node_info& ENG_Vbar2=sparser->get_node_info($1);
+				const node_info& ENG_RC=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
+				std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
 };
 ENG_IVP	:	ENG_V ENG_PP
 {
@@ -122,6 +131,30 @@ ENG_IVP	:	ENG_V ENG_PP
 					return -1;
 				}
 				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
+}
+		|	ENG_NV ENG_PP
+{
+			const node_info& ENG_NV=sparser->get_node_info($1);
+			const node_info& ENG_PP=sparser->get_node_info($2);
+			$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
+			if($$<0){
+				//object_node=sparser->get_object_node(NP);
+				//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
+				return -1;
+			}
+			std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
+};
+ENG_NV	:	ENG_V ENG_NEG
+{
+				const node_info& ENG_V=sparser->get_node_info($1);
+				const node_info& ENG_NEG=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
+				if($$<0){
+					//object_node=sparser->get_object_node(NP);
+					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
+					return -1;
+				}
+				std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
 };
 ENG_Vbar3	:	ENG_V ENG_AdvP
 {
@@ -257,7 +290,7 @@ ENG_V	:	ENG_V_stem
 				const node_info& ENG_V_stem=sparser->get_node_info($1);
 				const node_info& ENG_V_lfea_state=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_state);
-				std::cout<<"ENG_V->ENG_V_stem ENG_V_state"<<std::endl;
+				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_state"<<std::endl;
 };
 ENG_V_stem	: t_ENG_V_stem
 {
@@ -310,7 +343,7 @@ ENG_N_Sg_0Con	:	ENG_N_Stem	ENG_N_lfea_Sg
 {
 				const node_info& ENG_N_Stem=sparser->get_node_info($1);
 				const node_info& ENG_N_lfea_Sg=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Stem,ENG_N_lfea_Sg);
+				$$=sparser->combine_nodes("ENG_N_Sg0Con",ENG_N_Stem,ENG_N_lfea_Sg);
 				if($$<0){
 					//object_node=sparser->get_object_node(NP);
 					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
@@ -322,7 +355,7 @@ ENG_N_Sg	:	ENG_N_Sg_0Con	ENG_1Con
 {
 				const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
 				const node_info& ENG_1Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con,ENG_1Con);
+				$$=sparser->combine_nodes("Sg",ENG_N_Sg_0Con,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con ENG_1Con"<<std::endl;
 }
 	|	ENG_1Con
@@ -330,9 +363,18 @@ ENG_N_Sg	:	ENG_N_Sg_0Con	ENG_1Con
 				lexicon word;
 
 				const node_info& ENG_1Con=sparser->get_node_info($1);
-				word.gcat="ENG_N_Sg";
+				word.gcat="Sg";
 				$$=sparser->set_node_info(word,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
+}
+	|	ENG_N_Sg_0Con
+{
+				lexicon word;
+
+				const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
+				word.gcat="Sg";
+				$$=sparser->set_node_info(word,ENG_N_Sg_0Con);
+				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con"<<std::endl;
 };
 ENG_N_Pl_0Con	:	ENG_N_Stem	ENG_N_lfea_Pl
 {
@@ -541,7 +583,16 @@ ENG_RC:		ENG_RPro ENG_TP
 				$$=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_TP);
 				std::cout<<"ENG_RC->ENG_RPro ENG_TP"<<std::endl;
 };
-/*Exclude Det for now so now "Shut down THE comupter" won't work
+ENG_NEG:	t_ENG_Neg
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned();
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+/*Exclude Det for now so now "Shut down THE computer" won't work
 ENG_Det :	t_ENG_Det
 {
 				lexicon word;
@@ -577,6 +628,7 @@ int yywrap(){
 const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
 	std::string shell_command;
 	db *sqlite=NULL;
+	transgraph *transgraph=NULL;
 
 	try{
 		if(human_input!=NULL){
@@ -585,12 +637,15 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			sqlite->open("hi.db");
 			sparser=new interpreter;
 			if(yyparse()==0){
-				if(sparser->is_longest_match_for_semantic_rules_found()==true)
-					std::cout<<"TRUE";
-					//shell_command=sparser->get_command();
-				else std::cout<<"FALSE";
+				transgraph=sparser->longest_match_for_semantic_rules_found();
+				if(transgraph!=NULL){
+					std::cout<<"TRUE"<<std::endl;
+					shell_command=transgraph->transcript(std::string());
+					//std::cout<<shell_command<<std::endl;
+				}
+				else std::cout<<"FALSE"<<std::endl;
 			}
-			else std::cout<<"FALSE";
+			else std::cout<<"FALSE"<<std::endl;
 			delete sparser;
 			sparser=NULL;
 			delete lex;
@@ -598,47 +653,50 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			sqlite->close();
 			delete sqlite;
 			sqlite=NULL;
-			return shell_command.c_str();
+			delete transgraph;
+			if(shell_command.empty()==false)
+				return shell_command.c_str();
+			else return NULL;
 		}
 	}
 	catch(sql_execution_error& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(failed_to_open_db& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(failed_to_close_db& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(lexicon_type_and_db_table_schema_mismatch& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(more_than_one_token_found& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(object_node_missing& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(head_node_missing& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(invalid_combination& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(std::exception& exception){
 		std::cout<<exception.what()<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	catch(...){
 		std::cout<<"Unexpected error ..."<<std::endl;
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 }
