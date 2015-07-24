@@ -6,6 +6,10 @@
 		int yywrap(void);
 	}
 
+
+	#ifdef __ANDROID__
+	#include "log.h"
+	#endif
 	#include <iostream>
 	#include "sqlite3.h"
 	#include "db.h"
@@ -42,7 +46,7 @@
 %token	t_ENG_Prep 8
 %token	t_ENG_QPro 9
 %token	t_ENG_V_stem 10
-%token	t_ENG_V_lfea_state 11
+%token	t_ENG_V_lfea_aux 11
 %token	t_ENG_RPro_stem 12
 %token	t_ENG_RPro_lfea_relative 13
 %token	t_ENG_Neg 14
@@ -285,12 +289,12 @@ ENG_V	:	ENG_V_stem
 				$$=sparser->set_node_info(word,ENG_V_Stem);
 				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 }
-	|	ENG_V_stem ENG_V_lfea_state
+	|	ENG_V_stem ENG_V_lfea_aux
 {
 				const node_info& ENG_V_stem=sparser->get_node_info($1);
-				const node_info& ENG_V_lfea_state=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_state);
-				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_state"<<std::endl;
+				const node_info& ENG_V_lfea_aux=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_aux);
+				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_aux"<<std::endl;
 };
 ENG_V_stem	: t_ENG_V_stem
 {
@@ -301,13 +305,13 @@ ENG_V_stem	: t_ENG_V_stem
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
-ENG_V_lfea_state	: t_ENG_V_lfea_state
+ENG_V_lfea_aux	: t_ENG_V_lfea_aux
 {
 				lexicon word;
 				const node_info empty_node_info={};
 
 				word=lex->last_word_scanned();
-				word.gcat="State";
+				word.gcat="Aux";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -629,12 +633,18 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 	std::string shell_command;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
+	char *commandscript=NULL;
 
 	try{
 		if(human_input!=NULL){
 			lex=new lexer(human_input);
 			sqlite=db::get_instance();
-			sqlite->open("hi.db");
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
+				sqlite->open("/data/data/hi.pkg/hi.db");//TODO: get cwd on android
+			#else
+				sqlite->open("hi.db");
+			#endif
 			sparser=new interpreter;
 			if(yyparse()==0){
 				transgraph=sparser->longest_match_for_semantic_rules_found();
@@ -654,9 +664,12 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			delete sqlite;
 			sqlite=NULL;
 			delete transgraph;
-			if(shell_command.empty()==false)
-				return shell_command.c_str();
-			else return NULL;
+			if(shell_command.empty()==false){
+				commandscript=new char[shell_command.length()+1];
+				shell_command.copy(commandscript,shell_command.length(),0);
+				commandscript[shell_command.length()]='\0';
+			}
+			return commandscript;
 		}
 	}
 	catch(sql_execution_error& exception){

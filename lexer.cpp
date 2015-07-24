@@ -61,7 +61,7 @@ lexicon lexer::last_word_scanned(){
 	unsigned int nr_of_words;
 
 	nr_of_words=words.size();
-	if(human_input_iterator!=human_input.end()){
+	if(human_input_iterator!=human_input.end()){//TODO: this condition fails if there's no terminating \n at the end of human input
 		word.token=words[nr_of_words-1].token;
 		word.word=words[nr_of_words-1].word;
 		word.lid=words[nr_of_words-1].lid;

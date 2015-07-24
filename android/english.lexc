@@ -14,8 +14,8 @@ Negation ;
 
 LEXICON Noun
 
-file Ninf;
-directory Ninf;
+contact Ninf;
+name Ninf;
 
 LEXICON Verb
 
@@ -37,9 +37,7 @@ LEXICON Vaux
 
 LEXICON Preposition
 
-from Pinf;
-in Pinf;
-to Pinf;
+with Pinf;
 
 LEXICON Pinf
 
@@ -55,7 +53,8 @@ LEXICON Advinf
 
 LEXICON Adjective
 
-executable Adjinf;
+first Adjinf;
+last Adjinf;
 
 LEXICON Adjinf
 

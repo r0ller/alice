@@ -4,7 +4,12 @@
 morphan *morphan::singleton_instance=NULL;
 
 morphan::morphan(){
-	morphan::fst=fsm_read_binary_file("english.fst");//TODO: Instead of hardcoding, check how to load a morphan for the current language
+	//TODO: Instead of hardcoding, check how to load a morphan for the current language
+	#ifdef __ANDROID__
+		morphan::fst=fsm_read_binary_file("/data/data/hi.pkg/english.fst");//TODO: get cwd on android
+	#else
+		morphan::fst=fsm_read_binary_file("english.fst");
+	#endif
 	if(morphan::fst == NULL){
 		//TODO: throw exception
 		exit(EXIT_FAILURE);
