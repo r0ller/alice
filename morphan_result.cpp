@@ -63,3 +63,12 @@ const std::vector<std::string>& morphan_result::morphemes() const{
 bool morphan_result::has_feature(const std::string feature) const{
 	return features.find(feature)==features.end()?false:true;
 }
+
+void morphan_result::add_feature(const std::string& feature){
+	//TODO: verify feature in gcat db table to see if the feature belongs indeed to the gcat in question
+	features.insert(feature);
+}
+
+const std::set<std::string>& morphan_result::lfeas() const{
+	return features;
+}

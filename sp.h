@@ -24,7 +24,6 @@
 		unsigned int right_child;/*argument node*/
 		std::map<unsigned int,unsigned int> node_links;//uint1:node_id,uint2:seq.nr.;historical sequence of semantically validated nodes (syntactic validation is carried out by bison and is recorded in the tree)
 		std::multimap<unsigned int,unsigned int> dependency_validation_matrix;//uint1:row_index of dependency entry in expression.dependencies, uint2: dependent node id
-		functor_data functor_attributes;
 	}node_info;
 
 
@@ -82,13 +81,7 @@
 			transgraph* build_transgraph(const p_m1_node_id_m2_d_key&, const std::pair<std::string,unsigned int>&,
 					std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&,
 					const unsigned int = 1);
-			//std::vector<std::string> find_ev_occurence_in(const std::string&);
-			//void set_command(const std::string&, const std::string&, const std::string&);
-			//void set_options(const std::string&);
-			//void find_ev_definitions(const std::string&, std::vector<std::string>&);
-			//void find_ev_definitions(const std::string&, std::vector<ev_name_value_pair>&);
-			//void delete_ev_redefinitions(const std::string&, std::string&);
-			//std::string resolve_ev_redefinitions(const std::string&, const std::string&);
+			unsigned int direct_descendant_of(const node_info&);
 			void destroy_node_infos();
 			std::vector<node_info> node_infos;
 			unsigned int nr_of_nodes;
@@ -105,7 +98,7 @@
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
 			transgraph* longest_match_for_semantic_rules_found();
-			//std::string translate();
+			unsigned int add_feature_to_leaf(const node_info&,const std::string&);
 	};
 
 	class semper_error:public std::exception{

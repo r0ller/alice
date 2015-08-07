@@ -66,6 +66,20 @@ FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES FUNCTORS(functor, d_key) 
 /*TODO: with sqlite3.8.0 partial index is supported so a unique index could be created with 'where d_counter'*/
 /*create unique index i_depolex_lexeme_d_key on DEPOLEX(lexeme, d_key) where d_counter;*/
 
+/*TODO:think over if a table for derivations&compositions fits the bill for type inference
+Note that it allows 1:N for multiple inheritance and composition*/
+/*
+create table DERCO(
+functor varchar(47),
+dkey smallint,
+counter smallint,
+extension_type smallint, --derivation or composition
+ref_functor varchar(47),
+ref_d_key smallint,
+PRIMARY KEY(functor, d_key, counter, extension_type)
+);
+*/
+
 /*Maps each syntactic rule to a semantic rule (note: semantic combination rules are divided into different steps due to
 technical reasons)*/
 create table RULE_TO_RULE_MAP(

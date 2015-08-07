@@ -1,7 +1,9 @@
 #include "transgraph.h"
 
-transgraph::transgraph(const std::pair<std::string,unsigned int>& functor){
+transgraph::transgraph(const std::pair<std::string,unsigned int>& functor,const morphan_result *lfeas){
 	this->functor=functor;
+	if(lfeas!=NULL)	this->lfeas=lfeas;
+	else this->lfeas=NULL;
 }
 
 transgraph::~transgraph(){
@@ -23,6 +25,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
 	const std::string *semantic_dependency=NULL,*ref_d_key=NULL,*functor_id=NULL,*functor_def=NULL;
 	std::map<d_counter,std::string> argument_scripts;
+	unsigned int feature_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
 	sqlite=db::get_instance();
@@ -88,6 +91,14 @@ std::string transgraph::transcript(const std::string& type) const{
 			}
 		}
 		transcript+="function "+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+"){ ";
+		if(lfeas!=NULL){
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_LFEAS=new Array();";
+			for(auto&& i:lfeas->lfeas()){
+				transcript+=functor.first+"_"+std::to_string(functor.second)+"_LFEAS["+std::to_string(feature_index)+"]='";
+				transcript+=i+"';";
+				++feature_index;
+			}
+		}
 		functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"';");
 		if(functor_id_entry==NULL) exit(EXIT_FAILURE);//TODO: throw exception
 		functor_id=functor_id_entry->field_value_at_row_position(0,"functor_id");
@@ -103,6 +114,7 @@ std::string transgraph::transcript(const std::string& type) const{
 			transcript+="true; };"+functor.first+"_"+std::to_string(functor.second)+"_OUT="+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+")"+";";
 		}
 	}
+	__android_log_print(ANDROID_LOG_INFO, "hi", "debug");
 	return transcript;
 }
 #else
@@ -113,6 +125,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
 	const std::string *semantic_dependency=NULL,*ref_d_key=NULL,*functor_id=NULL,*functor_def=NULL;
 	std::map<d_counter,std::string> argument_scripts;
+	unsigned int feature_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
 	sqlite=db::get_instance();
@@ -168,6 +181,13 @@ std::string transgraph::transcript(const std::string& type) const{
 			}
 		}
 		transcript+=functor.first+"_"+std::to_string(functor.second)+"(){ ";
+		if(lfeas!=NULL){
+			for(auto&& i:lfeas->lfeas()){
+				transcript+=functor.first+"_"+std::to_string(functor.second)+"_LFEAS["+std::to_string(feature_index)+"]='";
+				transcript+=i+"';";
+				++feature_index;
+			}
+		}
 		functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"';");
 		if(functor_id_entry==NULL) exit(EXIT_FAILURE);//TODO: throw exception
 		functor_id=functor_id_entry->field_value_at_row_position(0,"functor_id");

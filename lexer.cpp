@@ -136,7 +136,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 						}
 //						std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-						tokens.push_back(token);
+						if(token>0) tokens.push_back(token);
 					}
 					else{
 						tag_position=morphemes[i].find("[stem]");

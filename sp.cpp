@@ -158,134 +158,6 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	return nodeinfo.node_id;
 }
 
-//??? interpreter::translate(??? formula){
-//	std::string command,environment_variable;
-//	std::vector<std::string> environment_variables;
-//
-//	 TODO: Check options and command attributes for environment variable redefinitions
-//	 and resolve them using some logic.
-//	if(this->command.empty()==false){
-//		command=this->command;
-//		if(options.empty()==false){
-//			find_ev_definitions(options,environment_variables);
-//			for(unsigned int i=0;i<environment_variables.size();++i){
-//				environment_variable=environment_variables[i];
-//				//Look up redefinitions for the environment variable in command
-//				delete_ev_redefinitions(environment_variable,command);
-//			}
-//			command=options+command;
-//		}
-//	}
-//	return command;
-//}
-
-
-/*PRIVATE*/
-/*
-void interpreter::find_ev_definitions(const std::string& script, std::vector<std::string>& environment_variables){
-	std::string environment_variable;
-	std::istringstream stream_to_tokenize(script);
-	size_t variable_start;
-
-	while(std::getline(stream_to_tokenize,environment_variable,'=')){
-		variable_start=environment_variable.find_last_of(" ;");
-		if(variable_start!=std::string::npos) environment_variable=environment_variable.substr(++variable_start);
-		environment_variable+="=";
-		environment_variables.push_back(environment_variable);
-	}
-	environment_variables.pop_back();//Remove last tokenized part, it's an R-value we don't need
-}
-*/
-
-/*
-void interpreter::find_ev_definitions(const std::string& script, std::vector<ev_name_value_pair>& environment_variables){
-	std::string environment_variable;
-	std::istringstream stream_to_tokenize(script);
-	size_t variable_start,value_end;
-	ev_name_value_pair ev_definition;
-
-	while(std::getline(stream_to_tokenize,environment_variable,'=')){
-		variable_start=environment_variable.find_last_of(" ;");
-		if(variable_start!=std::string::npos) ev_definition.name=environment_variable.substr(++variable_start);
-		else ev_definition.name=environment_variable;
-		ev_definition.name+="=";
-		if(environment_variables.empty()==true){
-			ev_definition.value.clear();
-		}
-		else{
-			value_end=environment_variable.find_first_of(" ;");
-			if(value_end!=std::string::npos) ev_definition.value=environment_variable.substr(0,value_end);
-			else ev_definition.value.clear();
-			environment_variables[environment_variables.size()-1].value=ev_definition.value;
-		}
-		environment_variables.push_back(ev_definition);
-	}
-	environment_variables.pop_back();//Remove last tokenized part, it's an R-value we don't need
-}
-*/
-
-/*
-void interpreter::delete_ev_redefinitions(const std::string& environment_variable, std::string& script){
-	size_t variable_start,variable_end;
-
-	variable_start=script.find(environment_variable);
-	while(variable_start!=std::string::npos){
-		if(script.at(variable_start+environment_variable.length())=='\''){
-			variable_end=script.find('\'',variable_start+environment_variable.length()+1);
-			++variable_end;
-			if(script.at(variable_end)==';')++variable_end;
-		}
-		else{
-			variable_end=script.find_first_of(" ;",variable_start);
-			if(variable_end==std::string::npos) variable_end=script.length();
-			else ++variable_end;
-			}
-		script=script.substr(0,variable_start)+script.substr(variable_end);
-		variable_start=script.find(environment_variable,variable_end);
-	}
-}
-*/
-
-/*
-std::string interpreter::resolve_ev_redefinitions(const std::string& in, const std::string& from){
-	std::string command,ev_string;
-	ev_name_value_pair environment_variable;
-	char *old_ev_cstring=NULL, *new_ev_cstring=NULL;
-	std::vector<ev_name_value_pair> environment_variables;
-
-	 TODO: Check options and command attributes for environment variable redefinitions
-	 * and resolve them using some logic.
-	if(in.empty()==false){
-		command=in;
-		if(from.empty()==false){
-			find_ev_definitions(from,environment_variables);
-			for(unsigned int i=0;i<environment_variables.size();++i){
-				environment_variable=environment_variables[i];
-				Look up redefinitions for the environment variable in command
-				delete_ev_redefinitions(environment_variable.name,command);
-				old_ev_cstring=std::getenv(environment_variable.name.substr(0,environment_variable.name.length()-1).c_str());//Cut '=' sign and check environment variable value
-				//It either exists with a different value or not at all and in both cases ev needs to be updated
-				if(environment_variable.name.substr(0,3)=="HI_"
-						&&(old_ev_cstring==NULL&&environment_variable.value.empty()==false
-						||old_ev_cstring!=NULL&&old_ev_cstring!=environment_variable.value)){
-					ev_string=environment_variable.name+environment_variable.value;
-					new_ev_cstring=(char*)std::malloc(ev_string.length()+1);
-					ev_string.copy(new_ev_cstring,ev_string.length(),0);
-					new_ev_cstring[ev_string.length()]=0;
-					//FIXME: Absolute path should be stored in ev!!!
-					putenv(new_ev_cstring);
-					if(new_ev_cstring!=old_ev_cstring) free(old_ev_cstring);
-				}
-				old_ev_cstring=NULL;
-				new_ev_cstring=NULL;
-			}
-			command=from+command;
-		}
-	}
-	return command;
-}
-*/
-
 std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* interpreter::is_valid_expression(node_info& main_node, node_info& dependent_node){
 	std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors=NULL;
 
@@ -400,7 +272,9 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	//nodes_found: node ids of the nodes found
 	//std::cout<<"symbol: "<<symbol<<std::endl;
 	if(symbol.empty()==false){
-		if(root_node.symbol==symbol&&lexeme.empty()==true||root_node.symbol==symbol&&lexeme.empty()==false&&root_node.expression.lexeme==lexeme){
+		if(root_node.symbol==symbol&&lexeme.empty()==true
+			||root_node.symbol!=symbol&&lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->has_feature(symbol)==true
+			||root_node.symbol==symbol&&lexeme.empty()==false&&root_node.expression.lexeme==lexeme){
 			//std::cout<<"node_found_by_symbol '"<<symbol<<"':"<<root_node.node_id<<std::endl;
 			nodes_found.push_back(root_node.node_id);
 		}
@@ -1284,11 +1158,11 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	if(root_found==longest_traversals.end()) exit(EXIT_FAILURE);//TODO: throw exception
 	if(std::atoi(parent.first.c_str())>0){
 //		std::cout<<get_node_info(std::atoi(parent.first.c_str())).expression.lexeme<<"_"<<parent.second<<std::endl;
-		functor_transgraph=new transgraph(std::make_pair(get_node_info(std::atoi(parent.first.c_str())).expression.lexeme,parent.second));
+		functor_transgraph=new transgraph(std::make_pair(get_node_info(std::atoi(parent.first.c_str())).expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 	}
 	else{
 //		std::cout<<parent.first<<"_"<<parent.second<<std::endl;
-		functor_transgraph=new transgraph(std::make_pair(parent.first,parent.second));
+		functor_transgraph=new transgraph(std::make_pair(parent.first,parent.second),NULL);
 	}
 	for(auto&& i:root_found->second.second){
 //		std::cout<<"debug lexeme:"<<get_node_info(i.first).expression.lexeme<<", d_key (i.second.second):"<<i.second.second<<
@@ -1333,129 +1207,26 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	return functor_transgraph;
 }
 
-/*
-std::vector<std::string> interpreter::find_ev_occurence_in(const std::string& script){
-	std::string environment_variable;
-	std::vector<std::string> environment_variables;
-	std::istringstream stream_to_tokenize(script);
-	size_t environment_variable_end;
-	unsigned int i=0;
+unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& feature){
+	unsigned int leaf_node_id=0;
 
-	while(std::getline(stream_to_tokenize,environment_variable,'$')){
-		if(i>0){//Ignore first tokenized part, it ends in $, not begins with it
-			environment_variable_end=environment_variable.find_first_of(" ;");
-			if(environment_variable_end!=std::string::npos)	environment_variable.resize(environment_variable_end);
-			environment_variables.push_back(environment_variable);
-		}
-		++i;
+	leaf_node_id=direct_descendant_of(node);
+	if(leaf_node_id>0){
+		const node_info& leaf_node=get_node_info(leaf_node_id);
+		leaf_node.expression.morphalytics->add_feature(feature);
 	}
-	return environment_variables;
+	return leaf_node_id;
 }
-*/
 
-
-/*
-void interpreter::set_command(const std::string& command, const std::string& constant, const std::string& prep){
-	std::string pattern,environment_variable,ev,ev_value,command_value,preposition_value,command_resolvee;
-	unsigned int i,j;
-	db *sqlite;
-	std::vector<std::string> environment_variables;
-
-	sqlite=db::get_instance();
-	if(this->command.empty()==true){
-		environment_variables=find_ev_occurence_in(command);
-		//printf("DEBUG: environment_variables.size()=%d\n",environment_variables.size());
-		for(j=0;j<environment_variables.size();++j){
-			pattern=environment_variables[j];
-			pattern+="=";
-			//printf("\nDEBUG PATTERN: %s\n\n",pattern.c_str());
-			Don't look up another definition if the environment variable is already defined in command
-			if(command.find(pattern)==std::string::npos&&this->command.empty()==true
-				||command.find(pattern)==std::string::npos&&this->command.empty()==false&&this->command.find(pattern)==std::string::npos){
-				//printf("\nDEBUG PATTERN OK: %s\n\n",pattern.c_str());
-				for(i=0;i<sqlite->result_size();++i){
-					At least one entry must exist with the pattern specified
-					command_value=sqlite->get_field_value(i,"command");
-					//printf("\nDEBUG DB ENTRY command_value=%s\n\n",command_value.c_str());
-					preposition_value=sqlite->get_field_value(i,"preposition");
-					//printf("\nDEBUG DB ENTRY preposition_value=%s\n\n",preposition_value.c_str());
-					if(command_value.find(pattern)!=std::string::npos&&
-							(prep.empty()==false&&preposition_value==prep
-							||prep.empty()==true&&preposition_value.empty()==false)){
-						//Check if the script found contains environment variable definition
-						if(pattern.substr(0,3)=="HI_"&&command_value.find(pattern)==std::string::npos){
-							//No definition found for the environment variable stored in pattern, take it from process environment
-							ev=pattern.substr(0,pattern.length()-1));//Cut '=' sign
-							ev_value=std::getenv(ev.c_str());
-						}
-						if(this->command.empty()==true){
-							if(ev_value.empty()==false){
-								this->command=pattern+"\'"+ev_value+"';"+command_value;
-							}
-							else this->command=command_value;
-						}
-						else if(this->command.find(command_value)==std::string::npos){
-							if(ev_value.empty()==false){
-								this->command+=pattern+"\'"+ev_value+"';";
-							}
-							this->command+=command_value;
-						}
-						//printf("\nDEBUG VARIABLE: %s\n\n",this->command.c_str());
-						break;
-					}
-				}
-			}
-		}
-		if(constant.empty()==true){
-			if(this->command.empty()==true){
-				this->command=command;
-			}
-			else{
-				this->command+=command;
-			}
-		}
-		else{
-			if(this->command.empty()==true){
-				this->command="constant="+constant+";"+command;
-			}
-			else{
-				this->command+="constant="+constant+";"+command;
-			}
-		}
-
+unsigned int interpreter::direct_descendant_of(const node_info& root_node){
+	if(root_node.left_child==0&&root_node.right_child==0){
+		//std::cout<<"direct descendant found: "<<root_node.node_id<<std::endl;
+		return root_node.node_id;
 	}
-	else{
-		if(constant.empty()==true){
-			this->command=command+this->command;
-		}
-		else{
-			pattern=command.substr(0,command.find('='));
-			pattern+="=";
-			command_resolvee=pattern+constant+command.substr(command.find(';'));
-			//printf("command_resolvee:%s\n",command_resolvee.c_str());
-			this->command=resolve_ev_redefinitions(this->command,command_resolvee);
-		}
-	}
-	//printf("\nDEBUG SET_COMMAND: %s\n\n",this->command.c_str());
+	if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
+	else if(root_node.right_child!=0&&root_node.left_child==0) return direct_descendant_of(get_node_info(root_node.right_child));
+	else return 0;
 }
-*/
-
-/*
-void interpreter::set_options(const std::string& options){
-
-	 TODO: check for already existing environment variables in this->private.options and if such a variable
-	 * occurs in the incoming options parameter, then rearrange this->private.options with string operations.
-	 * Otherwise, with simple concatenation the already existing environment variable loses its value due to
-	 * the redefinition in the incoming options parameter.
-	if(this->options.empty()==true){
-		this->options=options;
-	}
-	else{
-		this->options+=options;
-	}
-	//printf("\nDEBUG SET_OPTIONS: %s\n\n",this->options.c_str());
-}
-*/
 
 void interpreter::destroy_node_infos(){
 	nr_of_nodes=0;

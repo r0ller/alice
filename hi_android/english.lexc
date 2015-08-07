@@ -1,0 +1,79 @@
+!!!english.lexc!!!
+
+Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat] +Relative[lfea] +NEG[gcat]
+
+LEXICON Root
+
+Noun ;
+Verb ;
+Preposition ;
+Adverb ;
+Adjective ;
+Pronoun ;
+Negation ;
+
+LEXICON Noun
+
+contact Ninf;
+name Ninf;
+
+LEXICON Verb
+
+list   Vinf;
+be	Vinf;
+be[stem]+V[gcat]+Sg[lfea]:is #;
+be[stem]+V[gcat]+Pl[lfea]:are #;
+
+LEXICON Ninf
+
+[stem]+N[gcat]+Sg[lfea]:0   #;
+[stem]+N[gcat]+Pl[lfea]:^s  #;
+
+LEXICON Vinf
+
+[stem]+V[gcat]:0 #;
+
+LEXICON Vaux
+
+[stem]+V[gcat]+Aux[lfea]:0 #;
+
+LEXICON Preposition
+
+with Pinf;
+
+LEXICON Pinf
+
+[stem]+PREP[gcat]:0 #;
+
+LEXICON Adverb
+
+down Advinf;
+
+LEXICON Advinf
+
+[stem]+ADV[gcat]:0 #;
+
+LEXICON Adjective
+
+first Adjinf;
+last Adjinf;
+
+LEXICON Adjinf
+
+[stem]+A[gcat]:0 #;
+
+LEXICON Pronoun
+
+that RPro;
+
+LEXICON RPro
+
+[stem]+RPRO[gcat]+Relative[lfea]:0 #;
+
+LEXICON Negation
+
+not Neg;
+
+LEXICON Neg
+
+[stem]+NEG[gcat]:0 #;

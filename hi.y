@@ -6,7 +6,6 @@
 		int yywrap(void);
 	}
 
-
 	#ifdef __ANDROID__
 	#include "log.h"
 	#endif
@@ -128,6 +127,7 @@ ENG_IVP	:	ENG_V ENG_PP
 {
 				const node_info& ENG_V=sparser->get_node_info($1);
 				const node_info& ENG_PP=sparser->get_node_info($2);
+				sparser->add_feature_to_leaf(ENG_V,"RCV");
 				$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 				if($$<0){
 					//object_node=sparser->get_object_node(NP);
@@ -510,7 +510,7 @@ ENG_Prep:	t_ENG_Prep
 {
 				lexicon word;
 				const node_info empty_node_info={};
-			
+
 				word=lex->last_word_scanned();
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
@@ -630,10 +630,10 @@ int yywrap(){
 }
 
 const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
-	std::string shell_command;
+	std::string commandstr;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
-	char *commandscript=NULL;
+	char *commandchr=NULL;
 
 	try{
 		if(human_input!=NULL){
@@ -650,8 +650,8 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 				transgraph=sparser->longest_match_for_semantic_rules_found();
 				if(transgraph!=NULL){
 					std::cout<<"TRUE"<<std::endl;
-					shell_command=transgraph->transcript(std::string());
-					//std::cout<<shell_command<<std::endl;
+					commandstr=transgraph->transcript(std::string());
+					//std::cout<<commandstr<<std::endl;
 				}
 				else std::cout<<"FALSE"<<std::endl;
 			}
@@ -664,12 +664,12 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			delete sqlite;
 			sqlite=NULL;
 			delete transgraph;
-			if(shell_command.empty()==false){
-				commandscript=new char[shell_command.length()+1];
-				shell_command.copy(commandscript,shell_command.length(),0);
-				commandscript[shell_command.length()]='\0';
+			if(commandstr.empty()==false){
+				commandchr=new char[commandstr.length()+1];
+				commandstr.copy(commandchr,commandstr.length(),0);
+				commandchr[commandstr.length()]='\0';
 			}
-			return commandscript;
+			return commandchr;
 		}
 	}
 	catch(sql_execution_error& exception){

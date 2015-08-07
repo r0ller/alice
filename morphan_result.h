@@ -19,6 +19,8 @@
 			const std::string& gcat() const;
 			const std::vector<std::string>& morphemes() const;
 			bool has_feature(const std::string) const;
+			void add_feature(const std::string&);
+			const std::set<std::string>& lfeas() const;
 			//prefix();
 			//suffix();
 			//infix();

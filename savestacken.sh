@@ -1,2 +1,2 @@
-#!/usr/pkg/bin/bash
+#!/usr/bin/bash
 save stack english.fst

@@ -20,7 +20,9 @@ directory Ninf;
 LEXICON Verb
 
 list   Vinf;
-are Vaux;
+be	Vinf;
+be[stem]+V[gcat]+Sg[lfea]:is #;
+be[stem]+V[gcat]+Pl[lfea]:are #;
 
 LEXICON Ninf
 

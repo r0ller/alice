@@ -41,9 +41,10 @@ insert into SYMBOLS values('ENG_TP', 'ENG');
 insert into SYMBOLS values('ENG_RPRO', 'ENG');
 insert into SYMBOLS values('ENG_NV', 'ENG');
 insert into SYMBOLS values('NEG', 'ENG');
+insert into SYMBOLS values('RCV', 'ENG');/*Relative Clause Verb*/
 
-/*Constant has hardcoded token value 1 in the yacc source but to avoid collision, the values here are increased
-by 1 during runtime so, the smallest value here must at least be 1*/
+/*Constant has hardcoded token value 1 in the yacc source so to avoid collision, the values here are increased
+by 1 during runtime; Entries with NULL value for token are not to be generated in the yacc source.*/
 /*TODO: Think over if the feature field for all gcats shall at least be 'Stem' or not?
 For exmaple, DET is considered as well to have a stem? How is it analysed by Foma?*/
 insert into GCAT values('CON', NULL, 'ENG', '0', 'Constant');/*Plays role only when checking for terminal symbols*/
@@ -57,6 +58,8 @@ insert into GCAT values('PREP', NULL, 'ENG', '7', 'Preposition');
 insert into GCAT values('QPRO', NULL, 'ENG', '8', 'Quantifier Pronoun');
 insert into GCAT values('V', 'Stem', 'ENG', '9', 'Verb');
 insert into GCAT values('V', 'Aux', 'ENG', '10', 'Auxiliary');
+insert into GCAT values('V', 'RCV', 'ENG', NULL, 'Relative Clause Verb');
+insert into GCAT values('V', 'Pl', 'ENG', NULL, 'Plural Verb');
 insert into GCAT values('RPRO', NULL, 'ENG', '11', 'Relative Pronoun');
 insert into GCAT values('RPRO', 'Relative', 'ENG', '12', 'Relativizer feature');
 insert into GCAT values('NEG', 'Stem', 'ENG', '13', 'Negation');
@@ -71,6 +74,11 @@ insert into XLINKS values('0', 'Association');
 insert into XLINKS values('1', 'Aggregation');
 insert into XLINKS values('2', 'Composition');//Composition means 'life cycle dependency'!
 */
+insert into FUNCTOR_DEFS values('LISTENGV_1', NULL);
+insert into FUNCTOR_DEFS values('FILEENGN_1', NULL);
+insert into FUNCTOR_DEFS values('INENGPREP_1', NULL);
+insert into FUNCTOR_DEFS values('BEENGV_1', NULL);
+insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', NULL);
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
@@ -81,11 +89,11 @@ insert into FUNCTORS values('THATENGRPRO', '1', NULL);
 insert into FUNCTORS values('FILEENGN', '1', 'FILEENGN_1');
 insert into FUNCTORS values('FILEENGN', '2', 'FILEENGN_2');
 insert into FUNCTORS values('DIRECTORYENGN', '1', 'DIRECTORYENGN_1');
-insert into FUNCTORS values('AREENGV', '1', 'AREENGV_1');
+insert into FUNCTORS values('BEENGV', '1', 'BEENGV_1');
 insert into FUNCTORS values('NOTENGNEG', '1', 'NOTENGNEG_1');
 insert into FUNCTORS values('EXECUTABLEENGA', '1', 'EXECUTABLEENGA_1');
 
-insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'Aux',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VBAR1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, 'N', NULL, 'N', NULL, 'ENG');
@@ -99,10 +107,10 @@ insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', '2', '3', 
 insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '3', NULL, NULL, 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, 'RPRO', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '2', NULL, '3', 'Aux', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR1', 'ENG_RC', '3', NULL, NULL, 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_VBAR1', 'RPRO', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR2', 'ENG_RC', '2', NULL, '3', 'Aux', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_VBAR2', 'ENG_RC', '3', NULL, NULL, 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, 'NEG', NULL, 'H', NULL, 'ENG');
@@ -113,7 +121,8 @@ insert into LEXICON values('file', 'ENG', 'N', 'FILEENGN');
 insert into LEXICON values('directory', 'ENG', 'N', 'DIRECTORYENGN');
 insert into LEXICON values('from', 'ENG', 'PREP', 'FROMENGPREP');
 insert into LEXICON values('in', 'ENG', 'PREP', 'INENGPREP');
-insert into LEXICON values('are', 'ENG', 'V', 'AREENGV');
+insert into LEXICON values('are', 'ENG', 'V', 'BEENGV');
+insert into LEXICON values('be', 'ENG', 'V', 'BEENGV');
 insert into LEXICON values('not', 'ENG', 'NEG', 'NOTENGNEG');
 insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
 insert into LEXICON values('executable', 'ENG', 'A', 'EXECUTABLEENGA');
@@ -134,10 +143,10 @@ insert into RELATIONS values('LISTENGV', '1', 'ACTENGV', '1');
 
 /*no value in the semantic_dependency field means no dependency*/
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('DIRECTORYENGN', '1', '1', NULL, '2', NULL, '0', 'AREENGV', '1');
+insert into DEPOLEX values('DIRECTORYENGN', '1', '1', NULL, '2', NULL, '0', 'BEENGV', '1');
 insert into DEPOLEX values('DIRECTORYENGN', '1', '2', '1', '2', NULL, '1', 'CON', '1');
 insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', 'FILEENGN', '1');
-insert into DEPOLEX values('FILEENGN', '1', '1', NULL, '1', NULL, '0', 'AREENGV', '1');
+insert into DEPOLEX values('FILEENGN', '1', '1', NULL, '1', NULL, '0', 'BEENGV', '1');
 insert into DEPOLEX values('FILEENGN', '2', '1', '1', NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('FROMENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
 insert into DEPOLEX values('INENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
@@ -149,8 +158,8 @@ insert into DEPOLEX values('LISTENGV', '2', '2', NULL, '3', NULL, '0', 'INENGPRE
 insert into DEPOLEX values('LISTENGV', '2', '3', NULL, '3', NULL, '0', 'FROMENGPREP', '1');
 insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('AREENGV', '1', '1', NULL, '2', '2', '0', 'NOTENGNEG', '1');
-insert into DEPOLEX values('AREENGV', '1', '2', NULL, NULL, NULL, '0', 'INENGPREP', '1');
+insert into DEPOLEX values('BEENGV', '1', '1', NULL, '2', '2', '0', 'NOTENGNEG', '1');
+insert into DEPOLEX values('BEENGV', '1', '2', NULL, NULL, NULL, '0', 'INENGPREP', '1');
 insert into DEPOLEX values('NOTENGNEG', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 
 COMMIT;

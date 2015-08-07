@@ -17,8 +17,8 @@
 		std::string lid;
 		std::string gcat;
 		std::string lexeme;
-		query_result *dependencies;
-		morphan_result *morphalytics;
+		query_result *dependencies=NULL;
+		morphan_result *morphalytics=NULL;
 	}lexicon;
 
 	class db{
