@@ -19,6 +19,7 @@
 		std::string lexeme;
 		query_result *dependencies=NULL;
 		morphan_result *morphalytics=NULL;
+		std::vector<unsigned int> tokens;
 	}lexicon;
 
 	class db{

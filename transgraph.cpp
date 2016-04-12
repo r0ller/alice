@@ -17,7 +17,7 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 }
 
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__)
 std::string transgraph::transcript(const std::string& type) const{
 	std::string transcript,initial_argscript,argument_list;
 	db *sqlite=NULL;
@@ -114,7 +114,9 @@ std::string transgraph::transcript(const std::string& type) const{
 			transcript+="true; };"+functor.first+"_"+std::to_string(functor.second)+"_OUT="+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+")"+";";
 		}
 	}
+	#if defined(__ANDROID__)
 	__android_log_print(ANDROID_LOG_INFO, "hi", "debug");
+	#endif
 	return transcript;
 }
 #else

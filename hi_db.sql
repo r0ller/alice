@@ -8,19 +8,29 @@ create table ROOT_TYPE(
 root_type varchar(1) primary key /*h:head root, n:non head root*/
 );
 
+/*Table for platform specific language id mapping*/
+create table LIDMAP(
+plid varchar(16),
+platform varchar(16),
+lid varchar(5),
+PRIMARY KEY(plid, platform)
+FOREIGN KEY(lid) REFERENCES LANGUAGES(lid)
+);
+
 create table LANGUAGES(
-lid varchar(3) primary key,
+lid varchar(5) primary key,
 language varchar(128),
-head_position smallint /*0: undefined e.g. programming languages like bash, 1: head first, 2: head last*/
+head_position smallint, /*0: undefined, 1: head first, 2: head last*/
+fst varchar(256)
 );
 
 create table GCAT(/*Eventually, table for terminal symbols, i.e. to which yacc tokens can be assigned*/
 gcat varchar(12), /*references SYMBOLS(symbol),*/
 feature varchar(12), /*references SYMBOLS(symbol),*/
-lid varchar(3) references LANGUAGES(lid),
+lid varchar(5) references LANGUAGES(lid),
 token smallint,
-description varchar(128),
-PRIMARY KEY(gcat, feature, lid, token) /*gcat, feature, lid, token are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
+/*description varchar(128),*/
+PRIMARY KEY(gcat, feature, lid) /*gcat, feature, lid are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 );
@@ -28,7 +38,8 @@ FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 
 create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
-lid varchar(3) references LANGUAGES(lid),
+lid varchar(5) references LANGUAGES(lid),
+description varchar(128),
 PRIMARY KEY(symbol, lid)
 );
 
@@ -97,7 +108,7 @@ dependent_node_symbol varchar(12),/* references SYMBOLS(symbol),*/
 dependent_node_lexeme varchar(47),
 dependency_lookup_root varchar(1) references ROOT_TYPE(root_type),
 dependency_lookup_subtree_symbol varchar(12),/* references SYMBOLS(symbol),*/
-lid varchar(3) references LANGUAGES(lid),/*TODO: check it in coding when reading the table, this was added later so in the code nowhere expects such a field to exist*/
+lid varchar(5) references LANGUAGES(lid),/*TODO: check it in coding when reading the table, this was added later so in the code nowhere expects such a field to exist*/
 PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
@@ -112,7 +123,7 @@ FOREIGN KEY(dependency_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, li
 
 create table LEXICON(
 word varchar(256),
-lid varchar(3) references LANGUAGES(lid),
+lid varchar(5) references LANGUAGES(lid),
 gcat varchar(12),
 lexeme varchar(47),
 PRIMARY KEY(word, lid, gcat)

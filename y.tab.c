@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+#define YYBISON_VERSION "3.0.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -77,21 +77,22 @@
 	#include <iostream>
 	#include "sqlite3.h"
 	#include "db.h"
+	#include "lexer.h"
+	lexer *lex=NULL;
 	#include "query_result.cpp"
 	#include "db.cpp"
 	#include "morphan_result.cpp"
 	#include "morphan.cpp"
 	morphan *stemmer=NULL;
-	#include "lexer.h"
-	lexer *lex=NULL;
-	#include "lexer.cpp"
 	#include "sp.h"
 	interpreter *sparser=NULL;
+	#include "lexer.cpp"
 	#include "sp.cpp"
 	#include "transgraph.cpp";
-	int line=0;
+	void yyerror(char const *yymsgp);
+//	void yyerror(YYLTYPE yyloc, char const *yymsgp);
 
-#line 95 "y.tab.c" /* yacc.c:339  */
+#line 96 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -106,7 +107,7 @@
 # undef YYERROR_VERBOSE
 # define YYERROR_VERBOSE 1
 #else
-# define YYERROR_VERBOSE 0
+# define YYERROR_VERBOSE 1
 #endif
 
 
@@ -136,24 +137,13 @@ extern int yydebug;
     t_ENG_V_lfea_aux = 11,
     t_ENG_RPro_stem = 12,
     t_ENG_RPro_lfea_relative = 13,
-    t_ENG_Neg = 14
+    t_ENG_Neg = 14,
+    t_HUN_Con_lfea_Acc = 15,
+    t_HUN_Verb_stem = 16,
+    t_HUN_Verb_lfea_ConjDefSg2 = 17,
+    t_HUN_Vbpfx = 18
   };
 #endif
-/* Tokens.  */
-#define t_Con 1
-#define t_ENG_A 2
-#define t_ENG_Adv 3
-#define t_ENG_Det 4
-#define t_ENG_N_stem 5
-#define t_ENG_N_lfea_Pl 6
-#define t_ENG_N_lfea_Sg 7
-#define t_ENG_Prep 8
-#define t_ENG_QPro 9
-#define t_ENG_V_stem 10
-#define t_ENG_V_lfea_aux 11
-#define t_ENG_RPro_stem 12
-#define t_ENG_RPro_lfea_relative 13
-#define t_ENG_Neg 14
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -171,7 +161,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 175 "y.tab.c" /* yacc.c:358  */
+#line 165 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -282,33 +272,9 @@ typedef short int yytype_int16;
 #endif
 
 
-#if ! defined yyoverflow || YYERROR_VERBOSE
+#if 1
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
-
-# ifdef YYSTACK_USE_ALLOCA
-#  if YYSTACK_USE_ALLOCA
-#   ifdef __GNUC__
-#    define YYSTACK_ALLOC __builtin_alloca
-#   elif defined __BUILTIN_VA_ARG_INCR
-#    include <alloca.h> /* INFRINGES ON USER NAME SPACE */
-#   elif defined _AIX
-#    define YYSTACK_ALLOC __alloca
-#   elif defined _MSC_VER
-#    include <malloc.h> /* INFRINGES ON USER NAME SPACE */
-#    define alloca _alloca
-#   else
-#    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
-#     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
-      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
-#     ifndef EXIT_SUCCESS
-#      define EXIT_SUCCESS 0
-#     endif
-#    endif
-#   endif
-#  endif
-# endif
 
 # ifdef YYSTACK_ALLOC
    /* Pacify GCC's 'empty if-body' warning.  */
@@ -347,7 +313,8 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
-#endif /* ! defined yyoverflow || YYERROR_VERBOSE */
+# define YYCOPY_NEEDED 1
+#endif
 
 
 #if (! defined yyoverflow \
@@ -411,18 +378,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  9
+#define YYFINAL  14
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   57
+#define YYLAST   77
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  17
+#define YYNTOKENS  21
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  37
+#define YYNNTS  50
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  55
+#define YYNRULES  70
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  68
+#define YYNSTATES  89
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -437,7 +404,7 @@ union yyalloc
 static const yytype_uint8 yytranslate[] =
 {
        0,     3,     4,     5,     6,     7,     8,     9,    10,    11,
-      12,    13,    14,    15,    16,     2,     2,     2,     2,     2,
+      12,    13,    14,    15,    16,    17,    18,    19,    20,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -468,16 +435,18 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    53,    53,    58,    67,    79,    88,   100,   112,   119,
-     126,   139,   151,   163,   175,   187,   199,   211,   223,   232,
-     252,   265,   274,   283,   292,   299,   308,   318,   328,   337,
-     346,   358,   365,   374,   383,   395,   404,   416,   428,   437,
-     449,   458,   465,   474,   490,   500,   509,   522,   532,   541,
-     548,   557,   568,   576,   583,   590
+       0,    62,    62,    67,    72,    81,    88,    97,   104,   111,
+     118,   125,   133,   141,   148,   155,   162,   169,   176,   183,
+     192,   201,   212,   219,   228,   237,   246,   253,   262,   272,
+     281,   290,   299,   306,   313,   322,   331,   338,   347,   354,
+     361,   370,   377,   386,   393,   402,   412,   422,   431,   438,
+     451,   461,   470,   477,   486,   497,   505,   512,   519,   541,
+     548,   555,   562,   572,   581,   590,   599,   608,   627,   634,
+     644
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || 0
+#if YYDEBUG || YYERROR_VERBOSE || 1
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -485,14 +454,18 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "t_Con", "t_ENG_A", "t_ENG_Adv",
   "t_ENG_Det", "t_ENG_N_stem", "t_ENG_N_lfea_Pl", "t_ENG_N_lfea_Sg",
   "t_ENG_Prep", "t_ENG_QPro", "t_ENG_V_stem", "t_ENG_V_lfea_aux",
-  "t_ENG_RPro_stem", "t_ENG_RPro_lfea_relative", "t_ENG_Neg", "$accept",
-  "S", "ENG_VP", "ENG_IVP", "ENG_NV", "ENG_Vbar3", "ENG_Vbar2",
-  "ENG_Vbar1", "ENG_PP", "ENG_NP", "ENG_CNP", "ENG_AdvP", "ENG_V",
-  "ENG_V_stem", "ENG_V_lfea_aux", "ENG_QPro", "ENG_N", "ENG_N_Sg_0Con",
-  "ENG_N_Sg", "ENG_N_Pl_0Con", "ENG_1Con", "ENG_nCon", "ENG_N_Pl",
-  "ENG_N_Stem", "ENG_N_lfea_Sg", "ENG_N_lfea_Pl", "ENG_A", "ENG_Prep",
-  "ENG_Con", "ENG_Adv", "ENG_RPro", "ENG_RPro_stem",
-  "ENG_RPro_lfea_relative", "ENG_T", "ENG_TP", "ENG_RC", "ENG_NEG", YY_NULLPTR
+  "t_ENG_RPro_stem", "t_ENG_RPro_lfea_relative", "t_ENG_Neg",
+  "t_HUN_Con_lfea_Acc", "t_HUN_Verb_stem", "t_HUN_Verb_lfea_ConjDefSg2",
+  "t_HUN_Vbpfx", "$accept", "S", "ENG_VP", "ENG_IVP", "ENG_NV",
+  "ENG_Vbar3", "ENG_Vbar2", "ENG_Vbar1", "ENG_PP", "ENG_NP", "ENG_CNP",
+  "ENG_AdvP", "ENG_V", "ENG_V_stem", "ENG_V_lfea_aux", "ENG_QPro", "ENG_N",
+  "ENG_N_Sg_0Con", "ENG_N_Sg", "ENG_N_Pl_0Con", "ENG_1Con", "ENG_nCon",
+  "ENG_N_Pl", "ENG_N_Stem", "ENG_N_lfea_Sg", "ENG_N_lfea_Pl", "ENG_A",
+  "ENG_AP", "ENG_Prep", "ENG_Con", "ENG_Adv", "ENG_RPro", "ENG_RPro_stem",
+  "ENG_RPro_lfea_relative", "ENG_T", "ENG_TP", "ENG_RC", "ENG_NEG",
+  "HUN_VP", "HUN_ImpVerbPfx", "HUN_ImpVerb", "HUN_Verb_lfea_ConjDefSg2",
+  "HUN_Verb_stem", "HUN_Vbpfx", "HUN_NP", "HUN_N", "HUN_N_Sg", "HUN_1Con",
+  "HUN_Con", "HUN_Con_lfea_Acc", YY_NULLPTR
 };
 #endif
 
@@ -502,14 +475,15 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    12,    13,    14
+       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
+      18
 };
 # endif
 
-#define YYPACT_NINF -21
+#define YYPACT_NINF -26
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-21)))
+  (!!((Yystate) == (-26)))
 
 #define YYTABLE_NINF -1
 
@@ -520,13 +494,15 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -8,   -21,    10,   -21,    13,    23,     4,    27,    31,   -21,
-     -21,   -21,   -21,   -21,   -21,   -21,    18,   -21,    20,    20,
-      20,    20,    20,   -21,    34,    18,   -21,   -21,   -21,   -21,
-      13,   -21,    30,   -21,   -21,   -21,   -21,   -21,   -21,   -21,
-     -21,   -21,   -21,   -21,   -21,   -21,    20,    20,    20,   -21,
-     -21,   -21,   -21,   -21,   -21,   -21,   -21,    -8,   -21,   -21,
-     -21,   -21,    36,     3,   -21,   -21,   -21,   -21
+      19,   -26,   -26,    10,   -26,    23,    33,     2,    18,    15,
+     -26,    30,    26,    16,   -26,   -26,   -26,   -26,   -26,   -26,
+     -26,    38,   -26,    46,    46,    46,    41,    46,   -26,    42,
+      38,   -26,   -26,   -26,   -26,   -26,    23,   -26,    39,   -26,
+     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,
+     -26,   -26,   -26,   -26,   -26,    40,   -26,   -26,   -26,   -26,
+     -26,    46,   -26,    46,    46,    46,   -26,    47,   -26,   -26,
+     -26,   -26,   -26,   -26,   -26,   -26,    44,   -26,   -26,   -26,
+     -26,   -26,   -26,    48,    -2,   -26,   -26,   -26,   -26
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -534,31 +510,35 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    25,     0,     2,     0,     5,     3,     0,    23,     1,
-      47,    45,    42,    27,     7,    18,     0,    21,    33,    28,
-      38,    32,    40,    29,     0,     0,    35,    46,    50,     6,
-       0,    52,     0,     9,    48,    14,    15,     4,    22,     8,
-      16,    13,    26,    24,    19,    31,     0,    41,    39,    36,
-      37,    44,    43,    30,    34,    20,    17,     0,    54,    51,
-      49,    53,     0,     0,    11,    55,    10,    12
+       0,    27,    63,     0,     2,     0,     6,     4,     0,    25,
+       3,     0,     0,     0,     1,    50,    47,    44,    29,     8,
+      19,     0,    23,    35,    30,    40,    34,    42,    31,     0,
+       0,    20,    37,    49,    53,     7,     0,    55,     0,    10,
+      51,    15,    16,     5,    24,     9,    17,    14,    28,    26,
+      69,    59,    65,    66,    67,     0,    64,    60,    62,    61,
+      21,    34,    33,     0,    43,    41,    48,     0,    38,    39,
+      46,    45,    32,    36,    22,    18,     0,    57,    54,    52,
+      70,    68,    56,     0,     0,    12,    58,    11,    13
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -21,   -21,   -21,   -21,   -21,   -21,   -21,   -21,    -6,    -1,
-     -13,    40,    -9,   -21,   -21,   -21,   -21,   -21,   -21,   -21,
-      21,    16,   -21,   -21,   -21,   -21,   -21,   -21,   -20,   -21,
-     -21,   -21,   -21,   -21,   -21,    43,   -21
+     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,    -7,    -4,
+     -10,    51,   -16,   -26,   -26,   -26,   -26,   -26,   -26,    35,
+      -6,    28,   -26,    36,   -26,   -26,   -26,   -26,   -26,   -25,
+     -26,   -26,   -26,   -26,   -26,   -26,    56,   -26,   -26,   -26,
+     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,    61,    62,     4,     5,     6,    29,    14,
-      15,    37,     7,     8,    43,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    53,    54,    25,    30,    26,    38,
-      31,    32,    60,    57,    58,    33,    67
+      -1,     3,     4,    82,    83,     5,     6,     7,    35,    19,
+      20,    43,     8,     9,    49,    21,    22,    23,    24,    25,
+      26,    27,    28,    29,    72,    73,    30,    31,    36,    32,
+      44,    37,    38,    79,    76,    77,    39,    88,    10,    11,
+      12,    59,    13,    57,    51,    52,    53,    54,    55,    81
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -566,57 +546,67 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      35,    49,    50,    44,     1,    36,    40,    10,    11,    34,
-       9,    12,    55,    27,    27,    13,    10,    11,    28,    65,
-      12,    10,    11,    10,    13,    12,    49,    50,    50,    56,
-      10,    11,    34,    27,    12,    47,    48,    28,    13,    45,
-      46,    46,    51,    52,    42,    59,    27,    41,    63,    39,
-       0,     0,     0,     0,     0,     0,    64,    66
+      41,    68,    69,    42,    46,    15,    16,    40,    33,    17,
+      14,    60,    33,    18,    86,    61,    34,    62,    63,    63,
+      74,    15,    16,    40,    61,    17,    15,    16,    48,    18,
+      17,     1,    75,    50,    18,    58,    68,     2,    68,    69,
+      69,    15,    16,    33,    15,    17,    56,    34,    17,    15,
+      70,    71,    64,    65,    78,    70,     1,    80,    33,    47,
+      84,    66,    67,    45,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    85,    87
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,    21,    22,    16,    12,     6,     7,     3,     4,     5,
-       0,     7,    25,    10,    10,    11,     3,     4,    14,    16,
-       7,     3,     4,     3,    11,     7,    46,    47,    48,    30,
-       3,     4,     5,    10,     7,    19,    20,    14,    11,    18,
-      19,    20,     8,     9,    13,    15,    10,     7,    57,     6,
-      -1,    -1,    -1,    -1,    -1,    -1,    62,    63
+       7,    26,    27,     7,     8,     3,     4,     5,    10,     7,
+       0,    21,    10,    11,    16,    21,    14,    23,    24,    25,
+      30,     3,     4,     5,    30,     7,     3,     4,    13,    11,
+       7,    12,    36,     3,    11,    19,    61,    18,    63,    64,
+      65,     3,     4,    10,     3,     7,    20,    14,     7,     3,
+       8,     9,    24,    25,    15,     8,    12,    17,    10,     8,
+      76,    26,    26,     7,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    83,    84
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    12,    18,    19,    22,    23,    24,    29,    30,     0,
-       3,     4,     7,    11,    26,    27,    32,    33,    34,    35,
-      36,    37,    38,    39,    40,    43,    45,    10,    14,    25,
-      44,    47,    48,    52,     5,    25,    26,    28,    46,    52,
-      26,    28,    13,    31,    27,    37,    37,    38,    38,    45,
-      45,     8,     9,    41,    42,    27,    26,    50,    51,    15,
-      49,    20,    21,    29,    25,    16,    25,    53
+       0,    12,    18,    22,    23,    26,    27,    28,    33,    34,
+      59,    60,    61,    63,     0,     3,     4,     7,    11,    30,
+      31,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      47,    48,    50,    10,    14,    29,    49,    52,    53,    57,
+       5,    29,    30,    32,    51,    57,    30,    32,    13,    35,
+       3,    65,    66,    67,    68,    69,    20,    64,    19,    62,
+      31,    41,    41,    41,    42,    42,    40,    44,    50,    50,
+       8,     9,    45,    46,    31,    30,    55,    56,    15,    54,
+      17,    70,    24,    25,    33,    29,    16,    29,    58
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    17,    18,    19,    19,    19,    19,    19,    19,    19,
-      20,    20,    21,    22,    23,    23,    24,    25,    26,    26,
-      27,    27,    28,    29,    29,    30,    31,    32,    33,    33,
-      34,    35,    35,    35,    36,    37,    38,    38,    39,    39,
-      39,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-      48,    49,    50,    51,    52,    53
+       0,    21,    22,    22,    23,    23,    23,    23,    23,    23,
+      23,    24,    24,    25,    26,    27,    27,    28,    29,    30,
+      30,    30,    31,    31,    32,    33,    33,    34,    35,    36,
+      37,    37,    38,    39,    39,    39,    40,    41,    42,    42,
+      43,    43,    43,    43,    44,    45,    46,    47,    48,    49,
+      50,    51,    52,    53,    54,    55,    56,    57,    58,    59,
+      60,    61,    62,    63,    64,    65,    66,    67,    68,    69,
+      70
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     1,     2,     1,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     1,     2,
-       2,     1,     1,     1,     2,     1,     1,     1,     1,     1,
-       2,     2,     1,     1,     2,     1,     2,     2,     1,     2,
-       1,     2,     1,     1,     1,     1,     1,     1,     1,     2,
-       1,     1,     0,     2,     2,     1
+       0,     2,     1,     1,     1,     2,     1,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     1,
+       1,     2,     2,     1,     1,     1,     2,     1,     1,     1,
+       1,     1,     2,     2,     1,     1,     2,     1,     2,     2,
+       1,     2,     1,     2,     1,     1,     1,     1,     2,     1,
+       1,     1,     2,     1,     1,     0,     2,     2,     1,     2,
+       2,     2,     1,     1,     1,     1,     1,     1,     2,     1,
+       1
 };
 
 
@@ -640,6 +630,7 @@ do                                                              \
       yylval = (Value);                                         \
       YYPOPSTACK (yylen);                                       \
       yystate = *yyssp;                                         \
+      YY_LAC_DISCARD ("YYBACKUP");                              \
       goto yybackup;                                            \
     }                                                           \
   else                                                          \
@@ -801,6 +792,239 @@ int yydebug;
 # define YYMAXDEPTH 10000
 #endif
 
+/* Given a state stack such that *YYBOTTOM is its bottom, such that
+   *YYTOP is either its top or is YYTOP_EMPTY to indicate an empty
+   stack, and such that *YYCAPACITY is the maximum number of elements it
+   can hold without a reallocation, make sure there is enough room to
+   store YYADD more elements.  If not, allocate a new stack using
+   YYSTACK_ALLOC, copy the existing elements, and adjust *YYBOTTOM,
+   *YYTOP, and *YYCAPACITY to reflect the new capacity and memory
+   location.  If *YYBOTTOM != YYBOTTOM_NO_FREE, then free the old stack
+   using YYSTACK_FREE.  Return 0 if successful or if no reallocation is
+   required.  Return 1 if memory is exhausted.  */
+static int
+yy_lac_stack_realloc (YYSIZE_T *yycapacity, YYSIZE_T yyadd,
+#if YYDEBUG
+                      char const *yydebug_prefix,
+                      char const *yydebug_suffix,
+#endif
+                      yytype_int16 **yybottom,
+                      yytype_int16 *yybottom_no_free,
+                      yytype_int16 **yytop, yytype_int16 *yytop_empty)
+{
+  YYSIZE_T yysize_old =
+    *yytop == yytop_empty ? 0 : *yytop - *yybottom + 1;
+  YYSIZE_T yysize_new = yysize_old + yyadd;
+  if (*yycapacity < yysize_new)
+    {
+      YYSIZE_T yyalloc = 2 * yysize_new;
+      yytype_int16 *yybottom_new;
+      /* Use YYMAXDEPTH for maximum stack size given that the stack
+         should never need to grow larger than the main state stack
+         needs to grow without LAC.  */
+      if (YYMAXDEPTH < yysize_new)
+        {
+          YYDPRINTF ((stderr, "%smax size exceeded%s", yydebug_prefix,
+                      yydebug_suffix));
+          return 1;
+        }
+      if (YYMAXDEPTH < yyalloc)
+        yyalloc = YYMAXDEPTH;
+      yybottom_new =
+        (yytype_int16*) YYSTACK_ALLOC (yyalloc * sizeof *yybottom_new);
+      if (!yybottom_new)
+        {
+          YYDPRINTF ((stderr, "%srealloc failed%s", yydebug_prefix,
+                      yydebug_suffix));
+          return 1;
+        }
+      if (*yytop != yytop_empty)
+        {
+          YYCOPY (yybottom_new, *yybottom, yysize_old);
+          *yytop = yybottom_new + (yysize_old - 1);
+        }
+      if (*yybottom != yybottom_no_free)
+        YYSTACK_FREE (*yybottom);
+      *yybottom = yybottom_new;
+      *yycapacity = yyalloc;
+    }
+  return 0;
+}
+
+/* Establish the initial context for the current lookahead if no initial
+   context is currently established.
+
+   We define a context as a snapshot of the parser stacks.  We define
+   the initial context for a lookahead as the context in which the
+   parser initially examines that lookahead in order to select a
+   syntactic action.  Thus, if the lookahead eventually proves
+   syntactically unacceptable (possibly in a later context reached via a
+   series of reductions), the initial context can be used to determine
+   the exact set of tokens that would be syntactically acceptable in the
+   lookahead's place.  Moreover, it is the context after which any
+   further semantic actions would be erroneous because they would be
+   determined by a syntactically unacceptable token.
+
+   YY_LAC_ESTABLISH should be invoked when a reduction is about to be
+   performed in an inconsistent state (which, for the purposes of LAC,
+   includes consistent states that don't know they're consistent because
+   their default reductions have been disabled).  Iff there is a
+   lookahead token, it should also be invoked before reporting a syntax
+   error.  This latter case is for the sake of the debugging output.
+
+   For parse.lac=full, the implementation of YY_LAC_ESTABLISH is as
+   follows.  If no initial context is currently established for the
+   current lookahead, then check if that lookahead can eventually be
+   shifted if syntactic actions continue from the current context.
+   Report a syntax error if it cannot.  */
+#define YY_LAC_ESTABLISH                                         \
+do {                                                             \
+  if (!yy_lac_established)                                       \
+    {                                                            \
+      YYDPRINTF ((stderr,                                        \
+                  "LAC: initial context established for %s\n",   \
+                  yytname[yytoken]));                            \
+      yy_lac_established = 1;                                    \
+      {                                                          \
+        int yy_lac_status =                                      \
+          yy_lac (yyesa, &yyes, &yyes_capacity, yyssp, yytoken); \
+        if (yy_lac_status == 2)                                  \
+          goto yyexhaustedlab;                                   \
+        if (yy_lac_status == 1)                                  \
+          goto yyerrlab;                                         \
+      }                                                          \
+    }                                                            \
+} while (0)
+
+/* Discard any previous initial lookahead context because of Event,
+   which may be a lookahead change or an invalidation of the currently
+   established initial context for the current lookahead.
+
+   The most common example of a lookahead change is a shift.  An example
+   of both cases is syntax error recovery.  That is, a syntax error
+   occurs when the lookahead is syntactically erroneous for the
+   currently established initial context, so error recovery manipulates
+   the parser stacks to try to find a new initial context in which the
+   current lookahead is syntactically acceptable.  If it fails to find
+   such a context, it discards the lookahead.  */
+#if YYDEBUG
+# define YY_LAC_DISCARD(Event)                                           \
+do {                                                                     \
+  if (yy_lac_established)                                                \
+    {                                                                    \
+      if (yydebug)                                                       \
+        YYFPRINTF (stderr, "LAC: initial context discarded due to "      \
+                   Event "\n");                                          \
+      yy_lac_established = 0;                                            \
+    }                                                                    \
+} while (0)
+#else
+# define YY_LAC_DISCARD(Event) yy_lac_established = 0
+#endif
+
+/* Given the stack whose top is *YYSSP, return 0 iff YYTOKEN can
+   eventually (after perhaps some reductions) be shifted, return 1 if
+   not, or return 2 if memory is exhausted.  As preconditions and
+   postconditions: *YYES_CAPACITY is the allocated size of the array to
+   which *YYES points, and either *YYES = YYESA or *YYES points to an
+   array allocated with YYSTACK_ALLOC.  yy_lac may overwrite the
+   contents of either array, alter *YYES and *YYES_CAPACITY, and free
+   any old *YYES other than YYESA.  */
+static int
+yy_lac (yytype_int16 *yyesa, yytype_int16 **yyes,
+        YYSIZE_T *yyes_capacity, yytype_int16 *yyssp, int yytoken)
+{
+  yytype_int16 *yyes_prev = yyssp;
+  yytype_int16 *yyesp = yyes_prev;
+  YYDPRINTF ((stderr, "LAC: checking lookahead %s:", yytname[yytoken]));
+  if (yytoken == YYUNDEFTOK)
+    {
+      YYDPRINTF ((stderr, " Always Err\n"));
+      return 1;
+    }
+  while (1)
+    {
+      int yyrule = yypact[*yyesp];
+      if (yypact_value_is_default (yyrule)
+          || (yyrule += yytoken) < 0 || YYLAST < yyrule
+          || yycheck[yyrule] != yytoken)
+        {
+          yyrule = yydefact[*yyesp];
+          if (yyrule == 0)
+            {
+              YYDPRINTF ((stderr, " Err\n"));
+              return 1;
+            }
+        }
+      else
+        {
+          yyrule = yytable[yyrule];
+          if (yytable_value_is_error (yyrule))
+            {
+              YYDPRINTF ((stderr, " Err\n"));
+              return 1;
+            }
+          if (0 < yyrule)
+            {
+              YYDPRINTF ((stderr, " S%d\n", yyrule));
+              return 0;
+            }
+          yyrule = -yyrule;
+        }
+      {
+        YYSIZE_T yylen = yyr2[yyrule];
+        YYDPRINTF ((stderr, " R%d", yyrule - 1));
+        if (yyesp != yyes_prev)
+          {
+            YYSIZE_T yysize = yyesp - *yyes + 1;
+            if (yylen < yysize)
+              {
+                yyesp -= yylen;
+                yylen = 0;
+              }
+            else
+              {
+                yylen -= yysize;
+                yyesp = yyes_prev;
+              }
+          }
+        if (yylen)
+          yyesp = yyes_prev -= yylen;
+      }
+      {
+        int yystate;
+        {
+          int yylhs = yyr1[yyrule] - YYNTOKENS;
+          yystate = yypgoto[yylhs] + *yyesp;
+          if (yystate < 0 || YYLAST < yystate
+              || yycheck[yystate] != *yyesp)
+            yystate = yydefgoto[yylhs];
+          else
+            yystate = yytable[yystate];
+        }
+        if (yyesp == yyes_prev)
+          {
+            yyesp = *yyes;
+            *yyesp = yystate;
+          }
+        else
+          {
+            if (yy_lac_stack_realloc (yyes_capacity, 1,
+#if YYDEBUG
+                                      " (", ")",
+#endif
+                                      yyes, yyesa, &yyesp, yyes_prev))
+              {
+                YYDPRINTF ((stderr, "\n"));
+                return 2;
+              }
+            *++yyesp = yystate;
+          }
+        YYDPRINTF ((stderr, " G%d", yystate));
+      }
+    }
+}
+
 
 #if YYERROR_VERBOSE
 
@@ -890,15 +1114,18 @@ yytnamerr (char *yyres, const char *yystr)
 
 /* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
    about the unexpected token YYTOKEN for the state stack whose top is
-   YYSSP.
+   YYSSP.  In order to see if a particular token T is a
+   valid looakhead, invoke yy_lac (YYESA, YYES, YYES_CAPACITY, YYSSP, T).
 
    Return 0 if *YYMSG was successfully written.  Return 1 if *YYMSG is
    not large enough to hold the message.  In that case, also set
    *YYMSG_ALLOC to the required number of bytes.  Return 2 if the
-   required number of bytes is too large to store.  */
+   required number of bytes is too large to store or if
+   yy_lac returned 2.  */
 static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
-                yytype_int16 *yyssp, int yytoken)
+                yytype_int16 *yyesa, yytype_int16 **yyes,
+                YYSIZE_T *yyes_capacity, yytype_int16 *yyssp, int yytoken)
 {
   YYSIZE_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
@@ -925,34 +1152,32 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
        consistent state with a default action.  There might have been a
        previous inconsistent state, consistent state with a non-default
        action, or user semantic action that manipulated yychar.
-     - Of course, the expected token list depends on states to have
-       correct lookahead information, and it depends on the parser not
-       to perform extra reductions after fetching a lookahead from the
-       scanner and before detecting a syntax error.  Thus, state merging
-       (from LALR or IELR) and default reductions corrupt the expected
-       token list.  However, the list is correct for canonical LR with
-       one exception: it will still contain any token that will not be
-       accepted due to an error action in a later state.
+       In the first two cases, it might appear that the current syntax
+       error should have been detected in the previous state when yy_lac
+       was invoked.  However, at that time, there might have been a
+       different syntax error that discarded a different initial context
+       during error recovery, leaving behind the current lookahead.
   */
   if (yytoken != YYEMPTY)
     {
       int yyn = yypact[*yyssp];
+      YYDPRINTF ((stderr, "Constructing syntax error message\n"));
       yyarg[yycount++] = yytname[yytoken];
       if (!yypact_value_is_default (yyn))
         {
-          /* Start YYX at -YYN if negative to avoid negative indexes in
-             YYCHECK.  In other words, skip the first -YYN actions for
-             this state because they are default actions.  */
-          int yyxbegin = yyn < 0 ? -yyn : 0;
-          /* Stay within bounds of both yycheck and yytname.  */
-          int yychecklim = YYLAST - yyn + 1;
-          int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
           int yyx;
 
-          for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR
-                && !yytable_value_is_error (yytable[yyx + yyn]))
+          for (yyx = 0; yyx < YYNTOKENS; ++yyx)
+            if (yyx != YYTERROR && yyx != YYUNDEFTOK)
               {
+                {
+                  int yy_lac_status = yy_lac (yyesa, yyes, yyes_capacity,
+                                              yyssp, yyx);
+                  if (yy_lac_status == 2)
+                    return 2;
+                  if (yy_lac_status == 1)
+                    continue;
+                }
                 if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
                   {
                     yycount = 1;
@@ -969,6 +1194,10 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 }
               }
         }
+# if YYDEBUG
+      else if (yydebug)
+        YYFPRINTF (stderr, "No expected tokens.\n");
+# endif
     }
 
   switch (yycount)
@@ -1083,6 +1312,11 @@ yyparse (void)
 
     YYSIZE_T yystacksize;
 
+    yytype_int16 yyesa[20];
+    yytype_int16 *yyes;
+    YYSIZE_T yyes_capacity;
+
+  int yy_lac_established = 0;
   int yyn;
   int yyresult;
   /* Lookahead token as an internal (translated) token number.  */
@@ -1107,6 +1341,11 @@ yyparse (void)
   yyssp = yyss = yyssa;
   yyvsp = yyvs = yyvsa;
   yystacksize = YYINITDEPTH;
+
+  yyes = yyesa;
+  yyes_capacity = sizeof yyesa / sizeof *yyes;
+  if (YYMAXDEPTH < yyes_capacity)
+    yyes_capacity = YYMAXDEPTH;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
@@ -1232,12 +1471,16 @@ yybackup:
      detect an error, take that action.  */
   yyn += yytoken;
   if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
-    goto yydefault;
+    {
+      YY_LAC_ESTABLISH;
+      goto yydefault;
+    }
   yyn = yytable[yyn];
   if (yyn <= 0)
     {
       if (yytable_value_is_error (yyn))
         goto yyerrlab;
+      YY_LAC_ESTABLISH;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -1252,6 +1495,7 @@ yybackup:
 
   /* Discard the shifted token.  */
   yychar = YYEMPTY;
+  YY_LAC_DISCARD ("shift");
 
   yystate = yyn;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -1290,19 +1534,30 @@ yyreduce:
 
 
   YY_REDUCE_PRINT (yyn);
-  switch (yyn)
-    {
-        case 2:
-#line 54 "hi.y" /* yacc.c:1646  */
+  {
+    int yychar_backup = yychar;
+    switch (yyn)
+      {
+          case 2:
+#line 63 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_VP=sparser->get_node_info((yyvsp[0]));
 				std::cout<<"S->ENG_VP"<<std::endl;
 }
-#line 1302 "y.tab.c" /* yacc.c:1646  */
+#line 1548 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 59 "hi.y" /* yacc.c:1646  */
+#line 68 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_VP=sparser->get_node_info((yyvsp[0]));
+				std::cout<<"S->HUN_VP"<<std::endl;
+}
+#line 1557 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 73 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1311,27 +1566,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Vbar1);
 				std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
 }
-#line 1315 "y.tab.c" /* yacc.c:1646  */
+#line 1570 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 4:
-#line 68 "hi.y" /* yacc.c:1646  */
+  case 5:
+#line 82 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
-				if((yyval)<0){
-					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 }
-#line 1331 "y.tab.c" /* yacc.c:1646  */
+#line 1581 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 5:
-#line 80 "hi.y" /* yacc.c:1646  */
+  case 6:
+#line 89 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1340,194 +1590,145 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Vbar2);
 				std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
 }
-#line 1344 "y.tab.c" /* yacc.c:1646  */
+#line 1594 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 6:
-#line 89 "hi.y" /* yacc.c:1646  */
+  case 7:
+#line 98 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
-				if((yyval)<0){
-					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 }
-#line 1360 "y.tab.c" /* yacc.c:1646  */
+#line 1605 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 7:
-#line 101 "hi.y" /* yacc.c:1646  */
+  case 8:
+#line 105 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar3=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
-				if((yyval)<0){
-					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 }
-#line 1376 "y.tab.c" /* yacc.c:1646  */
+#line 1616 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 8:
-#line 113 "hi.y" /* yacc.c:1646  */
+  case 9:
+#line 112 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
 }
-#line 1387 "y.tab.c" /* yacc.c:1646  */
+#line 1627 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 9:
-#line 120 "hi.y" /* yacc.c:1646  */
+  case 10:
+#line 119 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
 }
-#line 1398 "y.tab.c" /* yacc.c:1646  */
+#line 1638 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 127 "hi.y" /* yacc.c:1646  */
+  case 11:
+#line 126 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 				sparser->add_feature_to_leaf(ENG_V,"RCV");
 				(yyval)=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
 }
-#line 1415 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 11:
-#line 140 "hi.y" /* yacc.c:1646  */
-    {
-			const node_info& ENG_NV=sparser->get_node_info((yyvsp[-1]));
-			const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
-			(yyval)=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-			if((yyval)<0){
-				//object_node=sparser->get_object_node(NP);
-				//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-				return -1;
-			}
-			std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
-}
-#line 1431 "y.tab.c" /* yacc.c:1646  */
+#line 1650 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 152 "hi.y" /* yacc.c:1646  */
+#line 134 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& ENG_NV=sparser->get_node_info((yyvsp[-1]));
+				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
+				sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+				(yyval)=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
+				std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
+}
+#line 1662 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 13:
+#line 142 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NEG=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
 }
-#line 1447 "y.tab.c" /* yacc.c:1646  */
+#line 1673 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 13:
-#line 164 "hi.y" /* yacc.c:1646  */
+  case 14:
+#line 149 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VBAR3",ENG_V,ENG_AdvP);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
 }
-#line 1463 "y.tab.c" /* yacc.c:1646  */
+#line 1684 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 14:
-#line 176 "hi.y" /* yacc.c:1646  */
+  case 15:
+#line 156 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_PP);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
 }
-#line 1479 "y.tab.c" /* yacc.c:1646  */
+#line 1695 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 15:
-#line 188 "hi.y" /* yacc.c:1646  */
+  case 16:
+#line 163 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 }
-#line 1495 "y.tab.c" /* yacc.c:1646  */
+#line 1706 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 16:
-#line 200 "hi.y" /* yacc.c:1646  */
+  case 17:
+#line 170 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 }
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 1717 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 17:
-#line 212 "hi.y" /* yacc.c:1646  */
+  case 18:
+#line 177 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Prep=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
-				if((yyval)<0){
-					/*object_node=sparser->public.get_object_node(sparser,NP);
-					printf("Error: cannot interpret %s %s.\n",Prep->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
 }
-#line 1527 "y.tab.c" /* yacc.c:1646  */
+#line 1728 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 18:
-#line 224 "hi.y" /* yacc.c:1646  */
+  case 19:
+#line 184 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1536,48 +1737,46 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 }
-#line 1540 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 19:
-#line 233 "hi.y" /* yacc.c:1646  */
-    {
-				const node_info& ENG_QPro=sparser->get_node_info((yyvsp[-1]));
-				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
-				/*	TODO: really need to check if there's a constant ?
-					Currently, it's done to make functor argument diff easier.*/
-				/*const node_info& object_node=sparser->get_node_info(sparser->get_object_node(CNP));
-				if(object_node.right_child!=0){
-					//printf("Syntax error: constants like %s cannot be quantified!\n",sparser->get_node_info(object_node.right_child).expression.c_str());
-					return -1;
-				}*/
-				(yyval)=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
-				/* No check for $$<0 since quantifier pronouns are not validated as
-				 * everything in the current model seems to be countable.*/
-				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
-}
-#line 1560 "y.tab.c" /* yacc.c:1646  */
+#line 1741 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 253 "hi.y" /* yacc.c:1646  */
+#line 193 "hi.y" /* yacc.c:1646  */
     {
-				const node_info& ENG_A=sparser->get_node_info((yyvsp[-1]));
-				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
-				/*TODO: ellenorizni, hogy ha a CNP parameteres akkor hiba mint a QPro CNP-nal!*/
-				(yyval)=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
-				if((yyval)<0){
-					/*object_node=sparser->public.get_object_node(sparser,CNP);
-					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);*/
-					return -1;
-				}
-				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
+				lexicon word;
+
+				const node_info& ENG_AP=sparser->get_node_info((yyvsp[0]));
+				word.gcat="ENG_NP";
+				(yyval)=sparser->set_node_info(word,ENG_AP);
+				std::cout<<"ENG_NP->ENG_AP"<<std::endl;
 }
-#line 1577 "y.tab.c" /* yacc.c:1646  */
+#line 1754 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 266 "hi.y" /* yacc.c:1646  */
+#line 202 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& ENG_QPro=sparser->get_node_info((yyvsp[-1]));
+				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
+				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
+}
+#line 1765 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 22:
+#line 213 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& ENG_A=sparser->get_node_info((yyvsp[-1]));
+				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
+				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
+}
+#line 1776 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 23:
+#line 220 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1586,11 +1785,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N);
 				std::cout<<"ENG_CNP->ENG_N"<<std::endl;
 }
-#line 1590 "y.tab.c" /* yacc.c:1646  */
+#line 1789 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 22:
-#line 275 "hi.y" /* yacc.c:1646  */
+  case 24:
+#line 229 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1599,11 +1798,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Adv);
 				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
 }
-#line 1603 "y.tab.c" /* yacc.c:1646  */
+#line 1802 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 23:
-#line 284 "hi.y" /* yacc.c:1646  */
+  case 25:
+#line 238 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1612,63 +1811,62 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_V_Stem);
 				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 }
-#line 1616 "y.tab.c" /* yacc.c:1646  */
+#line 1815 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 24:
-#line 293 "hi.y" /* yacc.c:1646  */
+  case 26:
+#line 247 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V_lfea_aux=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_aux);
 				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_aux"<<std::endl;
 }
-#line 1627 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 25:
-#line 300 "hi.y" /* yacc.c:1646  */
-    {
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->last_word_scanned();
-				(yyval)=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-#line 1640 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 26:
-#line 309 "hi.y" /* yacc.c:1646  */
-    {
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->last_word_scanned();
-				word.gcat="Aux";
-				(yyval)=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-#line 1654 "y.tab.c" /* yacc.c:1646  */
+#line 1826 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 319 "hi.y" /* yacc.c:1646  */
+#line 254 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				/*TODO: consider what if quantifiers like ALL are handled as functors?*/
+				word=lex->last_word_scanned(t_ENG_V_stem);
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1668 "y.tab.c" /* yacc.c:1646  */
+#line 1839 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 329 "hi.y" /* yacc.c:1646  */
+#line 263 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_ENG_V_lfea_aux);
+//				word.gcat="Aux";
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 1853 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 29:
+#line 273 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_ENG_QPro);
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 1866 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 30:
+#line 282 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 	
@@ -1677,11 +1875,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg);
 				std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
 }
-#line 1681 "y.tab.c" /* yacc.c:1646  */
+#line 1879 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 29:
-#line 338 "hi.y" /* yacc.c:1646  */
+  case 31:
+#line 291 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1690,38 +1888,33 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl);
 				std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
 }
-#line 1694 "y.tab.c" /* yacc.c:1646  */
+#line 1892 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 30:
-#line 347 "hi.y" /* yacc.c:1646  */
+  case 32:
+#line 300 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_lfea_Sg=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Sg0Con",ENG_N_Stem,ENG_N_lfea_Sg);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 }
-#line 1710 "y.tab.c" /* yacc.c:1646  */
+#line 1903 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 31:
-#line 359 "hi.y" /* yacc.c:1646  */
+  case 33:
+#line 307 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Sg_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("Sg",ENG_N_Sg_0Con,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con ENG_1Con"<<std::endl;
 }
-#line 1721 "y.tab.c" /* yacc.c:1646  */
+#line 1914 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 32:
-#line 366 "hi.y" /* yacc.c:1646  */
+  case 34:
+#line 314 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1730,11 +1923,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
 }
-#line 1734 "y.tab.c" /* yacc.c:1646  */
+#line 1927 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 33:
-#line 375 "hi.y" /* yacc.c:1646  */
+  case 35:
+#line 323 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1743,27 +1936,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg_0Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con"<<std::endl;
 }
-#line 1747 "y.tab.c" /* yacc.c:1646  */
+#line 1940 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 34:
-#line 384 "hi.y" /* yacc.c:1646  */
+  case 36:
+#line 332 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_lfea_Pl=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
 }
-#line 1763 "y.tab.c" /* yacc.c:1646  */
+#line 1951 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 35:
-#line 396 "hi.y" /* yacc.c:1646  */
+  case 37:
+#line 339 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1772,43 +1960,33 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Con);
 				std::cout<<"ENG_1Con->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
 }
-#line 1776 "y.tab.c" /* yacc.c:1646  */
+#line 1964 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 36:
-#line 405 "hi.y" /* yacc.c:1646  */
+  case 38:
+#line 348 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 }
-#line 1792 "y.tab.c" /* yacc.c:1646  */
+#line 1975 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 37:
-#line 417 "hi.y" /* yacc.c:1646  */
+  case 39:
+#line 355 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 }
-#line 1808 "y.tab.c" /* yacc.c:1646  */
+#line 1986 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 38:
-#line 429 "hi.y" /* yacc.c:1646  */
+  case 40:
+#line 362 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1817,27 +1995,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl_0Con);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con"<<std::endl;
 }
-#line 1821 "y.tab.c" /* yacc.c:1646  */
+#line 1999 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 39:
-#line 438 "hi.y" /* yacc.c:1646  */
+  case 41:
+#line 371 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con,ENG_nCon);
-				if((yyval)<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con ENG_nCon"<<std::endl;
 }
-#line 1837 "y.tab.c" /* yacc.c:1646  */
+#line 2010 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 40:
-#line 450 "hi.y" /* yacc.c:1646  */
+  case 42:
+#line 378 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1846,160 +2019,165 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
 }
-#line 1850 "y.tab.c" /* yacc.c:1646  */
+#line 2023 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 41:
-#line 459 "hi.y" /* yacc.c:1646  */
+  case 43:
+#line 387 "hi.y" /* yacc.c:1646  */
     {
 				//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 				//that a singular noun cannot combine with more than one constant like in 'list file abc def'
 				//TODO: Any better solution???
 				return -1;
 }
-#line 1861 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 42:
-#line 466 "hi.y" /* yacc.c:1646  */
-    {
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->last_word_scanned();
-				(yyval)=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-#line 1874 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 475 "hi.y" /* yacc.c:1646  */
-    {
-				lexicon word;
-				const node_info empty_node_info={};
-
-				word=lex->last_word_scanned();//TODO: it's unnecessary to duplicate the word info for each node that is related to an affix of the stem of the last scanned word
-				//Create a method that returns the info only about the affix in question. Hint: create a method 'lexicon lexer::get_lexicon_info_by_token( uint token )' which
-				//would return everything what last_word_scanned() returns but: if the token belongs to a stem it equals to calling last_word_scanned()
-				//if the token belongs to an lfea, every field is the same as when calling last_word_scanned() but: the token field would contain the token of the lfea,
-				//and if the affix has a functor, then the gcat is the corresponding PREFIX/INFIX/SUFFIX and the lexeme corresponds to that of the affix
-				//if the affix does not have a functor, then the gcat is again either PREFIX/INFIX/SUFFIX but the lexeme field is empty
-				//WELL, it would have been good if I had written here if duplicating word info poses any problem...
-				word.gcat="ENG_N_lfea_Sg";
-				(yyval)=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-}
-#line 1894 "y.tab.c" /* yacc.c:1646  */
+#line 2034 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 491 "hi.y" /* yacc.c:1646  */
+#line 394 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				word.gcat="ENG_N_lfea_Pl";
+				word=lex->last_word_scanned(t_ENG_N_stem);
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1908 "y.tab.c" /* yacc.c:1646  */
+#line 2047 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 501 "hi.y" /* yacc.c:1646  */
+#line 403 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_N_lfea_Sg);
+//				word.gcat="ENG_N_lfea_Sg";
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1921 "y.tab.c" /* yacc.c:1646  */
+#line 2061 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 510 "hi.y" /* yacc.c:1646  */
+#line 413 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_N_lfea_Pl);
+//				word.gcat="ENG_N_lfea_Pl";
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1934 "y.tab.c" /* yacc.c:1646  */
+#line 2075 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 523 "hi.y" /* yacc.c:1646  */
+#line 423 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_ENG_A);
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 2088 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 432 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
+				const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con);
+				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con"<<std::endl;
+}
+#line 2099 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 439 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_ENG_Prep);
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 2112 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 452 "hi.y" /* yacc.c:1646  */
     {
 				const node_info empty_node_info={};
 				lexicon word;
 
-				word=lex->last_word_scanned();
-				word.gcat="CON";
+				word=lex->last_word_scanned(t_Con);
+//				word.gcat="CON";
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Constant:"<<word.word<<std::endl;
 }
-#line 1948 "y.tab.c" /* yacc.c:1646  */
+#line 2126 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 48:
-#line 533 "hi.y" /* yacc.c:1646  */
+  case 51:
+#line 462 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 			
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_Adv);
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1961 "y.tab.c" /* yacc.c:1646  */
+#line 2139 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 49:
-#line 542 "hi.y" /* yacc.c:1646  */
+  case 52:
+#line 471 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_RPro_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RPro_lfea_relative=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_RPRO",ENG_RPro_stem,ENG_RPro_lfea_relative);
 				std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
 }
-#line 1972 "y.tab.c" /* yacc.c:1646  */
+#line 2150 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 50:
-#line 549 "hi.y" /* yacc.c:1646  */
+  case 53:
+#line 478 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_RPro_stem);
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1985 "y.tab.c" /* yacc.c:1646  */
+#line 2163 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 51:
-#line 558 "hi.y" /* yacc.c:1646  */
+  case 54:
+#line 487 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				word.gcat="Relative";
+				word=lex->last_word_scanned(t_ENG_RPro_lfea_relative);
+//				word.gcat="Relative";
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1999 "y.tab.c" /* yacc.c:1646  */
+#line 2177 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 52:
-#line 568 "hi.y" /* yacc.c:1646  */
+  case 55:
+#line 497 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2008,48 +2186,202 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"ENG_T->null"<<std::endl;
 }
-#line 2012 "y.tab.c" /* yacc.c:1646  */
+#line 2190 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 53:
-#line 577 "hi.y" /* yacc.c:1646  */
+  case 56:
+#line 506 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_T=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_IVP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_TP",ENG_T,ENG_IVP);
 				std::cout<<"ENG_TP->ENG_T ENG_IVP"<<std::endl;
 }
-#line 2023 "y.tab.c" /* yacc.c:1646  */
+#line 2201 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 54:
-#line 584 "hi.y" /* yacc.c:1646  */
+  case 57:
+#line 513 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_RPro=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_TP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_TP);
 				std::cout<<"ENG_RC->ENG_RPro ENG_TP"<<std::endl;
 }
-#line 2034 "y.tab.c" /* yacc.c:1646  */
+#line 2212 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 55:
-#line 591 "hi.y" /* yacc.c:1646  */
+  case 58:
+#line 520 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_Neg);
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2047 "y.tab.c" /* yacc.c:1646  */
+#line 2225 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 59:
+#line 542 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_ImpVerbPfx=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_NP=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
+				std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
+}
+#line 2236 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 60:
+#line 549 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_ImpVerb=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Vbpfx=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
+				std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
+}
+#line 2247 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 61:
+#line 556 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_Verb_stem=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
+				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
+}
+#line 2258 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 62:
+#line 563 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Verb_lfea_ConjDefSg2);
+//				word.gcat="ConjDefSg2";
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 2272 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 63:
+#line 573 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Verb_stem);
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 2285 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 64:
+#line 582 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Vbpfx);
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 2298 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 65:
+#line 591 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+
+				const node_info& HUN_NP=sparser->get_node_info((yyvsp[0]));
+				word.gcat="HUN_NP";
+				(yyval)=sparser->set_node_info(word,HUN_NP);
+				std::cout<<"HUN_NP->HUN_N"<<std::endl;
+}
+#line 2311 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 66:
+#line 600 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+
+				const node_info& HUN_N_Sg=sparser->get_node_info((yyvsp[0]));
+				word.gcat="HUN_N";
+				(yyval)=sparser->set_node_info(word,HUN_N_Sg);
+				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
+}
+#line 2324 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 67:
+#line 609 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+
+				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[0]));
+				word.gcat="Sg";
+				(yyval)=sparser->set_node_info(word,HUN_1Con);
+				std::cout<<"HUN_N_Sg->HUN_1Con"<<std::endl;
+}
+#line 2337 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 68:
+#line 628 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_Con=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_1Con",HUN_Con,HUN_Con_lfea_Acc);
+				std::cout<<"HUN_1Con->HUN_Con HUN_Con_lfea_Acc"<<std::endl;
+}
+#line 2348 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 69:
+#line 635 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info empty_node_info={};
+				lexicon word;
+
+				word=lex->last_word_scanned(t_Con);
+//				word.gcat="CON";
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<"Konstans:"<<word.word<<std::endl;
+}
+#line 2362 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 70:
+#line 645 "hi.y" /* yacc.c:1646  */
+    {
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Con_lfea_Acc);
+//				word.gcat="HUN_Con_lfea_Acc";
+				(yyval)=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+}
+#line 2376 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2051 "y.tab.c" /* yacc.c:1646  */
-      default: break;
-    }
+#line 2380 "y.tab.c" /* yacc.c:1646  */
+        default: break;
+      }
+    if (yychar_backup != yychar)
+      YY_LAC_DISCARD ("yychar change");
+  }
   /* User semantic actions sometimes alter yychar, and that requires
      that yytoken be updated with the new translation.  We take the
      approach of translating immediately before every use of yytoken.
@@ -2100,10 +2432,13 @@ yyerrlab:
       yyerror (YY_("syntax error"));
 #else
 # define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
+                                        yyesa, &yyes, &yyes_capacity, \
                                         yyssp, yytoken)
       {
         char const *yymsgp = YY_("syntax error");
         int yysyntax_error_status;
+        if (yychar != YYEMPTY)
+          YY_LAC_ESTABLISH;
         yysyntax_error_status = YYSYNTAX_ERROR;
         if (yysyntax_error_status == 0)
           yymsgp = yymsg;
@@ -2210,6 +2545,10 @@ yyerrlab1:
       YY_STACK_PRINT (yyss, yyssp);
     }
 
+  /* If the stack popping above didn't lose the initial context for the
+     current lookahead token, the shift below will for sure.  */
+  YY_LAC_DISCARD ("error recovery");
+
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
   YY_IGNORE_MAYBE_UNINITIALIZED_END
@@ -2236,7 +2575,7 @@ yyabortlab:
   yyresult = 1;
   goto yyreturn;
 
-#if !defined yyoverflow || YYERROR_VERBOSE
+#if 1
 /*-------------------------------------------------.
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
@@ -2269,44 +2608,45 @@ yyreturn:
   if (yyss != yyssa)
     YYSTACK_FREE (yyss);
 #endif
+  if (yyes != yyesa)
+    YYSTACK_FREE (yyes);
 #if YYERROR_VERBOSE
   if (yymsg != yymsgbuf)
     YYSTACK_FREE (yymsg);
 #endif
   return yyresult;
 }
-#line 610 "hi.y" /* yacc.c:1906  */
+#line 654 "hi.y" /* yacc.c:1906  */
 
 
 int yylex(void){
 	int token;
 	lexicon word={};
 
-	token=lex->next_token();
-	word=lex->last_word_scanned();//Check if any word was scanned
-	if(token==0&&word.word.empty()==true) return 0;//Return 0 (historic indicator of YACC about end of input stream) only if no word was scanned last time where as a corollary token = 0 as well
-	else return token+1;//return token+1 if a word was scanned but could not be tokenized (token=0)->consider it a constant (yacc %token for constant is 1)
+	if(lex->is_end_of_input()==false){
+		token=lex->next_token();
+		return token+1;
+	}
+	else return 0;//historic indicator of YACC about end of input stream
 }
 
-void yyerror(char *s){
-	//fprintf(stderr,"%s in command\n",s);
-	line=0;
+void yyerror(char const *yymsgp){
+	std::cout<<yymsgp<<std::endl;
 	return;
 }
 
-int yywrap(){
-	return 1;
-}
+#ifdef __EMSCRIPTEN__
+extern "C"{
+#endif
 
-const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
-	std::string commandstr;
+const char *hi(const char *human_input,const char *language,char *error){
+	std::string commandstr,last_word,validated_words;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *commandchr=NULL;
 
 	try{
 		if(human_input!=NULL){
-			lex=new lexer(human_input);
 			sqlite=db::get_instance();
 			#ifdef __ANDROID__
 				__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
@@ -2314,7 +2654,14 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			#else
 				sqlite->open("hi.db");
 			#endif
+			lex=new lexer(human_input,language);
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", "lexer started");
+			#endif
 			sparser=new interpreter;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", "interpreter started");
+			#endif
 			if(yyparse()==0){
 				transgraph=sparser->longest_match_for_semantic_rules_found();
 				if(transgraph!=NULL){
@@ -2322,9 +2669,47 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 					commandstr=transgraph->transcript(std::string());
 					//std::cout<<commandstr<<std::endl;
 				}
-				else std::cout<<"FALSE"<<std::endl;
+				else{
+					validated_words=lex->validated_words();
+					std::cout<<"validated words:"<<validated_words<<std::endl;
+					if(lex->last_word_scanned().morphalytics!=NULL)
+						last_word=lex->last_word_scanned().morphalytics->word();
+					else last_word=lex->last_word_scanned().word;
+					std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
+					if(error!=NULL){
+						if(validated_words.empty()==false){
+							validated_words.copy(error,validated_words.length(),0);
+							error[validated_words.length()]='/';
+							last_word.copy(&error[validated_words.length()+1],last_word.length(),0);
+							error[validated_words.length()+last_word.length()+1]='\0';
+						}
+						else{
+							last_word.copy(error,last_word.length(),0);
+							error[last_word.length()]='\0';
+						}
+					}
+				}
 			}
-			else std::cout<<"FALSE"<<std::endl;
+			else{
+				validated_words=lex->validated_words();
+				std::cout<<"validated words:"<<validated_words<<std::endl;
+				if(lex->last_word_scanned().morphalytics!=NULL)
+					last_word=lex->last_word_scanned().morphalytics->word();
+				else last_word=lex->last_word_scanned().word;
+				std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
+				if(error!=NULL){
+					if(validated_words.empty()==false){
+						validated_words.copy(error,validated_words.length(),0);
+						error[validated_words.length()]='/';
+						last_word.copy(&error[validated_words.length()+1],last_word.length(),0);
+						error[validated_words.length()+last_word.length()+1]='\0';
+					}
+					else{
+						last_word.copy(error,last_word.length(),0);
+						error[last_word.length()]='\0';
+					}
+				}
+			}
 			delete sparser;
 			sparser=NULL;
 			delete lex;
@@ -2337,6 +2722,7 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 				commandchr=new char[commandstr.length()+1];
 				commandstr.copy(commandchr,commandstr.length(),0);
 				commandchr[commandstr.length()]='\0';
+				if(error!=NULL) error[0]='\0';
 			}
 			return commandchr;
 		}
@@ -2370,7 +2756,29 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 		return NULL;
 	}
 	catch(invalid_combination& exception){
+		validated_words=lex->validated_words();
+		std::cout<<"validated words:"<<validated_words<<std::endl;
 		std::cout<<exception.what()<<std::endl;
+		if(error!=NULL){
+			if(validated_words.empty()==false){
+				validated_words.copy(error,validated_words.length(),0);
+				error[validated_words.length()]='/';
+				std::string left_node_words=exception.get_left();
+				left_node_words.copy(&error[validated_words.length()+1],left_node_words.length(),0);
+				error[validated_words.length()+left_node_words.length()+1]=' ';
+				std::string right_node_words=exception.get_right();
+				right_node_words.copy(&error[validated_words.length()+left_node_words.length()+2],right_node_words.length(),0);
+				error[validated_words.length()+left_node_words.length()+right_node_words.length()+2]='\0';
+			}
+			else{
+				std::string left_node_words=exception.get_left();
+				left_node_words.copy(error,left_node_words.length(),0);
+				error[left_node_words.length()]=' ';
+				std::string right_node_words=exception.get_right();
+				right_node_words.copy(&error[left_node_words.length()+1],right_node_words.length(),0);
+				error[left_node_words.length()+right_node_words.length()+1]='\0';
+			}
+		}
 		return NULL;
 	}
 	catch(std::exception& exception){
@@ -2382,3 +2790,6 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 		return NULL;
 	}
 }
+#ifdef __EMSCRIPTEN__
+}
+#endif

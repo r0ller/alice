@@ -1,11 +1,23 @@
 package hi.pkg;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Vector;
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ActivityNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -13,8 +25,6 @@ import android.content.ContentResolver;
 
 public class jsi {
     Context mContext;
-    String mContactName;
-    String[] mSelectionArgs=new String[1];
 
     /** Instantiate the interface and set the context */
     jsi(Context c) {
@@ -23,16 +33,28 @@ public class jsi {
 
     @JavascriptInterface
     public void fetchContacts(String contactName){
-		mContactName=contactName;
+       	class OneShotTask implements Runnable{
+       		private String mContactName;
+       		public OneShotTask(String str) { mContactName = str; }
+			@Override
+			public void run(){
+				Map<String, List<String>> Contacts=findContact(mContactName);
+				if(Contacts.isEmpty()==false){
+		            Toast.makeText(mContext, Contacts.toString(), Toast.LENGTH_LONG).show();
+				}
+		        else{
+		            Toast.makeText(mContext, "Nothing found", Toast.LENGTH_SHORT).show();
+		        }
+			}
+       	}
 		Activity activity = (Activity) mContext;
-		activity.runOnUiThread(new Runnable(){//As JS runs on UI thread, performing any operations on variables
-			//coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-			//The only workaround seems to be to do such things on UIthread and store results in private attributes.
-    		public void run(){
-		        mSelectionArgs[0]="%"+mContactName+"%";
-    		}
-    	});
-        String phoneNumber = null;
+		//As JS runs on UI thread, performing any operations on variables
+		//coming from JS or calling any method on them results in exception: Error calling method on NPObject.
+		//The only workaround seems to be to do such things on UIthread and store results in private attributes.
+		activity.runOnUiThread(new OneShotTask(contactName));
+    }
+    
+    public Map<String, List<String>> findContact(String contactName){
         Uri CONTENT_URI = ContactsContract.Contacts.CONTENT_URI;
         String _ID = ContactsContract.Contacts._ID;
         String DISPLAY_NAME = Contacts.DISPLAY_NAME;
@@ -41,35 +63,142 @@ public class jsi {
         String Phone_CONTACT_ID = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         String NUMBER = ContactsContract.CommonDataKinds.Phone.NUMBER;
         String Selection=Contacts.DISPLAY_NAME+" = ?";
+        String[] SelectionArgs={"%"+contactName+"%"};
 
-        StringBuffer output = new StringBuffer();
+        Map<String, List<String>> Contacts = new LinkedHashMap<String, List<String>>();
         ContentResolver contentResolver = mContext.getContentResolver();
-        //Didn't manage to run query with selection and selectionarg so currently just loop over every contact:(
+        //TODO:run query with selection and selectionarg instead of looping over every contact
         Cursor cursor=contentResolver.query(CONTENT_URI,null,null,null,null);
         // Loop for every contact in the phone
         if(cursor.getCount()>0){
-        	Log.i("jsi", "JSI debug");
             while (cursor.moveToNext()){
                 String contact_id = cursor.getString(cursor.getColumnIndex( _ID ));
                 String name = cursor.getString(cursor.getColumnIndex( DISPLAY_NAME ));
                 int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex( HAS_PHONE_NUMBER )));
-                if (hasPhoneNumber>0&&mContactName.isEmpty()==false&&name.equalsIgnoreCase(mContactName)==true
-                	||hasPhoneNumber>0&&mContactName.isEmpty()==true){
-                    output.append("Name:"+name+"\n");
+                if (hasPhoneNumber>0&&contactName.isEmpty()==false&&name.toLowerCase(Locale.getDefault()).contains(contactName.toLowerCase(Locale.getDefault()))==true
+                	||hasPhoneNumber>0&&contactName.isEmpty()==true){
                     // Query and loop for every phone number of the contact
                     Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI, null, Phone_CONTACT_ID + " = ?", new String[] { contact_id }, null);
+                    List<String> phoneNumbers=new Vector<String>();
                     while (phoneCursor.moveToNext()) {
-                        phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
-                        output.append("Phone number:"+phoneNumber+"\n");
+                    	String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
+                        phoneNumbers.add(phoneNumber);
                     }
+                	Contacts.put(name, phoneNumbers);
                     phoneCursor.close();
                 }
             }
             cursor.close();
-            Toast.makeText(mContext, output, Toast.LENGTH_SHORT).show();
         }
-        else{
-            Toast.makeText(mContext, "Nothing found", Toast.LENGTH_SHORT).show();
-        }
+    	return Contacts;
+    }
+    
+    @JavascriptInterface
+    public void showProduct(String product){
+       	class OneShotTask implements Runnable{
+       		private String mProduct;
+       		public OneShotTask(String str) { mProduct = str; }
+			@Override
+			public void run() {
+		    	//Toast.makeText(mContext, "product id is:"+product, Toast.LENGTH_SHORT).show();
+	    		String url="https://flpportal-i033768trial.dispatcher.hanatrial.ondemand.com/sap/hana/uis/clients/ushell-app/shells/fiori/FioriLaunchpad.html#product-display&/Products("+mProduct+")";
+	        	try
+	        	{
+	        	    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+	        	    mContext.startActivity( intent );
+	        	}
+	        	catch ( ActivityNotFoundException ex  )
+	        	{
+	        		Toast.makeText(mContext, "Activity not found", Toast.LENGTH_SHORT).show();
+	        	}
+			}
+       	}
+		Activity activity = (Activity) mContext;
+		//As JS runs on UI thread, performing any operations on variables
+		//coming from JS or calling any method on them results in exception: Error calling method on NPObject.
+		//The only workaround seems to be to do such things on UIthread and store results in private attributes.
+		activity.runOnUiThread(new OneShotTask(product));
+    }
+
+    @JavascriptInterface
+    public void Call(String Contact){
+       	class OneShotTask implements Runnable{
+       		private String mContact;
+       		public OneShotTask(String str) { mContact = str; }
+			@Override
+			public void run(){
+				//legösszetettebb magyar pl:"Hívd fel Minta Lacit [a magyar számán [a magyar szám[om]ról]]!"
+				//TODO: Ha nincs megadva melyik számról hívjon, a default simről indul a hívás.
+	       		Map<String, List<String>> Contacts=findContact(mContact);
+//				for(int i=mContact.length();i>0;--i){
+//					Contacts=findContact(mContact.substring(0,i));
+//					if(Contacts.isEmpty()==false) break;
+//				}
+				if(Contacts.isEmpty()==false){
+					Iterator<Map.Entry<String, List<String>>> contactList=Contacts.entrySet().iterator();
+					List<String> contactNumbers=null;
+					while(contactList.hasNext()){
+						Entry<String, List<String>> contactListItem=contactList.next();
+						if(contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(mContact)==true){
+							contactNumbers=contactListItem.getValue();
+							break;
+						}
+					}
+					if(contactNumbers!=null&&contactNumbers.isEmpty()==false){
+			            TelephonyManager tm=(TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
+			            String nwCountryCode=tm.getNetworkCountryIso();
+			            TelephonyInfo telephonyInfo=TelephonyInfo.getInstance(mContext);
+			            String callingCode=telephonyInfo.convertCountryCode(nwCountryCode.toUpperCase(Locale.getDefault()));
+			            String phoneNumber="";
+//						Iterator<String> phoneNumberList=Contacts.entrySet().iterator().next().getValue().iterator();
+						Iterator<String> phoneNumberList=contactNumbers.iterator();
+						while(phoneNumberList.hasNext()){
+							phoneNumber=(String)phoneNumberList.next();
+							if(phoneNumber.startsWith("+"+callingCode)==true||phoneNumber.startsWith("00"+callingCode)==true){
+								break;
+							}
+						}
+						//Check: using a broadcastreceiver for ACTION_NEW_OUTGOING_CALL it may be possible
+						//to handle the sim selector popup
+						if(phoneNumber.isEmpty()==false){
+				            Intent callIntent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				            callIntent.setData(Uri.parse("tel:" + phoneNumber));
+				            mContext.startActivity(callIntent);
+						}
+						else{
+				            Toast.makeText(mContext, "Sorry, can't make the call. Something went wrong.", Toast.LENGTH_SHORT).show();
+						}
+					}
+					else{
+			            Toast.makeText(mContext, "Sorry, no contact found with this name.", Toast.LENGTH_SHORT).show();
+					}
+				}
+		        else{
+		            Toast.makeText(mContext, "Nothing found", Toast.LENGTH_SHORT).show();
+		        }
+			}
+       	}
+		Activity activity = (Activity) mContext;
+		//As JS runs on UI thread, performing any operations on variables
+		//coming from JS or calling any method on them results in exception: Error calling method on NPObject.
+		//The only workaround seems to be to do such things on UIthread and store results in private attributes.
+		activity.runOnUiThread(new OneShotTask(Contact));
+    }
+
+    @JavascriptInterface
+    public void Toast(String text){
+       	class OneShotTask implements Runnable{
+       		private String mText;
+       		public OneShotTask(String str) { mText = str; }
+			@Override
+			public void run(){
+		    	Toast.makeText(mContext, mText, Toast.LENGTH_LONG).show();
+			}
+       	}
+		Activity activity = (Activity) mContext;
+		//As JS runs on UI thread, performing any operations on variables
+		//coming from JS or calling any method on them results in exception: Error calling method on NPObject.
+		//The only workaround seems to be to do such things on UIthread and store results in private attributes.
+		activity.runOnUiThread(new OneShotTask(text));
     }
 }

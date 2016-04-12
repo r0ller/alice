@@ -9,6 +9,7 @@
 
 	class lexer{
 		private:
+			std::string lid;
 			std::vector<lexicon> words;
 			std::string human_input;
 			std::string::iterator human_input_iterator;
@@ -19,12 +20,16 @@
 			query_result* dependencies_read_for_functor(const std::string&);
 			void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 		public:
-			lexer(const char *);
+			lexer(const char *,const char *);
 			~lexer();
 			unsigned int next_token();
 			lexicon last_word_scanned();
+			lexicon last_word_scanned(const unsigned int);
 			lexicon get_word_by_lexeme(const std::string);
 			unsigned int nr_of_words();
+			std::string language();
+			bool is_end_of_input();
+			std::string validated_words();
 	};
 
 	class lexer_error:public std::exception{

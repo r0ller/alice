@@ -2,10 +2,11 @@
 #include "db.h"
 
 /*PUBLIC*/
-lexer::lexer(const char *input_string){
+lexer::lexer(const char *input_string,const char *language){
+		lid=std::string(language);
 		human_input=std::string (input_string);
 		human_input_iterator=human_input.begin();
-		stemmer=morphan::get_instance();
+		stemmer=morphan::get_instance(lid);
 }
 
 lexer::~lexer(){
@@ -30,11 +31,15 @@ unsigned int lexer::next_token(){
 				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)]);
 			}
 		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
+		#ifdef __ANDROID__
+			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
+		#endif
 		if(last_word.empty()==false){
-			morphalytics=stemmer->analyze(last_word);//What if there're >1 analyses for the same word form???
+			morphalytics=stemmer->analyze(last_word);
+			//TODO: figure out what if there're >1 analyses for the same word form???
+			//e.g. more than one guesses can return for an unknown word, name, etc.
 			if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
 				new_word.morphalytics=NULL;
-				new_word.dependencies=NULL;
 				new_word.token=0;
 				new_word.word=last_word;
 				new_word.gcat="CON";
@@ -61,14 +66,52 @@ lexicon lexer::last_word_scanned(){
 	unsigned int nr_of_words;
 
 	nr_of_words=words.size();
-	if(human_input_iterator!=human_input.end()){//TODO: this condition fails if there's no terminating \n at the end of human input
-		word.token=words[nr_of_words-1].token;
-		word.word=words[nr_of_words-1].word;
-		word.lid=words[nr_of_words-1].lid;
-		word.gcat=words[nr_of_words-1].gcat;
-		word.lexeme=words[nr_of_words-1].lexeme;
-		word.dependencies=words[nr_of_words-1].dependencies;
-		word.morphalytics=words[nr_of_words-1].morphalytics;
+	word.token=words[nr_of_words-1].token;
+	word.word=words[nr_of_words-1].word;
+	word.lid=words[nr_of_words-1].lid;
+	word.gcat=words[nr_of_words-1].gcat;
+	word.lexeme=words[nr_of_words-1].lexeme;
+	word.dependencies=words[nr_of_words-1].dependencies;
+	word.morphalytics=words[nr_of_words-1].morphalytics;
+	word.tokens=words[nr_of_words-1].tokens;
+	return word;
+}
+
+lexicon lexer::last_word_scanned(const unsigned int token){
+	lexicon word;
+	unsigned int nr_of_words,internal_token=0;
+	bool token_found=false;
+	db *sqlite=NULL;
+	query_result *gcats_and_lingfeas=NULL;
+
+	internal_token=token-1;
+	nr_of_words=words.size();
+	if(internal_token==words[nr_of_words-1].token){
+		word=last_word_scanned();
+	}
+	else{
+		for(auto&& i:words[nr_of_words-1].tokens) if(i==internal_token) token_found=true;
+		if(token_found==true){
+			word.token=internal_token;
+			//word.word=words[nr_of_words-1].word;//Leave empty
+			word.lid=words[nr_of_words-1].lid;
+			//word.lexeme=words[nr_of_words-1].lexeme;//Leave empty
+			word.dependencies=NULL;//Leave empty
+			word.morphalytics=words[nr_of_words-1].morphalytics;
+			word.tokens=words[nr_of_words-1].tokens;
+			sqlite=db::get_instance();
+			//TODO:if the logic works, consider reorg of GCAT table to make the token field (or token and lid) the key
+			gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+words[nr_of_words-1].gcat+"' AND LID = '"+language()+"' AND TOKEN = '"+std::to_string(internal_token)+"';");
+			if(gcats_and_lingfeas==NULL||gcats_and_lingfeas!=NULL&&gcats_and_lingfeas->nr_of_result_rows()>1){
+				//TODO: throw exception
+				exit(EXIT_FAILURE);
+			}
+			word.gcat=*gcats_and_lingfeas->field_value_at_row_position(0,"feature");
+		}
+		else{
+			//TODO: throw exception
+			exit(EXIT_FAILURE);
+		}
 	}
 	return word;
 }
@@ -109,7 +152,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 	sqlite=db::get_instance();
 	//TODO:convert gcat to uppercase
 	//std::transform(morphalytics.gcat().begin(),morphalytics.gcat().end(),gcat.begin(),::toupper);
-	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + morphalytics.stem() + "' AND LID = 'ENG' AND GCAT = '" + morphalytics.gcat() + "';");
+	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + morphalytics.stem() + "' AND LID = '"+language()+"' AND GCAT = '" + morphalytics.gcat() + "';");
 	if(lexeme!=NULL&&lexeme->result_set().empty()==false){
 		for(field_position=lexeme->result_set().begin();field_position!=lexeme->result_set().end();++field_position){
 			if(field_position->second.field_name=="word")
@@ -122,7 +165,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 				new_word.lexeme=field_position->second.field_value;
 				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme);
 				new_word.morphalytics=&morphalytics;
-				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = 'ENG';");
+				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
 				morphemes=morphalytics.morphemes();
 				nr_of_morphemes=morphemes.size();
 				for(i=0;i<nr_of_morphemes;++i){
@@ -136,7 +179,10 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 						}
 //						std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-						if(token>0) tokens.push_back(token);
+						if(token>0){
+							tokens.push_back(token);
+							new_word.tokens.push_back(token);
+						}
 					}
 					else{
 						tag_position=morphemes[i].find("[stem]");
@@ -152,10 +198,11 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 //							std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 							tokens.push_back(token);
+							new_word.tokens.push_back(token);
+							new_word.token=token;
 						}
 					}
 				}
-				new_word.token=token;
 				words.push_back(new_word);
 			}
 			else{
@@ -164,6 +211,54 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 		}
 //		std::cout<<"nr of dependencies="<<words.rbegin()->dependencies->result_rows()<<std::endl;
 		delete lexeme;
+		delete gcats_and_lingfeas;
+	}
+	else{//Happens if the stemmer could guess a stem and provide an analysis but the stem is not found in the lexicon
+		new_word.word=morphalytics.word();
+		new_word.lid=language();
+		new_word.gcat=morphalytics.gcat();
+		new_word.lexeme=morphalytics.stem();
+		new_word.dependencies=dependencies_read_for_functor("CON");
+		new_word.morphalytics=&morphalytics;
+		gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
+		morphemes=morphalytics.morphemes();
+		nr_of_morphemes=morphemes.size();
+		for(i=0;i<nr_of_morphemes;++i){
+			tag_position=morphemes[i].find("[lfea]");
+			if(tag_position!=std::string::npos){
+				lingfea=morphemes[i].substr(0,tag_position);
+				field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
+				if(field==NULL||field->second.field_value.empty()==true){
+					//TODO: throw exception
+					exit(EXIT_FAILURE);
+				}
+//				std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
+				token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
+				if(token>0){
+					tokens.push_back(token);
+					new_word.tokens.push_back(token);
+				}
+			}
+			else{
+				tag_position=morphemes[i].find("[stem]");
+				if(tag_position!=std::string::npos){
+					field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
+					if(field==NULL){
+						field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
+							if(field==NULL){
+							//TODO: throw exception
+								exit(EXIT_FAILURE);
+							}
+					}
+//					std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
+					token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
+					tokens.push_back(token);
+					new_word.tokens.push_back(token);
+					new_word.token=token;
+				}
+			}
+		}
+		words.push_back(new_word);
 		delete gcats_and_lingfeas;
 	}
 	return tokens;
@@ -225,4 +320,48 @@ void lexer::destroy_words(){
 		words.clear();
 	}
 	return;
+}
+
+std::string lexer::language(){
+	return lid;
+}
+
+bool lexer::is_end_of_input(){
+	bool only_ws_found=true;
+
+	for(std::string::iterator i=human_input_iterator;i<human_input.end();++i){
+		if(std::isspace(*i)==false){
+			only_ws_found=false;
+			break;
+		}
+	}
+	if((human_input_iterator==human_input.end()||only_ws_found==true)&&token_deque.empty()==true) return true;
+	else return false;
+}
+
+std::string lexer::validated_words(){
+	std::set<unsigned int> validated_terminals;
+	std::set<std::string> validated_words;
+	std::string words_found;
+
+	validated_terminals=sparser->validated_terminals();
+	for(auto&& i:validated_terminals){
+		if(sparser->get_node_info(i).expression.morphalytics!=NULL&&sparser->get_node_info(i).expression.word.empty()==false){
+			validated_words.insert(sparser->get_node_info(i).expression.morphalytics->word());
+//			std::cout<<"validated word:"<<sparser->get_node_info(i).expression.morphalytics->word()<<std::endl;
+		}
+		else if(sparser->get_node_info(i).expression.word.empty()==false){
+			validated_words.insert(sparser->get_node_info(i).expression.word);
+//			std::cout<<"validated word:"<<sparser->get_node_info(i).expression.word<<std::endl;
+		}
+	}
+	for(auto&& i:words){
+//		std::cout<<"word in lexicon:"<<i.word<<std::endl;
+		if(i.morphalytics!=NULL&&i.word.empty()==false&&i.gcat!="CON")
+			if(validated_words.find(i.morphalytics->word())!=validated_words.end()) words_found+=i.morphalytics->word()+" ";
+		else if(i.word.empty()==false&&i.gcat!="CON")
+			if(validated_words.find(i.word)!=validated_words.end()) words_found+=i.word+" ";
+	}
+	if(words_found.empty()==false) words_found.pop_back();
+	return words_found;
 }

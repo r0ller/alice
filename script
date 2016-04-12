@@ -1,2 +1,0 @@
-#!/usr/pkg/bin/bash
-FILEENGN_1(){ FILEENGN_1_LFEAS[0]='Pl';true; };FILEENGN_1;LISTENGV_1(){ true; };LISTENGV_1 FILEENGN_1_OUT;

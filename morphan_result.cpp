@@ -48,6 +48,10 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 morphan_result::~morphan_result(){
 }
 
+const std::string& morphan_result::word() const{
+	return word_form;
+}
+
 const std::string& morphan_result::stem() const{
 	return word_stem;
 }

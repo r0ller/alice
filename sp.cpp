@@ -113,13 +113,13 @@ node_info& interpreter::get_private_node_info(unsigned int node_id){
 int interpreter::combine_nodes(const std::string& symbol, const node_info& left_node, const node_info& right_node){
 	node_info nodeinfo, new_phrase_head_root, new_phrase_non_head_root;
 	db *sqlite=NULL;
-	query_result *functors=NULL, *rule_to_rule_map_result=NULL;
+	query_result *functors=NULL, *rule_to_rule_map=NULL,*main_symbol_entry=NULL,*main_symbol_root_entry=NULL,*dependent_symbol_entry=NULL,*dependent_symbol_root_entry=NULL;
+	unsigned int rule_step_failed=0;
+	const std::pair<const unsigned int,field> *rule_entry=NULL;
+	std::vector<unsigned int> head_leafs, non_head_leafs;
+	std::string head_leaf_words, non_head_leaf_words;
 
-	/*TODO:valamit kezdeni kell azzal ha a left_node->symbol='QPro' ill. ha az object_node-nak van gyereke*/
-	nodeinfo.node_id=++nr_of_nodes;
-	/*printf("combined node id:%d\n",(*this->private.node_info[this->private.nr_of_nodes-1]).node_id);*/
-	nodeinfo.symbol=symbol;
-	/*printf("symbol:%s\n",(*this->private.node_info[this->private.nr_of_nodes-1]).symbol);*/
+	nodeinfo.node_id=0;
 	//TODO: Head first - head last determination
 	if(true){//If language is head first
 		new_phrase_head_root=left_node;
@@ -131,30 +131,55 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	}
 	else ;//TODO: What if none of them -like a programming language?
 	if(new_phrase_head_root.node_id!=0&&new_phrase_non_head_root.node_id!=0){
+		/*TODO:valamit kezdeni kell azzal ha a left_node->symbol='QPro' ill. ha az object_node-nak van gyereke*/
+		nodeinfo.node_id=++nr_of_nodes;
+		/*printf("combined node id:%d\n",(*this->private.node_info[this->private.nr_of_nodes-1]).node_id);*/
+		nodeinfo.symbol=symbol;
+		/*printf("symbol:%s\n",(*this->private.node_info[this->private.nr_of_nodes-1]).symbol);*/
 		sqlite=db::get_instance();
-		rule_to_rule_map_result=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
+//		std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
+		rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
 		//TODO:Check how to find out CON iotype so that CONs can be part of a combination
-		if(rule_to_rule_map_result!=NULL){//&&new_phrase_head_root.symbol!="CON"&&new_phrase_non_head_root.symbol!="CON"){
+		if(rule_to_rule_map!=NULL){
 		/* TODO: Instead of the current validation, the head node needs to be validated against
 		 * all child nodes of the right_node having a non-empty expression. This would ensure that
 		 * all constituents are checked against each other and not only the new head of the phrase and
 		 * the object of the phrase. E.g. 'list big small files!' is contradictory but now only
 		 * big<->files, small<->files and list<->files are validated and not small<->files, big<->small,
 		 * big<->files, list<->files.*/
-			if(is_valid_combination(symbol,new_phrase_head_root,new_phrase_non_head_root)==false){
-				throw invalid_combination(left_node.expression.word,right_node.expression.word);
+			rule_step_failed=is_valid_combination(symbol,new_phrase_head_root,new_phrase_non_head_root);
+			if(rule_step_failed!=0){
+				//TODO:depending of head first or head last left-to-right (lr) or right-to-left (rl) method needs to be called to collect leafs
+				get_leafs_of_node_lr(new_phrase_head_root,head_leafs);
+				get_leafs_of_node_lr(new_phrase_non_head_root,non_head_leafs);
+				for(auto&& i:head_leafs){
+					//TODO: check why certain leaves don't have morphalytics
+					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
+					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.word.empty()==false)
+						head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
+				}
+				if(head_leaf_words.empty()==false) head_leaf_words.pop_back();
+				for(auto&& i:non_head_leafs){
+					//TODO: check why certain leaves don't have morphalytics
+					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
+					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.word.empty()==false)
+						non_head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
+				}
+				if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
+				throw invalid_combination(head_leaf_words,non_head_leaf_words);
 			}
 		/*printf("valid combination:%s %s\n",head_node->expression,((node_info *)object_node)->expression);*/
 		}
+		nodeinfo.left_child=left_node.node_id;
+		nodeinfo.right_child=right_node.node_id;
+		node_infos.push_back(nodeinfo);
+		/*printf("combined node id:%d\n",node_infos[nr_of_nodes-1].node_id);
+		printf("symbol:%s\n",node_infos[nr_of_nodes-1].symbol.c_str());
+		printf("expression:%s\n",node_infos[nr_of_nodes-1].expression.c_str());
+		printf("left_child:%d\n",node_infos[nr_of_nodes-1].left_child);
+		printf("right_child:%d\n",node_infos[nr_of_nodes-1].right_child);*/
+		validated_nodes.push_back(nodeinfo.node_id);
 	}
-	nodeinfo.left_child=left_node.node_id;
-	nodeinfo.right_child=right_node.node_id;
-	node_infos.push_back(nodeinfo);
-	/*printf("combined node id:%d\n",node_infos[nr_of_nodes-1].node_id);
-	printf("symbol:%s\n",node_infos[nr_of_nodes-1].symbol.c_str());
-	printf("expression:%s\n",node_infos[nr_of_nodes-1].expression.c_str());
-	printf("left_child:%d\n",node_infos[nr_of_nodes-1].left_child);
-	printf("right_child:%d\n",node_infos[nr_of_nodes-1].right_child);*/
 	return nodeinfo.node_id;
 }
 
@@ -397,9 +422,10 @@ const std::pair<const unsigned int,field>* interpreter::followup_dependency(cons
 	else{
 		next_counter=*dependencies.field_value_at_row_position(previous_dependency_row_index,"d_failover");
 	}
+//	std::cout<<"next counter: "<<next_counter<<std::endl;
 	if(std::atoi(next_counter.c_str())>0&&std::atoi(next_counter.c_str())>std::atoi(dependencies.field_value_at_row_position(previous_dependency_row_index,"d_counter")->c_str())){
 		depolex_entry=dependencies.value_for_field_name_found_after_row_position(previous_dependency_row_index,"lexeme",lexeme);
-		while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")!=d_key
+		while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")==d_key
 				&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_counter")!=next_counter){
 			depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",lexeme);
 		}
@@ -484,10 +510,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			if(dependency_found_for_functor==true){
 				if(dependencies_found_entry!=dependencies_found.end()){
 					std::get<2>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
-//					dependencies_found_entry->second.second+=d_counter_validated_dependencies.size();
 					if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
 						std::get<1>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
-//						dependencies_found_entry->second.first+=d_counter_validated_dependencies.size();
 					}
 					else{
 						//Don't increase counter for found dependencies: this indicates a deliberate error on the success branch
@@ -541,6 +565,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		else{
 			depolex_entry=followup_dependency(depolex_entry->first,node.expression.lexeme,d_key,dependency_found_for_functor,*node.expression.dependencies);
 		}
+//		if(depolex_entry!=NULL) std::cout<<"followup d_counter: "<<*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")<<std::endl;
 	}
 	for(j=node.node_links.begin();j!=node.node_links.end();++j){
 		node_being_processed=false;
@@ -588,12 +613,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 
 	const node_info& node=get_node_info(node_id);
 //	std::cout<<"checking dependency for optional functor "<<functor<<" d_key "<<d_key<<std::endl;
-//	if(functor=="CON"){
-//		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme","CON");
-//	}
-//	else{
-		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
-//	}
+	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
 	if(depolex_entry==NULL){
 		std::cout<<"exiting, no dependency entry found for functor "<<functor<<std::endl;
 		//TODO: throw exception as for each functor there must be one entry with at least NULL dependency
@@ -653,10 +673,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				if(dependency_found_for_functor==true){
 					if(dependencies_found_entry!=dependencies_found.end()){
 						std::get<2>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
-//						dependencies_found_entry->second.second+=d_counter_validated_dependencies.size();
 						if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
 							std::get<1>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
-//							dependencies_found_entry->second.first+=d_counter_validated_dependencies.size();
 						}
 						else{
 							//Don't increase counter for found dependencies: this indicates a deliberate error on the success branch
@@ -749,10 +767,15 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > > longest_traversals;
 
 	const node_info& root_node=get_node_info(nr_of_nodes);
-	get_nodes_by_symbol(root_node,"ENG_VBAR1",std::string(),vbar_found);//TODO: create a db customizing table where the symbols for looking up predicates can be listed
+	//TODO: 1) create a db customizing table where the symbols for looking up predicates can be listed
+	//or rather 2) make use of adding a linguistic feature like "main verb" to the verb in the yacc source
+	//at an appropriate place in the syntactic rules
+	if(lex->language()=="ENG")get_nodes_by_symbol(root_node,"ENG_VBAR1",std::string(),vbar_found);
+	else if(lex->language()=="HUN")get_nodes_by_symbol(root_node,"HUN_ImpVerb",std::string(),vbar_found);
 	if(vbar_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
 	const node_info& vbar_node=get_node_info(*vbar_found.begin());
-	get_nodes_by_symbol(vbar_node,"V",std::string(),verbs_found);
+	if(lex->language()=="ENG")get_nodes_by_symbol(vbar_node,"V",std::string(),verbs_found);
+	else if(lex->language()=="HUN")get_nodes_by_symbol(vbar_node,"Verb",std::string(),verbs_found);
 	if(verbs_found.size()!=1) exit(EXIT_FAILURE);//TODO: throw exception
 	const node_info& node=get_node_info(*verbs_found.begin());
 	find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
@@ -875,7 +898,7 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 	return nr_of_deps_found;
 }
 
-bool interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
+unsigned int interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
 	bool valid_combination=false;
 	db *sqlite=NULL;
 	query_result *rule_to_rule_map=NULL;
@@ -883,8 +906,8 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 	std::multimap<unsigned int,unsigned int>::const_iterator l;
 	std::vector<unsigned int>::const_iterator j,k;
 	std::vector<unsigned int> main_nodes_found_by_symbol,dependent_nodes_found_by_symbol,main_subtree_nodes_found_by_symbol,dependency_subtree_nodes_found_by_symbol;
-	const std::pair<const unsigned int,field> *rule_entry=NULL;
-	unsigned int current_step=0,successor=0,failover=0,main_node_id=0,dep_node_id=0;
+	const std::pair<const unsigned int,field> *rule_entry=NULL,*rule_entry_failure_copy=NULL;
+	unsigned int current_step=0,successor=0,failover=0,main_node_id=0,dep_node_id=0,rule_step_failed=0;
 	std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
 	node_info *main_node=NULL,*dependent_node=NULL;
 	std::multimap<unsigned int,unsigned int> ref_node_ids_to_set;
@@ -895,6 +918,7 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 	if(rule_to_rule_map==NULL) exit(EXIT_FAILURE);//TODO: throw exception
 	rule_entry=rule_to_rule_map->first_value_for_field_name_found("step","1");
 	while(rule_entry!=NULL){
+		rule_entry_failure_copy=rule_entry;
 		current_step=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"step")->c_str());
 //		std::cout<<"step:"<<current_step<<std::endl;
 		failover=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"failover")->c_str());
@@ -1127,6 +1151,7 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 		}
 	}
 	if(valid_combination==true){
+		rule_step_failed=0;
 		for(auto&& i:functors_validated_for_nodes){
 			main_node=&get_private_node_info(i.first);
 			dependent_node=&get_private_node_info(i.second.second);
@@ -1137,13 +1162,14 @@ bool interpreter::is_valid_combination(const std::string& symbol, const node_inf
 		}
 	}
 	else{
+		rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
 		for(auto&& i:ref_node_ids_to_set){
 			dependent_node=&get_private_node_info(i.first);
 			dependent_node->ref_node_ids.erase(i.second);
 		}
 	}
 	delete rule_to_rule_map;
-	return valid_combination;
+	return rule_step_failed;
 }
 
 transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, const std::pair<std::string,unsigned int>& parent,
@@ -1218,6 +1244,19 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 	return leaf_node_id;
 }
 
+unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& leaf_symbol, const std::string& feature){
+	unsigned int leaf_node_id=0;
+	std::vector<unsigned int> nodes;
+
+	get_nodes_by_symbol(node,leaf_symbol,std::string(),nodes);
+	if(nodes.empty()==false) leaf_node_id=*nodes.begin();//Take only the first
+	if(leaf_node_id>0){
+		const node_info& leaf_node=get_node_info(leaf_node_id);
+		leaf_node.expression.morphalytics->add_feature(feature);
+	}
+	return leaf_node_id;
+}
+
 unsigned int interpreter::direct_descendant_of(const node_info& root_node){
 	if(root_node.left_child==0&&root_node.right_child==0){
 		//std::cout<<"direct descendant found: "<<root_node.node_id<<std::endl;
@@ -1226,6 +1265,30 @@ unsigned int interpreter::direct_descendant_of(const node_info& root_node){
 	if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
 	else if(root_node.right_child!=0&&root_node.left_child==0) return direct_descendant_of(get_node_info(root_node.right_child));
 	else return 0;
+}
+
+void interpreter::get_leafs_of_node_lr(const node_info& root_node, std::vector<unsigned int>& leafs){
+	if(root_node.left_child==0&&root_node.right_child==0){
+		leafs.push_back(root_node.node_id);
+//		std::cout<<"leaf word:"<<root_node.expression.word<<std::endl;
+		return;
+	}
+	if(root_node.left_child!=0)get_leafs_of_node_lr(get_node_info(root_node.left_child),leafs);
+	if(root_node.right_child!=0)get_leafs_of_node_lr(get_node_info(root_node.right_child),leafs);
+}
+
+std::set<unsigned int> interpreter::validated_terminals(){
+	std::vector<unsigned int> leafs;
+	std::set<unsigned int> terminals;
+
+	for(auto&& i:validated_nodes){
+		leafs.clear();
+		get_leafs_of_node_lr(get_node_info(i),leafs);
+		for(auto&& j:leafs){
+			terminals.insert(j);
+		}
+	}
+	return terminals;
 }
 
 void interpreter::destroy_node_infos(){

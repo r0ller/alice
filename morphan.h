@@ -10,15 +10,16 @@
 
 	class morphan{
 		private:
-			morphan();
+			morphan(const std::string&);
 			static morphan *singleton_instance;
-			fsm *fst;
-			apply_handle *morphan_handle;
+			fsm *fst=NULL;
+			apply_handle *morphan_handle=NULL;
+			char *pfstname=NULL;
 		public:
 			~morphan();
-			static morphan *get_instance(){
+			static morphan *get_instance(const std::string& lid){
 				if(morphan::singleton_instance==NULL){
-					morphan::singleton_instance=new morphan;
+					morphan::singleton_instance=new morphan(lid);
 				}
 				return morphan::singleton_instance;
 			};

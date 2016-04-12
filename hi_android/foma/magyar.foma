@@ -1,0 +1,919 @@
+### magyar.foma ###
+
+# Vowels
+define Vowel [ a | á | e | é | i | í | o |ó | u | ú | ü | ű | ö | ő | A | Á | E | É | I | Í | O | Ó | U | Ú | Ü | Ű | Ö | Ő ];
+define Cons [ b | c | č | ć | d | f | g | h | j | k | l | m | n | p | q | r | s | t | v | w | x | y | z | B | C | D | E | F | G | H | J | K | L | M | N | P | Q | R | S | T | V | W | X | Y | Z ];
+define Consk [ b | c | č | ć | d | f | g | h | j | k | l | m | n | p | q | r | s | t | v | w | x | y | z | B | C | D | E | F | G | H | J | K | L | M | N | P | Q | R | S | T | V | W | X | Y | Z | %- ];
+define Consnosz [ b | c | č | ć | d | f | g | h | j | k | l | m | n | p | q | r | t | v | w | x | y | B | C | D | E | F | G | H | J | K | L | M | N | P | Q | R | T | V | W | X | Y ];
+define Consnoszk [ b | c | č | ć | d | f | g | h | j | k | l | m | n | p | q | r | t | v | w | x | y | B | C | D | E | F | G | H | J | K | L | M | N | P | Q | R | T | V | W | X | Y | %- ];
+define Consgat [ d | g | n | r | s | t | v | D | G | N | R | S | T | V ];
+define Consgat1 [ d | g | g y | k | n | p | r | s | t | t y | v | D | G | G Y | K | N | P | R | S | T | T Y | V ];
+define Consgat2 [ d | f | g | g y | k | n | p | r | s | t | t y | v | D | F | G | G Y | K | N | P | R | S | T | T Y | V ];
+define Conssz [ s | z | s z | S | Z | S Z ];
+define Consjlnr [ j | l | n | r | J | L | N | R ];
+define Constnelkul [ b | d | f | g | k | p | v | Cons t | B | D | F | G | K | P | V | Cons T ];
+define BackVowel [ a | á | o | ó | u | ú | A | Á | O | Ó | U | Ú ];
+define FrontUnroundedVowel [ e | é | i | í | ü | ű | E | É | I | Í | Ü | Ű ];
+define Front1UnroundedVowel [ e | é | i | í | E | É | I | Í  ];
+define FrontRoundedVowel [ ö | ő | Ö | Ő ];
+define Front1RoundedVowel [ ö | ő | ü | ű | Ö | Ő | Ü | Ű ];
+define FrontVowel [ e | é | i | í | ü | ű | ö | ő | E | É | I | Í | Ü | Ű | Ö | Ő ];
+
+#begin insertion from enhu2.foma
+#define Vowel [ a | á | ä | e | é | ë | i | í | o |ó | u | ú | ü | ű | ö | ő | A | Á | E | É | I | Í | O |Ó | U | Ú | Ü | Ű | Ö | Ő ];
+define ConsNogln [ b | c | d | f | h | j | k | m | p | q | r | s | v | w | x | y | z | B | C | D | E | F | H | J | K | L | M | P | Q | R | S | V | W | X | Y | Z ];
+#define Cons [ b | c | č | ć | d | f | g | h | j | k | l | m | n | p | q | r | s | t | v | w | x | y | z | B | C | Č | Ć | D | E | F | G | H | J | K | L | M | N | P | Q | R | S | T | V | W | X | Y | Z ];
+define yNoCons [ ConsNogln y | Vowel y | s z t y | ConsNogln Y | Vowel Y | S Z T Y ];
+define yNoConstny [ Cons y | Vowel y | Cons Y | Vowel Y ];
+define Vowelwithy [ Vowel | yNoCons ];
+define Vowelwithyy [ Vowel | y | Y ];
+define Vowelwithytny [ Vowel | yNoConstny ];
+define Vowel1 [ a | e | í | o | ü | ö | A | E | Í | O | Ü | Ö ]; # w/o  á, é, i, ó, ő, ű, u, ú
+define Vowel2 [ a | e | i | í | o | ü | ö | A | E | I | Í | O | Ü | Ö ]; # w/o  á, é, i, ó, ő, ű, u, ú
+define Vowel1exc [ á | ä | é | ë | i | ó | ő | ű | u | ú | Á | É | I | Ó | Ő | Ű | U | Ú ];
+define Vowel1withy [ Vowel1 | yNoCons ];
+define Vowel2withy [ Vowel2 | yNoCons ];
+#define BackVowel [ a | á | o | ó | u | ú | A | Á | O | Ó | U | Ú ];
+#define FrontUnroundedVowel [ ä | e | é | ë | i | í | ü | ű | E | É | I | Í | Ü | Ű ];
+#define Front1UnroundedVowel [ ä | e | é | ë | i | í | E | É | I | Í  ];
+#define FrontRoundedVowel [ ö | ő | Ö | Ő ];
+#define Front1RoundedVowel [ ö | ő | ü | ű | Ö | Ő | Ü | Ű ];
+#define FrontVowel [ ä | e | é | ë | i | í | ü | ű | ö | ő | E | É | I | Í | Ü | Ű | Ö | Ő ];
+define NonPlosivCons [ c | j | l | r | s | v | z | C | J | L | R | S | V | Z ];
+define OppNonPlosivCons [ b | d | f | g | h | k | m | n | p | q | t | w | x | y | B | D | F | G | H | K | M | N | P | Q | T | W | X | Y ];
+define DCons [ s z | z s | g y | t y | n y | l y | c s |  S Z | Z S | G Y | T Y | N Y | L Y | C S ];
+define AccSingle [ j | l | n | r | s | z | J | L | N | R | S | Z ];
+define Nodupy [ Vowel | ConsNogln ];
+# előd (gróf zsiráf bab) 
+define ConsJaje [ b | f  | B | F ];
+define Consrd [ r d | n d ];
+#abáltja holdja
+define ConsAeJaje [ \Cons d | g | \s \c  h | s \c h | [ \s & \Vowel ] c h | k | l | m | n | p | r | \l t | v | g y | \z t y | \Cons D | G | \S \C  H | S \C H | [ \S & \Vowel ] C H | K | L | M | N | P | R | \L T | V | G Y | \Z T Y ];
+# kénye reménye
+define ConsAe [ c | j | s | z | x | s z | z s | c s | č | ć | [ s | Vowel ] c h | s z t y | n y | l y | C | J | S | Z | X | S Z | Z S | C S | Č | Ć | [ S | Vowel ] C H | S Z T Y | N Y | L Y ];
+#end insertion from enhu2.foma
+
+define PotentialWord [Cons|Vowel]+;
+
+define Filter1 ~[ $[ %+Rep \[%+Imper]* %+Rep ] |  $[ %+Imper \[%+Rep]* %+Imper ] ]; 
+define HarmRulenook §igeoo§ -> ó // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                   §igeoo§ -> ő // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRulenookmely §igeoomely§ -> ó // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                   §igeoomely§ -> ó // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleAAA §AAA§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                   §AAA§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+
+define HarmRuleAA §AA§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                  §AA§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+ 
+define HarmRuleIgeo §igeo§ -> e // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _    ,,
+                    §igeo§ -> ö // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeo§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _     ;
+define HarmRuleIgeoue §igeoue§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _    ,,
+                    §igeoue§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeoue§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _     ;
+define HarmRuleIgeou §igeou§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _    ,,
+                    §igeou§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeou§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _     ;
+define HarmRuleIgeoe §igeoe§ -> e // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _    ,,
+                    §igeoe§ -> e // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeoe§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _     ;
+define HarmRuleIgeo2 §igeo2§ -> e // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _   ?*  ,,
+                    §igeo2§ -> ö // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeo2§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _    ;
+define HarmRuleIgeo3 §igeo3§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _    ,,
+                    §igeo3§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeo3§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _     ;
+
+define HarmRuleIgeu §igeu§ -> u // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                    §igeu§ -> ü // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleIgeuo §igeuo§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                    §igeuo§ -> ö // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+
+define HarmRuleIgea §igea§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ?*  ,,
+                    §igea§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* _  ?*  ;
+
+define HarmRuleIgeaa §igeaa§ -> é // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ?*  ,,
+                    §igeaa§ -> á // .#. \"^"* BackVowel \Vowel* "^" ?* _  ?*  ;
+
+define HarmRuleIgee §igee§ -> e // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _   ,,
+                    §igee§ -> ö // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _  ,,
+                    §igee§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _   ;
+define HarmRuleIgeija1 §igeija1§ -> i // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ,,
+                     §igeija1§ -> %$ a // .#. \"^"* BackVowel Cons* [ s z ] %^ _   .o. 
+                     §igeija1§ -> %$ a // .#. \"^"* BackVowel Cons* [ z s ] %^ _   .o.
+                     §igeija1§ -> j a // .#. \"^"* BackVowel \Vowel*  "^" ?* [ Consnosz ] %^ _   .o. 
+                     §igeija1§ -> s a // .#. \"^"* BackVowel \Vowel*  "^" ?* s %^ _   .o. 
+                     §igeija1§ -> z a // .#. \"^"* BackVowel \Vowel*  "^" ?* z %^  _   .o. 
+                     §igeija1§ -> j a // .#. \"^"* BackVowel Cons* [ Consnosz ]+ %^ _   .o. 
+                     §igeija1§ -> a // .#. \"^"* BackVowel Cons* [ s s | z z ] %^ _   .o. 
+                     §igeija1§ -> s a // .#. \"^"* BackVowel Cons* s %^ _   .o. 
+                     §igeija1§ -> z a // .#. \"^"* BackVowel Cons* z %^ _   .o.
+                      z -> s  || [ s | S ] _ %^ %$ .o.
+                     %$ -> z  || [ s | S ] s %^ _ .o.
+                     s -> z  || z _ %^ %$ .o.
+                     %$ -> s  || z z %^ _ ;
+define HarmRuleIgeija2 §igeija2§ -> i // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ,,
+                     §igeija2§ -> %$ a // .#. \"^"* BackVowel Consk* [ s z ] %^ _   .o. 
+                     §igeija2§ -> %$ a // .#. \"^"* BackVowel Consk* [ z s ] %^ _   .o.
+                     §igeija2§ -> j a // .#. \"^"* BackVowel \Vowel*  "^" ?* [ Consnoszk ] %^ _   .o. 
+                     §igeija2§ -> s a // .#. \"^"* BackVowel \Vowel*  "^" ?* s %^ _   .o. 
+                     §igeija2§ -> z a // .#. \"^"* BackVowel \Vowel*  "^" ?* z %^  _   .o. 
+                     §igeija2§ -> j a // .#. \"^"* BackVowel Consk* [ Consnoszk ]+ %^ _   .o. 
+                     §igeija2§ -> a // .#. \"^"* BackVowel Consk* [ s s | z z ] %^ _   .o. 
+                     §igeija2§ -> s a // .#. \"^"* BackVowel Consk* s %^ _   .o. 
+                     §igeija2§ -> z a // .#. \"^"* BackVowel Consk* z %^ _   .o.
+                      z -> s  || [ s | S ] _ %^ %$ .o.
+                     %$ -> z  || [ s | S ] s %^ _ .o.
+                     s -> z  || z _ %^ %$ .o.
+                     %$ -> s  || z z %^ _ ;
+define HarmRuleIgejatokitek1 §igejatokitek1§ -> i t e k // .#. \"^"* FrontVowel \Vowel* "^" ?* _  ,,
+                     §igejatokitek1§ -> %$ á t o k // .#. \"^"* BackVowel \Vowel* [ s z ] %^ _   .o. 
+                     §igejatokitek1§ -> %$ á t o k // .#. \"^"* BackVowel \Vowel* [ z s ]  %^  _   .o. 
+                     §igejatokitek1§ -> á t o k // .#. \"^"* BackVowel  \Vowel*  "^" ?* [ s s | z z | S S | Z Z ] %^ _   .o. 
+                     §igejatokitek1§ -> s á t o k // .#. \"^"* BackVowel  \Vowel*  "^" ?* s %^ _   .o. 
+                     §igejatokitek1§ -> z á t o k // .#. \"^"* BackVowel  \Vowel*  "^" ?* z %^  _   .o. 
+                     §igejatokitek1§ -> j á t o k // .#. \"^"* BackVowel  \Vowel* "^" ?* Consnosz+ %^ _   .o. 
+                     §igejatokitek1§ -> á t o k // .#. \"^"* BackVowel   Cons* [ s s | z z ] %^ _   .o. 
+                     §igejatokitek1§ -> s á t o k // .#. \"^"* BackVowel   Cons* s %^ _   .o. 
+                     §igejatokitek1§ -> z á t o k // .#. \"^"* BackVowel   Cons* z %^  _   .o. 
+                     §igejatokitek1§ -> j á t o k // .#. \"^"* BackVowel   Cons* Consnosz+ %^ _   .o.
+                     z -> s  || [ s | S ] _ %^ %$ .o.
+                     %$ -> z  || [ s | S ] s %^ _ .o.
+                     s -> z  || [ z | Z ] _ %^ %$ .o.
+                     %$ -> s  || [ z | Z ] z %^ _ ;
+define HarmRuleIgejakik1 §igejakik1§ -> i k // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ,,
+                     §igejakik1§ -> %$ á k // .#. \"^"* BackVowel  \Vowel* [ s z ] %^ _  .o. 
+                     §igejakik1§ -> %$ á k // .#. \"^"* BackVowel  \Vowel* [ z s ] %^ _  .o. 
+                     §igejakik1§ -> s á k // .#. \"^"* BackVowel  \Vowel*  "^" ?* s %^ _  .o. 
+                     §igejakik1§ -> z á k // .#. \"^"* BackVowel  \Vowel*  "^" ?* z %^ _  .o. 
+                     §igejakik1§ -> j á k // .#. \"^"* BackVowel \Vowel*  "^" ?* [ Consnosz ]+ %^  _  .o. 
+                     §igejakik1§ -> á k // .#. \"^"* BackVowel Cons* [ s s | z z ] %^ _  .o. 
+                     §igejakik1§ -> s á k // .#. \"^"* BackVowel Cons* s %^ _  .o. 
+                     §igejakik1§ -> z á k // .#. \"^"* BackVowel Cons* z  %^ _  .o. 
+                     §igejakik1§ -> j á k // .#. \"^"* BackVowel Cons* [ Consnosz ]+ %^  _  .o. 
+                     z -> s  || s _ %^ %$ .o.
+                     %$ -> z  || s s %^ _ .o.
+                     s -> z  || z _ %^ %$ .o.
+                     %$ -> s  || z z %^ _ ;
+define HarmRuleIgejatokitek2 §igejatokitek2§ -> i t e k // .#. \"^"* FrontVowel \Vowel* "^" ?* _  ,,
+                     §igejatokitek2§ -> %$ á t o k // .#. \"^"* BackVowel \Vowel* [ s z ] %^ _   .o. 
+                     §igejatokitek2§ -> %$ á t o k // .#. \"^"* BackVowel \Vowel* [ z s ]  %^  _   .o. 
+                     §igejatokitek2§ -> á t o k // .#. \"^"* BackVowel  \Vowel*  "^" ?* [ s s | z z | S S | Z Z ] %^ _   .o. 
+                     §igejatokitek2§ -> s á t o k // .#. \"^"* BackVowel  \Vowel*  "^" ?* s %^ _   .o. 
+                     §igejatokitek2§ -> z á t o k // .#. \"^"* BackVowel  \Vowel*  "^" ?* z %^  _   .o. 
+                     §igejatokitek2§ -> j á t o k // .#. \"^"* BackVowel  \Vowel* "^" ?* Consnoszk+ %^ _   .o. 
+                     §igejatokitek2§ -> á t o k // .#. \"^"* BackVowel   Consk* [ s s | z z ] %^ _   .o. 
+                     §igejatokitek2§ -> s á t o k // .#. \"^"* BackVowel   Consk* s %^ _   .o. 
+                     §igejatokitek2§ -> z á t o k // .#. \"^"* BackVowel   Consk* z %^  _   .o. 
+                     §igejatokitek2§ -> j á t o k // .#. \"^"* BackVowel   Consk* Consnoszk+ %^ _   .o.
+                     z -> s  || [ s | S ] _ %^ %$ .o.
+                     %$ -> z  || [ s | S ] s %^ _ .o.
+                     s -> z  || [ z | Z ] _ %^ %$ .o.
+                     %$ -> s  || [ z | Z ] z %^ _ ;
+define HarmRuleIgejakik2 §igejakik2§ -> i k // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ,,
+                     §igejakik2§ -> %$ á k // .#. \"^"* BackVowel  \Vowel* [ s z ] %^ _  .o. 
+                     §igejakik2§ -> %$ á k // .#. \"^"* BackVowel  \Vowel* [ z s ] %^ _  .o. 
+                     §igejakik2§ -> s á k // .#. \"^"* BackVowel  \Vowel*  "^" ?* s %^ _  .o. 
+                     §igejakik2§ -> z á k // .#. \"^"* BackVowel  \Vowel*  "^" ?* z %^ _  .o. 
+                     §igejakik2§ -> j á k // .#. \"^"* BackVowel \Vowel*  "^" ?* [ Consnoszk ]+ %^  _  .o. 
+                     §igejakik2§ -> á k // .#. \"^"* BackVowel Consk* [ s s | z z ] %^ _  .o. 
+                     §igejakik2§ -> s á k // .#. \"^"* BackVowel Consk* s %^ _  .o. 
+                     §igejakik2§ -> z á k // .#. \"^"* BackVowel Consk* z  %^ _  .o. 
+                     §igejakik2§ -> j á k // .#. \"^"* BackVowel Consk* [ Consnoszk ]+ %^  _  .o. 
+                     z -> s  || s _ %^ %$ .o.
+                     %$ -> z  || s s %^ _ .o.
+                     s -> z  || z _ %^ %$ .o.
+                     %$ -> s  || z z %^ _ ;
+
+#bocsát, lát, fut       
+define HarmRulesj    §sj§ -> 0 // d %^ _ d .o.
+                     §sj§ -> s // [ ű | í | Ű | Í | [ Cons %^ ] | Cons ] t %^ _ .o.
+                     §sj§ -> s // [ Vowel s ] %^ _ .o.
+                     §sj§ -> %! // [ \ű & \í & \[ Cons %^ ] & \Cons ] t %^ _  Cons  .o.
+                     §sj§ -> %$ // [ \ű & \í & \[ Cons %^ ] & \Cons ] t %^ _ [ 0 | Vowel ] .o.
+                     §sj§ -> 0 // [ \s & \d ] z %^ _ d .o.
+                     §sj§ -> z // [ \s & \d ] z %^ _ \d* .o.
+                     §sj§ -> %( // s z %^ _ .o.
+                     §sj§ -> %) // d z %^ _ .o.
+                     §sj§ -> j  // \t %^ _ .o.
+                     t %^ %$ -> s s %^ .o.
+                     t %^ %! ->  s %^ .o.
+                     s z %^ %( -> s s z .o.
+                     d z %^ %) -> d d z ;
+define HarmRulesj1   §sj1§ -> %( // [ s z t ] %^ _ Cons .o.
+                     §sj1§ -> %$ // [ s z t ] %^ _ [ \Cons | 0 ] .o.
+                     §sj1§ -> j  // \[ s z t ] %^ _ .o.
+                     s z t %^ %$ -> s s z %^ .o.
+                     s z t %^ %( -> s z %^ ;
+define HarmRulesj2   §sj2§ -> s // [ Cons t ] %^ _ .o.
+                     §sj2§ -> j  // \[ Cons t ] %^ _ ;
+#tát
+define HarmRulesj3    §sj3§ -> 0 // d %^ _ d .o.
+                     §sj3§ -> s // [ á | ű | í | [ Cons %^ ] | Cons ] t %^ _ .o.
+                     §sj3§ -> %! // [ \á & \ű & \í & \[ Cons %^ ] & \Cons ] t %^ _  Cons  .o.
+                     §sj3§ -> %$ // [ \á & \ű & \í & \[ Cons %^ ] & \Cons ] t %^ _ [ 0 | Vowel ] .o.
+                     §sj3§ -> 0 // \s z %^ _ d .o.
+                     §sj3§ -> z // \s z %^ _ \d* .o.
+                     §sj3§ -> %( // s z %^ _ .o.
+                     §sj3§ -> j  // \t %^ _ .o.
+                     t %^ %$ -> s s %^ .o.
+                     t %^ %! ->  s %^ .o.
+                     s z %^ %( -> s s z ;
+#fest
+define HarmRulesj4    §sj4§ -> 0 // d %^ _ d .o.
+                     §sj4§ -> %- // [ ű | í | [ Cons %^ ] | Cons ] t %^ _ d .o.
+                     §sj4§ -> %+ // [ ű | í | [ Cons %^ ] | Cons ] t %^ _ [ \d | 0 ].o.
+                     §sj4§ -> %! // [ \ű & \í & \[ Cons %^ ] & \Cons ] t %^ _ Cons  .o.
+                     §sj4§ -> %$ // [ \ű & \í & \[ Cons %^ ] & \Cons ] t %^ _ [ 0 | Vowel ] .o.
+                     §sj4§ -> 0 // \s z %^ _ d .o.
+                     §sj4§ -> z // \s z %^ _ \d* .o.
+                     §sj4§ -> %( // s z %^ _ .o.
+                     §sj4§ -> j  // \t %^ _ .o.
+                     t %^ %$ -> s s %^ .o.
+                     t %^ %+ ->  s %^ .o.
+                     t %^ %- ->  0 %^ .o.
+                     t %^ %! ->  s %^ .o.
+                     s z %^ %( -> s s z ;
+define HarmRuleess   §ess§ -> s //  [ t | s | T | S ] %^ _  .o.
+                     §ess§ -> 0 //  [ \t & \s ] %^ _  ;
+# j,l,n,r után t, többi után ett, ott, ött
+define HarmRuleIgetattet §igetattet§ ->  0 // .#. \"^"* ?* Vowel [ n y ] "^" _ .o.
+                     §igetattet§ ->  e t // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattet§ ->  e t // .#. \"^"* Front1UnroundedVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattet§ ->  ö t // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattet§ ->  ö t // .#. \"^"* Front1RoundedVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattet§ ->  o t // .#. \"^"* BackVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattet§ ->  o t // .#. \"^"* BackVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattet§ ->  0 // .#. \"^"* ?* Consjlnr "^" _  ,,
+                     §igetattet§ ->  0 // .#. \"^"* ?* Vowel "^" _  ;
+define HarmRuleIgetattetoe §igetattetoe§ ->  0 // .#. \"^"* ?* Vowel [ n y ] "^" _ .o.
+                     §igetattetoe§ ->  e t // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattetoe§ ->  e t // .#. \"^"* Front1UnroundedVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattetoe§ ->  e t // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattetoe§ ->  e t // .#. \"^"* Front1RoundedVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattetoe§ ->  o t // .#. \"^"* BackVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattetoe§ ->  o t // .#. \"^"* BackVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattetoe§ ->  0 // .#. \"^"* ?* Consjlnr "^" _  ,,
+                     §igetattetoe§ ->  0 // .#. \"^"* ?* Vowel "^" _  ;
+
+define HarmRuleelol §igeelol§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                  §igeelol§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleae §ae§ -> a // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §ae§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleeo §eo§ -> o // .#. \"^"* BackVowel \Vowel*  "^"  ?* _ ,,
+                  §eo§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRulefelteo §felteo§ -> o // .#. \"^"* [ á | ó | ú ] \Vowel* Consgat+ "^"  ?* _ ,,
+                  §felteo§ -> e // .#. \"^"*  [ é | í ] \Vowel* Consgat+  "^" ?* _ ,,
+                 §felteo§ -> ö // .#. \"^"*  [ ő | ű ] \Vowel* Consgat+ "^" ?* _ .o.
+                 §felteo§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat* "^" ?* _ ;
+define HarmRulefelteo1 §felteo1§ -> o // .#. \"^"* [ a | á | o | ó | u | ú ] \Vowel* Consgat1+  "^"  ?* _ ,,
+                  §felteo1§ -> e // .#. \"^"* [ e | é | i | í ] \Vowel* Consgat1+  "^" ?* _ ,,
+                 §felteo1§ -> ö // .#. \"^"* [ ö | ő | ü | ű ] \Vowel* Consgat1+  "^" ?* _ .o.
+                 §felteo1§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat* "^" ?* _ ;
+define HarmRulefelteo2 §felteo2§ -> o // .#. \"^"* [ á | ó | ú ] \Vowel* Consgat+  "^"  ?* _ ,,
+                  §felteo2§ -> e // .#. \"^"* [ é ] \Vowel* Consgat+  "^" ?* _ ,,
+                 §felteo2§ -> ö // .#. \"^"* [ ő | ű ] \Vowel* Consgat+  "^" ?* _ .o.
+                 §felteo2§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat* "^" ?* _ ;
+define HarmRulefelteo3 §felteo3§ -> o // .#. \"^"* [ a | á | o | ó | u | ú ] \Vowel* Consgat2+  "^"  ?* _ ,,
+                  §felteo3§ -> e // .#. \"^"* [ e | é | i | í ] \Vowel* Consgat2+  "^" ?* _ ,,
+                 §felteo3§ -> ö // .#. \"^"* [ ö | ő | ü | ű ] \Vowel* Consgat2+  "^" ?* _ .o.
+                 §felteo3§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat2* "^" ?* _ ;
+define HarmRuleaen   §aen§ -> a // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §aen§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleaet   §aet§ -> a // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §aet§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleoe2   §oe2§ -> o // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §oe2§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleoeue   §oeue§ -> o // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §oeue§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _ ,,
+                  §oeue§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* _ ;
+define HarmRuleae2   §ae2§ -> a // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §ae2§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleAAAmely §AAAmely§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                   §AAAmely§ -> a // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+
+define HarmRuleAAmely §AAmely§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                  §AAmely§ -> a // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+ 
+define HarmRuleIgeomely §igeomely§ -> o // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _    ,,
+                    §igeomely§ -> o // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeomely§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _     ;
+define HarmRuleIgeo2mely §igeo2mely§ -> o // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _   ?*  ,,
+                    §igeo2mely§ -> o // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _    ,,
+                    §igeo2mely§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _    ;
+
+define HarmRuleIgeumely §igeumely§ -> u // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                    §igeumely§ -> u // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleIgeuomely §igeuomely§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                    §igeuomely§ -> o // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+
+define HarmRuleIgeamely §igeamely§ -> a // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ?*  ,,
+                    §igeamely§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* _  ?*  ;
+
+define HarmRuleIgeaamely §igeaamely§ -> á // .#. \"^"* FrontVowel \Vowel* "^" ?* _   ?*  ,,
+                    §igeaamely§ -> á // .#. \"^"* BackVowel \Vowel* "^" ?* _  ?*  ;
+
+define HarmRuleIgeemely §igeemely§ -> o // .#. \"^"* FrontUnroundedVowel \Vowel* "^" ?* _   ,,
+                    §igeemely§ -> o // .#. \"^"* FrontRoundedVowel \Vowel* "^" ?* _  ,,
+                    §igeemely§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _   ;
+define HarmRuleIgeija1mely  §igeija1mely§ -> j a // Vowel Consnosz*  "^" _ .o. 
+                     §igeija1mely§ -> s a // Vowel s*  "^" _   .o. 
+                     §igeija1mely§ -> z a // Vowel z*  "^" _   ; 
+define HarmRuleIgejatokitek1mely  §igejatokitek1mely§ -> %$ á t o k // .#. \"^"* Vowel  [ s z ] %^ _   .o. 
+                     §igejatokitek1mely§ -> %$ á t o k // .#. \"^"* Vowel [ z s ]  %^  _   .o. 
+                     §igejatokitek1mely§ -> s á t o k // .#. \"^"* Vowel  \Vowel*  "^" ?* s+ %^ _   .o. 
+                     §igejatokitek1mely§ -> á t o k // .#. \"^"* Vowel  \Vowel*  "^" ?* z z %^  _   .o. 
+                     §igejatokitek1mely§ -> z á t o k // .#. \"^"* Vowel  \Vowel*  "^" ?* z %^  _   .o. 
+                     §igejatokitek1mely§ -> j á t o k // .#. \"^"* Vowel  \Vowel* "^" ?* [ Consnosz+ | Vowel ] %^ _   .o. 
+                     §igejatokitek1mely§ -> s á t o k // .#. \"^"* Vowel   Cons* s+ %^ _   .o. 
+                     §igejatokitek1mely§ ->  á t o k // .#. \"^"* Vowel   Cons* z z %^  _   .o. 
+                     §igejatokitek1mely§ -> z á t o k // .#. \"^"* Vowel   Cons* z %^  _   .o. 
+                     §igejatokitek1mely§ -> j á t o k // .#. \"^"* Vowel   Cons* [ Consnosz+ | Vowel ] %^ _   .o.
+                     z -> s  || s _ %^ %$ .o.
+                     %$ -> z  || s s %^ _ .o.
+                     s -> z  || z _ %^ %$ .o.
+                     %$ -> s  || z z %^ _ ;
+
+define HarmRuleIgejakik1mely §igejakik1mely§ -> %$ á k // .#. \"^"* Vowel [ s z ] %^ _    .o. 
+                     §igejakik1mely§ -> %$ á k // .#. \"^"* Vowel [ z s ] %^ _    .o. 
+                     §igejakik1mely§ -> s á k // .#. \"^"* Vowel  \Vowel*  "^" ?* s %^ _    .o. 
+                     §igejakik1mely§ -> z á k // .#. \"^"* Vowel  \Vowel*  "^" ?* z %^ _    .o. 
+                     §igejakik1mely§ -> j á k // .#. \"^"* Vowel \Vowel*  "^" ?* [ Consnosz | Vowel ]+ %^  _    .o. 
+                     §igejakik1mely§ -> s á k // .#. \"^"* Vowel Cons* s+ %^ _    .o. 
+                     §igejakik1mely§ -> á k // .#. \"^"* Vowel Cons* z z  %^ _    .o. 
+                     §igejakik1mely§ -> z á k // .#. \"^"* Vowel Cons* z  %^ _    .o. 
+                     §igejakik1mely§ -> j á k // .#. \"^"* Vowel Cons* [ Consnosz  | Vowel ]+ %^  _    .o. 
+                     z -> s  || s _ %^ %$ .o.
+                     %$ -> z  || s s %^ _ .o.
+                     s -> z  || z _ %^ %$ .o.
+                     %$ -> s  || z z %^ _ ;
+
+define HarmRuleoe2mely   §oe2mely§ -> o // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §oe2mely§ -> o // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleae2mely   §ae2mely§ -> a // .#. \"^"* BackVowel \Vowel*  "^" ?*  _ ,,
+                  §ae2mely§ -> a // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+
+# j,l,n,r után t, többi után ett, ott, ött
+define HarmRuleIgetattetmely §igetattetmely§ ->  o t // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattetmely§ ->  o t // .#. \"^"* Front1UnroundedVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattetmely§ ->  o t // .#. \"^"* Front1RoundedVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattetmely§ ->  o t // .#. \"^"* Front1RoundedVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattetmely§ ->  o t // .#. \"^"* BackVowel \Vowel* "^" ?* \Consjlnr %^ _   ,,
+                     §igetattetmely§ ->  o t // .#. \"^"* BackVowel \Vowel* \Consjlnr "^" _   ,,
+                     §igetattetmely§ ->  0 // .#. \"^"* ?* Consjlnr "^" _  ;
+
+define HarmRuleaemely §aemely§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?*  _ ,,
+                  §aemely§ -> a // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleeomely §eomely§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?*  _ ,,
+                  §eomely§ -> o // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRulefelteomely §felteomely§ -> o // .#. \"^"* [ á | ó | ú ] \Vowel* Consgat+  "^"  ?* _ ,,
+                  §felteomely§ -> o // .#. \"^"* [ é | í ] \Vowel* Consgat+  "^" ?* _ ,,
+                 §felteomely§ -> o // .#. \"^"* [ ő | ű ] \Vowel* Consgat+  "^" ?* _ .o.
+                 §felteomely§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat+ "^" ?* _ ,,
+                §felteomely§ -> 0 // .#. \"^"* Vowel \Vowel* \Consgat* "^" ?* _ ;
+define HarmRulefelteo1mely §felteo1mely§ -> o // .#. \"^"* [ a | á | o | ó | u | ú ] \Vowel* Consgat1+  "^"  ?* _ ,,
+                  §felteo1mely§ -> o // .#. \"^"* [ e | é | i | í ] \Vowel* Consgat1+  "^" ?* _ ,,
+                 §felteo1mely§ -> o // .#. \"^"* [ ö | ő | ü | ű ] \Vowel* Consgat1+  "^" ?* _ .o.
+                 §felteo1mely§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat* "^" ?* _ ;
+define HarmRulefelteo2mely §felteo2mely§ -> o // .#. \"^"* [ á | ó | ú ] \Vowel* Consgat+  "^"  ?* _ ,,
+                  §felteo2mely§ -> o // .#. \"^"* [ é ] \Vowel* Consgat+  "^" ?* _ ,,
+                 §felteo2mely§ -> o // .#. \"^"* [ ő | ű ] \Vowel* Consgat+  "^" ?* _ .o.
+                 §felteo2mely§ -> 0 // .#. \"^"* Vowel \Vowel* Consgat+ "^" ?* _ ,,
+                §felteo2mely§ -> 0 // .#. \"^"* Vowel \Vowel* \Consgat* "^" ?* _ ;
+
+
+define HarmRulej §j§-> %$ // .#. \"^"* s z "^" _ .o.
+                 §j§-> %$ // .#. \"^"* z s "^" _ .o.
+                 §j§ -> 0 // .#. \"^"* z z "^"  _ .o.
+                 §j§ -> 0 // .#. \"^"* s s "^"  _ .o.
+                 §j§ -> z // .#. \"^"* \s z "^"  _ .o.
+                 §j§ -> s // .#. \"^"* \z s "^"  _ .o.
+                 §j§ -> j // .#. \"^"* [ Consnosz | Vowel ] "^" _ .o.
+                 §j§ -> z // .#. ?* \s z "^"  _ .o.
+                 §j§ -> s // .#. ?* \z s "^"  _ .o.
+                 §j§ -> j // .#. ?* [ Consnosz | Vowel ] "^" _ .o.
+                 z -> s  || s _ %^ %$ .o.
+                 %$ -> z  || s s %^ _ .o.
+                 s -> z  || z _ %^ %$ .o.
+                 %$ -> s  || z z %^ _ ;
+
+define HarmRuleg §g§-> 0 // .#. \"^"* [ g g ] "^" _ .o.
+                 §g§-> g //  ?*  _ ;
+
+define HarmRuleszorelol §szorelol§ -> s z //  Vowel %^* Consnosz %^ _ ,,
+                        §szorelol§ -> s z //  Vowel %^ _ ,,
+                        §szorelol§ -> s z //  Vowel %^* [ n y | g y | t y | d d  ] %^ _ .o.
+                        §szorelol§ -> a s z //  BackVowel %^* Cons+ %^* Consnosz %^ _ ,,
+                        §szorelol§ -> e s z //  FrontVowel %^* Cons+ %^* Consnosz %^ _ ,,
+                        §szorelol§ -> e l //  .#. \"^"* Front1UnroundedVowel \Vowel* Conssz+ %^  _ ,,
+                        §szorelol§ -> ö l // .#. \"^"* Front1RoundedVowel \Vowel* Conssz+ %^ _ ,,
+                        §szorelol§ -> o l // .#. \"^"* BackVowel \Vowel* Conssz+ %^ _ ;
+#define HarmRuleszorelolmely §szorelolmely§ -> s z // .#. ?* %^ _ ;
+
+define HarmRuleszorelolmely §szorelolmely§ -> s z // .#. ?* [ Consnosz | Vowel ] %^ _ ,,
+                        §szorelolmely§ -> o l // .#. \"^"* Conssz+ %^ _ ;
+define Constnelkul1 [ b | d | f | g | k | p | v ];
+define Constnelkul2 [ b | d | f | g | k | p | v | l l ];
+define HarmRuletatt §tatt§ -> 0 // .#. ?* [ Constnelkul1 ] %^ _ .o.
+                    §tatt§ -> t // .#. ?* \[ Constnelkul1 ] %^ _ ;
+define HarmRuletatt1 §tatt1§ -> 0 // .#. ?* [ Constnelkul ] %^ _ .o.
+                    §tatt1§ -> t // .#. ?* \[ Constnelkul ] %^ _ ;
+define HarmRuletatt2 §tatt2§ -> 0 // .#. ?* [ Constnelkul2 ] %^ _ .o.
+                    §tatt2§ -> t // .#. ?* \[ Constnelkul2 ] %^ _ ;
+define Suffixl   §l§ -> 0 // l l [ %^ | 0 ] _ .o.
+                 §l§ -> l // \[ l l ] [ %^ | 0 ] _ ;
+
+#begin insertion from enhu2.foma
+define Etoee e -> é ||  _ "^"  ?*  [ "+" {cAbl} | "+" {cAcc} | "+" {cAde} | "+" {cAll} | "+" {cCau} | "+" {cDat} | "+" {cDel} | "+" {cEla} | "+" {cFac} | "+" {cIll} | "+" {cIne} | "+" {cIns} | "+" {cSub} | "+" {cSue} | "+" {cSup} | "+" {cTer} | "+" {cFam} | "+" {cDis} | "+" {cEss} | "+" {cSoc}  | "+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} | "+" {cPlur} | "+" {cGens} | "+" {cGenpl}] ?* ; # \0: not zero kor & ként excluded
+define Atoaa a -> á ||  _ "^"  ?*  [ "+" {cAbl} | "+" {cAcc} | "+" {cAde} | "+" {cAll} | "+" {cCau} | "+" {cDat} | "+" {cDel} | "+" {cEla} | "+" {cFac} | "+" {cIll} | "+" {cIne} | "+" {cIns} | "+" {cSub} | "+" {cSue} | "+" {cSup} | "+" {cTer} | "+" {cFam} | "+" {cDis} | "+" {cEss} | "+" {cSoc}  | "+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} | "+" {cPlur}  | "+" {cGens} | "+" {cGenpl}] ?* ; # \0: not zero kor & ként excluded
+#derék
+define Eetoe é -> e || .#. \%^* _ [ k ] "^"  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} | "+" {cPlur} ]   ?*  ;
+#bél
+define EetoeAcc é -> e || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cAcc} ]  ?*  ;
+define EtoeeFgg e -> é || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ {cFam} | {cGen} | {cGenpl} ]    ?*  ;
+define EetoePP é -> e || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} ]   ?*  ;
+#víz
+define IitoiAcc3 í -> i || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cAcc} ]  ?*  ;
+define ItoiiFgg3 i -> í || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ {cFam} | {cGen} | {cGenpl} ]    ?*  ;
+define IitoiPP3 í -> i || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} ]   ?*  ;
+#tűz
+define UeuetoueAcc3 ű -> ü || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cAcc} ]  ?*  ;
+define UetoueueFgg3 ü -> ű || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ {cFam} | {cGen} | {cGenpl} ]    ?*  ;
+define UeuetouePP3 ű -> ü || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} ]   ?*  ;
+#nyár
+define AatoaAcc3 á -> a || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cAcc} ]  ?*  ;
+define AtoaaFgg3 a -> á || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ {cFam} | {cGen} | {cGenpl} ]    ?*  ;
+define AatoaPP3 á -> a || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} ]   ?*  ;
+#kút, úr
+define UutouAcc3 ú -> u || .#. \%^* _ [ DCons | Cons ] "^"  [ "+" {cAcc} ]  ?*  ;
+define UtouuFgg3 u -> ú || .#. \%^* _ [ DCons | Cons ] "^"  ?*  [ {cFam} | {cGen} | {cGenpl} ]    ?*  ;
+# úr - ura
+define UutouPP3 ú -> u || .#. \%^* _ NonPlosivCons+  "^"  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}| "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s}| "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} ]   ?*  ;
+# út, kút, lúd - lúdja  rúd ruduk
+define UutouPP31 ú -> u || .#. \%^* _ OppNonPlosivCons+ %^  ?*  [ "+" {cPlur}  | "+" {cSoc} | "+" {cDis} |"+" {cPosss1s}  | "+" {cPosss2s}    | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p}  | "+" {cPossp3s}]   ?*  ;
+
+define UuJtoj §J§ -> j || .#. \%^* ú OppNonPlosivCons+ %^ [ "+" {cPosss3s} ] %^ _ ?*  ;
+
+define HarmRulejaje §AE1§ -> á // .#. \"^"* BackVowel \Vowel* "^" ?* _ "^"  ?*  [ "+" {cAbl} | "+" {cAcc} | "+" {cAde} | "+" {cAll} | "+" {cCau} | "+" {cDat} | "+" {cDel} | "+" {cEla} | "+" {cFac} | "+" {cIll} | "+" {cIne} | "+" {cIns} | "+" {cSub} | "+" {cSue} | "+" {cSup} | "+" {cTer} | "+" {cFam} | "+" {cDis} | "+" {cEss} | "+" {cSoc}  | "+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} | "+" {cPlur} | "+" {cGens} | "+" {cGenpl}] ?* .o.
+                 §AE1§ -> é // .#. \"^"* FrontVowel \Vowel* "^" ?* _ "^"  ?*  [ "+" {cAbl} | "+" {cAcc} | "+" {cAde} | "+" {cAll} | "+" {cCau} | "+" {cDat} | "+" {cDel} | "+" {cEla} | "+" {cFac} | "+" {cIll} | "+" {cIne} | "+" {cIns} | "+" {cSub} | "+" {cSue} | "+" {cSup} | "+" {cTer} | "+" {cFam} | "+" {cDis} | "+" {cEss} | "+" {cSoc}  | "+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p} | "+" {cPlur} | "+" {cGens} | "+" {cGenpl}] ?* .o.
+                 §AE1§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?*  _ %^ [ 0 ] .o. 
+                 §AE1§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ %^ [ 0 ] ;
+
+define Changez2   §oeoez2§ -> §oeoez3§ // .#. ?* [ "+" {cGens} |  "+" {cGenpl} | "+" {cPosss1s}  | "+" {cPosss2s}  | "+" {cPosss3s}  | "+" {cPossp1s}  | "+" {cPossp2s}  | "+" {cPossp3s} | "+" {cPosss1p} | "+" {cPosss2p} | "+" {cPosss3p} | "+" {cPossp1p} | "+" {cPossp2p} | "+" {cPossp3p}|  "+" {cPlur}|  "+" {cFam} ] ?* _ t [0] ;
+
+define HarmRulePlur §oeoez1§ -> 0 // .#. \"^"* Vowelwithy %^ ?*  _  .o.
+                 §oeoez1§ -> o // .#. \"^"* BackVowel \Vowel+ "^" ?*  _ ,,
+                 §oeoez1§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel+ "^" ?* _ ,,
+                 §oeoez1§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel+  "^" ?* _ ;
+
+define HarmRulePluroe §oeoez5§ -> 0 // .#. \"^"* Vowelwithy %^ ?*  _  .o.
+                 §oeoez5§ -> o // .#. \"^"* BackVowel \Vowel+ "^" ?*  _ ,,
+                 §oeoez5§ -> e // .#. \"^"* FrontUnroundedVowel \Vowel+ "^" ?* _ ,,
+                 §oeoez5§ -> e // .#. \"^"* FrontRoundedVowel \Vowel+  "^" ?* _ ;
+
+define HarmRuleJJ1   §JJ§ -> j || .#. \"^"* %^  ?* _ ;
+
+define HarmRuleJnull1 §Jnull§ -> 0 || .#. \"^"* %^  ?* _ ;
+
+define HarmRuleul §uue§ -> u // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                 §uue§ -> ü // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleuk §UUE1§ -> u // .#. \"^"* BackVowel \Vowel*  "^" ?* _ ,,
+                 §UUE1§ -> ü // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleenkent §ooez3§ -> 0 // .#. \"^"* Vowelwithy %^ ?* _  .o.
+                 §ooez3§ -> o // .#. \"^"* BackVowel \Vowel+ "^" ?* _ ,,
+                 §ooez3§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel+ "^" ?* _ ,,
+                 §ooez3§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel+  "^" ?* _ ;
+define HarmRuleestul §EOA§ -> 0 // .#. \"^"* Vowelwithy %^  ?* _  .o.
+                 §EOA§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                 §EOA§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _ ,,
+                 §EOA§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel*  "^" ?* _ ;
+define HarmRuleunk §UUE§ -> 0 // .#. \"^"* Vowelwithy %^ ?* _  .o.
+                 §UUE§ -> u // .#. \"^"* BackVowel \Vowel+  "^" ?* _ ,,
+                 §UUE§ -> ü // .#. \"^"* FrontVowel \Vowel+ "^" ?* _ ;
+define HarmRuleotok1 §OEOE1§ -> 0 // .#. \"^"* Vowelwithy %^  ?* _  .o.
+                 §OEOE1§ -> o // .#. \"^"* BackVowel \Vowel*  "^" ?* _ ,,
+                 §OEOE1§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _ ,,
+                 §OEOE1§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel*  "^" ?* _ ;
+define HarmRuleotok2 §OEOE§ -> o // .#. \"^"* BackVowel \Vowel*  "^" ?* _ ,,
+                 §OEOE§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _ ,,
+                 §OEOE§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel*  "^" ?* _ ;
+define HarmRuleJPfi §JP1§ -> j || .#.  ?* _ ,,
+                 §JP1§ -> 0 || .#.  ?* _ ;
+define HarmRuleJPJ1 §JPJ§ -> j || .#. \"^"*  %^  ?* _ ;
+
+define HarmRuleJPnull1 §JPnull§ -> 0 || .#. \"^"*  %^  ?* _ ;
+define HarmRuleai §AE§ -> 0 || .#. \"^"* Vowelwithy %^ \j* _ .o.
+                  §AE§ -> a // .#. \"^"* BackVowel Cons* %^ \%^* _ .o.
+                  §AE§ -> e // .#. \"^"* FrontVowel Cons* %^ \%^* _ ;
+define HarmRuleaitok2 §OEOE2§ -> o // .#. \"^"* BackVowel \Vowel*  "^" ?* _ ,,
+                 §OEOE2§ -> e // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleAcc §oeoez2§ -> 0 // Vowelwithy %^ _  .o.
+                 §oeoez2§ -> e // .#. \"^"* FrontVowel \Vowel* Cons+ r "^"  _ \"^"* .#. .o. # ezret
+                 §oeoez2§ -> e // .#. \"^"* [ t | f | n | v | T | F | N | V ] e j "^"  _ \"^"* .#. .o.
+                 §oeoez2§ -> e // .#. \"^"* [ m | M ] e l l "^"  _ \"^"* .#. .o.
+                 §oeoez2§ -> e // .#. \"^"* [ t | T ] ü z "^"  _ \"^"* .#. .o.
+                 §oeoez2§ -> e // .#. \"^"* [ f | F ] ü z "^"  _ \"^"* .#. .o.
+                 §oeoez2§ -> e // .#. \"^"* [ s | S ] z ü z "^"  _ \"^"* .#. .o.
+                 §oeoez2§ -> 0 //  Vowel AccSingle  %^ _ .o.
+                 §oeoez2§ -> 0 //  Vowel AccSingle AccSingle  %^ _ .o.
+                 §oeoez2§ -> o //  BackVowel s z n %^ _ .o. # hasznot
+# rozsot 
+                 §oeoez2§ -> o //  [ r | R ] o z s %^ _ .o. # koszt
+# gúnyt, koszt, vészt
+                 §oeoez2§ -> 0 //  Vowel [ n y | s z  | l y ]   %^ _ .o.
+                 §oeoez2§ -> 0 //  Vowel [ n y | l y | s z | z s ] AccSingle  %^ _ .o.
+                 §oeoez2§ -> 0 //  [ Nodupy ]  y  %^ _ .o.
+# if at least one additional affix befor the acc affix babot de babjaimat
+                 §oeoez2§ -> a // .#. \"^"* BackVowel \Vowel* "^" ?* [ "^" ] ?* _ .o.
+                 §oeoez2§ -> o // .#. \"^"* BackVowel \Vowel* "^" [ \"^" ]* _ ,,
+                 §oeoez2§ -> e // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _ ,,
+                 §oeoez2§ -> ö // .#. \"^"* Front1RoundedVowel \Vowel*  "^" ?* _ ;
+define HarmRuleAcc1 §oeoez3§ -> 0 // Vowelwithy %^ _  .o.
+                 §oeoez3§ -> 0 //  Vowel AccSingle  %^ _ .o.
+                 §oeoez3§ -> 0 //  Vowel AccSingle AccSingle  %^ _ .o.
+                 §oeoez3§ -> 0 //  Vowel [ n y | s z | l y ]   %^ _ .o.
+                 §oeoez3§ -> 0 //  Vowel [ n y | l y | s z | z s ] AccSingle  %^ _ .o.
+                 §oeoez3§ -> 0 //  [ Nodupy ]  y  %^ _ .o.
+                 §oeoez3§ -> 0 //  [ s | S ] z %^ _ .o. # koszt
+define HarmRuletol §oooe§ -> ó // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                 §oooe§ -> ő // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRulehoz §oeoe§ -> o // .#. \"^"* BackVowel \Vowel* "^"  ?* _ .o.
+                 §oeoe§ -> e //  Front1UnroundedVowel \Vowel* "^" \"^"* _ ,,
+                 §oeoe§ -> ö //  Front1RoundedVowel \Vowel* "^" \"^"* _ ;
+define HarmRuleVVy §VVy§ -> v || Vowelwithyy %^  _ ,,
+                  §VVy§ -> b || \b b %^ _ ,,
+                  §VVy§ -> c || \c c %^ _ ,,
+                  §VVy§ -> d || \d d %^ _ ,,
+                  §VVy§ -> f || \f f %^ _ ,,
+                  §VVy§ -> g || \g g %^ _ ,,
+                  §VVy§ -> h || [ \h & \c ] h %^ _ ,,
+                  §VVy§ -> j || \j j %^ _ ,,
+                  §VVy§ -> k || \k k %^ _ ,,
+                  §VVy§ -> l || \l l %^ _ ,,
+                  §VVy§ -> m || \m m %^ _ ,,
+                  §VVy§ -> n || \n n %^ _ ,,
+                  §VVy§ -> p || \p p %^ _ ,,
+                  §VVy§ -> q || \q q %^ _ ,,
+                  §VVy§ -> r || \r r %^ _ ,,
+                  §VVy§ -> s || [ \s & \c & \t & \z ] s %^ _ ,,
+                  §VVy§ -> t || \t t %^ _ ,,
+                  §VVy§ -> v || \v v %^ _ ,,
+                  §VVy§ -> w || \w w %^ _ ,,
+                  §VVy§ -> s z || \x x %^ _ ,,
+                  §VVy§ -> 0 || [ b b | c c | d d | f f | g g | h h | j j | k k | l l | m m | n n | p p | q q | r r | s s | t t | v v | w w | x x | y y | z z ] %^ _ ,,
+                  §VVy§ -> [ c s ] || [ Vowel t s | i c h | t s c h | ć | č ] %^ _ .o. # Damjanich Bartsch
+                  §VVy§ -> [ h ] || [ [ o | a | u | r | l ]  c h ] %^ _ .o. # Bloch Bach eunuch Karch Pilch
+                  §VVy§ ->  s || [ s c h ] %^ _ .o. # Damjanich Bartsch
+                  §VVy§ -> [ h ] || e c h %^ _ .o.  # pech
+                  §VVy§ -> 0 || [ c c s | g g y | l l y | n n y | t t y | s s z | z z s ] %^ _ .o.
+                  §VVy§ -> %$ || \g g y %^ _ .o.
+                  §VVy§ -> %$ || \l l y %^ _ .o.
+                  §VVy§ -> %$ || \n n y %^ _ .o.
+                  §VVy§ -> %$ || \t t y %^ _ .o.
+                  §VVy§ -> %$ || \c c s %^ _ .o. # css-> ccs
+                  §VVy§ -> %$ || \s s z %^ _ .o.
+                  §VVy§ -> %$ || \z z s %^ _ .o.
+                  §VVy§ -> s || \s s %^ _ .o.
+                  §VVy§ -> v || \y y %^ _ .o.
+                  §VVy§ -> z || [ \c & \z & \t ] z %^ _  .o.
+                  §VVy§ -> c || [ t z | c z ] %^ _ .o. # tz-> tzc
+                  y -> g  || g _ %^ %$ .o.
+                  y -> l  || l _ %^ %$ .o.
+                  y -> n  || n _ %^ %$ .o.
+                  %$ -> y || [ g g | l l | n n ] %^ _ .o.
+                  y -> t  || t _ %^ %$ .o.
+                  %$ -> y || t t %^ _ .o.
+                  s -> c  || c _ %^ %$ .o.  # cs$ -> cc$
+                  %$ -> s || c c %^ _ .o.   # cc$ -> ccs
+                  z -> s  || s _ %^ %$ .o.
+                  %$ -> z || s s %^ _ .o.
+                  s -> z  || z _ %^ %$ .o.
+                  %$ -> s || z z %^ _ ;
+define HarmRuleVVH §VVH§ -> v || Vowel %^  _ ,,
+                  §VVH§ -> b || \b b %^ _ ,,
+                  §VVH§ -> c || \c c %^ _ ,,
+                  §VVH§ -> d || \d d %^ _ ,,
+                  §VVH§ -> f || \f f %^ _ ,,
+                  §VVH§ -> g || \g g %^ _ ,,
+                  §VVH§ -> h || [ \h & \c ] h %^ _ ,,
+                  §VVH§ -> j || \j j %^ _ ,,
+                  §VVH§ -> k || \k k %^+ _ ,,
+                  §VVH§ -> l || \l l %^ _ ,,
+                  §VVH§ -> m || \m m %^ _ ,,
+                  §VVH§ -> n || \n n %^ _ ,,
+                  §VVH§ -> p || \p p %^ _ ,,
+                  §VVH§ -> q || \q q %^ _ ,,
+                  §VVH§ -> r || \r r %^ _ ,,
+                  §VVH§ -> s || [ \s & \c & \t & \z ] s %^ _ ,,
+                  §VVH§ -> t || \t t %^ _ ,,
+                  §VVH§ -> v || \v v %^ _ ,,
+                  §VVH§ -> w || \w w %^ _ ,,
+                  §VVH§ -> s z || \x x %^ _ ,,
+                  §VVH§ -> 0 || [ b b | c c | d d | f f | g g | h h | j j | k k | l l | m m | n n | p p | q q | r r | s s | t t | v v | w w | x x | y y | z z ] %^ _ ,,
+                  §VVH§ -> [ c s ] || [ Vowel t s | y c h | é c h | á c h | t s c h | ć | č ] %^ _ .o. # Damjanich Bartsch
+                  §VVH§ -> [ h ] || [ [ o | a | u | r | l ]  c h ] %^ _ .o. # Bloch Bach eunuch Karch Pilch
+                  §VVH§ ->  s || [ s c h ] %^ _ .o. # Damjanich Bartsch
+                  §VVH§ -> [ h ] || [ e c h | i c h ] %^ _ .o.  # pech
+                  §VVH§ -> 0 || [ c c s | g g y | l l y | n n y | t t y | s s z | z z s ] %^ _ .o.
+                  §VVH§ -> %$ || \g g y %^ _ .o.
+                  §VVH§ -> %$ || \l l y %^ _ .o.
+                  §VVH§ -> %$ || \n n y %^ _ .o.
+                  §VVH§ -> %$ || \t t y %^ _ .o.
+                  §VVH§ -> %$ || \c c s %^ _ .o. # css-> ccs
+                  §VVH§ -> %$ || \s s z %^ _ .o.
+                  §VVH§ -> %$ || \z z s %^ _ .o.
+                  §VVH§ -> s || \s s %^ _ .o.
+                  §VVH§ -> v || \y y %^ _ .o.
+                  §VVH§ -> z || [ \c & \z & \t ] z %^ _  .o.
+                  §VVH§ -> c || [ t z | c z ] %^ _ .o. # tz-> tzc
+                  y -> g  || g _ %^ %$ .o.
+                  y -> l  || l _ %^ %$ .o.
+                  y -> n  || n _ %^ %$ .o.
+                  %$ -> y || [ g g | l l | n n ] %^ _ .o.
+                  y -> t  || t _ %^ %$ .o.
+                  %$ -> y || t t %^ _ .o.
+                  s -> c  || c _ %^ %$ .o.  # cs$ -> cc$
+                  %$ -> s || c c %^ _ .o.   # cc$ -> ccs
+                  z -> s  || s _ %^ %$ .o.
+                  %$ -> z || s s %^ _ .o.
+                  s -> z  || z _ %^ %$ .o.
+                  %$ -> s || z z %^ _ ;
+define HarmRuleVVdzs   §VVdzs§ -> %$ || ?* %^ _ .o.
+                  d -> d d  ||  _ z s  %^ %$ .o.
+                  %$ -> 0 || ?* %^ _ ;
+define HarmRuleonen §oeoez§ -> 0 //   Vowelwithy %^ _ .o.
+# rácsaimen
+                 §oeoez§ -> o // .#. \"^"* BackVowel Cons* "^" ?* _ .o.
+# mécsünken
+                 §oeoez§ -> ö //  Front1RoundedVowel Cons* "^" [ \%^* | Cons* %^ ] _ ,,
+                 §oeoez§ -> e //  Front1UnroundedVowel Cons* "^"  [ \%^* | Cons* %^ ] _ ;
+define HarmRulePlurmely18 §oeoez18§ -> 0 // .#. \"^"* Vowelwithy %^ ?*  _  .o.
+                 §oeoez18§ -> a // .#. \"^"* Vowel \Vowel+ "^" ?*  _ ;
+define HarmRuleulmely §uue2§ -> u // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                 §uue2§ -> u // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleestulmely §EOA17§ -> 0 // .#. \"^"* Vowelwithy %^  ?* _  .o.
+                 §EOA17§ -> o // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                 §EOA17§ -> o // .#. \"^"* Front1UnroundedVowel \Vowel* "^" ?* _ ,,
+                 §EOA17§ -> o // .#. \"^"* Front1RoundedVowel \Vowel*  "^" ?* _ ;
+define HarmRuletolmely §oooe2§ -> ó // .#. \"^"* BackVowel \Vowel* "^" ?* _ ,,
+                 §oooe2§ -> ó // .#. \"^"* FrontVowel \Vowel* "^" ?* _ ;
+define HarmRuleAccmely §oeoez22§ -> 0 // Vowelwithy %^ _  .o.
+                 §oeoez22§ -> 0 //  Vowel AccSingle  %^ _ .o.
+                 §oeoez22§ -> 0 //  Vowel AccSingle AccSingle  %^ _ .o.
+                 §oeoez22§ -> 0 //  Vowel [ n y | s z | l y ]   %^ _ .o.
+                 §oeoez22§ -> 0 //  Vowel [ n y | l y | s z | z s ] AccSingle  %^ _ .o.
+                 §oeoez22§ -> 0 //  [ Nodupy ]  y  %^ _ .o.
+# if at least one additional affix befor the acc affix babot de babjaimat
+                 §oeoez22§ -> a // .#. \"^"* Vowel \Vowel* "^" ?* [ "^" ] ?* _ .o.
+                 §oeoez22§ -> o // .#. \"^"* Vowel \Vowel* "^" [ \"^" ]* _ ,,
+                 §oeoez22§ -> o //  [ r | R ] o z s %^ _ .o. # koszt
+                 §oeoez22§ -> 0 //  [ s z | z s | S z | Z s ] %^ _ ; # koszt
+define HarmRulehozmely §oeoe2§ -> o // .#. ?* "^" ?* _ ;
+define HarmRuleonenmely §oeoez25§ -> 0 //   Vowelwithy %^ _ .o.
+                 §oeoez25§ -> o //   \Vowel %^ _ ;
+define HarmRuleenkentmely §ooez18§ -> 0 // .#. \"^"* Vowel %^ ?* _  .o.
+                 §ooez18§ -> o // .#. \"^"* BackVowel \Vowel+ "^" ?* _ ,,
+                 §ooez18§ -> o // .#. \"^"* Front1UnroundedVowel \Vowel+ "^" ?* _ ,,
+                 §ooez18§ -> o // .#. \"^"* Front1RoundedVowel \Vowel+  "^" ?* _ ;
+
+define Suffixb   §b§ -> 0 // b b [ %^ | 0 ] _ .o.
+                 §b§ -> b // \[ b b ] [ %^ | 0 ] _ ;
+define Suffixh   §h§ -> 0 // h h [ %^ | 0 ] _ .o.
+                 §h§ -> h // \[ h h ] [ %^ | 0 ] _ ;
+define Suffixk   §k§ -> 0 // k k [ %^ | 0 ] _ .o.
+                 §k§ -> k // \[ k k ] [ %^ | 0 ] _ ;
+define Suffixn   §n§ -> 0 // n n [ %^ | 0 ] _ .o.
+                 §n§ -> n // \[ n n ] [ %^ | 0 ] _ ;
+define SuffixNNn   §NNn§ -> %- n // n n [ %^ | 0 ] _ .o.
+                 §NNn§ -> n // \[ n n ] [ %^ | 0 ] _ ;
+define Suffixr   §r§ -> 0 // r r [ %^ | 0 ] _ .o.
+                 §r§ -> r // \[ r r ] [ %^ | 0 ] _ ;
+define SuffixRRr   §RRr§ -> %- r // r r [ %^ | 0 ] _ .o.
+                 §RRr§ -> r // \[ r r ] [ %^ | 0 ] _ ;
+define Suffixt   §t§ -> 0 // t t  [ %^ | 0 ] _ .o.
+                 §t§ -> t // \[ t t ] [ %^ | 0 ]  _ ;
+#end insertion from enhu2.foma
+
+ 
+
+define ToUpCase [a:A|á:Á|b:B|c:C|d:D|e:E|é:É|f:F|g:G|h:H|i:I|í:Í|j:J|k:K|l:L|m:M|n:N|o:O|ó:Ó|ö:Ö|ő:Ő|p:P|q:Q|r:R|s:S|t:T|u:U|ú:Ú|ü:Ü|ű:Ű|v:V|w:W|x:X|y:Y|z:Z] ?* | ?* ;
+
+# Cleanup: remove morpheme boundaries
+define Cleanup      "^"        -> 0;
+define CleanupEndings  "^" "+" {cRep}  -> 0 ,,
+                       "^" "+" {cImp}  -> 0 ,,
+                       "^" "+" {ccInf11}  -> 0 ,,
+                       "^" "+" {ccInf12}  -> 0 ,,
+                       "^" "+" {ccInf13}  -> 0 ,,
+                       "^" "+" {ccInf21}  -> 0 ,,
+                       "^" "+" {ccInf22}  -> 0 ,,
+                       "^" "+" {ccInf23}  -> 0 ,,
+                       "^" "+" {cInf}  -> 0 ,,
+                       "^" "+" {cAdv}  -> 0 ,,
+                       "^" "+" {ccAdvan}  -> 0 ,,
+                       "^" "+" {cNrep}  -> 0 ,,
+                       "^" "+" {cPot}  -> 0 ,,
+                       "^" "+" {cIndefSgp12}  -> 0 ,,
+                       "^" "+" {cIndefSg1}  -> 0 ,,
+                       "^" "+" {cIndefSg2}  -> 0 ,,
+                       "^" "+" {cIndefSg3}  -> 0 ,,
+                       "^" "+" {cIndefPl1}  -> 0 ,,
+                       "^" "+" {cIndefPl2}  -> 0 ,,
+                       "^" "+" {cIndefPl3}  -> 0 ,,
+                       "^" "+" {cDefSg1}  -> 0 ,,
+                       "^" "+" {cDefSg2}  -> 0 ,,
+                       "^" "+" {cDefSg3}  -> 0 ,,
+                       "^" "+" {cDefPl1}  -> 0 ,,
+                       "^" "+" {cDefPl2}  -> 0 ,,
+                       "^" "+" {cDefPl3}  -> 0 ,,
+                       "^" "+" {cPIndefSg1}  -> 0 ,,
+                       "^" "+" {cPIndefSg2}  -> 0 ,,
+                       "^" "+" {cPIndefSg3}  -> 0 ,,
+                       "^" "+" {cPIndefPl1}  -> 0 ,,
+                       "^" "+" {cPIndefPl2}  -> 0 ,,
+                       "^" "+" {cPIndefPl3}  -> 0 ,,
+                       "^" "+" {cPDefSgp12}  -> 0 ,,
+                       "^" "+" {cPDefSg1}  -> 0 ,,
+                       "^" "+" {cPDefSg2}  -> 0 ,,
+                       "^" "+" {cPDefSg3}  -> 0 ,,
+                       "^" "+" {cPDefPl1}  -> 0 ,,
+                       "^" "+" {cPDefPl2}  -> 0 ,,
+                       "^" "+" {cPDefPl3}  -> 0 ,,
+                       "^" "+" {cCIndefSg1}  -> 0 ,,
+                       "^" "+" {cCIndefSg2}  -> 0 ,,
+                       "^" "+" {cCIndefSg3}  -> 0 ,,
+                       "^" "+" {cCIndefPl1}  -> 0 ,,
+                       "^" "+" {cCIndefPl2}  -> 0 ,,
+                       "^" "+" {cCIndefPl3}  -> 0 ,,
+                       "^" "+" {cCDefSgp12}  -> 0 ,,
+                       "^" "+" {cCDefSg1}  -> 0 ,,
+                       "^" "+" {cCDefSg2}  -> 0 ,,
+                       "^" "+" {cCDefSg3}  -> 0 ,,
+                       "^" "+" {cCDefPl1}  -> 0 ,,
+                       "^" "+" {cCDefPl2}  -> 0 ,,
+                       "^" "+" {cCDefPl3}  -> 0 ,,
+                       "^" "+" {cConjIndefSg1}  -> 0 ,,
+                       "^" "+" {cConjIndefSg2}  -> 0 ,,
+                       "^" "+" {cConjIndefSg3}  -> 0 ,,
+                       "^" "+" {cConjIndefPl1}  -> 0 ,,
+                       "^" "+" {cConjIndefPl2}  -> 0 ,,
+                       "^" "+" {cConjIndefPl3}  -> 0 ,,
+                       "^" "+" {cConjDefSgp12}  -> 0 ,,
+                       "^" "+" {cConjDefSg1}  -> 0 ,,
+                       "^" "+" {cConjDefSg2}  -> 0 ,,
+                       "^" "+" {cConjDefSg3}  -> 0 ,,
+                       "^" "+" {cConjDefPl1}  -> 0 ,,
+                       "^" "+" {cConjDefPl2}  -> 0 ,,
+                       "^" "+" {cConjDefPl3}  -> 0 ,,
+#enhumisc.foma part for cleanupendigns begins here
+                       "^" "+" {cDis}  -> 0 ,,
+                       "^" "+" {cEss}  -> 0 ,,
+                       "^" "+" {cSoc}  -> 0 ,,
+                       "^" "+" {cTem}  -> 0 ,,
+                       "^" "+" {cPosss1p}  -> 0 ,,
+                       "^" "+" {cPosss2p}  -> 0 ,,
+                       "^" "+" {cPosss3p}  -> 0 ,,
+                       "^" "+" {cPossp1p}  -> 0 ,,
+                       "^" "+" {cPossp2p}  -> 0 ,,
+                       "^" "+" {cPossp3p}  -> 0 ,,
+                       "^" "+" {cPosss1s}  -> 0 ,,
+                       "^" "+" {cPosss2s}  -> 0 ,,
+                       "^" "+" {cPosss3s}  -> 0 ,,
+                       "^" "+" {cPossp1s}  -> 0 ,,
+                       "^" "+" {cPossp2s}  -> 0 ,,
+                       "^" "+" {cPossp3s}  -> 0 ,,
+                       "^" "+" {cPlur}  -> 0 ,,
+                       "^" "+" {cFam}  -> 0 ,,
+                       "^" "+" {cGenpl} -> 0 ,,
+                       "^" "+" {cGens}  -> 0 ,,
+                       "^" "+" {cAbl}  -> 0 ,,
+                       "^" "+" {cAcc}  -> 0 ,,
+                       "^" "+" {cAde}  -> 0 ,,
+                       "^" "+" {cAll}  -> 0 ,,
+                       "^" "+" {cCau}  -> 0 ,,
+                       "^" "+" {cDat}  -> 0 ,,
+                       "^" "+" {cDel}  -> 0 ,,
+                       "^" "+" {cEla}  -> 0 ,,
+                       "^" "+" {cFac}  -> 0 ,,
+                       "^" "+" {cFor}  -> 0 ,,
+                       "^" "+" {cIll}  -> 0 ,,
+                       "^" "+" {cIne}  -> 0 ,,
+                       "^" "+" {cIns}  -> 0 ,,
+                       "^" "+" {cNom}  -> 0 ,,
+                       "^" "+" {cSub}  -> 0 ,,
+                       "^" "+" {cSup}  -> 0 ,,
+                       "^" "+" {cTer}  -> 0 ,,
+#enhumisc.foma part for cleanupendigns ends here
+#enhu2.foma part for cleanupendigns begins here
+                       "^" "+" {cnAcc}  -> 0 ,,
+                       "^" "+" {ccForp}  -> 0 ,,
+                       "^" "+" {cxForpen}  -> 0 ,,
+                       "^" "+" {cSue}  -> 0;
+#enhu2.foma part for cleanupendigns begins here
+                      
+echo ">>> read in magyar.lexc <<<"       
+read lexc magyar.lexc
+substitute defined PotentialWord for "[Guess]"
+define Lexicon
+
+define Grammar  Filter1               .o. 
+                Lexicon               .o.                
+                CleanupEndings        .o.
+                Suffixl               .o.
+                HarmRuleAAA           .o. 
+                HarmRuleAA            .o.                
+                HarmRuleIgeu          .o. 
+                HarmRuleIgeuo         .o.
+                HarmRuleIgea          .o. 
+                HarmRuleIgee          .o.
+                HarmRuleIgeo          .o.  
+                HarmRuleIgeoe         .o.  
+                HarmRuleIgeoue        .o.
+                HarmRuleIgeo2         .o. 
+                HarmRuleIgeaa         .o. 
+                HarmRuleIgeija1        .o. 
+                HarmRuleIgejatokitek1  .o. 
+                HarmRuleIgejakik1      .o. 
+                HarmRuleIgetattet     .o.
+                HarmRuleeo            .o.
+                HarmRulefelteo        .o.
+                HarmRulefelteo1       .o.
+                HarmRulefelteo3       .o.
+                HarmRulej             .o.
+                HarmRuletatt             .o.
+                HarmRuleszorelol      .o.
+                HarmRulesj            .o.
+                HarmRulesj3            .o.
+                HarmRuleess           .o.
+                HarmRuleAAAmely           .o. 
+                HarmRuleAAmely            .o.                
+                HarmRuleIgeumely          .o. 
+                HarmRuleIgeamely          .o. 
+                HarmRuleIgeuomely          .o. 
+                HarmRuleIgeemely          .o.
+                HarmRuleIgeomely          .o.  
+                HarmRuleIgeo2mely         .o. 
+                HarmRuleIgeaamely         .o. 
+                HarmRuleIgeija1mely        .o. 
+                HarmRuleIgejatokitek1mely  .o. 
+                HarmRuleIgejakik1mely      .o. 
+                HarmRuleIgetattetmely     .o.
+                HarmRuleeomely            .o.
+                HarmRulefelteomely        .o.
+                HarmRuleszorelolmely      .o.
+                HarmRulenook              .o.
+                HarmRulenookmely          .o.
+#begin enhu2.foma insertion
+               Etoee             .o. 
+               Atoaa             .o. 
+               EetoeAcc          .o. # é
+               IitoiAcc3         .o. # í
+               UeuetoueAcc3      .o. # ű
+               AatoaAcc3         .o. # á
+               UutouAcc3         .o. # ú
+               Changez2          .o.
+#               HarmRulejaje      .o. 
+#               Suffixb           .o. 
+#               Suffixh           .o. 
+#               Suffixk           .o. 
+#               Suffixn           .o. 
+#               Suffixr           .o. 
+               Suffixt           .o. 
+#               HarmRulePlur      .o. 
+#               HarmRulePluroe    .o.
+#               HarmRuleJJ1         .o. 
+#               HarmRuleJnull1         .o. 
+#               HarmRuleul        .o. 
+#               HarmRuleuk        .o. 
+#               HarmRuleenkent    .o. 
+#               HarmRuleestul     .o. 
+#               HarmRuleunk       .o. 
+#               HarmRuleotok1     .o. 
+#               HarmRuleotok2     .o. 
+#               HarmRuleJP        .o. 
+#               HarmRuleJPJ1        .o. 
+#               HarmRuleJPnull1        .o. 
+#               HarmRuleai        .o. 
+#               HarmRuleaitok2    .o. 
+               HarmRuleAcc       .o. 
+               HarmRuleAcc1      .o. 
+#               HarmRuletol       .o. 
+#               HarmRulehoz       .o. 
+#               HarmRuleVV        .o. 
+#               HarmRuleVVH       .o.
+#               HarmRuleVVdzs     .o.
+#               HarmRuleonen      .o. 
+#               HarmRulePlurmely18  .o. 
+#               HarmRuleulmely      .o. 
+#               HarmRuleestulmely   .o. 
+#               HarmRuletolmely     .o. 
+               HarmRuleAccmely     .o. 
+#               HarmRulehozmely     .o. 
+#               HarmRuleonenmely    .o. 
+#               HarmRuleenkentmely  .o.
+#end enhu2.foma insertion
+                Cleanup                 .o.
+                ToUpCase ;         
+
+regex Grammar;

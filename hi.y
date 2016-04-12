@@ -12,19 +12,20 @@
 	#include <iostream>
 	#include "sqlite3.h"
 	#include "db.h"
+	#include "lexer.h"
+	lexer *lex=NULL;
 	#include "query_result.cpp"
 	#include "db.cpp"
 	#include "morphan_result.cpp"
 	#include "morphan.cpp"
 	morphan *stemmer=NULL;
-	#include "lexer.h"
-	lexer *lex=NULL;
-	#include "lexer.cpp"
 	#include "sp.h"
 	interpreter *sparser=NULL;
+	#include "lexer.cpp"
 	#include "sp.cpp"
 	#include "transgraph.cpp";
-	int line=0;
+	void yyerror(char const *yymsgp);
+//	void yyerror(YYLTYPE yyloc, char const *yymsgp);
 %}
 
 /* Every time one introduces a new gcat in the gcat table,
@@ -34,6 +35,10 @@
  * 3) added here with that value,
  * and the whole stuff needs to be recompiled.
  * NOTE: the constant token t_Con has ALWAYS the value 1 here.*/
+%define parse.lac full
+%define parse.error verbose
+//%locations
+//%define api.pure full
 %start	S
 %token	t_Con 1
 %token	t_ENG_A 2
@@ -49,11 +54,20 @@
 %token	t_ENG_RPro_stem 12
 %token	t_ENG_RPro_lfea_relative 13
 %token	t_ENG_Neg 14
+%token	t_HUN_Con_lfea_Acc 15
+%token	t_HUN_Verb_stem 16
+%token	t_HUN_Verb_lfea_ConjDefSg2 17
+%token	t_HUN_Vbpfx 18
 %%
 S	:	ENG_VP
 {
 				const node_info& ENG_VP=sparser->get_node_info($1);
 				std::cout<<"S->ENG_VP"<<std::endl;
+}
+	|	HUN_VP
+{
+				const node_info& HUN_VP=sparser->get_node_info($1);
+				std::cout<<"S->HUN_VP"<<std::endl;
 };
 ENG_VP	:	ENG_Vbar1
 {
@@ -69,11 +83,6 @@ ENG_VP	:	ENG_Vbar1
 				const node_info& ENG_Vbar1=sparser->get_node_info($1);
 				const node_info& ENG_AdvP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
-				if($$<0){
-					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 }
 	|	ENG_Vbar2
@@ -90,11 +99,6 @@ ENG_VP	:	ENG_Vbar1
 				const node_info& ENG_Vbar2=sparser->get_node_info($1);
 				const node_info& ENG_PP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
-				if($$<0){
-					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 }
 	|	ENG_Vbar3 ENG_NP
@@ -102,11 +106,6 @@ ENG_VP	:	ENG_Vbar1
 				const node_info& ENG_Vbar3=sparser->get_node_info($1);
 				const node_info& ENG_NP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
-				if($$<0){
-					/*object_node=sparser->public.get_object_node(sparser,PP);
-					printf("Error: cannot interpret %s %s.\n",Vdt->left_child->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 }
 	|	ENG_Vbar1 ENG_RC
@@ -129,35 +128,21 @@ ENG_IVP	:	ENG_V ENG_PP
 				const node_info& ENG_PP=sparser->get_node_info($2);
 				sparser->add_feature_to_leaf(ENG_V,"RCV");
 				$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
 }
 		|	ENG_NV ENG_PP
 {
-			const node_info& ENG_NV=sparser->get_node_info($1);
-			const node_info& ENG_PP=sparser->get_node_info($2);
-			$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-			if($$<0){
-				//object_node=sparser->get_object_node(NP);
-				//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-				return -1;
-			}
-			std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
+				const node_info& ENG_NV=sparser->get_node_info($1);
+				const node_info& ENG_PP=sparser->get_node_info($2);
+				sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+				$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
+				std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
 };
 ENG_NV	:	ENG_V ENG_NEG
 {
 				const node_info& ENG_V=sparser->get_node_info($1);
 				const node_info& ENG_NEG=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
 };
 ENG_Vbar3	:	ENG_V ENG_AdvP
@@ -165,11 +150,6 @@ ENG_Vbar3	:	ENG_V ENG_AdvP
 				const node_info& ENG_V=sparser->get_node_info($1);
 				const node_info& ENG_AdvP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VBAR3",ENG_V,ENG_AdvP);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
 };
 ENG_Vbar2	:	ENG_Vbar1 ENG_PP
@@ -177,11 +157,6 @@ ENG_Vbar2	:	ENG_Vbar1 ENG_PP
 				const node_info& ENG_Vbar1=sparser->get_node_info($1);
 				const node_info& ENG_PP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_PP);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
 }
 		|	ENG_Vbar1 ENG_NP
@@ -189,11 +164,6 @@ ENG_Vbar2	:	ENG_Vbar1 ENG_PP
 				const node_info& ENG_Vbar1=sparser->get_node_info($1);
 				const node_info& ENG_NP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 };
 ENG_Vbar1	:	ENG_V ENG_NP
@@ -201,11 +171,6 @@ ENG_Vbar1	:	ENG_V ENG_NP
 				const node_info& ENG_V=sparser->get_node_info($1);
 				const node_info& ENG_NP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 };
 ENG_PP	:	ENG_Prep ENG_NP
@@ -213,11 +178,6 @@ ENG_PP	:	ENG_Prep ENG_NP
 				const node_info& ENG_Prep=sparser->get_node_info($1);
 				const node_info& ENG_NP=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
-				if($$<0){
-					/*object_node=sparser->public.get_object_node(sparser,NP);
-					printf("Error: cannot interpret %s %s.\n",Prep->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
 };
 ENG_NP	:	ENG_CNP
@@ -229,20 +189,20 @@ ENG_NP	:	ENG_CNP
 				$$=sparser->set_node_info(word,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 }
-	|	ENG_QPro ENG_CNP
+		|	ENG_AP
+{
+				lexicon word;
+
+				const node_info& ENG_AP=sparser->get_node_info($1);
+				word.gcat="ENG_NP";
+				$$=sparser->set_node_info(word,ENG_AP);
+				std::cout<<"ENG_NP->ENG_AP"<<std::endl;
+}
+		|	ENG_QPro ENG_CNP
 {
 				const node_info& ENG_QPro=sparser->get_node_info($1);
 				const node_info& ENG_CNP=sparser->get_node_info($2);
-				/*	TODO: really need to check if there's a constant ?
-					Currently, it's done to make functor argument diff easier.*/
-				/*const node_info& object_node=sparser->get_node_info(sparser->get_object_node(CNP));
-				if(object_node.right_child!=0){
-					//printf("Syntax error: constants like %s cannot be quantified!\n",sparser->get_node_info(object_node.right_child).expression.c_str());
-					return -1;
-				}*/
 				$$=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
-				/* No check for $$<0 since quantifier pronouns are not validated as
-				 * everything in the current model seems to be countable.*/
 				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
 };
 /*	|	Pro
@@ -253,13 +213,7 @@ ENG_CNP	:	ENG_A ENG_CNP
 {
 				const node_info& ENG_A=sparser->get_node_info($1);
 				const node_info& ENG_CNP=sparser->get_node_info($2);
-				/*TODO: ellenorizni, hogy ha a CNP parameteres akkor hiba mint a QPro CNP-nal!*/
 				$$=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
-				if($$<0){
-					/*object_node=sparser->public.get_object_node(sparser,CNP);
-					printf("Error: cannot interpret %s %s.\n",A->expression,object_node->expression);*/
-					return -1;
-				}
 				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
 }
 	|	ENG_N
@@ -301,7 +255,7 @@ ENG_V_stem	: t_ENG_V_stem
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_V_stem);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -310,8 +264,8 @@ ENG_V_lfea_aux	: t_ENG_V_lfea_aux
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				word.gcat="Aux";
+				word=lex->last_word_scanned(t_ENG_V_lfea_aux);
+//				word.gcat="Aux";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -320,8 +274,7 @@ ENG_QPro	:	t_ENG_QPro
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				/*TODO: consider what if quantifiers like ALL are handled as functors?*/
+				word=lex->last_word_scanned(t_ENG_QPro);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -348,11 +301,6 @@ ENG_N_Sg_0Con	:	ENG_N_Stem	ENG_N_lfea_Sg
 				const node_info& ENG_N_Stem=sparser->get_node_info($1);
 				const node_info& ENG_N_lfea_Sg=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_N_Sg0Con",ENG_N_Stem,ENG_N_lfea_Sg);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 };
 ENG_N_Sg	:	ENG_N_Sg_0Con	ENG_1Con
@@ -385,11 +333,6 @@ ENG_N_Pl_0Con	:	ENG_N_Stem	ENG_N_lfea_Pl
 				const node_info& ENG_N_Stem=sparser->get_node_info($1);
 				const node_info& ENG_N_lfea_Pl=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
 };
 ENG_1Con	:	ENG_Con
@@ -406,11 +349,6 @@ ENG_nCon	:	ENG_1Con	ENG_Con
 				const node_info& ENG_1Con=sparser->get_node_info($1);
 				const node_info& ENG_Con=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 }
 	|	ENG_nCon ENG_Con
@@ -418,11 +356,6 @@ ENG_nCon	:	ENG_1Con	ENG_Con
 				const node_info& ENG_nCon=sparser->get_node_info($1);
 				const node_info& ENG_Con=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 };
 ENG_N_Pl	:	ENG_N_Pl_0Con
@@ -439,11 +372,6 @@ ENG_N_Pl	:	ENG_N_Pl_0Con
 				const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
 				const node_info& ENG_nCon=sparser->get_node_info($2);
 				$$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con,ENG_nCon);
-				if($$<0){
-					//object_node=sparser->get_object_node(NP);
-					//printf("Error: cannot interpret %s %s.\n",V->expression,object_node->expression);
-					return -1;
-				}
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con ENG_nCon"<<std::endl;
 }
 	|	ENG_nCon
@@ -467,7 +395,7 @@ ENG_N_Stem	: t_ENG_N_stem
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_N_stem);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -476,14 +404,8 @@ ENG_N_lfea_Sg	: t_ENG_N_lfea_Sg
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();//TODO: it's unnecessary to duplicate the word info for each node that is related to an affix of the stem of the last scanned word
-				//Create a method that returns the info only about the affix in question. Hint: create a method 'lexicon lexer::get_lexicon_info_by_token( uint token )' which
-				//would return everything what last_word_scanned() returns but: if the token belongs to a stem it equals to calling last_word_scanned()
-				//if the token belongs to an lfea, every field is the same as when calling last_word_scanned() but: the token field would contain the token of the lfea,
-				//and if the affix has a functor, then the gcat is the corresponding PREFIX/INFIX/SUFFIX and the lexeme corresponds to that of the affix
-				//if the affix does not have a functor, then the gcat is again either PREFIX/INFIX/SUFFIX but the lexeme field is empty
-				//WELL, it would have been good if I had written here if duplicating word info poses any problem...
-				word.gcat="ENG_N_lfea_Sg";
+				word=lex->last_word_scanned(t_ENG_N_lfea_Sg);
+//				word.gcat="ENG_N_lfea_Sg";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -492,8 +414,8 @@ ENG_N_lfea_Pl	: t_ENG_N_lfea_Pl
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				word.gcat="ENG_N_lfea_Pl";
+				word=lex->last_word_scanned(t_ENG_N_lfea_Pl);
+//				word.gcat="ENG_N_lfea_Pl";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -502,16 +424,23 @@ ENG_A	:	t_ENG_A
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_A);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+ENG_AP	:	ENG_1Con ENG_N_Pl_0Con
+{
+				const node_info& ENG_1Con=sparser->get_node_info($1);
+				const node_info& ENG_N_Pl_0Con=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con);
+				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con"<<std::endl;
 };
 ENG_Prep:	t_ENG_Prep
 {
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_Prep);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -524,8 +453,8 @@ ENG_Con	:	t_Con
 				const node_info empty_node_info={};
 				lexicon word;
 
-				word=lex->last_word_scanned();
-				word.gcat="CON";
+				word=lex->last_word_scanned(t_Con);
+//				word.gcat="CON";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Constant:"<<word.word<<std::endl;
 };
@@ -534,7 +463,7 @@ ENG_Adv	:	t_ENG_Adv
 				lexicon word;
 				const node_info empty_node_info={};
 			
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_Adv);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -550,7 +479,7 @@ ENG_RPro_stem : t_ENG_RPro_stem
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_RPro_stem);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -559,8 +488,8 @@ ENG_RPro_lfea_relative	: t_ENG_RPro_lfea_relative
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
-				word.gcat="Relative";
+				word=lex->last_word_scanned(t_ENG_RPro_lfea_relative);
+//				word.gcat="Relative";
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -592,7 +521,7 @@ ENG_NEG:	t_ENG_Neg
 				lexicon word;
 				const node_info empty_node_info={};
 
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_Neg);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
@@ -602,42 +531,156 @@ ENG_Det :	t_ENG_Det
 				lexicon word;
 				const node_info empty_node_info={};
 			
-				word=lex->last_word_scanned();
+				word=lex->last_word_scanned(t_ENG_Det);
 				$$=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 };
 */
+
+/*-----------------HUNGARIAN RULES-----------------*/
+HUN_VP	:	HUN_ImpVerbPfx HUN_NP
+{
+				const node_info& HUN_ImpVerbPfx=sparser->get_node_info($1);
+				const node_info& HUN_NP=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
+				std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
+};
+HUN_ImpVerbPfx :	HUN_ImpVerb HUN_Vbpfx
+{
+				const node_info& HUN_ImpVerb=sparser->get_node_info($1);
+				const node_info& HUN_Vbpfx=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
+				std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
+};
+HUN_ImpVerb :	HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
+{
+				const node_info& HUN_Verb_stem=sparser->get_node_info($1);
+				const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
+				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
+};
+HUN_Verb_lfea_ConjDefSg2 : t_HUN_Verb_lfea_ConjDefSg2
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Verb_lfea_ConjDefSg2);
+//				word.gcat="ConjDefSg2";
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+HUN_Verb_stem	: t_HUN_Verb_stem
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Verb_stem);
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+HUN_Vbpfx	: t_HUN_Vbpfx
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Vbpfx);
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
+HUN_NP	:	HUN_N
+{
+				lexicon word;
+
+				const node_info& HUN_NP=sparser->get_node_info($1);
+				word.gcat="HUN_NP";
+				$$=sparser->set_node_info(word,HUN_NP);
+				std::cout<<"HUN_NP->HUN_N"<<std::endl;
+};
+HUN_N	:	HUN_N_Sg
+{
+				lexicon word;
+
+				const node_info& HUN_N_Sg=sparser->get_node_info($1);
+				word.gcat="HUN_N";
+				$$=sparser->set_node_info(word,HUN_N_Sg);
+				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
+};
+HUN_N_Sg	:	HUN_1Con
+{
+				lexicon word;
+
+				const node_info& HUN_1Con=sparser->get_node_info($1);
+				word.gcat="Sg";
+				$$=sparser->set_node_info(word,HUN_1Con);
+				std::cout<<"HUN_N_Sg->HUN_1Con"<<std::endl;
+};
+HUN_1Con	:
+/*HUN_Con
+{
+				lexicon word;
+
+				const node_info& HUN_Con=sparser->get_node_info($1);
+				word.gcat="HUN_1Con";
+				$$=sparser->set_node_info(word,HUN_Con);
+				std::cout<<"HUN_1Con->HUN_Con:"<<HUN_Con.expression.lexeme<<std::endl;
+}*/
+			HUN_Con HUN_Con_lfea_Acc
+{
+				const node_info& HUN_Con=sparser->get_node_info($1);
+				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_1Con",HUN_Con,HUN_Con_lfea_Acc);
+				std::cout<<"HUN_1Con->HUN_Con HUN_Con_lfea_Acc"<<std::endl;
+};
+HUN_Con	:	t_Con
+{
+				const node_info empty_node_info={};
+				lexicon word;
+
+				word=lex->last_word_scanned(t_Con);
+//				word.gcat="CON";
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<"Konstans:"<<word.word<<std::endl;
+};
+HUN_Con_lfea_Acc : t_HUN_Con_lfea_Acc
+{
+				lexicon word;
+				const node_info empty_node_info={};
+
+				word=lex->last_word_scanned(t_HUN_Con_lfea_Acc);
+//				word.gcat="HUN_Con_lfea_Acc";
+				$$=sparser->set_node_info(word,empty_node_info);
+				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+};
 %%
 
 int yylex(void){
 	int token;
 	lexicon word={};
 
-	token=lex->next_token();
-	word=lex->last_word_scanned();//Check if any word was scanned
-	if(token==0&&word.word.empty()==true) return 0;//Return 0 (historic indicator of YACC about end of input stream) only if no word was scanned last time where as a corollary token = 0 as well
-	else return token+1;//return token+1 if a word was scanned but could not be tokenized (token=0)->consider it a constant (yacc %token for constant is 1)
+	if(lex->is_end_of_input()==false){
+		token=lex->next_token();
+		return token+1;
+	}
+	else return 0;//historic indicator of YACC about end of input stream
 }
 
-void yyerror(char *s){
-	//fprintf(stderr,"%s in command\n",s);
-	line=0;
+void yyerror(char const *yymsgp){
+	std::cout<<yymsgp<<std::endl;
 	return;
 }
 
-int yywrap(){
-	return 1;
-}
+#ifdef __EMSCRIPTEN__
+extern "C"{
+#endif
 
-const char *hi(const char *human_input){//TODO: introduce new parameter char *trace to return traces if not NULL
-	std::string commandstr;
+const char *hi(const char *human_input,const char *language,char *error){
+	std::string commandstr,last_word,validated_words;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *commandchr=NULL;
 
 	try{
 		if(human_input!=NULL){
-			lex=new lexer(human_input);
 			sqlite=db::get_instance();
 			#ifdef __ANDROID__
 				__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
@@ -645,7 +688,14 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 			#else
 				sqlite->open("hi.db");
 			#endif
+			lex=new lexer(human_input,language);
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", "lexer started");
+			#endif
 			sparser=new interpreter;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", "interpreter started");
+			#endif
 			if(yyparse()==0){
 				transgraph=sparser->longest_match_for_semantic_rules_found();
 				if(transgraph!=NULL){
@@ -653,9 +703,47 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 					commandstr=transgraph->transcript(std::string());
 					//std::cout<<commandstr<<std::endl;
 				}
-				else std::cout<<"FALSE"<<std::endl;
+				else{
+					validated_words=lex->validated_words();
+					std::cout<<"validated words:"<<validated_words<<std::endl;
+					if(lex->last_word_scanned().morphalytics!=NULL)
+						last_word=lex->last_word_scanned().morphalytics->word();
+					else last_word=lex->last_word_scanned().word;
+					std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
+					if(error!=NULL){
+						if(validated_words.empty()==false){
+							validated_words.copy(error,validated_words.length(),0);
+							error[validated_words.length()]='/';
+							last_word.copy(&error[validated_words.length()+1],last_word.length(),0);
+							error[validated_words.length()+last_word.length()+1]='\0';
+						}
+						else{
+							last_word.copy(error,last_word.length(),0);
+							error[last_word.length()]='\0';
+						}
+					}
+				}
 			}
-			else std::cout<<"FALSE"<<std::endl;
+			else{
+				validated_words=lex->validated_words();
+				std::cout<<"validated words:"<<validated_words<<std::endl;
+				if(lex->last_word_scanned().morphalytics!=NULL)
+					last_word=lex->last_word_scanned().morphalytics->word();
+				else last_word=lex->last_word_scanned().word;
+				std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
+				if(error!=NULL){
+					if(validated_words.empty()==false){
+						validated_words.copy(error,validated_words.length(),0);
+						error[validated_words.length()]='/';
+						last_word.copy(&error[validated_words.length()+1],last_word.length(),0);
+						error[validated_words.length()+last_word.length()+1]='\0';
+					}
+					else{
+						last_word.copy(error,last_word.length(),0);
+						error[last_word.length()]='\0';
+					}
+				}
+			}
 			delete sparser;
 			sparser=NULL;
 			delete lex;
@@ -668,6 +756,7 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 				commandchr=new char[commandstr.length()+1];
 				commandstr.copy(commandchr,commandstr.length(),0);
 				commandchr[commandstr.length()]='\0';
+				if(error!=NULL) error[0]='\0';
 			}
 			return commandchr;
 		}
@@ -701,7 +790,29 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 		return NULL;
 	}
 	catch(invalid_combination& exception){
+		validated_words=lex->validated_words();
+		std::cout<<"validated words:"<<validated_words<<std::endl;
 		std::cout<<exception.what()<<std::endl;
+		if(error!=NULL){
+			if(validated_words.empty()==false){
+				validated_words.copy(error,validated_words.length(),0);
+				error[validated_words.length()]='/';
+				std::string left_node_words=exception.get_left();
+				left_node_words.copy(&error[validated_words.length()+1],left_node_words.length(),0);
+				error[validated_words.length()+left_node_words.length()+1]=' ';
+				std::string right_node_words=exception.get_right();
+				right_node_words.copy(&error[validated_words.length()+left_node_words.length()+2],right_node_words.length(),0);
+				error[validated_words.length()+left_node_words.length()+right_node_words.length()+2]='\0';
+			}
+			else{
+				std::string left_node_words=exception.get_left();
+				left_node_words.copy(error,left_node_words.length(),0);
+				error[left_node_words.length()]=' ';
+				std::string right_node_words=exception.get_right();
+				right_node_words.copy(&error[left_node_words.length()+1],right_node_words.length(),0);
+				error[left_node_words.length()+right_node_words.length()+1]='\0';
+			}
+		}
 		return NULL;
 	}
 	catch(std::exception& exception){
@@ -713,3 +824,6 @@ const char *hi(const char *human_input){//TODO: introduce new parameter char *tr
 		return NULL;
 	}
 }
+#ifdef __EMSCRIPTEN__
+}
+#endif

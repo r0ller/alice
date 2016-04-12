@@ -68,7 +68,7 @@
 			unsigned int get_head_node(const node_info&);
 			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
-			bool is_valid_combination(const std::string&, const node_info&, const node_info&);
+			unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
 			bool find_functors_for_dependency(const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* functors_found_for_dependencies(const node_info&, node_info&);
 			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
@@ -83,6 +83,7 @@
 					const unsigned int = 1);
 			unsigned int direct_descendant_of(const node_info&);
 			void destroy_node_infos();
+			std::vector<unsigned int> validated_nodes;
 			std::vector<node_info> node_infos;
 			unsigned int nr_of_nodes;
 			std::string command;
@@ -91,6 +92,7 @@
 			std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> > node_dependency_traversal_stack_tree;
 			t_node_dependency_traversals  node_dependency_traversals;
 			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> > >  node_odependency_traversals;
+			void get_leafs_of_node_lr(const node_info&, std::vector<unsigned int>&);
 		public:
 			interpreter();
 			~interpreter();
@@ -99,6 +101,8 @@
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
 			transgraph* longest_match_for_semantic_rules_found();
 			unsigned int add_feature_to_leaf(const node_info&,const std::string&);
+			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&);
+			std::set<unsigned int> validated_terminals();
 	};
 
 	class semper_error:public std::exception{
@@ -155,10 +159,12 @@
 		public:
 			invalid_combination(std::string, std::string);
 			~invalid_combination() throw() {};
+			std::string get_left();
+			std::string get_right();
 			virtual const char *what() const throw(){
 				std::string message;
 
-				message="Invalid combination, cannot interpret: "+left_node+right_node;
+				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
 				return message.c_str();
 			}
 	};
@@ -167,4 +173,13 @@
 		left_node=left;
 		right_node=right;
 	}
+
+	std::string invalid_combination::get_left(){
+		return left_node;
+	}
+
+	std::string invalid_combination::get_right(){
+		return right_node;
+	}
+
 #endif

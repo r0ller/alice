@@ -15,6 +15,7 @@
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&);
 			~morphan_result();
+			const std::string& word() const;
 			const std::string& stem() const;
 			const std::string& gcat() const;
 			const std::vector<std::string>& morphemes() const;
