@@ -33,7 +33,7 @@ public void onReceive(Context context, Intent intent) {
     Intent callingIntent = new Intent(context, MainActivity.class);
     callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
     callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-    callingIntent.putExtra("LID", defaultLanguage);
+    callingIntent.putExtra("lid", defaultLanguage);
     context.startActivity(callingIntent);
 	}
 }

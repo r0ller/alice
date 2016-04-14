@@ -129,17 +129,35 @@ public class jsi {
 			public void run(){
 				//legösszetettebb magyar pl:"Hívd fel Minta Lacit [a magyar számán [a magyar szám[om]ról]]!"
 				//TODO: Ha nincs megadva melyik számról hívjon, a default simről indul a hívás.
+				String contactName2="";
+				String contactName3="";
+				if(LanguageChecker.getInstance().getDefaultLanguage().contentEquals("HUN")==true){
+					if(mContact.endsWith("á")==true)contactName2=mContact.substring(0,mContact.length()-1)+"a";
+					else if(mContact.endsWith("é")==true)contactName2=mContact.substring(0,mContact.length()-1)+"e";
+					else if(mContact.endsWith("í")==true)contactName2=mContact.substring(0,mContact.length()-1)+"i";
+					else if(mContact.endsWith("ó")==true)contactName2=mContact.substring(0,mContact.length()-1)+"o";
+					else if(mContact.endsWith("ő")==true)contactName2=mContact.substring(0,mContact.length()-1)+"ö";
+					else if(mContact.endsWith("ú")==true)contactName2=mContact.substring(0,mContact.length()-1)+"u";
+					else if(mContact.endsWith("ű")==true)contactName2=mContact.substring(0,mContact.length()-1)+"ü";
+					else if(mContact.endsWith("a")==true)contactName3=mContact.substring(0,mContact.length()-1);
+					else if(mContact.endsWith("e")==true)contactName3=mContact.substring(0,mContact.length()-1);
+					else if(mContact.endsWith("i")==true)contactName3=mContact.substring(0,mContact.length()-1);
+					else if(mContact.endsWith("o")==true)contactName3=mContact.substring(0,mContact.length()-1);
+					else if(mContact.endsWith("ö")==true)contactName3=mContact.substring(0,mContact.length()-1);
+					else if(mContact.endsWith("u")==true)contactName3=mContact.substring(0,mContact.length()-1);
+					else if(mContact.endsWith("ü")==true)contactName3=mContact.substring(0,mContact.length()-1);
+				}
 	       		Map<String, List<String>> Contacts=findContact(mContact);
-//				for(int i=mContact.length();i>0;--i){
-//					Contacts=findContact(mContact.substring(0,i));
-//					if(Contacts.isEmpty()==false) break;
-//				}
+	       		if(Contacts.isEmpty()==true&&contactName2.isEmpty()==false) Contacts=findContact(contactName2);
+	       		if(Contacts.isEmpty()==true&&contactName3.isEmpty()==false) Contacts=findContact(contactName3);
 				if(Contacts.isEmpty()==false){
 					Iterator<Map.Entry<String, List<String>>> contactList=Contacts.entrySet().iterator();
 					List<String> contactNumbers=null;
 					while(contactList.hasNext()){
 						Entry<String, List<String>> contactListItem=contactList.next();
-						if(contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(mContact)==true){
+						if(contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(mContact)==true
+							||contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(contactName2)==true
+							||contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(contactName3)==true){
 							contactNumbers=contactListItem.getValue();
 							break;
 						}
@@ -150,7 +168,6 @@ public class jsi {
 			            TelephonyInfo telephonyInfo=TelephonyInfo.getInstance(mContext);
 			            String callingCode=telephonyInfo.convertCountryCode(nwCountryCode.toUpperCase(Locale.getDefault()));
 			            String phoneNumber="";
-//						Iterator<String> phoneNumberList=Contacts.entrySet().iterator().next().getValue().iterator();
 						Iterator<String> phoneNumberList=contactNumbers.iterator();
 						while(phoneNumberList.hasNext()){
 							phoneNumber=(String)phoneNumberList.next();
@@ -170,11 +187,22 @@ public class jsi {
 						}
 					}
 					else{
-			            Toast.makeText(mContext, "Sorry, no contact found with this name.", Toast.LENGTH_SHORT).show();
+			            Toast.makeText(mContext, "Sorry, no contact found. Please, repeat the name.", Toast.LENGTH_SHORT).show();
+			            Intent callingIntent = new Intent(mContext, MainActivity.class);
+			            callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			            callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			            callingIntent.putExtra("LID", LanguageChecker.getInstance().getDefaultLanguage());
+			            callingIntent.putExtra("tryagain", "true");
+			            mContext.startActivity(callingIntent);
 					}
 				}
 		        else{
-		            Toast.makeText(mContext, "Nothing found", Toast.LENGTH_SHORT).show();
+		            Toast.makeText(mContext, "Sorry, no contact found. Please, repeat the name.", Toast.LENGTH_SHORT).show();
+		            Intent callingIntent = new Intent(mContext, MainActivity.class);
+		            callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		            callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		            callingIntent.putExtra("repeat", mContact);
+		            mContext.startActivity(callingIntent);
 		        }
 			}
        	}

@@ -605,17 +605,16 @@ HUN_N	:	HUN_N_Sg
 				$$=sparser->set_node_info(word,HUN_N_Sg);
 				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
 };
-HUN_N_Sg	:	HUN_1Con
+HUN_N_Sg	:	HUN_AccCon
 {
 				lexicon word;
 
-				const node_info& HUN_1Con=sparser->get_node_info($1);
+				const node_info& HUN_AccCon=sparser->get_node_info($1);
 				word.gcat="Sg";
-				$$=sparser->set_node_info(word,HUN_1Con);
-				std::cout<<"HUN_N_Sg->HUN_1Con"<<std::endl;
+				$$=sparser->set_node_info(word,HUN_AccCon);
+				std::cout<<"HUN_N_Sg->HUN_AccCon"<<std::endl;
 };
-HUN_1Con	:
-/*HUN_Con
+HUN_1Con	:	HUN_Con
 {
 				lexicon word;
 
@@ -623,13 +622,41 @@ HUN_1Con	:
 				word.gcat="HUN_1Con";
 				$$=sparser->set_node_info(word,HUN_Con);
 				std::cout<<"HUN_1Con->HUN_Con:"<<HUN_Con.expression.lexeme<<std::endl;
-}*/
-			HUN_Con HUN_Con_lfea_Acc
+};
+HUN_nCon	:	HUN_1Con	HUN_Con
 {
-				const node_info& HUN_Con=sparser->get_node_info($1);
+				const node_info& HUN_1Con=sparser->get_node_info($1);
+				const node_info& HUN_Con=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
+				std::cout<<"HUN_nCon->HUN_1Con HUN_Con"<<std::endl;
+}
+	|	HUN_nCon HUN_Con
+{
+				const node_info& HUN_nCon=sparser->get_node_info($1);
+				const node_info& HUN_Con=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
+				std::cout<<"HUN_nCon->HUN_nCon HUN_Con"<<std::endl;
+}
+	|	HUN_AccCon HUN_Con
+{
+				const node_info& HUN_AccCon=sparser->get_node_info($1);
+				const node_info& HUN_Con=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_nCon",HUN_AccCon,HUN_Con);
+				std::cout<<"HUN_nCon->HUN_AccCon HUN_Con"<<std::endl;
+};
+HUN_AccCon	:	HUN_1Con HUN_Con_lfea_Acc
+{
+				const node_info& HUN_1Con=sparser->get_node_info($1);
 				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_1Con",HUN_Con,HUN_Con_lfea_Acc);
-				std::cout<<"HUN_1Con->HUN_Con HUN_Con_lfea_Acc"<<std::endl;
+				$$=sparser->combine_nodes("HUN_AccCon",HUN_1Con,HUN_Con_lfea_Acc);
+				std::cout<<"HUN_AccCon->HUN_1Con HUN_Con_lfea_Acc"<<std::endl;
+}
+			|	HUN_nCon HUN_Con_lfea_Acc
+{
+				const node_info& HUN_nCon=sparser->get_node_info($1);
+				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
+				$$=sparser->combine_nodes("HUN_AccCon",HUN_nCon,HUN_Con_lfea_Acc);
+				std::cout<<"HUN_AccCon->HUN_nCon HUN_Con_lfea_Acc"<<std::endl;
 };
 HUN_Con	:	t_Con
 {
