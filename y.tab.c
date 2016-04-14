@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.2"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -380,16 +380,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  14
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   77
+#define YYLAST   83
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  21
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  50
+#define YYNNTS  52
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  70
+#define YYNRULES  75
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  89
+#define YYNSTATES  95
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -441,8 +441,8 @@ static const yytype_uint16 yyrline[] =
      281,   290,   299,   306,   313,   322,   331,   338,   347,   354,
      361,   370,   377,   386,   393,   402,   412,   422,   431,   438,
      451,   461,   470,   477,   486,   497,   505,   512,   519,   541,
-     548,   555,   562,   572,   581,   590,   599,   608,   627,   634,
-     644
+     548,   555,   562,   572,   581,   590,   599,   608,   617,   626,
+     633,   640,   647,   654,   661,   671
 };
 #endif
 
@@ -465,7 +465,7 @@ static const char *const yytname[] =
   "ENG_RPro_lfea_relative", "ENG_T", "ENG_TP", "ENG_RC", "ENG_NEG",
   "HUN_VP", "HUN_ImpVerbPfx", "HUN_ImpVerb", "HUN_Verb_lfea_ConjDefSg2",
   "HUN_Verb_stem", "HUN_Vbpfx", "HUN_NP", "HUN_N", "HUN_N_Sg", "HUN_1Con",
-  "HUN_Con", "HUN_Con_lfea_Acc", YY_NULLPTR
+  "HUN_nCon", "HUN_AccCon", "HUN_Con", "HUN_Con_lfea_Acc", YY_NULLPTR
 };
 #endif
 
@@ -494,15 +494,16 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      19,   -26,   -26,    10,   -26,    23,    33,     2,    18,    15,
-     -26,    30,    26,    16,   -26,   -26,   -26,   -26,   -26,   -26,
-     -26,    38,   -26,    46,    46,    46,    41,    46,   -26,    42,
-      38,   -26,   -26,   -26,   -26,   -26,    23,   -26,    39,   -26,
+      16,   -26,   -26,    11,   -26,    32,    37,     3,    26,    10,
+     -26,     6,    28,    38,   -26,   -26,   -26,   -26,   -26,   -26,
+     -26,    42,   -26,    55,    55,    55,     9,    55,   -26,    17,
+      42,   -26,   -26,   -26,   -26,   -26,    32,   -26,    44,   -26,
      -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,
-     -26,   -26,   -26,   -26,   -26,    40,   -26,   -26,   -26,   -26,
-     -26,    46,   -26,    46,    46,    46,   -26,    47,   -26,   -26,
-     -26,   -26,   -26,   -26,   -26,   -26,    44,   -26,   -26,   -26,
-     -26,   -26,   -26,    48,    -2,   -26,   -26,   -26,   -26
+     -26,   -26,   -26,   -26,     2,     2,     6,   -26,   -26,   -26,
+     -26,   -26,   -26,    55,   -26,    55,    55,    55,   -26,    52,
+     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,    49,   -26,
+     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,    53,
+      34,   -26,   -26,   -26,   -26
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -515,30 +516,33 @@ static const yytype_uint8 yydefact[] =
       19,     0,    23,    35,    30,    40,    34,    42,    31,     0,
        0,    20,    37,    49,    53,     7,     0,    55,     0,    10,
       51,    15,    16,     5,    24,     9,    17,    14,    28,    26,
-      69,    59,    65,    66,    67,     0,    64,    60,    62,    61,
-      21,    34,    33,     0,    43,    41,    48,     0,    38,    39,
-      46,    45,    32,    36,    22,    18,     0,    57,    54,    52,
-      70,    68,    56,     0,     0,    12,    58,    11,    13
+      74,    59,    65,    66,     0,     0,    67,    68,    64,    60,
+      62,    61,    21,    34,    33,     0,    43,    41,    48,     0,
+      38,    39,    46,    45,    32,    36,    22,    18,     0,    57,
+      54,    52,    75,    69,    72,    70,    73,    71,    56,     0,
+       0,    12,    58,    11,    13
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
      -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,    -7,    -4,
-     -10,    51,   -16,   -26,   -26,   -26,   -26,   -26,   -26,    35,
-      -6,    28,   -26,    36,   -26,   -26,   -26,   -26,   -26,   -25,
-     -26,   -26,   -26,   -26,   -26,   -26,    56,   -26,   -26,   -26,
-     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26
+      -6,    54,   -14,   -26,   -26,   -26,   -26,   -26,   -26,    39,
+      -3,    31,   -26,    40,   -26,   -26,   -26,   -26,   -26,   -25,
+     -26,   -26,   -26,   -26,   -26,   -26,    60,   -26,   -26,   -26,
+     -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,   -26,
+      -2,    13
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,     4,    82,    83,     5,     6,     7,    35,    19,
+      -1,     3,     4,    88,    89,     5,     6,     7,    35,    19,
       20,    43,     8,     9,    49,    21,    22,    23,    24,    25,
-      26,    27,    28,    29,    72,    73,    30,    31,    36,    32,
-      44,    37,    38,    79,    76,    77,    39,    88,    10,    11,
-      12,    59,    13,    57,    51,    52,    53,    54,    55,    81
+      26,    27,    28,    29,    74,    75,    30,    31,    36,    32,
+      44,    37,    38,    81,    78,    79,    39,    94,    10,    11,
+      12,    61,    13,    59,    51,    52,    53,    54,    55,    56,
+      57,    84
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -546,26 +550,28 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      41,    68,    69,    42,    46,    15,    16,    40,    33,    17,
-      14,    60,    33,    18,    86,    61,    34,    62,    63,    63,
-      74,    15,    16,    40,    61,    17,    15,    16,    48,    18,
-      17,     1,    75,    50,    18,    58,    68,     2,    68,    69,
-      69,    15,    16,    33,    15,    17,    56,    34,    17,    15,
-      70,    71,    64,    65,    78,    70,     1,    80,    33,    47,
-      84,    66,    67,    45,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    85,    87
+      41,    70,    71,    42,    46,    50,    15,    16,    40,    50,
+      17,    14,    15,    33,    18,    62,    17,    34,    63,    82,
+      64,    65,    65,    48,    76,    72,    73,    63,     1,    15,
+      16,    40,    77,    17,     2,    15,    16,    18,    70,    17,
+      70,    71,    71,    18,    33,    15,    16,    33,    58,    17,
+      92,    34,    83,    85,    87,    66,    67,    60,    15,    80,
+      72,     1,    47,    33,    90,    68,    69,    45,    86,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    91,    93
 };
 
 static const yytype_int8 yycheck[] =
 {
-       7,    26,    27,     7,     8,     3,     4,     5,    10,     7,
-       0,    21,    10,    11,    16,    21,    14,    23,    24,    25,
-      30,     3,     4,     5,    30,     7,     3,     4,    13,    11,
-       7,    12,    36,     3,    11,    19,    61,    18,    63,    64,
-      65,     3,     4,    10,     3,     7,    20,    14,     7,     3,
-       8,     9,    24,    25,    15,     8,    12,    17,    10,     8,
-      76,    26,    26,     7,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    83,    84
+       7,    26,    27,     7,     8,     3,     3,     4,     5,     3,
+       7,     0,     3,    10,    11,    21,     7,    14,    21,    17,
+      23,    24,    25,    13,    30,     8,     9,    30,    12,     3,
+       4,     5,    36,     7,    18,     3,     4,    11,    63,     7,
+      65,    66,    67,    11,    10,     3,     4,    10,    20,     7,
+      16,    14,    54,    55,    56,    24,    25,    19,     3,    15,
+       8,    12,     8,    10,    78,    26,    26,     7,    55,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    89,    90
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -577,10 +583,11 @@ static const yytype_uint8 yystos[] =
       31,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       47,    48,    50,    10,    14,    29,    49,    52,    53,    57,
        5,    29,    30,    32,    51,    57,    30,    32,    13,    35,
-       3,    65,    66,    67,    68,    69,    20,    64,    19,    62,
-      31,    41,    41,    41,    42,    42,    40,    44,    50,    50,
-       8,     9,    45,    46,    31,    30,    55,    56,    15,    54,
-      17,    70,    24,    25,    33,    29,    16,    29,    58
+       3,    65,    66,    67,    68,    69,    70,    71,    20,    64,
+      19,    62,    31,    41,    41,    41,    42,    42,    40,    44,
+      50,    50,     8,     9,    45,    46,    31,    30,    55,    56,
+      15,    54,    17,    71,    72,    71,    72,    71,    24,    25,
+      33,    29,    16,    29,    58
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -593,7 +600,7 @@ static const yytype_uint8 yyr1[] =
       43,    43,    43,    43,    44,    45,    46,    47,    48,    49,
       50,    51,    52,    53,    54,    55,    56,    57,    58,    59,
       60,    61,    62,    63,    64,    65,    66,    67,    68,    69,
-      70
+      69,    69,    70,    70,    71,    72
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -605,8 +612,8 @@ static const yytype_uint8 yyr2[] =
        1,     1,     2,     2,     1,     1,     2,     1,     2,     2,
        1,     2,     1,     2,     1,     1,     1,     1,     2,     1,
        1,     1,     2,     1,     1,     0,     2,     2,     1,     2,
-       2,     2,     1,     1,     1,     1,     1,     1,     2,     1,
-       1
+       2,     2,     1,     1,     1,     1,     1,     1,     1,     2,
+       2,     2,     2,     2,     1,     1
 };
 
 
@@ -1544,7 +1551,7 @@ yyreduce:
 				const node_info& ENG_VP=sparser->get_node_info((yyvsp[0]));
 				std::cout<<"S->ENG_VP"<<std::endl;
 }
-#line 1548 "y.tab.c" /* yacc.c:1646  */
+#line 1555 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
@@ -1553,7 +1560,7 @@ yyreduce:
 				const node_info& HUN_VP=sparser->get_node_info((yyvsp[0]));
 				std::cout<<"S->HUN_VP"<<std::endl;
 }
-#line 1557 "y.tab.c" /* yacc.c:1646  */
+#line 1564 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
@@ -1566,7 +1573,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Vbar1);
 				std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
 }
-#line 1570 "y.tab.c" /* yacc.c:1646  */
+#line 1577 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
@@ -1577,7 +1584,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 }
-#line 1581 "y.tab.c" /* yacc.c:1646  */
+#line 1588 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
@@ -1590,7 +1597,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Vbar2);
 				std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
 }
-#line 1594 "y.tab.c" /* yacc.c:1646  */
+#line 1601 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
@@ -1601,7 +1608,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 }
-#line 1605 "y.tab.c" /* yacc.c:1646  */
+#line 1612 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
@@ -1612,7 +1619,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
 				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 }
-#line 1616 "y.tab.c" /* yacc.c:1646  */
+#line 1623 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
@@ -1623,7 +1630,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
 }
-#line 1627 "y.tab.c" /* yacc.c:1646  */
+#line 1634 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
@@ -1634,7 +1641,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
 }
-#line 1638 "y.tab.c" /* yacc.c:1646  */
+#line 1645 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
@@ -1646,7 +1653,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
 }
-#line 1650 "y.tab.c" /* yacc.c:1646  */
+#line 1657 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
@@ -1658,7 +1665,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 				std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
 }
-#line 1662 "y.tab.c" /* yacc.c:1646  */
+#line 1669 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
@@ -1669,7 +1676,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
 				std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
 }
-#line 1673 "y.tab.c" /* yacc.c:1646  */
+#line 1680 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
@@ -1680,7 +1687,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VBAR3",ENG_V,ENG_AdvP);
 				std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
 }
-#line 1684 "y.tab.c" /* yacc.c:1646  */
+#line 1691 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
@@ -1691,7 +1698,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_PP);
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
 }
-#line 1695 "y.tab.c" /* yacc.c:1646  */
+#line 1702 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
@@ -1702,7 +1709,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 }
-#line 1706 "y.tab.c" /* yacc.c:1646  */
+#line 1713 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
@@ -1713,7 +1720,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
 				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 }
-#line 1717 "y.tab.c" /* yacc.c:1646  */
+#line 1724 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
@@ -1724,7 +1731,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
 				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
 }
-#line 1728 "y.tab.c" /* yacc.c:1646  */
+#line 1735 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
@@ -1737,7 +1744,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 }
-#line 1741 "y.tab.c" /* yacc.c:1646  */
+#line 1748 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
@@ -1750,7 +1757,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_AP);
 				std::cout<<"ENG_NP->ENG_AP"<<std::endl;
 }
-#line 1754 "y.tab.c" /* yacc.c:1646  */
+#line 1761 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
@@ -1761,7 +1768,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
 }
-#line 1765 "y.tab.c" /* yacc.c:1646  */
+#line 1772 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
@@ -1772,7 +1779,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
 				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
 }
-#line 1776 "y.tab.c" /* yacc.c:1646  */
+#line 1783 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
@@ -1785,7 +1792,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N);
 				std::cout<<"ENG_CNP->ENG_N"<<std::endl;
 }
-#line 1789 "y.tab.c" /* yacc.c:1646  */
+#line 1796 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
@@ -1798,7 +1805,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Adv);
 				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
 }
-#line 1802 "y.tab.c" /* yacc.c:1646  */
+#line 1809 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
@@ -1811,7 +1818,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_V_Stem);
 				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 }
-#line 1815 "y.tab.c" /* yacc.c:1646  */
+#line 1822 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
@@ -1822,7 +1829,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_aux);
 				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_aux"<<std::endl;
 }
-#line 1826 "y.tab.c" /* yacc.c:1646  */
+#line 1833 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
@@ -1835,7 +1842,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1839 "y.tab.c" /* yacc.c:1646  */
+#line 1846 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
@@ -1849,7 +1856,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1853 "y.tab.c" /* yacc.c:1646  */
+#line 1860 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
@@ -1862,7 +1869,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1866 "y.tab.c" /* yacc.c:1646  */
+#line 1873 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
@@ -1875,7 +1882,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg);
 				std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
 }
-#line 1879 "y.tab.c" /* yacc.c:1646  */
+#line 1886 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
@@ -1888,7 +1895,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl);
 				std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
 }
-#line 1892 "y.tab.c" /* yacc.c:1646  */
+#line 1899 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
@@ -1899,7 +1906,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_N_Sg0Con",ENG_N_Stem,ENG_N_lfea_Sg);
 				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 }
-#line 1903 "y.tab.c" /* yacc.c:1646  */
+#line 1910 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
@@ -1910,7 +1917,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("Sg",ENG_N_Sg_0Con,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con ENG_1Con"<<std::endl;
 }
-#line 1914 "y.tab.c" /* yacc.c:1646  */
+#line 1921 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
@@ -1923,7 +1930,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
 }
-#line 1927 "y.tab.c" /* yacc.c:1646  */
+#line 1934 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
@@ -1936,7 +1943,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg_0Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con"<<std::endl;
 }
-#line 1940 "y.tab.c" /* yacc.c:1646  */
+#line 1947 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
@@ -1947,7 +1954,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
 				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
 }
-#line 1951 "y.tab.c" /* yacc.c:1646  */
+#line 1958 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
@@ -1960,7 +1967,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Con);
 				std::cout<<"ENG_1Con->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
 }
-#line 1964 "y.tab.c" /* yacc.c:1646  */
+#line 1971 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
@@ -1971,7 +1978,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
 				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 }
-#line 1975 "y.tab.c" /* yacc.c:1646  */
+#line 1982 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
@@ -1982,7 +1989,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 }
-#line 1986 "y.tab.c" /* yacc.c:1646  */
+#line 1993 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
@@ -1995,7 +2002,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl_0Con);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con"<<std::endl;
 }
-#line 1999 "y.tab.c" /* yacc.c:1646  */
+#line 2006 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
@@ -2006,7 +2013,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con ENG_nCon"<<std::endl;
 }
-#line 2010 "y.tab.c" /* yacc.c:1646  */
+#line 2017 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
@@ -2019,7 +2026,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
 }
-#line 2023 "y.tab.c" /* yacc.c:1646  */
+#line 2030 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
@@ -2030,7 +2037,7 @@ yyreduce:
 				//TODO: Any better solution???
 				return -1;
 }
-#line 2034 "y.tab.c" /* yacc.c:1646  */
+#line 2041 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
@@ -2043,7 +2050,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2047 "y.tab.c" /* yacc.c:1646  */
+#line 2054 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
@@ -2057,7 +2064,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2061 "y.tab.c" /* yacc.c:1646  */
+#line 2068 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
@@ -2071,7 +2078,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2075 "y.tab.c" /* yacc.c:1646  */
+#line 2082 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
@@ -2084,7 +2091,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2088 "y.tab.c" /* yacc.c:1646  */
+#line 2095 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
@@ -2095,7 +2102,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con);
 				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con"<<std::endl;
 }
-#line 2099 "y.tab.c" /* yacc.c:1646  */
+#line 2106 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
@@ -2108,7 +2115,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2112 "y.tab.c" /* yacc.c:1646  */
+#line 2119 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
@@ -2122,7 +2129,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Constant:"<<word.word<<std::endl;
 }
-#line 2126 "y.tab.c" /* yacc.c:1646  */
+#line 2133 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
@@ -2135,7 +2142,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2139 "y.tab.c" /* yacc.c:1646  */
+#line 2146 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
@@ -2146,7 +2153,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_RPRO",ENG_RPro_stem,ENG_RPro_lfea_relative);
 				std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
 }
-#line 2150 "y.tab.c" /* yacc.c:1646  */
+#line 2157 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
@@ -2159,7 +2166,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2163 "y.tab.c" /* yacc.c:1646  */
+#line 2170 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
@@ -2173,7 +2180,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2177 "y.tab.c" /* yacc.c:1646  */
+#line 2184 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
@@ -2186,7 +2193,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"ENG_T->null"<<std::endl;
 }
-#line 2190 "y.tab.c" /* yacc.c:1646  */
+#line 2197 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
@@ -2197,7 +2204,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_TP",ENG_T,ENG_IVP);
 				std::cout<<"ENG_TP->ENG_T ENG_IVP"<<std::endl;
 }
-#line 2201 "y.tab.c" /* yacc.c:1646  */
+#line 2208 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
@@ -2208,7 +2215,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_TP);
 				std::cout<<"ENG_RC->ENG_RPro ENG_TP"<<std::endl;
 }
-#line 2212 "y.tab.c" /* yacc.c:1646  */
+#line 2219 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
@@ -2221,7 +2228,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2225 "y.tab.c" /* yacc.c:1646  */
+#line 2232 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
@@ -2232,7 +2239,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
 				std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
 }
-#line 2236 "y.tab.c" /* yacc.c:1646  */
+#line 2243 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
@@ -2243,7 +2250,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
 				std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
 }
-#line 2247 "y.tab.c" /* yacc.c:1646  */
+#line 2254 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
@@ -2254,7 +2261,7 @@ yyreduce:
 				(yyval)=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
 }
-#line 2258 "y.tab.c" /* yacc.c:1646  */
+#line 2265 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
@@ -2268,7 +2275,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2272 "y.tab.c" /* yacc.c:1646  */
+#line 2279 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
@@ -2281,7 +2288,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2285 "y.tab.c" /* yacc.c:1646  */
+#line 2292 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
@@ -2294,7 +2301,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2298 "y.tab.c" /* yacc.c:1646  */
+#line 2305 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
@@ -2307,7 +2314,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,HUN_NP);
 				std::cout<<"HUN_NP->HUN_N"<<std::endl;
 }
-#line 2311 "y.tab.c" /* yacc.c:1646  */
+#line 2318 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
@@ -2320,7 +2327,7 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,HUN_N_Sg);
 				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
 }
-#line 2324 "y.tab.c" /* yacc.c:1646  */
+#line 2331 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
@@ -2328,27 +2335,84 @@ yyreduce:
     {
 				lexicon word;
 
-				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[0]));
+				const node_info& HUN_AccCon=sparser->get_node_info((yyvsp[0]));
 				word.gcat="Sg";
-				(yyval)=sparser->set_node_info(word,HUN_1Con);
-				std::cout<<"HUN_N_Sg->HUN_1Con"<<std::endl;
+				(yyval)=sparser->set_node_info(word,HUN_AccCon);
+				std::cout<<"HUN_N_Sg->HUN_AccCon"<<std::endl;
 }
-#line 2337 "y.tab.c" /* yacc.c:1646  */
+#line 2344 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 628 "hi.y" /* yacc.c:1646  */
+#line 618 "hi.y" /* yacc.c:1646  */
     {
-				const node_info& HUN_Con=sparser->get_node_info((yyvsp[-1]));
-				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
-				(yyval)=sparser->combine_nodes("HUN_1Con",HUN_Con,HUN_Con_lfea_Acc);
-				std::cout<<"HUN_1Con->HUN_Con HUN_Con_lfea_Acc"<<std::endl;
+				lexicon word;
+
+				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
+				word.gcat="HUN_1Con";
+				(yyval)=sparser->set_node_info(word,HUN_Con);
+				std::cout<<"HUN_1Con->HUN_Con:"<<HUN_Con.expression.lexeme<<std::endl;
 }
-#line 2348 "y.tab.c" /* yacc.c:1646  */
+#line 2357 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 635 "hi.y" /* yacc.c:1646  */
+#line 627 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
+				std::cout<<"HUN_nCon->HUN_1Con HUN_Con"<<std::endl;
+}
+#line 2368 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 70:
+#line 634 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_nCon=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
+				std::cout<<"HUN_nCon->HUN_nCon HUN_Con"<<std::endl;
+}
+#line 2379 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 71:
+#line 641 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_AccCon=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_AccCon,HUN_Con);
+				std::cout<<"HUN_nCon->HUN_AccCon HUN_Con"<<std::endl;
+}
+#line 2390 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 72:
+#line 648 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_AccCon",HUN_1Con,HUN_Con_lfea_Acc);
+				std::cout<<"HUN_AccCon->HUN_1Con HUN_Con_lfea_Acc"<<std::endl;
+}
+#line 2401 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 73:
+#line 655 "hi.y" /* yacc.c:1646  */
+    {
+				const node_info& HUN_nCon=sparser->get_node_info((yyvsp[-1]));
+				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
+				(yyval)=sparser->combine_nodes("HUN_AccCon",HUN_nCon,HUN_Con_lfea_Acc);
+				std::cout<<"HUN_AccCon->HUN_nCon HUN_Con_lfea_Acc"<<std::endl;
+}
+#line 2412 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 74:
+#line 662 "hi.y" /* yacc.c:1646  */
     {
 				const node_info empty_node_info={};
 				lexicon word;
@@ -2358,11 +2422,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Konstans:"<<word.word<<std::endl;
 }
-#line 2362 "y.tab.c" /* yacc.c:1646  */
+#line 2426 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 70:
-#line 645 "hi.y" /* yacc.c:1646  */
+  case 75:
+#line 672 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2372,11 +2436,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2376 "y.tab.c" /* yacc.c:1646  */
+#line 2440 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2380 "y.tab.c" /* yacc.c:1646  */
+#line 2444 "y.tab.c" /* yacc.c:1646  */
         default: break;
       }
     if (yychar_backup != yychar)
@@ -2616,7 +2680,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 654 "hi.y" /* yacc.c:1906  */
+#line 681 "hi.y" /* yacc.c:1906  */
 
 
 int yylex(void){

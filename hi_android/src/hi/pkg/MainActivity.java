@@ -103,15 +103,15 @@ public class MainActivity extends Activity implements OnClickListener {
         findViewById(R.id.button1).setOnClickListener(this);
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setDefaultTextEncodingName("UTF-8");
         mWebView.addJavascriptInterface(new jsi(this), "Android");
         mWebView.setWebChromeClient(new WebChromeClient());
-		mWebView.setWebViewClient(new WebViewClient(){
-			@Override
-		    public void onPageFinished(WebView view, String url){   
-//		        view.loadUrl("javascript:Android.execute();");
-        		view.loadUrl("javascript:"+commandScript);
-		    }           
-		});
+		mWebView.setWebViewClient(new WebViewClient());//{
+//			@Override
+//		    public void onPageFinished(WebView view, String url){   
+//        		view.loadUrl("javascript:"+commandScript);
+//		    }           
+		//});
         PackageManager m = getPackageManager();
         String s = getPackageName();
         try {
@@ -179,136 +179,148 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	  @Override
 	  protected void onNewIntent(Intent intent) {
-		  if (intent!=null && intent.getExtras()!=null) {
-		    String lid=intent.getStringExtra("LID");
-//		    Toast.makeText(this, "LID:"+lid, Toast.LENGTH_LONG).show();
-		    if(nrOfTrials>0){
-		    	if(lid.contentEquals("HUN")==true){
-		    		if(recognisedText.contains("betűvel")==true||recognisedText.contains("szóval")==true){
-			    		String trimmedInput=recognisedText.replace("betűvel","");
-			    		trimmedInput=recognisedText.replace("szóval","");
-			    		trimmedInput=recognisedText.replace(" ","");
-			    		if(trimmedInput.isEmpty()==false){
-				    		ArrayList<Integer> spellStarts=new ArrayList<Integer>();
-			    			int spellStart=recognisedText.indexOf("betűvel");
-				    		while(spellStart<recognisedText.length()&&spellStart!=-1){
-				    			spellStarts.add(spellStart);
-				    			spellStart=recognisedText.indexOf("betűvel",spellStart+"betűvel".length());
+		  if (intent!=null && intent.getExtras()!=null){
+			  if(intent.hasExtra("lid")==true){
+				  String lid=intent.getStringExtra("lid");
+//				    Toast.makeText(this, "LID:"+lid, Toast.LENGTH_LONG).show();
+				    if(nrOfTrials>0){
+				    	if(lid.contentEquals("HUN")==true){
+				    		if(recognisedText.contains("betűvel")==true||recognisedText.contains("szóval")==true){
+					    		String trimmedInput=recognisedText.replace("betűvel","");
+					    		trimmedInput=recognisedText.replace("szóval","");
+					    		trimmedInput=recognisedText.replace(" ","");
+					    		if(trimmedInput.isEmpty()==false){
+						    		ArrayList<Integer> spellStarts=new ArrayList<Integer>();
+					    			int spellStart=recognisedText.indexOf("betűvel");
+						    		while(spellStart<recognisedText.length()&&spellStart!=-1){
+						    			spellStarts.add(spellStart);
+						    			spellStart=recognisedText.indexOf("betűvel",spellStart+"betűvel".length());
+						    		}
+						    		ArrayList<Integer> spellEnds=new ArrayList<Integer>();
+						    		int spellEnd=recognisedText.indexOf("szóval");
+						    		while(spellEnd<recognisedText.length()&&spellEnd!=-1){
+						    			spellEnds.add(spellEnd);
+						    			spellEnd=recognisedText.indexOf("szóval",spellEnd+"szóval".length());
+						    		}
+						    		if(spellStarts.isEmpty()==true&&spellEnds.isEmpty()==false){
+						    			trimmedInput=recognisedText.replace("szóval","");
+						    			while(trimmedInput.contentEquals(trimmedInput.replace("  "," "))==false){
+						    				trimmedInput=trimmedInput.replace("  "," ");
+						    			}
+						    		}
+						    		else if(spellStarts.isEmpty()==false&&spellEnds.isEmpty()==true){
+						    			trimmedInput=recognisedText;
+						    			while(trimmedInput.contentEquals(trimmedInput.replace("  "," "))==false){
+						    				trimmedInput=trimmedInput.replace("  "," ");
+						    			}
+						    			String[] splittedInput=trimmedInput.split("betűvel");
+						    			recognisedText=commandPartOk;
+						    			for(int i=0;i<splittedInput.length;++i){
+						    				if(splittedInput[i].isEmpty()==false){
+								    			if(splittedInput[i].startsWith(" ")==true) splittedInput[i]=splittedInput[i].substring(1);
+								    			if(splittedInput[i].endsWith(" ")==false) splittedInput[i]+=" ";
+								    			int nrOfLettersCut=0;
+								    			int nextSpace=0;
+								    			while(nextSpace>=0&&nrOfLettersCut+1<splittedInput[i].length()){
+									    			nextSpace=splittedInput[i].indexOf(" ",nrOfLettersCut+1);
+							    					if(nrOfLettersCut>0) splittedInput[i]=splittedInput[i].substring(0,nrOfLettersCut)+splittedInput[i].charAt(nrOfLettersCut+1)+splittedInput[i].substring(nextSpace);
+							    					else splittedInput[i]=splittedInput[i].charAt(0)+splittedInput[i].substring(nextSpace);
+								    				++nrOfLettersCut;
+								    			}
+								    			recognisedText+=" "+splittedInput[i];
+						    				}
+						    			}
+						    		}
+						    		else if(spellStarts.isEmpty()==false&&spellEnds.isEmpty()==false||spellStarts.isEmpty()==true&&spellEnds.isEmpty()==true){
+								    	//TODO: implement processing alternating sections of spelled and worded text, do nothing for the time being
+						    			recognisedText=commandPartOk+" "+recognisedText;
+						    		}
+					    		}
 				    		}
-				    		ArrayList<Integer> spellEnds=new ArrayList<Integer>();
-				    		int spellEnd=recognisedText.indexOf("szóval");
-				    		while(spellEnd<recognisedText.length()&&spellEnd!=-1){
-				    			spellEnds.add(spellEnd);
-				    			spellEnd=recognisedText.indexOf("szóval",spellEnd+"szóval".length());
+				    		else{
+						    	recognisedText=commandPartOk+" "+recognisedText;
 				    		}
-				    		if(spellStarts.isEmpty()==true&&spellEnds.isEmpty()==false){
-				    			trimmedInput=recognisedText.replace("szóval","");
-				    			while(trimmedInput.contentEquals(trimmedInput.replace("  "," "))==false){
-				    				trimmedInput=trimmedInput.replace("  "," ");
-				    			}
-				    		}
-				    		else if(spellStarts.isEmpty()==false&&spellEnds.isEmpty()==true){
-				    			trimmedInput=recognisedText.replace("betűvel","");
-				    			while(trimmedInput.contentEquals(trimmedInput.replace("  "," "))==false){
-				    				trimmedInput=trimmedInput.replace("  "," ");
-				    			}
-				    			if(trimmedInput.startsWith(" ")==true) trimmedInput=trimmedInput.substring(1);
-				    			if(trimmedInput.endsWith(" ")==false) trimmedInput+=" ";
-				    			int nrOfLettersCut=0;
-				    			int nextSpace=0;
-				    			while(nextSpace>=0&&nrOfLettersCut+1<trimmedInput.length()){
-					    			nextSpace=trimmedInput.indexOf(" ",nrOfLettersCut+1);
-			    					if(nrOfLettersCut>0) trimmedInput=trimmedInput.substring(0,nrOfLettersCut)+trimmedInput.charAt(nrOfLettersCut+1)+trimmedInput.substring(nextSpace);
-			    					else trimmedInput=trimmedInput.charAt(0)+trimmedInput.substring(nextSpace);
-				    				++nrOfLettersCut;
-				    			}
-				    			recognisedText=commandPartOk+" "+trimmedInput;
-				    		}
-				    		else if(spellStarts.isEmpty()==false&&spellEnds.isEmpty()==false||spellStarts.isEmpty()==true&&spellEnds.isEmpty()==true){
-						    	//TODO: implement alternating sections of spelled and worded text, do nothing for the time being
-				    			recognisedText=commandPartOk+" "+recognisedText;
-				    		}
-			    		}
-		    		}
-		    		else{
-				    	recognisedText=commandPartOk+" "+recognisedText;
-		    		}
-		    	}
-		    	else{
-		    		recognisedText=commandPartOk+" "+recognisedText;
-		    	}
-		    }
-		    Toast.makeText(this, "command:"+recognisedText, Toast.LENGTH_LONG).show();
-		    byte[] error= new byte[1024];
-		    commandBytes=jhi(recognisedText+"\n",lid,error);
-		    try{
-			    String errortext=new String(error,"UTF-8");
-			    Toast.makeText(this, "error:"+errortext, Toast.LENGTH_LONG).show();
-			    if(errortext.contains("/")==true){
-				    ++nrOfTrials;
-				    String okPart=errortext.substring(0,errortext.indexOf("/"));
-//				    Toast.makeText(this, "okPart:"+okPart, Toast.LENGTH_LONG).show();
-				    commandPartOk=recognisedText.substring(0,recognisedText.indexOf(okPart)+okPart.length());
-//				    Toast.makeText(this, "Ok:"+commandPartOk, Toast.LENGTH_LONG).show();
+				    	}
+				    	else{
+				    		recognisedText=commandPartOk+" "+recognisedText;
+				    	}
+				    }
+				    byte[] error= new byte[1024];
+				    Toast.makeText(this, "command:"+recognisedText, Toast.LENGTH_LONG).show();
+				    commandBytes=jhi(recognisedText+"\n",lid,error);
+				    try{
+					    String errortext=new String(error,"UTF-8");
+					    Toast.makeText(this, "error:"+errortext, Toast.LENGTH_LONG).show();
+					    if(errortext.contains("/")==true){
+						   ++nrOfTrials;
+					    	String okPart=errortext.substring(0,errortext.indexOf("/"));
+//						    Toast.makeText(this, "okPart:"+okPart, Toast.LENGTH_LONG).show();
+						    commandPartOk=recognisedText.substring(0,recognisedText.indexOf(okPart)+okPart.length());
+//						    Toast.makeText(this, "Ok:"+commandPartOk, Toast.LENGTH_LONG).show();
 
 //beginSilentDebug
-//				    recognisedText="betűvel aladár levente ilona zoltán tibor";
-////			    	recognisedTexts.add(command);//TODO:check why this makes the app dump
-//					((TextView)findViewById(R.id.text1)).setText(recognisedText);
-//			    	//Get default (primary) language set for voice input 
-//			        Intent i = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);
-//			        LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();
-//			        sendOrderedBroadcast(i, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
+//						    recognisedText="betűvel b a r b a r á t";
+////					    	recognisedTexts.add(command);//TODO:check why this makes the app dump
+//							((TextView)findViewById(R.id.text1)).setText(recognisedText);
+//					    	//Get default (primary) language set for voice input 
+//					        Intent i = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);
+//					        LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();
+//					        sendOrderedBroadcast(i, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
 //endSilentDebug
 
-				    Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-			    	try {
-			    		startActivityForResult(i, REQUEST_OK);
-			        } catch (Exception e) {
-			        	Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
-			        }
-			    }
-		    }
-		    catch(UnsupportedEncodingException e){
-		    	Log.e("utf8", "conversion", e);
-		    }
-			if(commandBytes!=null){
-			    try{
-			    	commandScript=new String(commandBytes,"UTF-8");
-			    }
-			    catch(UnsupportedEncodingException e){
-			    	Log.e("utf8", "conversion", e);
-			    }
-				((TextView)findViewById(R.id.text2)).setText(commandScript);
-		    	mWebView.loadData("<html><head></head><body></body></html>","text/html", "UTF-8");
-		    }
-	    }
-	    else {
-	  	    Toast.makeText(this, "LID unknown", Toast.LENGTH_LONG).show();
+						    Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+					    	try {
+					    		startActivityForResult(i, REQUEST_OK);
+					        } catch (Exception e) {
+					        	Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
+					        }
+					    }
+				    }
+				    catch(UnsupportedEncodingException e){
+				    	Log.e("utf8", "conversion", e);
+				    }
+					if(commandBytes!=null){
+					    try{
+					    	commandScript=new String(commandBytes,"UTF-8");
+					    }
+					    catch(UnsupportedEncodingException e){
+					    	Log.e("utf8", "conversion", e);
+					    }
+						((TextView)findViewById(R.id.text2)).setText(commandScript);
+				    	mWebView.loadData("<html><head></head><body><script type=\"text/javascript\">"+commandScript+"</script></body></html>","text/html; charset=UTF-8", "UTF-8");
+				    }
+			  }
+			  else if(intent.hasExtra("repeat")==true){
+				  ++nrOfTrials;
+				  commandPartOk=recognisedText.substring(0,recognisedText.indexOf(intent.getStringExtra("repeat")));
+				  commandPartOk=commandPartOk.replaceAll(" +$","");
+
+//beginSilentDebug
+//				  recognisedText="betűvel b a r b a r á t";
+////				  recognisedTexts.add(command);//TODO:check why this makes the app dump
+//				  ((TextView)findViewById(R.id.text1)).setText(recognisedText);
+//				  //Get default (primary) language set for voice input 
+//				  Intent i = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);
+//				  LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();
+//				  sendOrderedBroadcast(i, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
+//endSilentDebug
+
+				  Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+				  try {
+					  startActivityForResult(i, REQUEST_OK);
+				  } catch (Exception e) {
+					  Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
+				  }
+			  }
 	    }
 	    super.onNewIntent(intent);
 	  }
-
-//	  @Override
-//	  protected void onResume() { 
-//	    super.onResume();   
-//	    if (getIntent()!=null && getIntent().getExtras()!=null) {
-//	    	Toast.makeText(this, "onResume:"+getIntent().getExtras().getString("LID"), Toast.LENGTH_LONG).show();
-//	    }
-//	      else {
-//	  	    Toast.makeText(this, "onResume:empty", Toast.LENGTH_LONG).show();
-//	    }
-//	  }
-
-//	  public ArrayList<String> getRecognisedTexts(){
-//		  return recognisedTexts;
-//	  }
 
 	@Override
     public void onClick(View v){
 //beginSilentDebug
 //		nrOfTrials=0;
-//		recognisedText="hívd fel a liszt";
+//		recognisedText="hívd fel barbarát";
 ////    	recognisedTexts.add(command);//TODO:check why this makes the app dump
 //		((TextView)findViewById(R.id.text1)).setText(recognisedText);
 //    	//Get default (primary) language set for voice input 
