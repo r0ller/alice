@@ -163,13 +163,14 @@ ENG_Vbar2	:	ENG_Vbar1 ENG_PP
 {
 				const node_info& ENG_Vbar1=sparser->get_node_info($1);
 				const node_info& ENG_NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
+				$$=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_NP);
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 };
 ENG_Vbar1	:	ENG_V ENG_NP
 {
 				const node_info& ENG_V=sparser->get_node_info($1);
 				const node_info& ENG_NP=sparser->get_node_info($2);
+				sparser->add_feature_to_leaf(ENG_V,"main_verb");
 				$$=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
 				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 };
@@ -556,6 +557,7 @@ HUN_ImpVerb :	HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
 {
 				const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 				const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
+				sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 				$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
 };
@@ -840,6 +842,10 @@ const char *hi(const char *human_input,const char *language,char *error){
 				error[left_node_words.length()+right_node_words.length()+1]='\0';
 			}
 		}
+		return NULL;
+	}
+	catch(missing_prerequisite_symbol& exception){
+		std::cout<<exception.what()<<std::endl;
 		return NULL;
 	}
 	catch(std::exception& exception){
