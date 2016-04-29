@@ -1,0 +1,1 @@
+save stack magyar.fst

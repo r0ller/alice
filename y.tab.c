@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+#define YYBISON_VERSION "3.0.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -436,13 +436,13 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    62,    62,    67,    72,    81,    88,    97,   104,   111,
-     118,   125,   133,   141,   148,   155,   162,   169,   176,   183,
-     192,   201,   212,   219,   228,   237,   246,   253,   262,   272,
-     281,   290,   299,   306,   313,   322,   331,   338,   347,   354,
-     361,   370,   377,   386,   393,   402,   412,   422,   431,   438,
-     451,   461,   470,   477,   486,   497,   505,   512,   519,   541,
-     548,   555,   562,   572,   581,   590,   599,   608,   617,   626,
-     633,   640,   647,   654,   661,   671
+     118,   125,   133,   141,   148,   155,   162,   169,   177,   184,
+     193,   202,   213,   220,   229,   238,   247,   254,   263,   273,
+     282,   291,   300,   307,   314,   323,   332,   339,   348,   355,
+     362,   371,   378,   387,   394,   403,   413,   423,   432,   439,
+     452,   462,   471,   478,   487,   498,   506,   513,   520,   542,
+     549,   556,   564,   574,   583,   592,   601,   610,   619,   628,
+     635,   642,   649,   656,   663,   673
 };
 #endif
 
@@ -1706,7 +1706,7 @@ yyreduce:
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
-				(yyval)=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
+				(yyval)=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_NP);
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 }
 #line 1713 "y.tab.c" /* yacc.c:1646  */
@@ -1717,25 +1717,26 @@ yyreduce:
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
+				sparser->add_feature_to_leaf(ENG_V,"main_verb");
 				(yyval)=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
 				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 }
-#line 1724 "y.tab.c" /* yacc.c:1646  */
+#line 1725 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 177 "hi.y" /* yacc.c:1646  */
+#line 178 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Prep=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
 				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
 }
-#line 1735 "y.tab.c" /* yacc.c:1646  */
+#line 1736 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 184 "hi.y" /* yacc.c:1646  */
+#line 185 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1744,11 +1745,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 }
-#line 1748 "y.tab.c" /* yacc.c:1646  */
+#line 1749 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 193 "hi.y" /* yacc.c:1646  */
+#line 194 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1757,33 +1758,33 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_AP);
 				std::cout<<"ENG_NP->ENG_AP"<<std::endl;
 }
-#line 1761 "y.tab.c" /* yacc.c:1646  */
+#line 1762 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 202 "hi.y" /* yacc.c:1646  */
+#line 203 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_QPro=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
 }
-#line 1772 "y.tab.c" /* yacc.c:1646  */
+#line 1773 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 213 "hi.y" /* yacc.c:1646  */
+#line 214 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_A=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
 				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
 }
-#line 1783 "y.tab.c" /* yacc.c:1646  */
+#line 1784 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 220 "hi.y" /* yacc.c:1646  */
+#line 221 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1792,11 +1793,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N);
 				std::cout<<"ENG_CNP->ENG_N"<<std::endl;
 }
-#line 1796 "y.tab.c" /* yacc.c:1646  */
+#line 1797 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 229 "hi.y" /* yacc.c:1646  */
+#line 230 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1805,11 +1806,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Adv);
 				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
 }
-#line 1809 "y.tab.c" /* yacc.c:1646  */
+#line 1810 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 238 "hi.y" /* yacc.c:1646  */
+#line 239 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1818,22 +1819,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_V_Stem);
 				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 }
-#line 1822 "y.tab.c" /* yacc.c:1646  */
+#line 1823 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 247 "hi.y" /* yacc.c:1646  */
+#line 248 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V_lfea_aux=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_aux);
 				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_aux"<<std::endl;
 }
-#line 1833 "y.tab.c" /* yacc.c:1646  */
+#line 1834 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 254 "hi.y" /* yacc.c:1646  */
+#line 255 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1842,11 +1843,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1846 "y.tab.c" /* yacc.c:1646  */
+#line 1847 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 263 "hi.y" /* yacc.c:1646  */
+#line 264 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1856,11 +1857,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1860 "y.tab.c" /* yacc.c:1646  */
+#line 1861 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 273 "hi.y" /* yacc.c:1646  */
+#line 274 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1869,11 +1870,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1873 "y.tab.c" /* yacc.c:1646  */
+#line 1874 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 282 "hi.y" /* yacc.c:1646  */
+#line 283 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 	
@@ -1882,11 +1883,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg);
 				std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
 }
-#line 1886 "y.tab.c" /* yacc.c:1646  */
+#line 1887 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 291 "hi.y" /* yacc.c:1646  */
+#line 292 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1895,33 +1896,33 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl);
 				std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
 }
-#line 1899 "y.tab.c" /* yacc.c:1646  */
+#line 1900 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 300 "hi.y" /* yacc.c:1646  */
+#line 301 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_lfea_Sg=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Sg0Con",ENG_N_Stem,ENG_N_lfea_Sg);
 				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 }
-#line 1910 "y.tab.c" /* yacc.c:1646  */
+#line 1911 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 307 "hi.y" /* yacc.c:1646  */
+#line 308 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Sg_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("Sg",ENG_N_Sg_0Con,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con ENG_1Con"<<std::endl;
 }
-#line 1921 "y.tab.c" /* yacc.c:1646  */
+#line 1922 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 314 "hi.y" /* yacc.c:1646  */
+#line 315 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1930,11 +1931,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
 }
-#line 1934 "y.tab.c" /* yacc.c:1646  */
+#line 1935 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 323 "hi.y" /* yacc.c:1646  */
+#line 324 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1943,22 +1944,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg_0Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con"<<std::endl;
 }
-#line 1947 "y.tab.c" /* yacc.c:1646  */
+#line 1948 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 332 "hi.y" /* yacc.c:1646  */
+#line 333 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_lfea_Pl=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
 				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
 }
-#line 1958 "y.tab.c" /* yacc.c:1646  */
+#line 1959 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 339 "hi.y" /* yacc.c:1646  */
+#line 340 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1967,33 +1968,33 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Con);
 				std::cout<<"ENG_1Con->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
 }
-#line 1971 "y.tab.c" /* yacc.c:1646  */
+#line 1972 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 348 "hi.y" /* yacc.c:1646  */
+#line 349 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
 				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 }
-#line 1982 "y.tab.c" /* yacc.c:1646  */
+#line 1983 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 355 "hi.y" /* yacc.c:1646  */
+#line 356 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 }
-#line 1993 "y.tab.c" /* yacc.c:1646  */
+#line 1994 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 362 "hi.y" /* yacc.c:1646  */
+#line 363 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2002,22 +2003,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl_0Con);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con"<<std::endl;
 }
-#line 2006 "y.tab.c" /* yacc.c:1646  */
+#line 2007 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 371 "hi.y" /* yacc.c:1646  */
+#line 372 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con ENG_nCon"<<std::endl;
 }
-#line 2017 "y.tab.c" /* yacc.c:1646  */
+#line 2018 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 378 "hi.y" /* yacc.c:1646  */
+#line 379 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2026,22 +2027,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
 }
-#line 2030 "y.tab.c" /* yacc.c:1646  */
+#line 2031 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 387 "hi.y" /* yacc.c:1646  */
+#line 388 "hi.y" /* yacc.c:1646  */
     {
 				//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 				//that a singular noun cannot combine with more than one constant like in 'list file abc def'
 				//TODO: Any better solution???
 				return -1;
 }
-#line 2041 "y.tab.c" /* yacc.c:1646  */
+#line 2042 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 394 "hi.y" /* yacc.c:1646  */
+#line 395 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2050,11 +2051,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2054 "y.tab.c" /* yacc.c:1646  */
+#line 2055 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 403 "hi.y" /* yacc.c:1646  */
+#line 404 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2064,11 +2065,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2068 "y.tab.c" /* yacc.c:1646  */
+#line 2069 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 413 "hi.y" /* yacc.c:1646  */
+#line 414 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2078,11 +2079,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2082 "y.tab.c" /* yacc.c:1646  */
+#line 2083 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 423 "hi.y" /* yacc.c:1646  */
+#line 424 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2091,22 +2092,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2095 "y.tab.c" /* yacc.c:1646  */
+#line 2096 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 432 "hi.y" /* yacc.c:1646  */
+#line 433 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con);
 				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con"<<std::endl;
 }
-#line 2106 "y.tab.c" /* yacc.c:1646  */
+#line 2107 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 439 "hi.y" /* yacc.c:1646  */
+#line 440 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2115,11 +2116,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2119 "y.tab.c" /* yacc.c:1646  */
+#line 2120 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 452 "hi.y" /* yacc.c:1646  */
+#line 453 "hi.y" /* yacc.c:1646  */
     {
 				const node_info empty_node_info={};
 				lexicon word;
@@ -2129,11 +2130,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Constant:"<<word.word<<std::endl;
 }
-#line 2133 "y.tab.c" /* yacc.c:1646  */
+#line 2134 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 462 "hi.y" /* yacc.c:1646  */
+#line 463 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2142,22 +2143,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2146 "y.tab.c" /* yacc.c:1646  */
+#line 2147 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 471 "hi.y" /* yacc.c:1646  */
+#line 472 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_RPro_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RPro_lfea_relative=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_RPRO",ENG_RPro_stem,ENG_RPro_lfea_relative);
 				std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
 }
-#line 2157 "y.tab.c" /* yacc.c:1646  */
+#line 2158 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 478 "hi.y" /* yacc.c:1646  */
+#line 479 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2166,11 +2167,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2170 "y.tab.c" /* yacc.c:1646  */
+#line 2171 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 487 "hi.y" /* yacc.c:1646  */
+#line 488 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2180,11 +2181,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2184 "y.tab.c" /* yacc.c:1646  */
+#line 2185 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 497 "hi.y" /* yacc.c:1646  */
+#line 498 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2193,33 +2194,33 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"ENG_T->null"<<std::endl;
 }
-#line 2197 "y.tab.c" /* yacc.c:1646  */
+#line 2198 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 506 "hi.y" /* yacc.c:1646  */
+#line 507 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_T=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_IVP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_TP",ENG_T,ENG_IVP);
 				std::cout<<"ENG_TP->ENG_T ENG_IVP"<<std::endl;
 }
-#line 2208 "y.tab.c" /* yacc.c:1646  */
+#line 2209 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 513 "hi.y" /* yacc.c:1646  */
+#line 514 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_RPro=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_TP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_TP);
 				std::cout<<"ENG_RC->ENG_RPro ENG_TP"<<std::endl;
 }
-#line 2219 "y.tab.c" /* yacc.c:1646  */
+#line 2220 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 520 "hi.y" /* yacc.c:1646  */
+#line 521 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2228,44 +2229,45 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2232 "y.tab.c" /* yacc.c:1646  */
+#line 2233 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 542 "hi.y" /* yacc.c:1646  */
+#line 543 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_ImpVerbPfx=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
 				std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
 }
-#line 2243 "y.tab.c" /* yacc.c:1646  */
+#line 2244 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 549 "hi.y" /* yacc.c:1646  */
+#line 550 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_ImpVerb=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Vbpfx=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
 				std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
 }
-#line 2254 "y.tab.c" /* yacc.c:1646  */
+#line 2255 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 556 "hi.y" /* yacc.c:1646  */
+#line 557 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_Verb_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info((yyvsp[0]));
+				sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 				(yyval)=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
 }
-#line 2265 "y.tab.c" /* yacc.c:1646  */
+#line 2267 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 563 "hi.y" /* yacc.c:1646  */
+#line 565 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2275,11 +2277,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2279 "y.tab.c" /* yacc.c:1646  */
+#line 2281 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 573 "hi.y" /* yacc.c:1646  */
+#line 575 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2288,11 +2290,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2292 "y.tab.c" /* yacc.c:1646  */
+#line 2294 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 582 "hi.y" /* yacc.c:1646  */
+#line 584 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2301,11 +2303,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2305 "y.tab.c" /* yacc.c:1646  */
+#line 2307 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 591 "hi.y" /* yacc.c:1646  */
+#line 593 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2314,11 +2316,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,HUN_NP);
 				std::cout<<"HUN_NP->HUN_N"<<std::endl;
 }
-#line 2318 "y.tab.c" /* yacc.c:1646  */
+#line 2320 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 600 "hi.y" /* yacc.c:1646  */
+#line 602 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2327,11 +2329,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,HUN_N_Sg);
 				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
 }
-#line 2331 "y.tab.c" /* yacc.c:1646  */
+#line 2333 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 609 "hi.y" /* yacc.c:1646  */
+#line 611 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2340,11 +2342,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,HUN_AccCon);
 				std::cout<<"HUN_N_Sg->HUN_AccCon"<<std::endl;
 }
-#line 2344 "y.tab.c" /* yacc.c:1646  */
+#line 2346 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 618 "hi.y" /* yacc.c:1646  */
+#line 620 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2353,66 +2355,66 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,HUN_Con);
 				std::cout<<"HUN_1Con->HUN_Con:"<<HUN_Con.expression.lexeme<<std::endl;
 }
-#line 2357 "y.tab.c" /* yacc.c:1646  */
+#line 2359 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 627 "hi.y" /* yacc.c:1646  */
+#line 629 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
 				std::cout<<"HUN_nCon->HUN_1Con HUN_Con"<<std::endl;
 }
-#line 2368 "y.tab.c" /* yacc.c:1646  */
+#line 2370 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 634 "hi.y" /* yacc.c:1646  */
+#line 636 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
 				std::cout<<"HUN_nCon->HUN_nCon HUN_Con"<<std::endl;
 }
-#line 2379 "y.tab.c" /* yacc.c:1646  */
+#line 2381 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 641 "hi.y" /* yacc.c:1646  */
+#line 643 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_AccCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_AccCon,HUN_Con);
 				std::cout<<"HUN_nCon->HUN_AccCon HUN_Con"<<std::endl;
 }
-#line 2390 "y.tab.c" /* yacc.c:1646  */
+#line 2392 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 648 "hi.y" /* yacc.c:1646  */
+#line 650 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_AccCon",HUN_1Con,HUN_Con_lfea_Acc);
 				std::cout<<"HUN_AccCon->HUN_1Con HUN_Con_lfea_Acc"<<std::endl;
 }
-#line 2401 "y.tab.c" /* yacc.c:1646  */
+#line 2403 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 655 "hi.y" /* yacc.c:1646  */
+#line 657 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_AccCon",HUN_nCon,HUN_Con_lfea_Acc);
 				std::cout<<"HUN_AccCon->HUN_nCon HUN_Con_lfea_Acc"<<std::endl;
 }
-#line 2412 "y.tab.c" /* yacc.c:1646  */
+#line 2414 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 662 "hi.y" /* yacc.c:1646  */
+#line 664 "hi.y" /* yacc.c:1646  */
     {
 				const node_info empty_node_info={};
 				lexicon word;
@@ -2422,11 +2424,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Konstans:"<<word.word<<std::endl;
 }
-#line 2426 "y.tab.c" /* yacc.c:1646  */
+#line 2428 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 672 "hi.y" /* yacc.c:1646  */
+#line 674 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2436,11 +2438,11 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2440 "y.tab.c" /* yacc.c:1646  */
+#line 2442 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2444 "y.tab.c" /* yacc.c:1646  */
+#line 2446 "y.tab.c" /* yacc.c:1646  */
         default: break;
       }
     if (yychar_backup != yychar)
@@ -2680,7 +2682,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 681 "hi.y" /* yacc.c:1906  */
+#line 683 "hi.y" /* yacc.c:1906  */
 
 
 int yylex(void){
@@ -2843,6 +2845,10 @@ const char *hi(const char *human_input,const char *language,char *error){
 				error[left_node_words.length()+right_node_words.length()+1]='\0';
 			}
 		}
+		return NULL;
+	}
+	catch(missing_prerequisite_symbol& exception){
+		std::cout<<exception.what()<<std::endl;
 		return NULL;
 	}
 	catch(std::exception& exception){

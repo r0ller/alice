@@ -93,6 +93,7 @@
 			t_node_dependency_traversals  node_dependency_traversals;
 			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> > >  node_odependency_traversals;
 			void get_leafs_of_node_lr(const node_info&, std::vector<unsigned int>&);
+			unsigned int check_prerequisite_symbols(const node_info&, const node_info&);
 		public:
 			interpreter();
 			~interpreter();
@@ -182,4 +183,23 @@
 		return right_node;
 	}
 
+	class missing_prerequisite_symbol:public semper_error{
+	private:
+		std::string parent_symbol;
+		std::string child_symbol;
+	public:
+		missing_prerequisite_symbol(std::string,std::string);
+		~missing_prerequisite_symbol() throw() {};
+		virtual const char *what() const throw(){
+			std::string message;
+
+			message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
+			return message.c_str();
+		}
+	};
+
+	missing_prerequisite_symbol::missing_prerequisite_symbol(std::string parent, std::string child){
+		parent_symbol=parent;
+		child_symbol=child;
+	}
 #endif
