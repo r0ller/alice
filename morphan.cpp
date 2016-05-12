@@ -57,7 +57,7 @@ morphan_result *morphan::analyze(const std::string& word){
 	char *result=NULL;
 	std::vector<char> c_word;
 	std::vector<std::string> morphemes_vector;
-	unsigned int separator_position=0, length, start_position=0;
+	size_t separator_position=0, length=0, start_position=0;
 	std::string morphemes;
 	morphan_result *analysis=NULL;
 
@@ -68,6 +68,7 @@ morphan_result *morphan::analyze(const std::string& word){
 	c_word.assign(word.begin(),word.end());
 	c_word.push_back('\0');
 	result=apply_up(morphan::morphan_handle, &c_word[0]);
+//	std::cout<<"result:"<<result<<std::endl;
 	if(result!=NULL){//result==NULL means that it cannot be analyzed -> treat it as constant. However, one thing TODO is:
 		//think over, what should happen the other way around i.e. when a constant appears which can be analysed???
 		morphemes=std::string((const char *)result);

@@ -35,6 +35,7 @@ unsigned int lexer::next_token(){
 			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
 		#endif
 		if(last_word.empty()==false){
+//			std::cout<<"last word:"<<last_word<<std::endl;
 			morphalytics=stemmer->analyze(last_word);
 			//TODO: figure out what if there're >1 analyses for the same word form???
 			//e.g. more than one guesses can return for an unknown word, name, etc.
@@ -139,7 +140,8 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 
 /*PRIVATE*/
 std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
-	unsigned int i=0, nr_of_morphemes=0, tag_position=0, token=0;
+	unsigned int i=0, nr_of_morphemes=0, token=0;
+	size_t tag_position=0;
 	lexicon new_word;
 	db *sqlite=NULL;
 	std::multimap<unsigned int,field>::const_iterator field_position, gcat_position;
