@@ -7,17 +7,18 @@ lexer::lexer(const char *input_string,const char *language){
 		human_input=std::string (input_string);
 		human_input_iterator=human_input.begin();
 		stemmer=morphan::get_instance(lid);
+		morphalytics=NULL;
 }
 
 lexer::~lexer(){
 	destroy_words();
 	delete stemmer;
+	delete morphalytics;
 }
 
 unsigned int lexer::next_token(){
 	unsigned int token=0;
-	std::string last_word;
-	morphan_result *morphalytics=NULL;
+	std::string last_word,new_word_form;
 	lexicon new_word;
 
 	if(token_deque.empty()==false){
@@ -35,24 +36,46 @@ unsigned int lexer::next_token(){
 			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
 		#endif
 		if(last_word.empty()==false){
+//			std::cout<<"last word:"<<last_word<<std::endl;
 			morphalytics=stemmer->analyze(last_word);
-			//TODO: figure out what if there're >1 analyses for the same word form???
-			//e.g. more than one guesses can return for an unknown word, name, etc.
+			//TODO: if there're >1 analyses for the same word form:
+			//1) the analyses with multiple results should be stored
+			//2) if the bison parser breaks down due to an error, store the erroneous token
+			//3) the whole parsing should be restarted (with parser reset)
+			//4) delete (or mark as "wrong") the analysis for the erroneous token from the previously stored analyses with multiple results
+			//5) when the parsing gets to the same word form for which the erroneous token was returned, take a new analysis from the multiple results
 			if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
-				new_word.morphalytics=NULL;
 				new_word.token=0;
 				new_word.word=last_word;
 				new_word.gcat="CON";
 				new_word.lexeme=last_word;
 				new_word.dependencies=dependencies_read_for_functor("CON");
-				words.push_back(new_word);
-				return 0;
+				new_word.morphalytics=NULL;
+				new_word.tokens.push_back(0);
+				token_paths->add_word(new_word);
+				new_word_form=last_word;
 			}
-			token_deque=store_word(*morphalytics);
-			if(token_deque.empty()==true){
-				//TODO: throw exception
-				exit(EXIT_FAILURE);
+			else{
+				for(auto&& i:*morphalytics){
+					new_word=tokenize_word(i);
+					if(new_word.tokens.empty()==true){//TODO: throw exception
+						exit(EXIT_FAILURE);
+					}
+					token_paths->add_word(new_word);
+					if(new_word_form.empty()==true){
+						//Due to the fact, that the last_word is read from input and the tokenize_word()
+						//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
+						//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
+						//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
+						//So let's store the word form as it's added to token_paths.
+						new_word_form=new_word.word;
+					}
+					new_word.tokens.clear();
+				}
 			}
+			new_word=token_paths->next_word(new_word_form);
+			words.push_back(new_word);
+			token_deque=new_word.tokens;
 			token=token_deque.front();
 			token_deque.pop_front();
 		}
@@ -138,8 +161,9 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 }
 
 /*PRIVATE*/
-std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
-	unsigned int i=0, nr_of_morphemes=0, tag_position=0, token=0;
+lexicon lexer::tokenize_word(morphan_result& morphalytics){
+	unsigned int i=0, nr_of_morphemes=0, token=0;
+	size_t tag_position=0;
 	lexicon new_word;
 	db *sqlite=NULL;
 	std::multimap<unsigned int,field>::const_iterator field_position, gcat_position;
@@ -147,7 +171,6 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 	std::string lingfea;
 	const std::pair<const unsigned int,field> *field;
 	std::vector<std::string> morphemes;
-	std::deque<unsigned int> tokens;
 
 	sqlite=db::get_instance();
 	//TODO:convert gcat to uppercase
@@ -172,6 +195,7 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 					tag_position=morphemes[i].find("[lfea]");
 					if(tag_position!=std::string::npos){
 						lingfea=morphemes[i].substr(0,tag_position);
+//						std::cout<<"lingfea:"<<lingfea<<std::endl;
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 						if(field==NULL||field->second.field_value.empty()==true){
 							//TODO: throw exception
@@ -180,7 +204,6 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 //						std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 						if(token>0){
-							tokens.push_back(token);
 							new_word.tokens.push_back(token);
 						}
 					}
@@ -192,18 +215,16 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 								field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
 									if(field==NULL){
 									//TODO: throw exception
-										exit(EXIT_FAILURE);
+ 										exit(EXIT_FAILURE);
 									}
 							}
 //							std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-							tokens.push_back(token);
 							new_word.tokens.push_back(token);
 							new_word.token=token;
 						}
 					}
 				}
-				words.push_back(new_word);
 			}
 			else{
 				throw lexicon_type_and_db_table_schema_mismatch();
@@ -235,7 +256,6 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 //				std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 				token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
 				if(token>0){
-					tokens.push_back(token);
 					new_word.tokens.push_back(token);
 				}
 			}
@@ -252,16 +272,14 @@ std::deque<unsigned int> lexer::store_word(morphan_result& morphalytics){
 					}
 //					std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 					token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-					tokens.push_back(token);
 					new_word.tokens.push_back(token);
 					new_word.token=token;
 				}
 			}
 		}
-		words.push_back(new_word);
 		delete gcats_and_lingfeas;
 	}
-	return tokens;
+	return new_word;
 }
 
 query_result* lexer::dependencies_read_for_functor(const std::string& functor){
@@ -364,4 +382,8 @@ std::string lexer::validated_words(){
 	}
 	if(words_found.empty()==false) words_found.pop_back();
 	return words_found;
+}
+
+std::vector<lexicon> lexer::word_entries(){
+	return words;
 }

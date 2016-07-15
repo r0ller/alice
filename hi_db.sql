@@ -1,9 +1,5 @@
 PRAGMA foreign_keys = ON;
 
-/*create table DEFTYPE(*/
-/*deftype smallint primary key*/ /*0:function definition, 1:option definition*/
-/*);*/
-
 create table ROOT_TYPE(
 root_type varchar(1) primary key /*h:head root, n:non head root*/
 );
@@ -43,18 +39,6 @@ description varchar(128),
 PRIMARY KEY(symbol, lid)
 );
 
-/*See commenting reasons after the RELATION_FUNCTORS table
-create table CARDINALITY(
-cid varchar(2) primary key,
-description varchar(32)
-);
-
-create table XLINKS(//eXternal Links
-xid smallint primary key,
-xlink varchar(32) //association, composition, aggregation
-);
-*/
-
 /*handles semantic dependencies like e.g. kick the bucket=kick|1|1|the;kick|1|2|bucket; and so on like look|1|1|up;look|2|1|after;*/
 /*It also stores semantic dependencies of lexemes and morphemes like: k�ldd el=k�ld|1|1|d;k�ld|1|2|el;*/
 /*That is, it is to store dependencies within one semantic unit (szótári egység)*/
@@ -76,20 +60,6 @@ FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES FUNCTORS(functor, d_key) 
 );
 /*TODO: with sqlite3.8.0 partial index is supported so a unique index could be created with 'where d_counter'*/
 /*create unique index i_depolex_lexeme_d_key on DEPOLEX(lexeme, d_key) where d_counter;*/
-
-/*TODO:think over if a table for derivations&compositions fits the bill for type inference
-Note that it allows 1:N for multiple inheritance and composition*/
-/*
-create table DERCO(
-functor varchar(47),
-dkey smallint,
-counter smallint,
-extension_type smallint, --derivation or composition
-ref_functor varchar(47),
-ref_d_key smallint,
-PRIMARY KEY(functor, d_key, counter, extension_type)
-);
-*/
 
 /*Maps each syntactic rule to a semantic rule (note: semantic combination rules are divided into different steps due to
 technical reasons)*/
@@ -131,75 +101,30 @@ FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid) /*TODO: figure out how to
 /*FOREIGN KEY(lexeme) REFERENCES FUNCTORS(functor)*/ /*TODO: figure out, how to connect functors table functor field and lexicon table lexeme field*/
 );
 
+/*Searchable XML for context field? Instead of one context field for the context structure, we could have a scheme like: <keys>,tag,value
+e.g. the xml structure <xmltag1>value for xmltag1<xmltag2>value for xmltag2</xmltag2></xmltag1> would look like:
+<keys>,"<xmltag1>","value for xmltag1"
+<keys>,"<xmltag2>","value for xmltag2"
+<keys>,"</xmltag2>",NULL
+<keys>,"</xmltag1>",NULL
+This way, the context content would be searchable. Actually, XML tagging convention is not even necessary.
+*/
+create table CONTEXTS(
+model_id text,/*id for the model in which the context was interpreted*/
+context_source text,/*user or other source of context*/
+session_id text,
+timestamp text,
+stype smallint,/*0:imperative,1:declarative,2:interrogative*/
+context text,/*already compiled, interpreted result*/
+PRIMARY KEY(model_id,context_source,session_id,timestamp)
+);
+
 create table FUNCTOR_DEFS(
 functor_id varchar(51),
 /*definition_type smallint references DEFTYPE(deftype),*/
 definition text,
 PRIMARY KEY(functor_id)
 );
-
-/*
-create table ENTITIES(
-entity varchar(47),
-d_key smallint,
-is_a_entity varchar(47),
-is_a_d_key smallint,
-PRIMARY KEY(entity, d_key)
-FOREIGN KEY(entity, d_key) REFERENCES FUNCTORS(functor, d_key)
-FOREIGN KEY(is_a_entity, is_a_d_key) REFERENCES ENTITIES(entity, d_key) DEFERRABLE INITIALLY DEFERRED
-);
-create unique index i_entities_entity on ENTITIES(entity);
-*/
-
-/*Semantic tree for adjectives e.g. 'red','blue',etc. are derived from 'coloured'*/
-/*
-create table ATTRIBUTES(
-attribute varchar(47),
-d_key smallint,
-is_attribute varchar(47),
-is_d_key smallint,
-PRIMARY KEY(attribute, d_key)
-FOREIGN KEY(attribute, d_key) REFERENCES FUNCTORS(functor, d_key)
-FOREIGN KEY(is_attribute, is_d_key) REFERENCES ATTRIBUTES(attribute, d_key) DEFERRABLE INITIALLY DEFERRED
-);
-create unique index i_attributes_attribute on ATTRIBUTES(attribute);
-*/
-
-/*
-As for attributes, the table scheme above would solve the problem posed by phrases: 'long files'<>'long directories',
-where long needs to be interpreted in a different way. BUT: what about words that are not found in any tree?
-Like e.g. 'dangerous file'? Any file can be dangerous, so not general but specific entity-attribute realtions should
-be stored in such cases like 'dangerous file', 'dangerous directory', etc. which is not a real solution.
-So no solution has been invented yet to handle such general relations...
-*/
-
-/*Semantic tree for adverbs*/
-/*
-create table ADVERBS(
-adverb varchar(47),
-d_key smallint,
-means_adverb varchar(47),
-means_d_key smallint,
-PRIMARY KEY(adverb, d_key)
-FOREIGN KEY(adverb, d_key) REFERENCES FUNCTORS(functor, d_key)
-FOREIGN KEY(means_adverb, means_d_key) REFERENCES ADVERBS(adverb, d_key) DEFERRABLE INITIALLY DEFERRED
-);
-create unique index i_adverbs_adverb on ADVERBS(adverb);
-*/
-
-/*Semantic tree for verbs e.g. 'fly' entails 'move'*/
-/*
-create table RELATIONS(
-relation varchar(47),
-d_key smallint,
-entails_relation varchar(47),
-entails_d_key smallint,
-PRIMARY KEY(relation, d_key)
-FOREIGN KEY(relation, d_key) REFERENCES FUNCTORS(functor, d_key)
-FOREIGN KEY(entails_relation, entails_d_key) REFERENCES RELATIONS(relation, d_key) DEFERRABLE INITIALLY DEFERRED
-);
-create unique index i_relations_relation on RELATIONS(relation);
-*/
 
 create table FUNCTORS(
 functor varchar(47),
@@ -208,12 +133,3 @@ functor_id varchar(51),
 PRIMARY KEY(functor, d_key)
 FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
 );
-
-/*Taken out from RELATION_FUNCTORS because it seems better to have a separate features tables like: part_whole_relations, etc. Then a mapping table could be
-introduced for the functors to map them to their features like: <functor>, <feature_table_name>.
-
-part_role varchar(47) references ENTITIES(entity),//defines who takes the part role in the relation of entity-argument, the other one is then considered taking the whole role
-p_cardinality varchar(2) references CARDINALITY(cid),//part cardinality
-w_cardinality varchar(2) references CARDINALITY(cid),//whole cardinality
-xlink smallint references XLINKS(xid), 
-*/

@@ -2,7 +2,8 @@
 
 /*PUBLIC*/
 morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes){
-	unsigned int nr_of_morphemes=0,i,hit=0;
+	unsigned int nr_of_morphemes=0,i;
+	size_t hit=0;
 	std::string morpheme;
 	bool tag_found=false;
 

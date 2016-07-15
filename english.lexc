@@ -1,21 +1,18 @@
 !!!english.lexc!!!
 
-Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat] +Relative[lfea] +NEG[gcat]
+Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat]
++Relative[lfea] +NEG[gcat] [Guess] +CON[gcat] +fwConsonant[lfea] +fwVowel[lfea] +Indef[lfea] +DET[gcat] +PAR[gcat]
 
 LEXICON Root
 
-Noun ;
 Verb ;
 Preposition ;
 Adverb ;
 Adjective ;
 Pronoun ;
 Negation ;
-
-LEXICON Noun
-
-file Ninf;
-directory Ninf;
+Determiner ;
+Particle ;
 
 LEXICON Verb
 
@@ -24,14 +21,10 @@ be	Vinf;
 be[stem]+V[gcat]+Sg[lfea]:is #;
 be[stem]+V[gcat]+Pl[lfea]:are #;
 
-LEXICON Ninf
-
-[stem]+N[gcat]+Sg[lfea]:0   #;
-[stem]+N[gcat]+Pl[lfea]:^s  #;
-
 LEXICON Vinf
 
 [stem]+V[gcat]:0 #;
+[stem]+V[gcat]+Gerund[lfea]:^ing #;
 
 LEXICON Vaux
 
@@ -78,3 +71,16 @@ not Neg;
 LEXICON Neg
 
 [stem]+NEG[gcat]:0 #;
+
+LEXICON Determiner
+
+a[stem]+DET[gcat]+Indef[lfea]+fwConsonant[lfea]:a #;
+a[stem]+DET[gcat]+Indef[lfea]+fwVowel[lfea]:an #;
+
+LEXICON Particle
+
+to Par;
+
+LEXICON Par
+
+[stem]+PAR[gcat]:0 #;

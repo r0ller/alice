@@ -1,8 +1,4 @@
 BEGIN;
-/*
-insert into DEFTYPE values('0');
-insert into DEFTYPE values('1');
-*/
 
 insert into ROOT_TYPE values('H');
 insert into ROOT_TYPE values('N');
@@ -15,6 +11,7 @@ insert into SYMBOLS values('A', 'ENG', 'Adjective');
 insert into SYMBOLS values('ADV', 'ENG', 'Adverb');
 insert into SYMBOLS values('CON', 'ENG', 'Constant');
 insert into SYMBOLS values('DET', 'ENG', 'Determiner');
+insert into SYMBOLS values('Indef', 'ENG', 'Indefinite Determiner');
 insert into SYMBOLS values('N', 'ENG', 'Noun');
 insert into SYMBOLS values('ENG_VP', 'ENG', 'Verb Phrase');
 insert into SYMBOLS values('ENG_NP', 'ENG', 'Noun Phrase');
@@ -29,6 +26,7 @@ insert into SYMBOLS values('V', 'ENG', 'Verb');
 insert into SYMBOLS values('ENG_VBAR1', 'ENG', 'Intermediate Verb Pharse');
 insert into SYMBOLS values('ENG_VBAR2', 'ENG', 'Intermediate Verb Pharse');
 insert into SYMBOLS values('ENG_VBAR3', 'ENG', 'Intermediate Verb Pharse');
+insert into SYMBOLS values('ENG_VBAR4', 'ENG', 'Intermediate Verb Pharse');
 insert into SYMBOLS values('RPRO', 'ENG', 'Relative Pronoun');
 insert into SYMBOLS values('Relative', 'ENG', 'Relativizer feature');
 insert into SYMBOLS values('Aux', 'ENG', 'Auxiliary');
@@ -36,10 +34,16 @@ insert into SYMBOLS values('ENG_RC', 'ENG', 'Relative Clause');
 insert into SYMBOLS values('ENG_IVP', 'ENG', 'Incomplete Verb Phrase');
 insert into SYMBOLS values('ENG_V', 'ENG', 'Verb');
 insert into SYMBOLS values('ENG_TP', 'ENG', 'Tense Phrase');
+insert into SYMBOLS values('ENG_DP', 'ENG', 'Determiner Phrase');
 insert into SYMBOLS values('ENG_RPRO', 'ENG', 'Relative Pronoun');
 insert into SYMBOLS values('ENG_NV', 'ENG', 'Negated Verb');
 insert into SYMBOLS values('NEG', 'ENG', 'Negation');
 insert into SYMBOLS values('RCV', 'ENG', 'Relative Clause Verb');
+insert into SYMBOLS values('PAR', 'ENG', 'Tense particle');
+insert into SYMBOLS values('fwVowel', 'ENG', 'following word starts with vowel');
+insert into SYMBOLS values('fwConsonant', 'ENG', 'following word starts with consonant');
+insert into SYMBOLS values('swVowel', 'ENG', 'word starts with vowel');
+insert into SYMBOLS values('swConsonant', 'ENG', 'word starts with consonant');
 
 /*Constant has hardcoded token value 1 in the yacc source so to avoid collision, the values here are increased
 by 1 during runtime; Entries with NULL value for token are not to be generated in the yacc source.*/
@@ -57,21 +61,19 @@ insert into GCAT values('QPRO', NULL, 'ENG', '8');
 insert into GCAT values('V', 'Stem', 'ENG', '9');
 insert into GCAT values('V', 'Aux', 'ENG', '10');
 insert into GCAT values('V', 'RCV', 'ENG', NULL);
+insert into GCAT values('V', 'Sg', 'ENG', NULL);
 insert into GCAT values('V', 'Pl', 'ENG', NULL);
 insert into GCAT values('RPRO', NULL, 'ENG', '11');
 insert into GCAT values('RPRO', 'Relative', 'ENG', '12');
 insert into GCAT values('NEG', 'Stem', 'ENG', '13');
+insert into GCAT values('PAR', NULL, 'ENG', '18');
+insert into GCAT values('DET','Indef', 'ENG', '19');
+insert into GCAT values('DET','fwVowel', 'ENG', '20');
+insert into GCAT values('DET','fwConsonant', 'ENG', '21');
+insert into GCAT values('N','swVowel', 'ENG', '22');
+insert into GCAT values('N','swConsonant', 'ENG', '23');
+insert into GCAT values('V','Gerund', 'ENG', '24');
 
-/*
-insert into CARDINALITY values('01', '0..1');
-insert into CARDINALITY values('11', '1..1');
-insert into CARDINALITY values('0N', '0..N');
-insert into CARDINALITY values('1N', '1..N');
-
-insert into XLINKS values('0', 'Association');
-insert into XLINKS values('1', 'Aggregation');
-insert into XLINKS values('2', 'Composition');//Composition means 'life cycle dependency'!
-*/
 insert into FUNCTOR_DEFS values('LISTENGV_1', NULL);
 insert into FUNCTOR_DEFS values('FILEENGN_1', NULL);
 insert into FUNCTOR_DEFS values('INENGPREP_1', NULL);
@@ -124,20 +126,10 @@ insert into LEXICON values('be', 'ENG', 'V', 'BEENGV');
 insert into LEXICON values('not', 'ENG', 'NEG', 'NOTENGNEG');
 insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
 insert into LEXICON values('executable', 'ENG', 'A', 'EXECUTABLEENGA');
-
-/*Remove attributives from ENTITIES like executable,etc., leave only pure nouns*/
-/*
-insert into ENTITIES values('ENTITYENGN', '1', 'ENTITYENGN', '1');
-insert into ENTITIES values('FILEENGN', '1', 'ENTITYENGN', '1');
-insert into ENTITIES values('DIRECTORYENGN', '1', 'FILEENGN', '1');
-
-insert into RELATIONS values('ACTENGV', '1', 'ACTENGV', '1');
-insert into RELATIONS values('CHANGEENGV', '1', 'ACTENGV', '1');
-insert into RELATIONS values('CREATEENGV', '1', 'ACTENGV', '1');
-insert into RELATIONS values('MAKEENGV', '1', 'CREATEENGV', '1');
-insert into RELATIONS values('COPYENGV', '1', 'CREATEENGV', '1');
-insert into RELATIONS values('LISTENGV', '1', 'ACTENGV', '1');
-*/
+insert into LEXICON values('a', 'ENG', 'DET', 'AENGDET');
+insert into LEXICON values('an', 'ENG', 'DET', 'ANENGDET');
+insert into LEXICON values('to', 'ENG', 'PREP', 'TOENGPREP');
+insert into LEXICON values('to', 'ENG', 'PAR', 'TOENGPAR');
 
 /*no value in the semantic_dependency field means no dependency*/
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
@@ -159,6 +151,10 @@ insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL,
 insert into DEPOLEX values('BEENGV', '1', '1', NULL, '2', '2', '0', 'NOTENGNEG', '1');
 insert into DEPOLEX values('BEENGV', '1', '2', NULL, NULL, NULL, '0', 'INENGPREP', '1');
 insert into DEPOLEX values('NOTENGNEG', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('AENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('ANENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 COMMIT;
 

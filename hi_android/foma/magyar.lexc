@@ -22,7 +22,7 @@ Multichar_Symbols  +Verb[gcat] +Rep +Imper  +Pot
                   +Vbpfx[gcat] +Noun[gcat] [Guess] [stem]
                   +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat]
                   +Aux[lfea] +RPRO[gcat] +Relative[lfea] +NEG[gcat]
-                  +Constant[lfea]
+                  +CON[gcat]
 
 #begin insertion from enhufnevek.lexc
 +Dis +Ess +Soc +Tem

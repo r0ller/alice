@@ -2,6 +2,8 @@
 
 # Vowels
 define V [ a | e | i | o | u ];
+# Consonants
+define C [ b | c | d | f | g | h | j | k | l | m | n | p | q | r | s | t | v | w | x | y | z ];
 
 #define ToUpcase a -> A || .#. _ ,,
 #                á -> Á || .#. _ ,,
@@ -59,6 +61,20 @@ define YReplacement y -> i e || _ "^" s ;
 # Cleanup: remove morpheme boundaries
 define Cleanup "^" -> 0;
 
+def AddTag [..] -> "+swVowel[lfea]" || .#. V ?* _ .#. .o. 
+           [..] -> "+swConsonant[lfea]" || .#. C ?* _ .#. ;
+
+read lexc engnoun.lexc
+define LexiconN
+
+define GrammarN LexiconN           .o. 
+#               ConsonantDoubling .o. 
+#               EDeletion         .o. 
+               EInsertion        .o. 
+               YReplacement      .o. 
+#               KInsertion        .o. 
+               Cleanup;
+
 read lexc english.lexc
 define Lexicon
 
@@ -70,15 +86,15 @@ define Grammar Lexicon           .o.
 #               KInsertion        .o. 
                Cleanup;
 
-define Grammarup Lexicon           .o. 
+#define Grammarup Lexicon           .o. 
 #               ToUpcase          .o. 
 #               ConsonantDoubling .o. 
 #               EDeletion         .o. 
-               EInsertion        .o. 
-               YReplacement      .o. 
+#               EInsertion        .o. 
+#               YReplacement      .o. 
 #               KInsertion        .o. 
-               Cleanup;
+#               Cleanup;
 
-regex Grammar | Grammarup;
+#regex Grammar | Grammarup;
 
- 
+regex [GrammarN.i .o. AddTag].i | Grammar;

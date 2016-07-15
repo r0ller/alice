@@ -53,13 +53,14 @@ morphan::~morphan(){
 	if(pfstname!=NULL) delete []pfstname;
 }
 
-morphan_result *morphan::analyze(const std::string& word){
+std::vector<morphan_result> *morphan::analyze(const std::string& word){
 	char *result=NULL;
 	std::vector<char> c_word;
 	std::vector<std::string> morphemes_vector;
-	unsigned int separator_position=0, length, start_position=0;
+	size_t separator_position=0, length=0, start_position=0;
 	std::string morphemes;
 	morphan_result *analysis=NULL;
+	std::vector<morphan_result> *analyses=NULL;
 
 //	std::cout<<"analyzing word "<<word<<std::endl;
 	#ifdef __ANDROID__
@@ -68,15 +69,11 @@ morphan_result *morphan::analyze(const std::string& word){
 	c_word.assign(word.begin(),word.end());
 	c_word.push_back('\0');
 	result=apply_up(morphan::morphan_handle, &c_word[0]);
-	if(result!=NULL){//result==NULL means that it cannot be analyzed -> treat it as constant. However, one thing TODO is:
+//	std::cout<<"result:"<<result<<std::endl;
+	if(result!=NULL) analyses=new std::vector<morphan_result>();
+	while(result!=NULL){//result==NULL means that it cannot be analyzed -> treat it as constant. However, one thing TODO is:
 		//think over, what should happen the other way around i.e. when a constant appears which can be analysed???
 		morphemes=std::string((const char *)result);
-		result=apply_up(morphan::morphan_handle, NULL);
-		if(result!=NULL){//TODO: this means that there are >1 possible analyses for the same word form! Think over if rollback can be done in yyerror()
-			//and a new syntactic analysis carried out for the other result of the morphological analysis.
-			//TODO: throw exception
-			exit(EXIT_FAILURE);
-		}
 		separator_position=morphemes.find('+');
 		while(separator_position!=std::string::npos){
 			length=separator_position-start_position;
@@ -88,6 +85,10 @@ morphan_result *morphan::analyze(const std::string& word){
 		}
 		morphemes_vector.push_back(morphemes.substr(start_position,std::string::npos));
 		analysis=new morphan_result(word,morphemes_vector);
+		analyses->push_back(*analysis);
+		morphemes_vector.clear();
+		start_position=0;
+		result=apply_up(morphan::morphan_handle, NULL);
 	}
-	return analysis;
+	return analyses;
 }

@@ -14,8 +14,9 @@
 			std::string human_input;
 			std::string::iterator human_input_iterator;
 			morphan *stemmer;
+			std::vector<morphan_result> *morphalytics;
 			std::deque<unsigned int> token_deque;
-			std::deque<unsigned int> store_word(morphan_result&);
+			lexicon tokenize_word(morphan_result&);
 			void destroy_words();
 			query_result* dependencies_read_for_functor(const std::string&);
 			void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
@@ -30,6 +31,7 @@
 			std::string language();
 			bool is_end_of_input();
 			std::string validated_words();
+			std::vector<lexicon> word_entries();
 	};
 
 	class lexer_error:public std::exception{
