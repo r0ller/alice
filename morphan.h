@@ -23,6 +23,6 @@
 				}
 				return morphan::singleton_instance;
 			};
-			morphan_result *analyze(const std::string&);
+			std::vector<morphan_result> *analyze(const std::string&);
 	};
 #endif
