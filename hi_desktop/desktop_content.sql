@@ -75,6 +75,7 @@ insert into GCAT values('N','swConsonant', 'ENG', '23');
 insert into GCAT values('V','Gerund', 'ENG', '24');
 
 insert into FUNCTOR_DEFS values('LISTENGV_1', NULL);
+insert into FUNCTOR_DEFS values('LISTENGV_2', NULL);
 insert into FUNCTOR_DEFS values('FILEENGN_1', NULL);
 insert into FUNCTOR_DEFS values('INENGPREP_1', NULL);
 insert into FUNCTOR_DEFS values('BEENGV_1', NULL);

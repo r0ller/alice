@@ -3081,8 +3081,9 @@ const char *hi(const char *human_input,const char *language,char *error){
 	char *commandchr=NULL;
 
 	token_paths=new tokenpaths;
-	//TODO:remove commandchr==NULL condition check when a complete implementation for
-	//token paths coverage is done
+	//TODO: remove commandchr==NULL condition check when a complete implementation for
+	//token paths coverage is done i.e. when all token paths are interpreted and not the
+	//first interpretable token path wins
 	while(human_input!=NULL&&commandchr==NULL&&token_paths->is_any_left()==true){
 		std::cout<<"picking new token path"<<std::endl; 
 		try{
@@ -3109,7 +3110,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 					token_paths->add_valid_path(lex->word_entries());
 					std::cout<<"TRUE"<<std::endl;
 					commandstr=transgraph->transcript(std::string());
-					//std::cout<<commandstr<<std::endl;
+					std::cout<<commandstr<<std::endl;
 				}
 				else{
 					token_paths->add_invalid_path(lex->word_entries());
