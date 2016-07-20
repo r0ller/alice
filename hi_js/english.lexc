@@ -1,10 +1,10 @@
 !!!english.lexc!!!
 
-Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat] +Relative[lfea] +NEG[gcat]
+Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat]
++Relative[lfea] +NEG[gcat] [Guess] +CON[gcat] +fwConsonant[lfea] +fwVowel[lfea] +Indef[lfea] +DET[gcat] +PAR[gcat]
 
 LEXICON Root
 
-Noun ;
 Verb ;
 Preposition ;
 Adverb ;
@@ -12,22 +12,12 @@ Adjective ;
 Pronoun ;
 Negation ;
 
-LEXICON Noun
-
-restaurant Ninf;
-location Ninf;
-
 LEXICON Verb
 
 show   Vinf;
 be	Vinf;
 be[stem]+V[gcat]+Sg[lfea]:is #;
 be[stem]+V[gcat]+Pl[lfea]:are #;
-
-LEXICON Ninf
-
-[stem]+N[gcat]+Sg[lfea]:0   #;
-[stem]+N[gcat]+Pl[lfea]:^s  #;
 
 LEXICON Vinf
 
