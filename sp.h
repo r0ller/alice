@@ -71,9 +71,9 @@
 			unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
 			bool find_functors_for_dependency(const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* functors_found_for_dependencies(const node_info&, node_info&);
-			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
-			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&,std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
-			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, const std::string&, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >&);
+			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&);
+			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&,std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&, std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&);
+			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, const std::string&, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&);
 			const std::pair<const unsigned int,field>* followup_dependency(const unsigned int, const std::string&, const std::string&, const bool, const query_result&);
 			std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> calculate_longest_matching_dependency_route(std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&);
 			t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&, std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
@@ -91,7 +91,7 @@
 			std::stack<p_m1_node_id_m2_d_key> node_dependency_traversal_stack;
 			std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> > node_dependency_traversal_stack_tree;
 			t_node_dependency_traversals  node_dependency_traversals;
-			std::map<std::pair<unsigned int,unsigned int>,std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> > >  node_odependency_traversals;
+			std::map<std::pair<unsigned int,unsigned int>,std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> > >  node_odependency_traversals;
 			void get_leafs_of_node_lr(const node_info&, std::vector<unsigned int>&);
 			unsigned int check_prerequisite_symbols(const node_info&, const node_info&);
 		public:

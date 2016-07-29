@@ -360,13 +360,15 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 }
 
 void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
-		std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >& optional_dependencies_checked){
+		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked){
 	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
 	std::string d_key="0";
 	unsigned int d_counter=0;
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::vector<p_m1_node_id_m2_d_key> node_d_key_route;
 	p_m1_node_id_m2_d_key parent_node;
+	std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> > dependencies_found_via_optional_paths;
+	std::set<unsigned int> unique_optional_dependency_paths;
 
 	const node_info& node=get_node_info(node_id);
 	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
@@ -417,7 +419,40 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 			//TODO: figure out what should happen in this case: a previously processed node with its functor/d_key gets processed again...
 			exit(EXIT_FAILURE);
 		}
-		find_dependencies_for_functor(std::to_string(node.node_id),d_key,d_counter,node.node_id,d_key,dependencies_found,optional_dependencies_checked);
+		find_dependencies_for_functor(std::to_string(node.node_id),d_key,d_counter,node.node_id,d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
+		unique_optional_dependency_paths.clear();
+		for(auto&& i:dependencies_found_via_optional_paths){
+			//if there are more than one optional dependency paths leading to the same real dependency,
+			//select the first one and collect them in a set
+			if(unique_optional_dependency_paths.empty()==false){
+				for(auto&& j:unique_optional_dependency_paths){
+					auto optional_dependency_path=dependencies_found_via_optional_paths.find(j);
+					if(i.first!=j&&std::get<0>(i.second)!=std::get<0>(optional_dependency_path->second)
+						&&std::get<1>(i.second)!=std::get<1>(optional_dependency_path->second)
+						&&std::get<2>(i.second)!=std::get<2>(optional_dependency_path->second)){
+						unique_optional_dependency_paths.insert(i.first);
+					}
+				}
+			}
+			else{
+				unique_optional_dependency_paths.insert(i.first);
+			}
+		}
+		for(std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >::iterator j=optional_dependencies_checked.begin();j!=optional_dependencies_checked.end();){
+			auto unique_optional_dependency_path=unique_optional_dependency_paths.find(std::get<3>(j->second));
+			if(unique_optional_dependency_path==unique_optional_dependency_paths.end()){
+				//if there are more than one optional dependency paths leading to the same real dependency,
+				//keep only the first ones selected into unique_optional_dependency_paths, delete all others
+				j=optional_dependencies_checked.erase(j);
+			}
+			else if(std::get<4>(j->second)>std::get<3>(dependencies_found_via_optional_paths.find(*unique_optional_dependency_path)->second)){
+				//Cut off optional dependencies checked out that stem from a real dependency but lead to no other real dependency
+				j=optional_dependencies_checked.erase(j);
+			}
+			else{
+				++j;
+			}
+		}
 		parent_node=node_dependency_traversal_stack.top();
 		if(dependencies_found.empty()==false){
 			auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
@@ -486,7 +521,8 @@ const std::pair<const unsigned int,field>* interpreter::followup_dependency(cons
 void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key, const unsigned int parent_d_counter,
 		const unsigned int node_id, const std::string& d_key,
 		t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
-		std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >& optional_dependencies_checked){
+		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked,
+		std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >& dependencies_found_via_optional_paths){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string semantic_dependency,ref_d_key,d_counter="0",manner,d_failover,d_successor;
 	std::multimap<unsigned int,unsigned int>::const_iterator dependency_matrix_entry;
@@ -534,7 +570,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				if(d_key_validated_dependencies.find(dependency_matrix_entry->second)==d_key_validated_dependencies.end()){
 					d_counter_validated_dependencies.insert(dependency_matrix_entry->second);
 					d_key_validated_dependencies.insert(dependency_matrix_entry->second);
-					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked);
+					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 				}
 			}
 			if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
@@ -548,7 +584,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					||manner=="2"&&d_counter_validated_dependencies.size()<=1){
 //				std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<std::endl;
 				if(std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str())){
-					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),node_id,d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked);
+					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),node_id,d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 				}
 				dependency_found_for_functor=false;
 			}
@@ -651,7 +687,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key,const unsigned int parent_d_counter,
 		const unsigned int node_id, const std::string& node_d_key, const std::string& functor, const std::string& d_key,
 		t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
-		std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> >& optional_dependencies_checked){
+		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked,
+		std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >& dependencies_found_via_optional_paths){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string semantic_dependency,ref_d_key,d_counter="0",manner,d_failover,d_successor;
 	std::multimap<unsigned int,unsigned int>::const_iterator dependency_matrix_entry;
@@ -659,7 +696,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	t_map_of_node_ids_and_d_keys_to_nr_of_deps::iterator dependencies_found_entry;
 	std::set<unsigned int> d_counter_validated_dependencies,d_key_validated_dependencies,checked_d_counters;
 	bool dependency_found_for_functor=false;
-	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0;
+	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0,path_nr=0,odep_level=0;
 
 	const node_info& node=get_node_info(node_id);
 //	std::cout<<"checking dependency for optional functor "<<functor<<" d_key "<<d_key<<std::endl;
@@ -685,8 +722,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
 //				std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
 				d_counter_validated_dependencies.clear();
-				//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
-				optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,std::atoi(parent_d_key.c_str()),parent_d_counter)));
+				//Insert the corresponding entry into optional_dependencies_checked to indicate that the node id is already being checked
+				if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
+				else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
+				odep_level=optional_dependencies_checked.size()+1;
+				optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,std::atoi(parent_d_key.c_str()),parent_d_counter,path_nr,odep_level,std::atoi(d_counter.c_str()))));
+//				std::cout<<"optional dependency level:"<<odep_level<<std::endl;
+//				std::cout<<"path_nr:"<<path_nr<<std::endl;
 				for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 						dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 						++dependency_matrix_entry){
@@ -696,7 +738,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					if(d_key_validated_dependencies.find(dependency_matrix_entry->second)==d_key_validated_dependencies.end()){
 						d_counter_validated_dependencies.insert(dependency_matrix_entry->second);
 						d_key_validated_dependencies.insert(dependency_matrix_entry->second);
-						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked);
+						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 					}
 				}
 				if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
@@ -711,7 +753,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 //					std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<functor<<" with d_key "<<d_key<<std::endl;
 					if((std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str()))
 						&&optional_dependencies_checked.find(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())))==optional_dependencies_checked.end()){
-						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked);
+						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 					}
 					dependency_found_for_functor=false;
 				}
@@ -721,17 +763,62 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				}
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependency_found_for_functor==true){
+					unsigned int nr_of_deps_to_add=0;
 					if(dependencies_found_entry!=dependencies_found.end()){
-						std::get<2>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
-						if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
-							std::get<1>(dependencies_found_entry->second)+=d_counter_validated_dependencies.size();
+						//shall path_nr be recalculated here or the previously calculated value should be used?
+						if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
+						else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
+						for(auto&& i:d_counter_validated_dependencies){
+							bool dependency_already_found_for_node_id=false;
+							for(auto&& j:dependencies_found_via_optional_paths){
+								if(std::get<0>(j.second)==node_id
+									&&std::get<1>(j.second)==std::atoi(node_d_key.c_str())
+									&&std::get<2>(j.second)==i){
+									dependency_already_found_for_node_id=true;
+									break;
+								}
+							}
+							if(dependency_already_found_for_node_id==false){
+//								std::cout<<"register dependency "<<semantic_dependency<<" for functor "<<get_node_info(node_id).expression.lexeme<<" node_id "<<node_id<<" with optional functor "<<functor<<std::endl;
+//								std::cout<<"optional dependency level:"<<odep_level<<std::endl;
+								dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
+								++nr_of_deps_to_add;
+							}
 						}
-						else{
-							//Don't increase counter for found dependencies: this indicates a deliberate error on the success branch
+						if(nr_of_deps_to_add>0){
+							std::get<2>(dependencies_found_entry->second)+=nr_of_deps_to_add;
+							if(std::atoi(d_successor.c_str())==0||std::atoi(d_successor.c_str())>std::atoi(d_counter.c_str())){
+								std::get<1>(dependencies_found_entry->second)+=nr_of_deps_to_add;
+							}
+							else{
+								//Don't increase counter for found dependencies: this indicates a deliberate error on the success branch
+							}
 						}
 					}
 					else{
-						dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(parent_node_id,d_counter_validated_dependencies.size(),d_counter_validated_dependencies.size(),std::atoi(parent_d_key.c_str()),parent_d_counter)));
+						//shall path_nr be recalculated here or the previously calculated value should be used?
+						if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
+						else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
+						for(auto&& i:d_counter_validated_dependencies){
+							bool dependency_already_found_for_node_id=false;
+							for(auto&& j:dependencies_found_via_optional_paths){
+								if(std::get<0>(j.second)==node_id
+									&&std::get<1>(j.second)==std::atoi(node_d_key.c_str())
+									&&std::get<2>(j.second)==i){
+									dependency_already_found_for_node_id=true;
+									break;
+								}
+							}
+							if(dependency_already_found_for_node_id==false){
+//								std::cout<<"register dependency "<<semantic_dependency<<" for functor "<<get_node_info(node_id).expression.lexeme<<" node_id "<<node_id<<" with optional functor "<<functor<<std::endl;
+//								std::cout<<"optional dependency level:"<<odep_level<<std::endl;
+								dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
+								++nr_of_deps_to_add;
+							}
+						}
+						if(nr_of_deps_to_add>0){
+							dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(parent_node_id,nr_of_deps_to_add,nr_of_deps_to_add,std::atoi(parent_d_key.c_str()),parent_d_counter)));
+						}
 					}
 				}
 				else{//Don't increase dependencies_found_entry.second.second i.e. the counter for expected dependecies to be found as nothing is expected to be found for an optional dependency
@@ -805,7 +892,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 
 transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	t_map_of_node_ids_and_d_keys_to_nr_of_deps dependencies_found;
-	std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int> > optional_dependencies_checked;
+	std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> > optional_dependencies_checked;
 	std::vector<unsigned int> verbs_found;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
@@ -848,6 +935,7 @@ std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_
 	std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 
 	for(auto&& i:node_dependency_traversal_stack_tree){
+//		std::cout<<"tree level: "<<i.first.first<<std::endl;
 		if(i.first.first==node_level){
 			std::get<1>(nr_of_deps)=0;
 			std::get<2>(nr_of_deps)=0;
@@ -860,9 +948,9 @@ std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_
 	std::get<1>(functor_found.second)=0;
 	std::get<2>(functor_found.second)=0;
 	for(auto&& i:longest_traversals){
-//TODO: two interpretations with the same number of deps must not be allowed.
-//The only exception is when the scripts behind the functors are the same.
-//This logic is missing though here.
+	//TODO: two interpretations with the same number of deps must not be allowed.
+	//The only exception is when the scripts behind the functors are the same.
+	//This logic is missing though here.
 		if(std::get<1>(i.second.first)>std::get<1>(functor_found.second)){
 			functor_found.first=i.first;
 			functor_found.second=i.second.first;
@@ -1265,7 +1353,8 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 					if(functors_processed.find(std::make_pair(i.first.first,i.first.second))==functors_processed.end()){
 //						std::cout<<"recursive call 2"<<std::endl;
 //						std::cout<<"debug lexeme:"<<i.first.first<<", d_key:"<<i.first.second<<
-//						", parent node:"<<i.second.first<<", parent d_key:"<<i.second.second<<std::endl;
+//						", parent node:"<<std::get<0>(i.second)<<", parent d_key:"<<std::get<1>(i.second)<<
+//						", odep_level:"<<std::get<4>(i.second)<<std::endl;
 						functor_transgraph->insert(std::get<2>(i.second),build_transgraph(root,std::make_pair(i.first.first,i.first.second),longest_traversals,node_level));
 						functors_processed.insert(std::make_pair(i.first.first,i.first.second));
 //						std::cout<<"recursive return 2"<<std::endl;

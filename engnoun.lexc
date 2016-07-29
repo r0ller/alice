@@ -10,8 +10,8 @@ Noun ;
 LEXICON Noun
 
 [Guess] Constant;
-file Ninf;
-directory Ninf;
+restaurant Ninf;
+location Ninf;
 
 LEXICON Constant
 [stem]+CON[gcat]:0	#;

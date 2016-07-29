@@ -11,12 +11,10 @@ Adverb ;
 Adjective ;
 Pronoun ;
 Negation ;
-Determiner ;
-Particle ;
 
 LEXICON Verb
 
-list   Vinf;
+show   Vinf;
 be	Vinf;
 be[stem]+V[gcat]+Sg[lfea]:is #;
 be[stem]+V[gcat]+Pl[lfea]:are #;
@@ -24,7 +22,6 @@ be[stem]+V[gcat]+Pl[lfea]:are #;
 LEXICON Vinf
 
 [stem]+V[gcat]:0 #;
-[stem]+V[gcat]+Gerund[lfea]:^ing #;
 
 LEXICON Vaux
 
@@ -32,9 +29,8 @@ LEXICON Vaux
 
 LEXICON Preposition
 
-from Pinf;
 in Pinf;
-to Pinf;
+of Pinf;
 
 LEXICON Pinf
 
@@ -50,7 +46,8 @@ LEXICON Advinf
 
 LEXICON Adjective
 
-executable Adjinf;
+first Adjinf;
+last Adjinf;
 
 LEXICON Adjinf
 
@@ -71,16 +68,3 @@ not Neg;
 LEXICON Neg
 
 [stem]+NEG[gcat]:0 #;
-
-LEXICON Determiner
-
-a[stem]+DET[gcat]+Indef[lfea]+fwConsonant[lfea]:a #;
-a[stem]+DET[gcat]+Indef[lfea]+fwVowel[lfea]:an #;
-
-LEXICON Particle
-
-to Par;
-
-LEXICON Par
-
-[stem]+PAR[gcat]:0 #;
