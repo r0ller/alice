@@ -12,7 +12,7 @@
 	#include <iostream>
 	#include "sqlite3.h"
 	#include "db.h"
-	#include "tokenpaths.cpp";
+	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
 	#include "lexer.h"
 	lexer *lex=NULL;
@@ -25,7 +25,7 @@
 	interpreter *sparser=NULL;
 	#include "lexer.cpp"
 	#include "sp.cpp"
-	#include "transgraph.cpp";
+	#include "transgraph.cpp"
 	void yyerror(char const *yymsgp);
 %}
 
@@ -969,7 +969,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 					token_paths->add_valid_path(lex->word_entries());
 					std::cout<<"TRUE"<<std::endl;
 					commandstr=transgraph->transcript(std::string());
-//					std::cout<<commandstr<<std::endl;
+					std::cout<<commandstr<<std::endl;
 				}
 				else{
 					token_paths->add_invalid_path(lex->word_entries());

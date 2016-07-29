@@ -77,7 +77,7 @@
 	#include <iostream>
 	#include "sqlite3.h"
 	#include "db.h"
-	#include "tokenpaths.cpp";
+	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
 	#include "lexer.h"
 	lexer *lex=NULL;
@@ -90,7 +90,7 @@
 	interpreter *sparser=NULL;
 	#include "lexer.cpp"
 	#include "sp.cpp"
-	#include "transgraph.cpp";
+	#include "transgraph.cpp"
 	void yyerror(char const *yymsgp);
 
 #line 97 "y.tab.c" /* yacc.c:339  */
