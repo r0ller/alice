@@ -8,6 +8,7 @@ lexer::lexer(const char *input_string,const char *language){
 		human_input_iterator=human_input.begin();
 		stemmer=morphan::get_instance(lid);
 		morphalytics=NULL;
+		token=0;
 }
 
 lexer::~lexer(){
@@ -17,7 +18,7 @@ lexer::~lexer(){
 }
 
 unsigned int lexer::next_token(){
-	unsigned int token=0;
+//	unsigned int token=0;
 	std::string last_word,new_word_form;
 	lexicon new_word;
 
@@ -122,7 +123,7 @@ lexicon lexer::last_word_scanned(const unsigned int token){
 			word.dependencies=NULL;//Leave empty
 			word.morphalytics=words[nr_of_words-1].morphalytics;
 			word.tokens=words[nr_of_words-1].tokens;
-			sqlite=db::get_instance();
+			sqlite=db_factory::get_instance();
 			//TODO:if the logic works, consider reorg of GCAT table to make the token field (or token and lid) the key
 			gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+words[nr_of_words-1].gcat+"' AND LID = '"+language()+"' AND TOKEN = '"+std::to_string(internal_token)+"';");
 			if(gcats_and_lingfeas==NULL||gcats_and_lingfeas!=NULL&&gcats_and_lingfeas->nr_of_result_rows()>1){
@@ -172,7 +173,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 	const std::pair<const unsigned int,field> *field;
 	std::vector<std::string> morphemes;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	//TODO:convert gcat to uppercase
 	//std::transform(morphalytics.gcat().begin(),morphalytics.gcat().end(),gcat.begin(),::toupper);
 	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + morphalytics.stem() + "' AND LID = '"+language()+"' AND GCAT = '" + morphalytics.gcat() + "';");
@@ -288,7 +289,7 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	std::string semantic_dependency,ref_d_key;
 	unsigned int n=0;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
@@ -307,7 +308,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 	unsigned int n=0;
 	const std::pair<const unsigned int,field> *dependency=NULL;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 //	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
 	dependencies->append(*result);
@@ -386,4 +387,8 @@ std::string lexer::validated_words(){
 
 std::vector<lexicon> lexer::word_entries(){
 	return words;
+}
+
+unsigned int lexer::last_token_returned(){
+	return token;
 }

@@ -47,7 +47,7 @@ unsigned int interpreter::check_prerequisite_symbols(const node_info& parent_nod
 	unsigned int current_step=0,successor=0,failover=0,rule_step_failed=0;
 
 //	std::cout<<"checking prerequisite symbols for parent symbol:"<<parent_node.symbol<<", child symbol:"<<child_node.symbol<<std::endl;
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+parent_node.symbol+"' AND HEAD_ROOT_SYMBOL = '"+child_node.symbol+"' AND (NON_HEAD_ROOT_SYMBOL = '' OR NON_HEAD_ROOT_SYMBOL IS NULL) ORDER BY STEP;");
 	if(rule_to_rule_map!=NULL){
 		rule_entry=rule_to_rule_map->first_value_for_field_name_found("step","1");
@@ -186,7 +186,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 		/*printf("combined node id:%d\n",(*this->private.node_info[this->private.nr_of_nodes-1]).node_id);*/
 		nodeinfo.symbol=symbol;
 		/*printf("symbol:%s\n",(*this->private.node_info[this->private.nr_of_nodes-1]).symbol);*/
-		sqlite=db::get_instance();
+		sqlite=db_factory::get_instance();
 //		std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
 		rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
 		//TODO:Check how to find out CON iotype so that CONs can be part of a combination
@@ -296,7 +296,7 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	}
 	d_key_list.resize(d_key_list.length()-1);//remove last ','
 	d_key_list+=")";
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	functors=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+functor+"' AND D_KEY IN "+d_key_list+";");
 	if(functors==NULL) exit(EXIT_FAILURE);
 	for(auto i=functors_found->begin();i!=functors_found->end();){
@@ -875,7 +875,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 	db *sqlite=NULL;
 	query_result *gcats=NULL;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	gcats=sqlite->exec_sql("SELECT DISTINCT GCAT FROM GCAT;");
 	if(gcats==NULL){
 		//TODO: throw exception
@@ -1045,7 +1045,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	std::multimap<unsigned int,unsigned int> ref_node_ids_to_set;
 	std::set<unsigned int>::const_iterator main_ref_node_id,dep_ref_node_id;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"' ORDER BY STEP;");
 	if(rule_to_rule_map==NULL) exit(EXIT_FAILURE);//TODO: throw exception
 	rule_entry=rule_to_rule_map->first_value_for_field_name_found("step","1");

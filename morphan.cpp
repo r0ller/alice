@@ -9,7 +9,7 @@ morphan::morphan(const std::string& lid){
 	query_result *fsts=NULL;
 	unsigned int fstname_length=0;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	fsts=sqlite->exec_sql("SELECT FST FROM LANGUAGES WHERE LID = '"+lid+"';");
 	if(fsts==NULL){
 		//TODO: throw exception

@@ -10,6 +10,7 @@ import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -34,12 +35,17 @@ public class MainActivity extends Activity implements OnClickListener {
     private ArrayList<String> recognisedTexts;
     private int nrOfTrials=0;
     private String commandPartOk;
+    private static Context context;
 
     static {
-    	System.loadLibrary("sqlite");
+//    	System.loadLibrary("sqlite");
     	System.loadLibrary("foma");
         System.loadLibrary("hilib");
         System.loadLibrary("jhi");
+    }
+
+    public static Context getContext(){
+    	return context;
     }
 
     private static boolean copyAssetFolder(AssetManager assetManager,
@@ -99,6 +105,7 @@ public class MainActivity extends Activity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	context=this;
         setContentView(R.layout.activity_main);
         findViewById(R.id.button1).setOnClickListener(this);
         mWebView = (WebView) findViewById(R.id.webview);
@@ -259,7 +266,7 @@ public class MainActivity extends Activity implements OnClickListener {
 //						    Toast.makeText(this, "Ok:"+commandPartOk, Toast.LENGTH_LONG).show();
 
 //beginSilentDebug
-//						    recognisedText="betűvel b a r b a r á t";
+//						    recognisedText="betűvel a l i z t";
 ////					    	recognisedTexts.add(command);//TODO:check why this makes the app dump
 //							((TextView)findViewById(R.id.text1)).setText(recognisedText);
 //					    	//Get default (primary) language set for voice input 
@@ -268,12 +275,14 @@ public class MainActivity extends Activity implements OnClickListener {
 //					        sendOrderedBroadcast(i, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
 //endSilentDebug
 
+//beginNormalDebug
 						    Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 					    	try {
 					    		startActivityForResult(i, REQUEST_OK);
 					        } catch (Exception e) {
 					        	Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
 					        }
+//endNormalDebug
 					    }
 				    }
 				    catch(UnsupportedEncodingException e){
@@ -296,7 +305,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				  commandPartOk=commandPartOk.replaceAll(" +$","");
 
 //beginSilentDebug
-//				  recognisedText="betűvel b a r b a r á t";
+//				  recognisedText="betűvel a l i z t";
 ////				  recognisedTexts.add(command);//TODO:check why this makes the app dump
 //				  ((TextView)findViewById(R.id.text1)).setText(recognisedText);
 //				  //Get default (primary) language set for voice input 
@@ -305,12 +314,14 @@ public class MainActivity extends Activity implements OnClickListener {
 //				  sendOrderedBroadcast(i, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
 //endSilentDebug
 
+//beginNormalDebug
 				  Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 				  try {
 					  startActivityForResult(i, REQUEST_OK);
 				  } catch (Exception e) {
 					  Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
 				  }
+//endNormalDebug
 			  }
 	    }
 	    super.onNewIntent(intent);
@@ -320,7 +331,7 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onClick(View v){
 //beginSilentDebug
 //		nrOfTrials=0;
-//		recognisedText="hívd fel barbarát";
+//		recognisedText="hívd fel a liszt";
 ////    	recognisedTexts.add(command);//TODO:check why this makes the app dump
 //		((TextView)findViewById(R.id.text1)).setText(recognisedText);
 //    	//Get default (primary) language set for voice input 
@@ -329,6 +340,7 @@ public class MainActivity extends Activity implements OnClickListener {
 //        sendOrderedBroadcast(intent, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
 //endSilentDebug
 
+//beginNormalDebug
 		nrOfTrials=0;
 		Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     	try {
@@ -336,6 +348,7 @@ public class MainActivity extends Activity implements OnClickListener {
         } catch (Exception e) {
         	Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
         }
+//endNormalDebug
     }
 
     @Override

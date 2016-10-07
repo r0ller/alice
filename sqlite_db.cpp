@@ -1,40 +1,36 @@
-#include "db.h"
-#include <algorithm>
+#include "sqlite_db.h"
 
-db *db::singleton_instance=NULL;
-int (*db::fptr_store_row_data)(void *, int, char **, char **)=NULL;
+int (*sqlite_db::fptr_store_row_data)(void *, int, char **, char **)=NULL;
 
-db::db(){
+sqlite_db::sqlite_db(){
 	sqlite=NULL;
-	db::fptr_store_row_data=&db::store_row_data;
+	sqlite_db::fptr_store_row_data=&sqlite_db::store_row_data;
 }
 
-/*PUBLIC*/
-
-db::~db(){
-	db::singleton_instance=NULL;
+sqlite_db::~sqlite_db(){
+	sqlite=NULL;
 }
 
-void db::open(const std::string& filename){
+void sqlite_db::open(const std::string& filename){
 	if(sqlite3_open(filename.c_str(),&sqlite)!=SQLITE_OK) throw failed_to_open_db();
 	return;
 }
 
-void db::close(){
+void sqlite_db::close(){
 	if(sqlite3_close(sqlite)!=SQLITE_OK) throw failed_to_close_db();
 	return;
 }
 
-const std::string db::error_message(){
+const std::string sqlite_db::error_message(){
 	return sqlite3_errmsg(sqlite);
 }
 
-query_result *db::exec_sql(const std::string& sql){
+query_result *sqlite_db::exec_sql(const std::string& sql){
 	query_result *result_set=NULL;
 
 //	std::cout<<sql<<std::endl;
 	result_set=new query_result();
-	if(sqlite3_exec(sqlite, sql.c_str(), db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
+	if(sqlite3_exec(sqlite, sql.c_str(), sqlite_db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
 		throw sql_execution_error();
 	}
 	if(result_set->nr_of_result_rows()==0){
@@ -45,7 +41,7 @@ query_result *db::exec_sql(const std::string& sql){
 }
 
 /*PRIVATE*/
-int db::store_row_data(void *p_result, int nr_of_columns, char **field_values, char **fields){/*CALLBACK function for sqlite3_exec*/
+int sqlite_db::store_row_data(void *p_result, int nr_of_columns, char **field_values, char **fields){/*CALLBACK function for sqlite3_exec*/
 	unsigned int row_index=0;
 	query_result *result=NULL;
 	field field;

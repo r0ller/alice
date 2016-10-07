@@ -28,7 +28,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	unsigned int feature_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	if(type!="CON"){
 		dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 		if(dependencies==NULL) exit(EXIT_FAILURE);//TODO: throw exception
@@ -114,9 +114,6 @@ std::string transgraph::transcript(const std::string& type) const{
 			transcript+="true; };"+functor.first+"_"+std::to_string(functor.second)+"_OUT="+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+")"+";";
 		}
 	}
-	#if defined(__ANDROID__)
-	__android_log_print(ANDROID_LOG_INFO, "hi", "debug");
-	#endif
 	return transcript;
 }
 #elif defined(__EMSCRIPTEN__)
@@ -130,7 +127,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	unsigned int feature_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	if(type!="CON"){
 		dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 		if(dependencies==NULL) exit(EXIT_FAILURE);//TODO: throw exception
@@ -249,7 +246,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	unsigned int feature_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	if(type!="CON"){
 		dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 		if(dependencies==NULL) exit(EXIT_FAILURE);//TODO: throw exception

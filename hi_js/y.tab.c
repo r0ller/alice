@@ -67,22 +67,23 @@
 	extern "C"{
 		int yyparse(void);
 		int yylex(void);
-		void yyerror(char *);
+		void yyerror(char const *yymsgp);
 		int yywrap(void);
 	}
 
-	#ifdef __ANDROID__
-	#include "log.h"
-	#endif
 	#include <iostream>
-	#include "sqlite3.h"
+	#ifdef __ANDROID__
+		#include "log.h"
+		#include "jni.h"
+		JavaVM *jvm=NULL;
+		jobject activity;
+	#endif
 	#include "db.h"
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
 	#include "lexer.h"
 	lexer *lex=NULL;
 	#include "query_result.cpp"
-	#include "db.cpp"
 	#include "morphan_result.cpp"
 	#include "morphan.cpp"
 	morphan *stemmer=NULL;
@@ -91,7 +92,6 @@
 	#include "lexer.cpp"
 	#include "sp.cpp"
 	#include "transgraph.cpp"
-	void yyerror(char const *yymsgp);
 
 #line 97 "y.tab.c" /* yacc.c:339  */
 
@@ -3074,7 +3074,12 @@ void yyerror(char const *yymsgp){
 extern "C"{
 #endif
 
+#ifdef __ANDROID__
+const char *hi(const char *human_input,const char *language,char *error, JavaVM *vm, jobject activityobj){
+#else
 const char *hi(const char *human_input,const char *language,char *error){
+#endif
+
 	std::string commandstr,last_word,validated_words;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
@@ -3088,13 +3093,17 @@ const char *hi(const char *human_input,const char *language,char *error){
 		std::cout<<"picking new token path"<<std::endl; 
 		try{
 			if(sqlite==NULL){
-				sqlite=db::get_instance();
 				#ifdef __ANDROID__
 					__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
-					sqlite->open("/data/data/hi.pkg/hi.db");//TODO: get cwd on android
-				#else
-					sqlite->open("hi.db");
+					if(vm!=NULL) jvm=vm;
+					else{
+						__android_log_print(ANDROID_LOG_INFO, "hi", "vm is NULL!");
+						exit(EXIT_FAILURE);
+					}
+					activity=activityobj;
 				#endif
+				sqlite=db_factory::get_instance();
+				sqlite->open("hi.db");
 			}
 			lex=new lexer(human_input,language);
 			#ifdef __ANDROID__
@@ -3137,6 +3146,29 @@ const char *hi(const char *human_input,const char *language,char *error){
 			else{//syntax error for token in yychar
 				token_paths->add_invalid_path(lex->word_entries());
 				token_paths->mark_syntax_error(lex->last_word_scanned());
+/*				std::cout<<"yychar="<<yychar<<std::endl;
+				std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
+				std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
+				//checking sparser->validated_terminals() may help in either this or the else branch
+				std::set<unsigned int> validated_terminals;
+				validated_terminals=sparser->validated_terminals();
+				if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)!=validated_terminals.end()){
+					std::cout<<"yychar found in validated terminals!"<<std::endl;
+				}
+				else if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)==validated_terminals.end()){
+					std::cout<<"yychar NOT found in validated terminals!"<<std::endl;
+				}
+				else std::cout<<"yychar is empty or 0"<<std::endl;
+				if(validated_terminals.find(lex->last_token_returned())!=validated_terminals.end()){
+					std::cout<<"last token found in validated terminals!"<<std::endl;
+				}
+				else{
+					std::cout<<"last token NOT found in validated terminals!"<<std::endl;
+				}
+//				if(lex->nr_of_words==1&&lex->last_word_scanned().token==lex->last_token_returned()){
+//				}
+				//TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token 
+				token_paths->followup_token(lex->last_token_returned());*/
 				validated_words=lex->validated_words();
 				std::cout<<"validated words:"<<validated_words<<std::endl;
 				if(lex->last_word_scanned().morphalytics!=NULL)
@@ -3169,15 +3201,27 @@ const char *hi(const char *human_input,const char *language,char *error){
 			}
 		}
 		catch(sql_execution_error& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(failed_to_open_db& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(failed_to_close_db& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(lexicon_type_and_db_table_schema_mismatch& exception){

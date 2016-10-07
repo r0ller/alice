@@ -47,6 +47,9 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 	bool entry_already_exists=false;
 	std::multimap<unsigned int,field>::iterator upper_bound,erase_invalidation_iterator_copy;
 
+//	#ifdef __ANDROID__
+//	__android_log_print(ANDROID_LOG_INFO, "hi", std::string("query_result->insert() "+std::to_string(row.first)+","+row.second.field_name+","+row.second.field_value).c_str());
+//	#endif
 	if(raw_result_set.empty()==false){
 		//check to avoid inserting a value for an existing field with the same name with the same row id
 		if(field_value_at_row_position(row.first,row.second.field_name)==NULL){
