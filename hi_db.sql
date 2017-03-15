@@ -24,13 +24,12 @@ create table GCAT(/*Eventually, table for terminal symbols, i.e. to which yacc t
 gcat varchar(12), /*references SYMBOLS(symbol),*/
 feature varchar(12), /*references SYMBOLS(symbol),*/
 lid varchar(5) references LANGUAGES(lid),
-token smallint,
-/*description varchar(128),*/
-PRIMARY KEY(gcat, feature, lid) /*gcat, feature, lid are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
+token smallint,/*unsigned ints are assigned as tokens to terminal symbols, NULLs being unconvertable by std::atoi() won't get a generated token in the bison source*/
+PRIMARY KEY(gcat, feature) /*gcat, feature, lid are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 );
-/*create unique index i_gcat_lid on GCAT(gcat, lid);*/
+create unique index i_token on GCAT(token);
 
 create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
@@ -148,9 +147,13 @@ FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
 );
 
 create table GRAMMAR(
+lid varchar(5) references LANGUAGES(lid),
 parent_symbol varchar(12),
 head_symbol varchar(12),
 non_head_symbol varchar(12),
 action text,/*if content is in quotes then it is regarded as code, if not then it is regarded as filename*/
-PRIMARY KEY(parent_symbol, head_symbol, non_head_symbol)
+PRIMARY KEY(lid, parent_symbol, head_symbol, non_head_symbol)
+FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 );

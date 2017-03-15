@@ -6,18 +6,22 @@
 		int yywrap(void);
 	}
 
-	#ifdef __ANDROID__
-	#include "log.h"
-	#endif
 	#include <iostream>
-	#include "sqlite3.h"
+	#ifdef __ANDROID__
+		#include "log.h"
+		#include "jni.h"
+		JavaVM *jvm=NULL;
+		jobject activity;
+	#endif
+	#ifdef __EMSCRIPTEN__
+		#include <emscripten.h>
+	#endif
 	#include "db.h"
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
 	#include "lexer.h"
 	lexer *lex=NULL;
 	#include "query_result.cpp"
-	#include "db.cpp"
 	#include "morphan_result.cpp"
 	#include "morphan.cpp"
 	morphan *stemmer=NULL;

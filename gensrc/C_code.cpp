@@ -19,7 +19,14 @@ void yyerror(char const *yymsgp){
 extern "C"{
 #endif
 
+#ifdef __ANDROID__
+const char *hi(const char *human_input,const char *language,char *error, JavaVM *vm, jobject activityobj){
+#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+const char *hi(const char *human_input,const char *language,const char *db_uri,char *error){
+#else
 const char *hi(const char *human_input,const char *language,char *error){
+#endif
+
 	std::string commandstr,last_word,validated_words;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
@@ -33,12 +40,26 @@ const char *hi(const char *human_input,const char *language,char *error){
 		std::cout<<"picking new token path"<<std::endl;
 		try{
 			if(sqlite==NULL){
-				sqlite=db::get_instance();
 				#ifdef __ANDROID__
 					__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
-					sqlite->open("/data/data/hi.pkg/hi.db");//TODO: get cwd on android
+					if(vm!=NULL) jvm=vm;
+					else{
+						__android_log_print(ANDROID_LOG_INFO, "hi", "vm is NULL!");
+						exit(EXIT_FAILURE);
+					}
+					activity=activityobj;
+				#endif
+				sqlite=db_factory::get_instance();
+				#if defined(__EMSCRIPTEN__) && FS==NETWORK
+				sqlite->open(db_uri);
+				#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+				EM_ASM(
+					FS.mkdir('/virtual');
+					FS.mount(NODEFS, { root: '.' }, '/virtual');
+				);
+				sqlite->open("/virtual/hi.db");
 				#else
-					sqlite->open("hi.db");
+				sqlite->open("hi.db");
 				#endif
 			}
 			lex=new lexer(human_input,language);
@@ -82,7 +103,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 			else{//syntax error for token in yychar
 				token_paths->add_invalid_path(lex->word_entries());
 				token_paths->mark_syntax_error(lex->last_word_scanned());
-				std::cout<<"yychar="<<yychar<<std::endl;
+/*				std::cout<<"yychar="<<yychar<<std::endl;
 				std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
 				std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
 				//checking sparser->validated_terminals() may help in either this or the else branch
@@ -104,7 +125,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 //				if(lex->nr_of_words==1&&lex->last_word_scanned().token==lex->last_token_returned()){
 //				}
 				//TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token
-				token_paths->followup_token(lex->last_token_returned());
+				token_paths->followup_token(lex->last_token_returned());*/
 				validated_words=lex->validated_words();
 				std::cout<<"validated words:"<<validated_words<<std::endl;
 				if(lex->last_word_scanned().morphalytics!=NULL)
@@ -137,15 +158,27 @@ const char *hi(const char *human_input,const char *language,char *error){
 			}
 		}
 		catch(sql_execution_error& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(failed_to_open_db& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(failed_to_close_db& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(lexicon_type_and_db_table_schema_mismatch& exception){
@@ -207,7 +240,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 	delete token_paths;
 	token_paths=NULL;
 	sqlite->close();
-	delete sqlite;
+	db_factory::delete_instance();
 	sqlite=NULL;
 	return commandchr;
 }

@@ -71,10 +71,16 @@
 		int yywrap(void);
 	}
 
-	#ifdef __ANDROID__
-	#include "log.h"
-	#endif
 	#include <iostream>
+	#ifdef __ANDROID__
+		#include "log.h"
+		#include "jni.h"
+		JavaVM *jvm=NULL;
+		jobject activity;
+	#endif
+	#ifdef __EMSCRIPTEN__
+		#include <emscripten.h>
+	#endif
 	#include "db.h"
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
@@ -90,7 +96,7 @@
 	#include "sp.cpp"
 	#include "transgraph.cpp"
 
-#line 94 "y.tab.c" /* yacc.c:339  */
+#line 100 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -166,7 +172,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 170 "y.tab.c" /* yacc.c:358  */
+#line 176 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -440,17 +446,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    65,    65,    70,    75,    84,    91,   100,   107,   114,
-     121,   128,   148,   156,   164,   171,   178,   185,   192,   200,
-     208,   216,   223,   232,   241,   252,   259,   268,   277,   286,
-     293,   300,   309,   319,   328,   337,   346,   355,   362,   369,
-     376,   383,   390,   397,   404,   413,   422,   431,   438,   445,
-     452,   464,   471,   478,   487,   496,   503,   510,   519,   526,
-     535,   545,   555,   564,   571,   578,   591,   601,   610,   617,
-     626,   645,   654,   661,   677,   684,   693,   700,   707,   714,
-     723,   732,   741,   750,   759,   769,   776,   783,   791,   801,
-     810,   819,   828,   837,   846,   855,   862,   869,   876,   883,
-     890,   900
+       0,    71,    71,    76,    81,    90,    97,   106,   113,   120,
+     127,   134,   154,   162,   170,   177,   184,   191,   198,   206,
+     214,   222,   229,   238,   247,   258,   265,   274,   283,   292,
+     299,   306,   315,   325,   334,   343,   352,   361,   368,   375,
+     382,   389,   396,   403,   410,   419,   428,   437,   444,   451,
+     458,   470,   477,   484,   493,   502,   509,   516,   525,   532,
+     541,   551,   561,   570,   577,   584,   597,   607,   616,   623,
+     632,   651,   660,   667,   683,   690,   699,   706,   713,   720,
+     729,   738,   747,   756,   765,   775,   782,   789,   797,   807,
+     816,   825,   834,   843,   852,   861,   868,   875,   882,   889,
+     896,   906
 };
 #endif
 
@@ -1587,25 +1593,25 @@ yyreduce:
     switch (yyn)
       {
           case 2:
-#line 66 "hi.y" /* yacc.c:1646  */
+#line 72 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_VP=sparser->get_node_info((yyvsp[0]));
 				std::cout<<"S->ENG_VP"<<std::endl;
 }
-#line 1596 "y.tab.c" /* yacc.c:1646  */
+#line 1602 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 71 "hi.y" /* yacc.c:1646  */
+#line 77 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_VP=sparser->get_node_info((yyvsp[0]));
 				std::cout<<"S->HUN_VP"<<std::endl;
 }
-#line 1605 "y.tab.c" /* yacc.c:1646  */
+#line 1611 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 76 "hi.y" /* yacc.c:1646  */
+#line 82 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1614,22 +1620,22 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Vbar1);
 				std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
 }
-#line 1618 "y.tab.c" /* yacc.c:1646  */
+#line 1624 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 85 "hi.y" /* yacc.c:1646  */
+#line 91 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 }
-#line 1629 "y.tab.c" /* yacc.c:1646  */
+#line 1635 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 92 "hi.y" /* yacc.c:1646  */
+#line 98 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1638,55 +1644,55 @@ yyreduce:
 				(yyval)=sparser->set_node_info(word,ENG_Vbar2);
 				std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
 }
-#line 1642 "y.tab.c" /* yacc.c:1646  */
+#line 1648 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 101 "hi.y" /* yacc.c:1646  */
+#line 107 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 }
-#line 1653 "y.tab.c" /* yacc.c:1646  */
+#line 1659 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 108 "hi.y" /* yacc.c:1646  */
+#line 114 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar3=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
 				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 1670 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 115 "hi.y" /* yacc.c:1646  */
+#line 121 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
 }
-#line 1675 "y.tab.c" /* yacc.c:1646  */
+#line 1681 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 122 "hi.y" /* yacc.c:1646  */
+#line 128 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
 				std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
 }
-#line 1686 "y.tab.c" /* yacc.c:1646  */
+#line 1692 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 129 "hi.y" /* yacc.c:1646  */
+#line 135 "hi.y" /* yacc.c:1646  */
     {
 /*
 an equipment is an entity ???is countable/uncountable differentiation necessary in the syntax???
@@ -1706,11 +1712,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("ENG_VP",ENG_Vbar4,ENG_DP);
 				std::cout<<"ENG_VP->ENG_Vbar4 ENG_DP"<<std::endl;
 }
-#line 1710 "y.tab.c" /* yacc.c:1646  */
+#line 1716 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 149 "hi.y" /* yacc.c:1646  */
+#line 155 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
@@ -1718,11 +1724,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
 }
-#line 1722 "y.tab.c" /* yacc.c:1646  */
+#line 1728 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 157 "hi.y" /* yacc.c:1646  */
+#line 163 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_NV=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
@@ -1730,55 +1736,55 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 				std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
 }
-#line 1734 "y.tab.c" /* yacc.c:1646  */
+#line 1740 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 165 "hi.y" /* yacc.c:1646  */
+#line 171 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NEG=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
 				std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
 }
-#line 1745 "y.tab.c" /* yacc.c:1646  */
+#line 1751 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 172 "hi.y" /* yacc.c:1646  */
+#line 178 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VBAR3",ENG_V,ENG_AdvP);
 				std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
 }
-#line 1756 "y.tab.c" /* yacc.c:1646  */
+#line 1762 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 179 "hi.y" /* yacc.c:1646  */
+#line 185 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_PP);
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
 }
-#line 1767 "y.tab.c" /* yacc.c:1646  */
+#line 1773 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 186 "hi.y" /* yacc.c:1646  */
+#line 192 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_VBAR2",ENG_Vbar1,ENG_NP);
 				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 }
-#line 1778 "y.tab.c" /* yacc.c:1646  */
+#line 1784 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 193 "hi.y" /* yacc.c:1646  */
+#line 199 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
@@ -1786,11 +1792,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("ENG_VBAR1",ENG_V,ENG_NP);
 				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 }
-#line 1790 "y.tab.c" /* yacc.c:1646  */
+#line 1796 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 201 "hi.y" /* yacc.c:1646  */
+#line 207 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_DP=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[0]));
@@ -1798,11 +1804,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("ENG_VBAR4",ENG_V,ENG_DP);
 				std::cout<<"ENG_Vbar4->ENG_DP ENG_V"<<std::endl;
 }
-#line 1802 "y.tab.c" /* yacc.c:1646  */
+#line 1808 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 209 "hi.y" /* yacc.c:1646  */
+#line 215 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_TP=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V=sparser->get_node_info((yyvsp[0]));
@@ -1810,22 +1816,22 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("ENG_VBAR4",ENG_V,ENG_TP);
 				std::cout<<"ENG_Vbar4->ENG_TP ENG_V"<<std::endl;
 }
-#line 1814 "y.tab.c" /* yacc.c:1646  */
+#line 1820 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 217 "hi.y" /* yacc.c:1646  */
+#line 223 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Prep=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
 				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
 }
-#line 1825 "y.tab.c" /* yacc.c:1646  */
+#line 1831 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 224 "hi.y" /* yacc.c:1646  */
+#line 230 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1834,11 +1840,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 }
-#line 1838 "y.tab.c" /* yacc.c:1646  */
+#line 1844 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 233 "hi.y" /* yacc.c:1646  */
+#line 239 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1847,33 +1853,33 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_AP);
 				std::cout<<"ENG_NP->ENG_AP"<<std::endl;
 }
-#line 1851 "y.tab.c" /* yacc.c:1646  */
+#line 1857 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 242 "hi.y" /* yacc.c:1646  */
+#line 248 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_QPro=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
 				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
 }
-#line 1862 "y.tab.c" /* yacc.c:1646  */
+#line 1868 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 253 "hi.y" /* yacc.c:1646  */
+#line 259 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_A=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
 				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
 }
-#line 1873 "y.tab.c" /* yacc.c:1646  */
+#line 1879 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 260 "hi.y" /* yacc.c:1646  */
+#line 266 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1882,11 +1888,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N);
 				std::cout<<"ENG_CNP->ENG_N"<<std::endl;
 }
-#line 1886 "y.tab.c" /* yacc.c:1646  */
+#line 1892 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 269 "hi.y" /* yacc.c:1646  */
+#line 275 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1895,11 +1901,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_Adv);
 				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
 }
-#line 1899 "y.tab.c" /* yacc.c:1646  */
+#line 1905 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 278 "hi.y" /* yacc.c:1646  */
+#line 284 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -1908,33 +1914,33 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_V_Stem);
 				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 }
-#line 1912 "y.tab.c" /* yacc.c:1646  */
+#line 1918 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 287 "hi.y" /* yacc.c:1646  */
+#line 293 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V_lfea_aux=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_aux);
 				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_aux"<<std::endl;
 }
-#line 1923 "y.tab.c" /* yacc.c:1646  */
+#line 1929 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 294 "hi.y" /* yacc.c:1646  */
+#line 300 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_V_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V_lfea_ger=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_V",ENG_V_stem,ENG_V_lfea_ger);
 				std::cout<<"ENG_V->ENG_V_stem ENG_V_lfea_ger"<<std::endl;
 }
-#line 1934 "y.tab.c" /* yacc.c:1646  */
+#line 1940 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 301 "hi.y" /* yacc.c:1646  */
+#line 307 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1943,11 +1949,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1947 "y.tab.c" /* yacc.c:1646  */
+#line 1953 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 310 "hi.y" /* yacc.c:1646  */
+#line 316 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1957,11 +1963,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1961 "y.tab.c" /* yacc.c:1646  */
+#line 1967 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 320 "hi.y" /* yacc.c:1646  */
+#line 326 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1970,11 +1976,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1974 "y.tab.c" /* yacc.c:1646  */
+#line 1980 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 329 "hi.y" /* yacc.c:1646  */
+#line 335 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -1983,11 +1989,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 1987 "y.tab.c" /* yacc.c:1646  */
+#line 1993 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 338 "hi.y" /* yacc.c:1646  */
+#line 344 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 	
@@ -1996,11 +2002,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg);
 				std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
 }
-#line 2000 "y.tab.c" /* yacc.c:1646  */
+#line 2006 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 347 "hi.y" /* yacc.c:1646  */
+#line 353 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2009,88 +2015,88 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl);
 				std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
 }
-#line 2013 "y.tab.c" /* yacc.c:1646  */
+#line 2019 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 356 "hi.y" /* yacc.c:1646  */
+#line 362 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Indef_Det_a=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_a,ENG_N_Sg_0Con_swC);
 				std::cout<<"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC"<<std::endl;
 }
-#line 2024 "y.tab.c" /* yacc.c:1646  */
+#line 2030 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 363 "hi.y" /* yacc.c:1646  */
+#line 369 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Indef_Det_an=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_an,ENG_N_Sg_0Con_swV);
 				std::cout<<"ENG_DP->ENG_Indef_Det_an ENG_N_Sg_0Con_swV"<<std::endl;
 }
-#line 2035 "y.tab.c" /* yacc.c:1646  */
+#line 2041 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 370 "hi.y" /* yacc.c:1646  */
+#line 376 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_lfea_Sg=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Sg0Con",ENG_N_Stem,ENG_N_lfea_Sg);
 				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
 }
-#line 2046 "y.tab.c" /* yacc.c:1646  */
+#line 2052 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 377 "hi.y" /* yacc.c:1646  */
+#line 383 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Sg_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_swConsonant=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Sg_0Con_swC",ENG_N_Sg_0Con,ENG_lfea_swConsonant);
 				std::cout<<"ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant"<<std::endl;
 }
-#line 2057 "y.tab.c" /* yacc.c:1646  */
+#line 2063 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 384 "hi.y" /* yacc.c:1646  */
+#line 390 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Sg_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_swVowel=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Sg_0Con_swV",ENG_N_Sg_0Con,ENG_lfea_swVowel);
 				std::cout<<"ENG_N_Sg_0Con_swV->ENG_N_Sg_0Con ENG_lfea_swVowel"<<std::endl;
 }
-#line 2068 "y.tab.c" /* yacc.c:1646  */
+#line 2074 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 391 "hi.y" /* yacc.c:1646  */
+#line 397 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("Sg",ENG_N_Sg_0Con_swC,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con"<<std::endl;
 }
-#line 2079 "y.tab.c" /* yacc.c:1646  */
+#line 2085 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 398 "hi.y" /* yacc.c:1646  */
+#line 404 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("Sg",ENG_N_Sg_0Con_swV,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV ENG_1Con"<<std::endl;
 }
-#line 2090 "y.tab.c" /* yacc.c:1646  */
+#line 2096 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 405 "hi.y" /* yacc.c:1646  */
+#line 411 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2099,11 +2105,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_1Con);
 				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
 }
-#line 2103 "y.tab.c" /* yacc.c:1646  */
+#line 2109 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 414 "hi.y" /* yacc.c:1646  */
+#line 420 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2112,11 +2118,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg_0Con_swC);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC"<<std::endl;
 }
-#line 2116 "y.tab.c" /* yacc.c:1646  */
+#line 2122 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 423 "hi.y" /* yacc.c:1646  */
+#line 429 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2125,44 +2131,44 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N_Sg_0Con_swV);
 				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV"<<std::endl;
 }
-#line 2129 "y.tab.c" /* yacc.c:1646  */
+#line 2135 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 432 "hi.y" /* yacc.c:1646  */
+#line 438 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_lfea_Pl=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
 				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
 }
-#line 2140 "y.tab.c" /* yacc.c:1646  */
+#line 2146 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 439 "hi.y" /* yacc.c:1646  */
+#line 445 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_swConsonant=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl_0Con_swC",ENG_N_Pl_0Con,ENG_lfea_swConsonant);
 				std::cout<<"ENG_N_Pl_0Con_swC->ENG_N_Pl_0Con ENG_lfea_swConsonant"<<std::endl;
 }
-#line 2151 "y.tab.c" /* yacc.c:1646  */
+#line 2157 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 446 "hi.y" /* yacc.c:1646  */
+#line 452 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_swVowel=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl_0Con_swV",ENG_N_Pl_0Con,ENG_lfea_swVowel);
 				std::cout<<"ENG_N_Pl_0Con_swV->ENG_N_Pl_0Con ENG_lfea_swVowel"<<std::endl;
 }
-#line 2162 "y.tab.c" /* yacc.c:1646  */
+#line 2168 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 453 "hi.y" /* yacc.c:1646  */
+#line 459 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2174,33 +2180,33 @@ types of pizza are hawaiian margherita pepperoni
 				//std::cout<<"ENG_1Con->ENG_Con:"<<ENG_Con.expression.lexeme<<std::endl;
 				std::cout<<"ENG_1Con->ENG_Con"<<std::endl;
 }
-#line 2178 "y.tab.c" /* yacc.c:1646  */
+#line 2184 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 465 "hi.y" /* yacc.c:1646  */
+#line 471 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
 				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 }
-#line 2189 "y.tab.c" /* yacc.c:1646  */
+#line 2195 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 472 "hi.y" /* yacc.c:1646  */
+#line 478 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 }
-#line 2200 "y.tab.c" /* yacc.c:1646  */
+#line 2206 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 479 "hi.y" /* yacc.c:1646  */
+#line 485 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2209,11 +2215,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl_0Con_swC);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC"<<std::endl;
 }
-#line 2213 "y.tab.c" /* yacc.c:1646  */
+#line 2219 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 488 "hi.y" /* yacc.c:1646  */
+#line 494 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2222,33 +2228,33 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_N_Pl_0Con_swV);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV"<<std::endl;
 }
-#line 2226 "y.tab.c" /* yacc.c:1646  */
+#line 2232 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 497 "hi.y" /* yacc.c:1646  */
+#line 503 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swC,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC ENG_nCon"<<std::endl;
 }
-#line 2237 "y.tab.c" /* yacc.c:1646  */
+#line 2243 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 504 "hi.y" /* yacc.c:1646  */
+#line 510 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV ENG_nCon"<<std::endl;
 }
-#line 2248 "y.tab.c" /* yacc.c:1646  */
+#line 2254 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 511 "hi.y" /* yacc.c:1646  */
+#line 517 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2257,22 +2263,22 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_nCon);
 				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
 }
-#line 2261 "y.tab.c" /* yacc.c:1646  */
+#line 2267 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 520 "hi.y" /* yacc.c:1646  */
+#line 526 "hi.y" /* yacc.c:1646  */
     {
 				//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 				//that a singular noun cannot combine with more than one constant like in 'list file abc def'
 				//TODO: Any better solution???
 				return -1;
 }
-#line 2272 "y.tab.c" /* yacc.c:1646  */
+#line 2278 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 527 "hi.y" /* yacc.c:1646  */
+#line 533 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2281,11 +2287,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2285 "y.tab.c" /* yacc.c:1646  */
+#line 2291 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 536 "hi.y" /* yacc.c:1646  */
+#line 542 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2295,11 +2301,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2299 "y.tab.c" /* yacc.c:1646  */
+#line 2305 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 546 "hi.y" /* yacc.c:1646  */
+#line 552 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2309,11 +2315,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2313 "y.tab.c" /* yacc.c:1646  */
+#line 2319 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 556 "hi.y" /* yacc.c:1646  */
+#line 562 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2322,33 +2328,33 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2326 "y.tab.c" /* yacc.c:1646  */
+#line 2332 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 565 "hi.y" /* yacc.c:1646  */
+#line 571 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swC);
 				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC"<<std::endl;
 }
-#line 2337 "y.tab.c" /* yacc.c:1646  */
+#line 2343 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 572 "hi.y" /* yacc.c:1646  */
+#line 578 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swV);
 				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swV"<<std::endl;
 }
-#line 2348 "y.tab.c" /* yacc.c:1646  */
+#line 2354 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 579 "hi.y" /* yacc.c:1646  */
+#line 585 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2357,11 +2363,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2361 "y.tab.c" /* yacc.c:1646  */
+#line 2367 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 592 "hi.y" /* yacc.c:1646  */
+#line 598 "hi.y" /* yacc.c:1646  */
     {
 				const node_info empty_node_info={};
 				lexicon word;
@@ -2371,11 +2377,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Constant:"<<word.word<<std::endl;
 }
-#line 2375 "y.tab.c" /* yacc.c:1646  */
+#line 2381 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 602 "hi.y" /* yacc.c:1646  */
+#line 608 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2384,22 +2390,22 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2388 "y.tab.c" /* yacc.c:1646  */
+#line 2394 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 611 "hi.y" /* yacc.c:1646  */
+#line 617 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_RPro_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_RPro_lfea_relative=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_RPRO",ENG_RPro_stem,ENG_RPro_lfea_relative);
 				std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
 }
-#line 2399 "y.tab.c" /* yacc.c:1646  */
+#line 2405 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 618 "hi.y" /* yacc.c:1646  */
+#line 624 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2408,11 +2414,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2412 "y.tab.c" /* yacc.c:1646  */
+#line 2418 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 627 "hi.y" /* yacc.c:1646  */
+#line 633 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2422,11 +2428,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2426 "y.tab.c" /* yacc.c:1646  */
+#line 2432 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 646 "hi.y" /* yacc.c:1646  */
+#line 652 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2435,22 +2441,22 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2439 "y.tab.c" /* yacc.c:1646  */
+#line 2445 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 655 "hi.y" /* yacc.c:1646  */
+#line 661 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Tense_particle=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_V_stem=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_TP",ENG_Tense_particle,ENG_V_stem);
 				std::cout<<"ENG_TP->ENG_Tense_particle ENG_V_stem"<<std::endl;
 }
-#line 2450 "y.tab.c" /* yacc.c:1646  */
+#line 2456 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 662 "hi.y" /* yacc.c:1646  */
+#line 668 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2459,22 +2465,22 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,ENG_V_ger);
 				std::cout<<"ENG_TP->ENG_V_ger"<<std::endl;
 }
-#line 2463 "y.tab.c" /* yacc.c:1646  */
+#line 2469 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 678 "hi.y" /* yacc.c:1646  */
+#line 684 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_RPro=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_IVP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVP);
 				std::cout<<"ENG_RC->ENG_RPro ENG_IVP"<<std::endl;
 }
-#line 2474 "y.tab.c" /* yacc.c:1646  */
+#line 2480 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 685 "hi.y" /* yacc.c:1646  */
+#line 691 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2483,44 +2489,44 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2487 "y.tab.c" /* yacc.c:1646  */
+#line 2493 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 694 "hi.y" /* yacc.c:1646  */
+#line 700 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Indef_Det=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_fwVowel=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_Indef_Det_an",ENG_Indef_Det,ENG_lfea_fwVowel);
 				std::cout<<"ENG_Indef_Det_an->ENG_Indef_Det ENG_lfea_fwVowel"<<std::endl;
 }
-#line 2498 "y.tab.c" /* yacc.c:1646  */
+#line 2504 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 701 "hi.y" /* yacc.c:1646  */
+#line 707 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Indef_Det=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_fwConsonant=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_Indef_Det_a",ENG_Indef_Det,ENG_lfea_fwConsonant);
 				std::cout<<"ENG_Indef_Det_a->ENG_Indef_Det ENG_lfea_fwConsonant"<<std::endl;
 }
-#line 2509 "y.tab.c" /* yacc.c:1646  */
+#line 2515 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 708 "hi.y" /* yacc.c:1646  */
+#line 714 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& ENG_Det_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& ENG_lfea_IndefDet=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("ENG_Indef_Det",ENG_Det_stem,ENG_lfea_IndefDet);
 				std::cout<<"ENG_Indef_Det->ENG_Det_stem ENG_lfea_IndefDet"<<std::endl;
 }
-#line 2520 "y.tab.c" /* yacc.c:1646  */
+#line 2526 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 715 "hi.y" /* yacc.c:1646  */
+#line 721 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2529,11 +2535,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2533 "y.tab.c" /* yacc.c:1646  */
+#line 2539 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 724 "hi.y" /* yacc.c:1646  */
+#line 730 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2542,11 +2548,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2546 "y.tab.c" /* yacc.c:1646  */
+#line 2552 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 733 "hi.y" /* yacc.c:1646  */
+#line 739 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2555,11 +2561,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2559 "y.tab.c" /* yacc.c:1646  */
+#line 2565 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 742 "hi.y" /* yacc.c:1646  */
+#line 748 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2568,11 +2574,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2572 "y.tab.c" /* yacc.c:1646  */
+#line 2578 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 751 "hi.y" /* yacc.c:1646  */
+#line 757 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2581,11 +2587,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2585 "y.tab.c" /* yacc.c:1646  */
+#line 2591 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 760 "hi.y" /* yacc.c:1646  */
+#line 766 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2594,33 +2600,33 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2598 "y.tab.c" /* yacc.c:1646  */
+#line 2604 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 770 "hi.y" /* yacc.c:1646  */
+#line 776 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_ImpVerbPfx=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_NP=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
 				std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
 }
-#line 2609 "y.tab.c" /* yacc.c:1646  */
+#line 2615 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 777 "hi.y" /* yacc.c:1646  */
+#line 783 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_ImpVerb=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Vbpfx=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
 				std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
 }
-#line 2620 "y.tab.c" /* yacc.c:1646  */
+#line 2626 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 784 "hi.y" /* yacc.c:1646  */
+#line 790 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_Verb_stem=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info((yyvsp[0]));
@@ -2628,11 +2634,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
 }
-#line 2632 "y.tab.c" /* yacc.c:1646  */
+#line 2638 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 792 "hi.y" /* yacc.c:1646  */
+#line 798 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2642,11 +2648,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2646 "y.tab.c" /* yacc.c:1646  */
+#line 2652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 802 "hi.y" /* yacc.c:1646  */
+#line 808 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2655,11 +2661,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2659 "y.tab.c" /* yacc.c:1646  */
+#line 2665 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 811 "hi.y" /* yacc.c:1646  */
+#line 817 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2668,11 +2674,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2672 "y.tab.c" /* yacc.c:1646  */
+#line 2678 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 820 "hi.y" /* yacc.c:1646  */
+#line 826 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2681,11 +2687,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,HUN_NP);
 				std::cout<<"HUN_NP->HUN_N"<<std::endl;
 }
-#line 2685 "y.tab.c" /* yacc.c:1646  */
+#line 2691 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 829 "hi.y" /* yacc.c:1646  */
+#line 835 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2694,11 +2700,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,HUN_N_Sg);
 				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
 }
-#line 2698 "y.tab.c" /* yacc.c:1646  */
+#line 2704 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 838 "hi.y" /* yacc.c:1646  */
+#line 844 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2707,11 +2713,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,HUN_AccCon);
 				std::cout<<"HUN_N_Sg->HUN_AccCon"<<std::endl;
 }
-#line 2711 "y.tab.c" /* yacc.c:1646  */
+#line 2717 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 847 "hi.y" /* yacc.c:1646  */
+#line 853 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 
@@ -2720,66 +2726,66 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,HUN_Con);
 				std::cout<<"HUN_1Con->HUN_Con:"<<HUN_Con.expression.lexeme<<std::endl;
 }
-#line 2724 "y.tab.c" /* yacc.c:1646  */
+#line 2730 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 856 "hi.y" /* yacc.c:1646  */
+#line 862 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
 				std::cout<<"HUN_nCon->HUN_1Con HUN_Con"<<std::endl;
 }
-#line 2735 "y.tab.c" /* yacc.c:1646  */
+#line 2741 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 863 "hi.y" /* yacc.c:1646  */
+#line 869 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
 				std::cout<<"HUN_nCon->HUN_nCon HUN_Con"<<std::endl;
 }
-#line 2746 "y.tab.c" /* yacc.c:1646  */
+#line 2752 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 870 "hi.y" /* yacc.c:1646  */
+#line 876 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_AccCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_nCon",HUN_AccCon,HUN_Con);
 				std::cout<<"HUN_nCon->HUN_AccCon HUN_Con"<<std::endl;
 }
-#line 2757 "y.tab.c" /* yacc.c:1646  */
+#line 2763 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 877 "hi.y" /* yacc.c:1646  */
+#line 883 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_1Con=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_AccCon",HUN_1Con,HUN_Con_lfea_Acc);
 				std::cout<<"HUN_AccCon->HUN_1Con HUN_Con_lfea_Acc"<<std::endl;
 }
-#line 2768 "y.tab.c" /* yacc.c:1646  */
+#line 2774 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 884 "hi.y" /* yacc.c:1646  */
+#line 890 "hi.y" /* yacc.c:1646  */
     {
 				const node_info& HUN_nCon=sparser->get_node_info((yyvsp[-1]));
 				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info((yyvsp[0]));
 				(yyval)=sparser->combine_nodes("HUN_AccCon",HUN_nCon,HUN_Con_lfea_Acc);
 				std::cout<<"HUN_AccCon->HUN_nCon HUN_Con_lfea_Acc"<<std::endl;
 }
-#line 2779 "y.tab.c" /* yacc.c:1646  */
+#line 2785 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 891 "hi.y" /* yacc.c:1646  */
+#line 897 "hi.y" /* yacc.c:1646  */
     {
 				const node_info empty_node_info={};
 				lexicon word;
@@ -2789,11 +2795,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<"Konstans:"<<word.word<<std::endl;
 }
-#line 2793 "y.tab.c" /* yacc.c:1646  */
+#line 2799 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 901 "hi.y" /* yacc.c:1646  */
+#line 907 "hi.y" /* yacc.c:1646  */
     {
 				lexicon word;
 				const node_info empty_node_info={};
@@ -2803,11 +2809,11 @@ types of pizza are hawaiian margherita pepperoni
 				(yyval)=sparser->set_node_info(word,empty_node_info);
 				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 }
-#line 2807 "y.tab.c" /* yacc.c:1646  */
+#line 2813 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2811 "y.tab.c" /* yacc.c:1646  */
+#line 2817 "y.tab.c" /* yacc.c:1646  */
         default: break;
       }
     if (yychar_backup != yychar)
@@ -3047,7 +3053,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 910 "hi.y" /* yacc.c:1906  */
+#line 916 "hi.y" /* yacc.c:1906  */
 
 
 int yylex(void){
@@ -3071,7 +3077,14 @@ void yyerror(char const *yymsgp){
 extern "C"{
 #endif
 
+#ifdef __ANDROID__
+const char *hi(const char *human_input,const char *language,char *error, JavaVM *vm, jobject activityobj){
+#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+const char *hi(const char *human_input,const char *language,const char *db_uri,char *error){
+#else
 const char *hi(const char *human_input,const char *language,char *error){
+#endif
+
 	std::string commandstr,last_word,validated_words;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
@@ -3085,12 +3098,26 @@ const char *hi(const char *human_input,const char *language,char *error){
 		std::cout<<"picking new token path"<<std::endl; 
 		try{
 			if(sqlite==NULL){
-				sqlite=db_factory::get_instance();
 				#ifdef __ANDROID__
 					__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
-					sqlite->open("/data/data/hi.pkg/hi.db");//TODO: get cwd on android
+					if(vm!=NULL) jvm=vm;
+					else{
+						__android_log_print(ANDROID_LOG_INFO, "hi", "vm is NULL!");
+						exit(EXIT_FAILURE);
+					}
+					activity=activityobj;
+				#endif
+				sqlite=db_factory::get_instance();
+				#if defined(__EMSCRIPTEN__) && FS==NETWORK
+				sqlite->open(db_uri);
+				#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+				EM_ASM(
+					FS.mkdir('/virtual');
+					FS.mount(NODEFS, { root: '.' }, '/virtual');
+				);
+				sqlite->open("/virtual/hi.db");
 				#else
-					sqlite->open("hi.db");
+				sqlite->open("hi.db");
 				#endif
 			}
 			lex=new lexer(human_input,language);
@@ -3134,7 +3161,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 			else{//syntax error for token in yychar
 				token_paths->add_invalid_path(lex->word_entries());
 				token_paths->mark_syntax_error(lex->last_word_scanned());
-				std::cout<<"yychar="<<yychar<<std::endl;
+/*				std::cout<<"yychar="<<yychar<<std::endl;
 				std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
 				std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
 				//checking sparser->validated_terminals() may help in either this or the else branch
@@ -3156,7 +3183,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 //				if(lex->nr_of_words==1&&lex->last_word_scanned().token==lex->last_token_returned()){
 //				}
 				//TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token 
-				token_paths->followup_token(lex->last_token_returned());
+				token_paths->followup_token(lex->last_token_returned());*/
 				validated_words=lex->validated_words();
 				std::cout<<"validated words:"<<validated_words<<std::endl;
 				if(lex->last_word_scanned().morphalytics!=NULL)
@@ -3189,15 +3216,27 @@ const char *hi(const char *human_input,const char *language,char *error){
 			}
 		}
 		catch(sql_execution_error& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(failed_to_open_db& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(failed_to_close_db& exception){
-			std::cout<<exception.what()<<std::endl;
+			#ifdef __ANDROID__
+				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
+			#else
+				std::cout<<exception.what()<<std::endl;
+			#endif
 			return NULL;
 		}
 		catch(lexicon_type_and_db_table_schema_mismatch& exception){
@@ -3259,7 +3298,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 	delete token_paths;
 	token_paths=NULL;
 	sqlite->close();
-	delete sqlite;
+	db_factory::delete_instance();
 	sqlite=NULL;
 	return commandchr;
 }

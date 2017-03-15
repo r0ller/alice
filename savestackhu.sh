@@ -1,2 +1,2 @@
-#!/usr/bin/bash
+#!/usr/pkg/bin/bash
 save stack magyar.fst

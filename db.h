@@ -1,6 +1,10 @@
 #ifndef DB_H
 	#define DB_H
 
+	#define EMBEDDED 1
+	#define NODEJS 2
+	#define NETWORK 3
+
 	#include <string>
 	#include <exception>
 	#include "query_result.h"
@@ -29,7 +33,7 @@
 
 	#if defined(__ANDROID__)
 		#include "jni_db.h"
-	#elif defined(__EMSCRIPTEN__) && defined(__EMBEDNODB__)
+	#elif defined(__EMSCRIPTEN__) && FS==NETWORK
 		#include "js_db.h"
 	#else
 		#include "sqlite_db.h"
@@ -43,7 +47,7 @@
 				if(db_factory::singleton_instance==NULL){
 					#if defined(__ANDROID__)
 						db_factory::singleton_instance=new jni_db;
-					#elif defined(__EMSCRIPTEN__) && defined(__EMBEDNODB__)
+					#elif defined(__EMSCRIPTEN__) && FS==NETWORK
 						db_factory::singleton_instance=new js_db;
 					#else
 						db_factory::singleton_instance=new sqlite_db;
@@ -77,7 +81,7 @@
 
 	#if defined(__ANDROID__)
 		#include "jni_db.cpp"
-	#elif defined(__EMSCRIPTEN__) && defined(__EMBEDNODB__)
+	#elif defined(__EMSCRIPTEN__) && FS==NETWORK
 		#include "js_db.cpp"
 	#else
 		#include "sqlite_db.cpp"

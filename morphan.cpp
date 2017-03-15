@@ -19,11 +19,14 @@ morphan::morphan(const std::string& lid){
 	#ifdef __ANDROID__
 		__android_log_print(ANDROID_LOG_INFO, "hi", "fst used: %s", fstname.c_str());
 		fstname="/data/data/hi.pkg/"+fstname;//TODO: get cwd on android
+	#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+		fstname="/virtual/"+fstname;
 	#endif
 	fstname_length=fstname.length();
 	pfstname=new char[fstname_length+1];
 	fstname_length=fstname.copy(pfstname,fstname_length+1);
 	pfstname[fstname_length]='\0';
+	//std::cout<<"opening fst: "<<fstname<<std::endl;
 	morphan::fst=fsm_read_binary_file(pfstname);
 	if(morphan::fst==NULL){
 		#ifdef __ANDROID__

@@ -37,7 +37,7 @@ unsigned int lexer::next_token(){
 			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
 		#endif
 		if(last_word.empty()==false){
-//			std::cout<<"last word:"<<last_word<<std::endl;
+			//std::cout<<"last word:"<<last_word<<std::endl;
 			morphalytics=stemmer->analyze(last_word);
 			//TODO: if there're >1 analyses for the same word form:
 			//1) the analyses with multiple results should be stored

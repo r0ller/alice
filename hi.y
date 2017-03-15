@@ -13,6 +13,9 @@
 		JavaVM *jvm=NULL;
 		jobject activity;
 	#endif
+	#ifdef __EMSCRIPTEN__
+		#include <emscripten.h>
+	#endif
 	#include "db.h"
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
@@ -935,6 +938,8 @@ extern "C"{
 
 #ifdef __ANDROID__
 const char *hi(const char *human_input,const char *language,char *error, JavaVM *vm, jobject activityobj){
+#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+const char *hi(const char *human_input,const char *language,const char *db_uri,char *error){
 #else
 const char *hi(const char *human_input,const char *language,char *error){
 #endif
@@ -962,12 +967,16 @@ const char *hi(const char *human_input,const char *language,char *error){
 					activity=activityobj;
 				#endif
 				sqlite=db_factory::get_instance();
-				#ifdef __ANDROID__
-					__android_log_print(ANDROID_LOG_INFO, "hi", "db instantiated");
-				#endif
+				#if defined(__EMSCRIPTEN__) && FS==NETWORK
+				sqlite->open(db_uri);
+				#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+				EM_ASM(
+					FS.mkdir('/virtual');
+					FS.mount(NODEFS, { root: '.' }, '/virtual');
+				);
+				sqlite->open("/virtual/hi.db");
+				#else
 				sqlite->open("hi.db");
-				#ifdef __ANDROID__
-					__android_log_print(ANDROID_LOG_INFO, "hi", "db opened");
 				#endif
 			}
 			lex=new lexer(human_input,language);
