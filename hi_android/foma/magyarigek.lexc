@@ -52,7 +52,6 @@ Multichar_Symbols  +Verb[gcat] +Rep +Imper  +Pot
 §igeoo§ §igeoomely§
 
 LEXICON Root
-Noun;
 Verb;
 Vbpfx;
 
@@ -89,12 +88,3 @@ Case1mely;
 
 LEXICON Case1mely
 +ConjDefSg2[lfea]:^+cConjDefSg2^d              #;
-
-LEXICON Noun
-[Guess] Constant;
-
-LEXICON Constant
-[stem]+CON[gcat]:0	Object;
-
-LEXICON Object
-+Acc[lfea]:^+cAcc^§oeoez2§t       #;  ! ot, et, öt, t
