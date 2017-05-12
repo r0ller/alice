@@ -1,0 +1,1 @@
+[Read me on wiki](https://github.com/r0ller/alice/wiki)

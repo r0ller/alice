@@ -60,7 +60,7 @@ unsigned int lexer::next_token(){
 				for(auto&& i:*morphalytics){
 					new_word=tokenize_word(i);
 					if(new_word.tokens.empty()==true){//TODO: throw exception
-						exit(EXIT_FAILURE);
+						throw std::runtime_error("No tokens found for word:"+last_word);
 					}
 					token_paths->add_word(new_word);
 					if(new_word_form.empty()==true){
@@ -127,14 +127,12 @@ lexicon lexer::last_word_scanned(const unsigned int token){
 			//TODO:if the logic works, consider reorg of GCAT table to make the token field (or token and lid) the key
 			gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+words[nr_of_words-1].gcat+"' AND LID = '"+language()+"' AND TOKEN = '"+std::to_string(internal_token)+"';");
 			if(gcats_and_lingfeas==NULL||gcats_and_lingfeas!=NULL&&gcats_and_lingfeas->nr_of_result_rows()>1){
-				//TODO: throw exception
-				exit(EXIT_FAILURE);
+				throw std::runtime_error("No entry found in GCAT db table for token "+std::to_string(internal_token)+", gcat "+words[nr_of_words-1].gcat+", language "+language());
 			}
 			word.gcat=*gcats_and_lingfeas->field_value_at_row_position(0,"feature");
 		}
 		else{
-			//TODO: throw exception
-			exit(EXIT_FAILURE);
+			throw std::runtime_error("Token "+std::to_string(token)+" not found for the last word scanned.");
 		}
 	}
 	return word;
@@ -199,8 +197,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 //						std::cout<<"lingfea:"<<lingfea<<std::endl;
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 						if(field==NULL||field->second.field_value.empty()==true){
-							//TODO: throw exception
-							exit(EXIT_FAILURE);
+							throw std::runtime_error("Linguistic feature "+lingfea+" for gcat "+new_word.gcat+" is not found in GCAT db table.");
 						}
 //						std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
@@ -215,8 +212,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 							if(field==NULL){
 								field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
 									if(field==NULL){
-									//TODO: throw exception
- 										exit(EXIT_FAILURE);
+ 										throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
 									}
 							}
 //							std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
@@ -251,8 +247,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 				lingfea=morphemes[i].substr(0,tag_position);
 				field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 				if(field==NULL||field->second.field_value.empty()==true){
-					//TODO: throw exception
-					exit(EXIT_FAILURE);
+					throw std::runtime_error("Linguistic feature "+lingfea+" for gcat "+new_word.gcat+" is not found in GCAT db table.");
 				}
 //				std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
 				token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
@@ -267,8 +262,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 					if(field==NULL){
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
 							if(field==NULL){
-							//TODO: throw exception
-								exit(EXIT_FAILURE);
+								throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
 							}
 					}
 //					std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;

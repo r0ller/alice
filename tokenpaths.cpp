@@ -14,7 +14,7 @@ bool tokenpaths::is_any_left(){
 
 	if(wordtoken_counter.empty()==true&&(valid_paths.empty()==false||invalid_paths.empty()==false)
 		||wordtoken_counter.empty()==false&&valid_paths.empty()==true&&invalid_paths.empty()==true){
-		exit(EXIT_FAILURE);//TODO: throw exception
+		throw std::runtime_error("Well, I'm prepared for this. Cannot handle the state of word token counter, valid and invalid token paths.");
 	}
 	else if(wordtoken_counter.empty()==false&&(valid_paths.empty()==false||invalid_paths.empty()==false)){
 		for(std::map<std::string,unsigned int>::iterator i=wordtoken_counter.begin();i!=wordtoken_counter.end();++i){
@@ -26,13 +26,15 @@ bool tokenpaths::is_any_left(){
 //		std::cout<<"nr_of_paths="<<nr_of_paths<<", nr_of_paths_covered="<<nr_of_paths_covered<<std::endl;
 		if(nr_of_paths==nr_of_paths_covered) return false;
 		else if(nr_of_paths_covered<nr_of_paths) return true;
-		else exit(EXIT_FAILURE);//TODO: throw exception
+		else{
+			throw std::runtime_error("What!? There are more token paths covered than the total number of all paths? I quit.");
+		}
 	}
 	else if(wordtoken_counter.empty()==true){
 		return true;
 	}
 	else{
-		exit(EXIT_FAILURE);//TODO: throw exception
+		throw std::runtime_error("I'm not prepared for this. Cannot handle the state of word token counter, valid and invalid token paths.");
 	}
 }
 
@@ -123,9 +125,9 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 		delete result;
 	}
 	else{
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Either there's no entry for token "+std::to_string(token)+" or there are more than one in the GCAT db table.");
 	}
-	result=sqlite->exec_sql("SELECT * FROM SYNTAX WHERE HEAD_SYMBOL = '"+symbol+"' OR NON_HEAD_SYMBOL = '"+symbol+"';");
+	result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE HEAD_SYMBOL = '"+symbol+"' OR NON_HEAD_SYMBOL = '"+symbol+"';");
 	if(result!=NULL){
 		for(unsigned int i=0;i<result->nr_of_result_rows();++i){
 			parent_symbol=*result->field_value_at_row_position(i,"parent_symbol");
@@ -148,7 +150,7 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 		delete result;
 	}
 	else{
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("There's no entry for the head/non-head symbol "+symbol+" in the GRAMMAR db table.");
 	}
 	for(auto&& i:token_paths){
 		std::cout<<"anchor token:"<<i.first.first<<" anchor counter:"<<i.first.second<<" followup token:"<<i.second<<std::endl;
@@ -166,7 +168,7 @@ void tokenpaths::find_rhs_up(const std::string& anchor_symbol, const unsigned in
 
 	std::cout<<"find rhs up"<<std::endl;
 	sqlite=db_factory::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM SYNTAX WHERE HEAD_SYMBOL = '"+symbol+"' OR NON_HEAD_SYMBOL = '"+symbol+"';");
+	result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE HEAD_SYMBOL = '"+symbol+"' OR NON_HEAD_SYMBOL = '"+symbol+"';");
 	if(result!=NULL){
 		for(unsigned int i=0;i<result->nr_of_result_rows();++i){
 			parent_symbol=*result->field_value_at_row_position(i,"parent_symbol");
@@ -191,7 +193,7 @@ void tokenpaths::find_rhs_up(const std::string& anchor_symbol, const unsigned in
 		delete result;
 	}
 	else{
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("There's no entry for the head/non-head symbol "+symbol+" in the GRAMMAR db table.");
 	}
 }
 
@@ -203,7 +205,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 
 	std::cout<<"find lhs down"<<std::endl;
 	sqlite=db_factory::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM SYNTAX WHERE PARENT_SYMBOL = '"+symbol+"';");
+	result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE PARENT_SYMBOL = '"+symbol+"';");
 	if(result!=NULL){
 		for(unsigned int i=0;i<result->nr_of_result_rows();++i){
 			parent_symbol=*result->field_value_at_row_position(i,"parent_symbol");
@@ -231,7 +233,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 				}
 			}
 			else{
-				exit(EXIT_FAILURE);
+				throw std::runtime_error("There's no entry for the parent symbol "+symbol+" in the GRAMMAR db table.");
 			}
 		}
 		delete result;

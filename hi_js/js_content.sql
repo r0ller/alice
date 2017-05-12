@@ -11,6 +11,7 @@ insert into SYMBOLS values('A', 'ENG', 'Adjective');
 insert into SYMBOLS values('ADV', 'ENG', 'Adverb');
 insert into SYMBOLS values('CON', 'ENG', 'Constant');
 insert into SYMBOLS values('DET', 'ENG', 'Determiner');
+insert into SYMBOLS values('Indef', 'ENG', 'Indefinite Determiner');
 insert into SYMBOLS values('N', 'ENG', 'Noun');
 insert into SYMBOLS values('ENG_VP', 'ENG', 'Verb Phrase');
 insert into SYMBOLS values('ENG_NP', 'ENG', 'Noun Phrase');
@@ -126,7 +127,7 @@ insert into GCAT values('DET', 'fwVowel', 'ENG', '20');
 insert into GCAT values('DET', 'fwConsonant', 'ENG', '21');
 insert into GCAT values('N', 'swVowel', 'ENG', '22');
 insert into GCAT values('N', 'swConsonant', 'ENG', '23');
-insert into GCAT values( 'V', 'Gerund', 'ENG', '24');
+insert into GCAT values('V', 'Gerund', 'ENG', '24');
 
 insert into FUNCTOR_DEFS values('LOCATIONENGN_1',	NULL);
 insert into FUNCTOR_DEFS values('OFENGPREP_1', NULL);

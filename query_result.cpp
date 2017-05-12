@@ -79,7 +79,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 			}
 		}
 		if(fields_inserted!=fields){
-			exit(EXIT_FAILURE);//TODO: throw exception, field names to be inserted and that of the table structure do not match
+			throw std::runtime_error("Field names to be inserted and that of the table structure do not match.");
 		}
 		for(std::set<unsigned int>::const_iterator i=keys_found.begin();i!=keys_found.end();++i){
 			if(fields_found.count(*i)==nr_of_columns){
@@ -99,13 +99,11 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 			row_buffer.erase(row.first);
 		}
 		if(row_buffer.find(row.first)!=row_buffer.end()){
-			std::cout<<"exiting, row_buffer not cleared up"<<std::endl;
-			exit(EXIT_FAILURE);//TODO: throw exception
+			throw std::runtime_error("Exiting, row_buffer not cleared up.");
 		}
 	}
 	else if(nr_of_inserted_columns>nr_of_columns){
-		std::cout<<"exiting, row_buffer is inconsistent"<<std::endl;
-		exit(EXIT_FAILURE);//TODO: throw exception
+		throw std::runtime_error("Exiting, row_buffer is inconsistent");
 	}
 }
 

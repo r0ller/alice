@@ -12,8 +12,7 @@ morphan::morphan(const std::string& lid){
 	sqlite=db_factory::get_instance();
 	fsts=sqlite->exec_sql("SELECT FST FROM LANGUAGES WHERE LID = '"+lid+"';");
 	if(fsts==NULL){
-		//TODO: throw exception
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("No entry found for language id "+lid+" in LANGUAGES db table.");
 	}
 	fstname=*fsts->field_value_at_row_position(0,"fst");
 	#ifdef __ANDROID__
@@ -32,16 +31,14 @@ morphan::morphan(const std::string& lid){
 		#ifdef __ANDROID__
 			__android_log_print(ANDROID_LOG_INFO, "hi", "failed to read binary fst %s",pfstname);
 		#endif
-		//TODO: throw exception
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Failed to read binary fst "+fstname);
 	}
 	morphan::morphan_handle=apply_init(morphan::fst);
 	if(morphan::morphan_handle==NULL){
 		#ifdef __ANDROID__
 			__android_log_print(ANDROID_LOG_INFO, "hi", "fst apply_init failed");
 		#endif
-		//TODO: throw exception
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Fst initialization failed for "+fstname);
 	}
 	delete fsts;
 	#ifdef __ANDROID__

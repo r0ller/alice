@@ -1,5 +1,5 @@
 #!/usr/pkg/bin/bash
-bison -o y.tab.c hi.y;
+bison -o y.tab.c $1;
 arm-linux-androideabi-clang++ -x c++ -std=c++11 -D__ANDROID__ -pedantic -Wall -c y.tab.c -lstdc++ -latomic;
 rm fifo_hilib;
 mkfifo fifo_hilib;

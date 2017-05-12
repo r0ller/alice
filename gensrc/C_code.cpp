@@ -23,6 +23,8 @@ extern "C"{
 const char *hi(const char *human_input,const char *language,char *error, JavaVM *vm, jobject activityobj){
 #elif defined(__EMSCRIPTEN__) && FS==NETWORK
 const char *hi(const char *human_input,const char *language,const char *db_uri,char *error){
+#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+const char *hi(const char *human_input,const char *language,const char *db_file_path,char *error){
 #else
 const char *hi(const char *human_input,const char *language,char *error){
 #endif
@@ -57,7 +59,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 					FS.mkdir('/virtual');
 					FS.mount(NODEFS, { root: '.' }, '/virtual');
 				);
-				sqlite->open("/virtual/hi.db");
+				sqlite->open("/virtual/"+std::string(db_file_path));
 				#else
 				sqlite->open("hi.db");
 				#endif
@@ -228,7 +230,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 			std::cout<<exception.what()<<std::endl;
 			return NULL;
 		}
-		catch(std::exception& exception){
+		catch(std::runtime_error& exception){//Catch underived exceptions thrown with string based messages
 			std::cout<<exception.what()<<std::endl;
 			return NULL;
 		}

@@ -29,7 +29,7 @@ PRIMARY KEY(gcat, feature) /*gcat, feature, lid are all keys as once token liter
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 );
-create unique index i_token on GCAT(token);
+create index i_token on GCAT(token);/*TODO: this should be "create unique index" but it fails e.g. if two CONs are defined in the GCAT for two different languages with token 0*/
 
 create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
