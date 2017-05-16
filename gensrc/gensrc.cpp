@@ -8,27 +8,34 @@
 int main(int argc, char* argv[]){
 
 	std::string C_declarations, bison_declarations, grammar, C_code, parent_symbol, head_symbol, non_head_symbol, action;
-	std::string gcat, feature, lid, token, prev_parent_symbol, combine_nodes, set_node, bison_source, db_file, path, base, lid_list, snippetsdir;
+	std::string gcat, feature, lid, token, prev_parent_symbol, combine_nodes, set_node, bison_source, db_file, path, base, lid_list, snippetsdir, output;
 	std::stringstream *stringstream=NULL;
 	std::ifstream *filestream=NULL;
+	std::ofstream *bison_file=NULL;
 	db *sqlite=NULL;
 	query_result *grammar_rules=NULL, *tokens=NULL, *symbols=NULL;
 	std::set<std::string> lids;
 
 	if(argc<3){
-		std::cerr<<"Usage: gensrc /path/to/dbfile.db /path/to/snippets"<<std::endl;
+		std::cerr<<"Usage: gensrc /path/to/dbfile.db /path/to/snippets [/path/with/output/file/name]"<<std::endl;
 		return 1;
 	}
 	else{
 		db_file=argv[1];
 		snippetsdir=argv[2];
 		if(snippetsdir.back()=='/') snippetsdir.pop_back();
-		std::size_t base_end=db_file.find_last_of("/");
-		if(base_end==std::string::npos) return 1;
-		path=db_file.substr(0,base_end);
-		std::size_t base_start=path.find_last_of("/");
-		base=path.substr(base_start+1);
-		if(db_file.empty()==true||path.empty()==true||base.empty()==true||snippetsdir.empty()==true) return 1;
+		if(argc==4){
+			output=argv[3];
+			if(db_file.empty()==true||output.empty()==true||snippetsdir.empty()==true) return 1;
+		}
+		else{
+			std::size_t base_end=db_file.find_last_of("/");
+			if(base_end==std::string::npos) return 1;
+			path=db_file.substr(0,base_end);
+			std::size_t base_start=path.find_last_of("/");
+			base=path.substr(base_start+1);
+			if(db_file.empty()==true||path.empty()==true||base.empty()==true||snippetsdir.empty()==true) return 1;
+		}
 	}
 	filestream=new std::ifstream(snippetsdir+"/C_declarations.cpp");
 	if(filestream!=NULL){
@@ -189,9 +196,15 @@ int main(int argc, char* argv[]){
 	db_factory::delete_instance();
 	sqlite=NULL;
 	bison_source=C_declarations+bison_declarations+grammar+C_code;
-	std::ofstream bison_file(path+"/"+base+".y");
-	bison_file << bison_source;
-	bison_file.close();
+	if(output.empty()==false){
+		bison_file=new std::ofstream(output);
+	}
+	else{
+		bison_file=new std::ofstream(path+"/"+base+".y");
+	}
+	*bison_file << bison_source;
+	bison_file->close();
+	delete bison_file;
 //	std::cout<<bison_source<<std::endl;
 	return 0;
 }
