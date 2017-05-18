@@ -53,853 +53,918 @@
 %token	t_HUN_Verb_ConjDefSg2 17
 %token	t_HUN_Vbpfx_Stem 18
 %%
-ENG_1Con	:	ENG_Con 
+ENG_1Con:
+ENG_Con 
 {
-				lexicon word;
-				const node_info& ENG_Con=sparser->get_node_info($1);
-				word.gcat="ENG_Con";
-				$$=sparser->set_node_info(word,ENG_Con);
-				std::cout<<"ENG_1Con->ENG_Con"<<std::endl;
+lexicon word;
+const node_info& ENG_Con=sparser->get_node_info($1);
+word.gcat="ENG_1Con";
+$$=sparser->set_node_info(word,ENG_Con);
+std::cout<<"ENG_1Con->ENG_Con"<<std::endl;
 
 };
-ENG_A	:	t_ENG_A_Stem 
+ENG_A:
+t_ENG_A_Stem 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_A_Stem);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_A_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_AP	:	ENG_1Con ENG_N_Pl_0Con_swC
+ENG_AP:
+ENG_1Con ENG_N_Pl_0Con_swC
 {
-				const node_info& ENG_1Con=sparser->get_node_info($1);
-				const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swC);
-				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC"<<std::endl;
-
-}
-	|	ENG_1Con ENG_N_Pl_0Con_swV
-{
-				const node_info& ENG_1Con=sparser->get_node_info($1);
-				const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swV);
-				std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swV"<<std::endl;
-
-};
-ENG_Adv	:	t_ENG_ADV 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_ADV);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_AdvP	:	ENG_Adv 
-{
-				lexicon word;
-				const node_info& ENG_Adv=sparser->get_node_info($1);
-				word.gcat="ENG_Adv";
-				$$=sparser->set_node_info(word,ENG_Adv);
-				std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
-
-};
-ENG_CNP	:	ENG_A ENG_CNP
-{
-				const node_info& ENG_A=sparser->get_node_info($1);
-				const node_info& ENG_CNP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
-				std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
+const node_info& ENG_1Con=sparser->get_node_info($1);
+const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swC);
+std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC"<<std::endl;
 
 }
-	|	ENG_N 
+|ENG_1Con ENG_N_Pl_0Con_swV
 {
-				lexicon word;
-				const node_info& ENG_N=sparser->get_node_info($1);
-				word.gcat="ENG_N";
-				$$=sparser->set_node_info(word,ENG_N);
-				std::cout<<"ENG_CNP->ENG_N"<<std::endl;
+const node_info& ENG_1Con=sparser->get_node_info($1);
+const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swV);
+std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swV"<<std::endl;
 
 };
-ENG_Con	:	t_Con 
+ENG_Adv:
+t_ENG_ADV 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_Con);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_ADV);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_DP	:	ENG_Indef_Det_a ENG_N_Sg_0Con_swC
+ENG_AdvP:
+ENG_Adv 
 {
-				const node_info& ENG_Indef_Det_a=sparser->get_node_info($1);
-				const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_a,ENG_N_Sg_0Con_swC);
-				std::cout<<"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC"<<std::endl;
+lexicon word;
+const node_info& ENG_Adv=sparser->get_node_info($1);
+word.gcat="ENG_AdvP";
+$$=sparser->set_node_info(word,ENG_Adv);
+std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
+
+};
+ENG_CNP:
+ENG_A ENG_CNP
+{
+const node_info& ENG_A=sparser->get_node_info($1);
+const node_info& ENG_CNP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
+std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
 
 }
-	|	ENG_Indef_Det_an ENG_N_Sg_0Con_swV
+|ENG_N 
 {
-				const node_info& ENG_Indef_Det_an=sparser->get_node_info($1);
-				const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_an,ENG_N_Sg_0Con_swV);
-				std::cout<<"ENG_DP->ENG_Indef_Det_an ENG_N_Sg_0Con_swV"<<std::endl;
+lexicon word;
+const node_info& ENG_N=sparser->get_node_info($1);
+word.gcat="ENG_CNP";
+$$=sparser->set_node_info(word,ENG_N);
+std::cout<<"ENG_CNP->ENG_N"<<std::endl;
 
 };
-ENG_Det_stem	:	t_ENG_DET 
+ENG_Con:
+t_Con 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_DET);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_Con);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<"Constant:"<<word.word<<std::endl;
 };
-ENG_IVP	:	ENG_NV ENG_PP
+ENG_DP:
+ENG_Indef_Det_a ENG_N_Sg_0Con_swC
 {
-				const node_info& ENG_NV=sparser->get_node_info($1);
-				const node_info& ENG_PP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-				std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
+const node_info& ENG_Indef_Det_a=sparser->get_node_info($1);
+const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_a,ENG_N_Sg_0Con_swC);
+std::cout<<"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC"<<std::endl;
 
 }
-	|	ENG_V ENG_PP
+|ENG_Indef_Det_an ENG_N_Sg_0Con_swV
 {
-				const node_info& ENG_V=sparser->get_node_info($1);
-				const node_info& ENG_PP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
-				std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
+const node_info& ENG_Indef_Det_an=sparser->get_node_info($1);
+const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_an,ENG_N_Sg_0Con_swV);
+std::cout<<"ENG_DP->ENG_Indef_Det_an ENG_N_Sg_0Con_swV"<<std::endl;
 
 };
-ENG_Indef_Det	:	ENG_Det_stem ENG_lfea_IndefDet
+ENG_Det_stem:
+t_ENG_DET 
 {
-				const node_info& ENG_Det_stem=sparser->get_node_info($1);
-				const node_info& ENG_lfea_IndefDet=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Indef_Det",ENG_Det_stem,ENG_lfea_IndefDet);
-				std::cout<<"ENG_Indef_Det->ENG_Det_stem ENG_lfea_IndefDet"<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_DET);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_Indef_Det_a	:	ENG_Indef_Det ENG_lfea_fwConsonant
+ENG_IVP:
+ENG_NV ENG_PP
 {
-				const node_info& ENG_Indef_Det=sparser->get_node_info($1);
-				const node_info& ENG_lfea_fwConsonant=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Indef_Det_a",ENG_Indef_Det,ENG_lfea_fwConsonant);
-				std::cout<<"ENG_Indef_Det_a->ENG_Indef_Det ENG_lfea_fwConsonant"<<std::endl;
+const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
+std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
+}
+|ENG_V ENG_PP
+{
+const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
+std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
+};
+ENG_Indef_Det:
+ENG_Det_stem ENG_lfea_IndefDet
+{
+const node_info& ENG_Det_stem=sparser->get_node_info($1);
+const node_info& ENG_lfea_IndefDet=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Indef_Det",ENG_Det_stem,ENG_lfea_IndefDet);
+std::cout<<"ENG_Indef_Det->ENG_Det_stem ENG_lfea_IndefDet"<<std::endl;
 
 };
-ENG_Indef_Det_an	:	ENG_Indef_Det ENG_lfea_fwVowel
+ENG_Indef_Det_a:
+ENG_Indef_Det ENG_lfea_fwConsonant
 {
-				const node_info& ENG_Indef_Det=sparser->get_node_info($1);
-				const node_info& ENG_lfea_fwVowel=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Indef_Det_an",ENG_Indef_Det,ENG_lfea_fwVowel);
-				std::cout<<"ENG_Indef_Det_an->ENG_Indef_Det ENG_lfea_fwVowel"<<std::endl;
+const node_info& ENG_Indef_Det=sparser->get_node_info($1);
+const node_info& ENG_lfea_fwConsonant=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Indef_Det_a",ENG_Indef_Det,ENG_lfea_fwConsonant);
+std::cout<<"ENG_Indef_Det_a->ENG_Indef_Det ENG_lfea_fwConsonant"<<std::endl;
 
 };
-ENG_N	:	ENG_N_Pl 
+ENG_Indef_Det_an:
+ENG_Indef_Det ENG_lfea_fwVowel
 {
-				lexicon word;
-				const node_info& ENG_N_Pl=sparser->get_node_info($1);
-				word.gcat="ENG_N_Pl";
-				$$=sparser->set_node_info(word,ENG_N_Pl);
-				std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
+const node_info& ENG_Indef_Det=sparser->get_node_info($1);
+const node_info& ENG_lfea_fwVowel=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Indef_Det_an",ENG_Indef_Det,ENG_lfea_fwVowel);
+std::cout<<"ENG_Indef_Det_an->ENG_Indef_Det ENG_lfea_fwVowel"<<std::endl;
+
+};
+ENG_N:
+ENG_N_Pl 
+{
+lexicon word;
+const node_info& ENG_N_Pl=sparser->get_node_info($1);
+word.gcat="ENG_N";
+$$=sparser->set_node_info(word,ENG_N_Pl);
+std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
 
 }
-	|	ENG_N_Sg 
+|ENG_N_Sg 
 {
-				lexicon word;
-				const node_info& ENG_N_Sg=sparser->get_node_info($1);
-				word.gcat="ENG_N_Sg";
-				$$=sparser->set_node_info(word,ENG_N_Sg);
-				std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
+lexicon word;
+const node_info& ENG_N_Sg=sparser->get_node_info($1);
+word.gcat="ENG_N";
+$$=sparser->set_node_info(word,ENG_N_Sg);
+std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
 
 };
-ENG_NEG	:	t_ENG_NEG_Stem 
+ENG_NEG:
+t_ENG_NEG_Stem 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_NEG_Stem);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_NEG_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_NP	:	ENG_AP 
+ENG_NP:
+ENG_AP 
 {
-				lexicon word;
-				const node_info& ENG_AP=sparser->get_node_info($1);
-				word.gcat="ENG_AP";
-				$$=sparser->set_node_info(word,ENG_AP);
-				std::cout<<"ENG_NP->ENG_AP"<<std::endl;
+lexicon word;
+const node_info& ENG_AP=sparser->get_node_info($1);
+word.gcat="ENG_NP";
+$$=sparser->set_node_info(word,ENG_AP);
+std::cout<<"ENG_NP->ENG_AP"<<std::endl;
 
 }
-	|	ENG_CNP 
+|ENG_CNP 
 {
-				lexicon word;
-				const node_info& ENG_CNP=sparser->get_node_info($1);
-				word.gcat="ENG_CNP";
-				$$=sparser->set_node_info(word,ENG_CNP);
-				std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
+lexicon word;
+const node_info& ENG_CNP=sparser->get_node_info($1);
+word.gcat="ENG_NP";
+$$=sparser->set_node_info(word,ENG_CNP);
+std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 
 }
-	|	ENG_QPro ENG_CNP
+|ENG_QPro ENG_CNP
 {
-				const node_info& ENG_QPro=sparser->get_node_info($1);
-				const node_info& ENG_CNP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
-				std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
+const node_info& ENG_QPro=sparser->get_node_info($1);
+const node_info& ENG_CNP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
+std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
 
 };
-ENG_NV	:	ENG_V ENG_NEG
+ENG_NV:
+ENG_V ENG_NEG
 {
-				const node_info& ENG_V=sparser->get_node_info($1);
-				const node_info& ENG_NEG=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
-				std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
+const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_NEG=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
+std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
 
 };
-ENG_N_Pl	:	ENG_N_Pl_0Con_swC 
+ENG_N_Pl:
+ENG_N_Pl_0Con_swC 
 {
-				lexicon word;
-				const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($1);
-				word.gcat="ENG_N_Pl_0Con_swC";
-				$$=sparser->set_node_info(word,ENG_N_Pl_0Con_swC);
-				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC"<<std::endl;
+lexicon word;
+const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($1);
+word.gcat="ENG_N_Pl";
+$$=sparser->set_node_info(word,ENG_N_Pl_0Con_swC);
+std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC"<<std::endl;
 
 }
-	|	ENG_N_Pl_0Con_swC ENG_nCon
+|ENG_N_Pl_0Con_swC ENG_nCon
 {
-				const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($1);
-				const node_info& ENG_nCon=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swC,ENG_nCon);
-				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC ENG_nCon"<<std::endl;
+const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($1);
+const node_info& ENG_nCon=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swC,ENG_nCon);
+std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC ENG_nCon"<<std::endl;
 
 }
-	|	ENG_N_Pl_0Con_swV 
+|ENG_N_Pl_0Con_swV 
 {
-				lexicon word;
-				const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($1);
-				word.gcat="ENG_N_Pl_0Con_swV";
-				$$=sparser->set_node_info(word,ENG_N_Pl_0Con_swV);
-				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV"<<std::endl;
+lexicon word;
+const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($1);
+word.gcat="ENG_N_Pl";
+$$=sparser->set_node_info(word,ENG_N_Pl_0Con_swV);
+std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV"<<std::endl;
 
 }
-	|	ENG_N_Pl_0Con_swV ENG_nCon
+|ENG_N_Pl_0Con_swV ENG_nCon
 {
-				const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($1);
-				const node_info& ENG_nCon=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
-				std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV ENG_nCon"<<std::endl;
+const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($1);
+const node_info& ENG_nCon=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
+std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV ENG_nCon"<<std::endl;
 
 }
-	|	ENG_N_Sg ENG_nCon
+|ENG_N_Sg ENG_nCon
 {
-				const node_info& ENG_N_Sg=sparser->get_node_info($1);
-				const node_info& ENG_nCon=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Sg,ENG_nCon);
-				std::cout<<"ENG_N_Pl->ENG_N_Sg ENG_nCon"<<std::endl;
+//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
+//that a singular noun cannot combine with more than one constant like in 'list file abc def'
+//TODO: Any better solution???
+return -1;
+}
+|ENG_nCon 
+{
+lexicon word;
+const node_info& ENG_nCon=sparser->get_node_info($1);
+word.gcat="ENG_N_Pl";
+$$=sparser->set_node_info(word,ENG_nCon);
+std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
+
+};
+ENG_N_Pl_0Con:
+ENG_N_Stem ENG_N_lfea_Pl
+{
+const node_info& ENG_N_Stem=sparser->get_node_info($1);
+const node_info& ENG_N_lfea_Pl=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
+std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
+
+};
+ENG_N_Pl_0Con_swC:
+ENG_N_Pl_0Con ENG_lfea_swConsonant
+{
+const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
+const node_info& ENG_lfea_swConsonant=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Pl_0Con_swC",ENG_N_Pl_0Con,ENG_lfea_swConsonant);
+std::cout<<"ENG_N_Pl_0Con_swC->ENG_N_Pl_0Con ENG_lfea_swConsonant"<<std::endl;
+
+};
+ENG_N_Pl_0Con_swV:
+ENG_N_Pl_0Con ENG_lfea_swVowel
+{
+const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
+const node_info& ENG_lfea_swVowel=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Pl_0Con_swV",ENG_N_Pl_0Con,ENG_lfea_swVowel);
+std::cout<<"ENG_N_Pl_0Con_swV->ENG_N_Pl_0Con ENG_lfea_swVowel"<<std::endl;
+
+};
+ENG_N_Sg:
+ENG_1Con 
+{
+lexicon word;
+const node_info& ENG_1Con=sparser->get_node_info($1);
+word.gcat="ENG_N_Sg";
+$$=sparser->set_node_info(word,ENG_1Con);
+std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
 
 }
-	|	ENG_nCon 
+|ENG_N_Sg_0Con_swC 
 {
-				lexicon word;
-				const node_info& ENG_nCon=sparser->get_node_info($1);
-				word.gcat="ENG_nCon";
-				$$=sparser->set_node_info(word,ENG_nCon);
-				std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
-
-};
-ENG_N_Pl_0Con	:	ENG_N_Stem ENG_N_lfea_Pl
-{
-				const node_info& ENG_N_Stem=sparser->get_node_info($1);
-				const node_info& ENG_N_lfea_Pl=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
-				std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
-
-};
-ENG_N_Pl_0Con_swC	:	ENG_N_Pl_0Con ENG_lfea_swConsonant
-{
-				const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
-				const node_info& ENG_lfea_swConsonant=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Pl_0Con_swC",ENG_N_Pl_0Con,ENG_lfea_swConsonant);
-				std::cout<<"ENG_N_Pl_0Con_swC->ENG_N_Pl_0Con ENG_lfea_swConsonant"<<std::endl;
-
-};
-ENG_N_Pl_0Con_swV	:	ENG_N_Pl_0Con ENG_lfea_swVowel
-{
-				const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
-				const node_info& ENG_lfea_swVowel=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Pl_0Con_swV",ENG_N_Pl_0Con,ENG_lfea_swVowel);
-				std::cout<<"ENG_N_Pl_0Con_swV->ENG_N_Pl_0Con ENG_lfea_swVowel"<<std::endl;
-
-};
-ENG_N_Sg	:	ENG_1Con 
-{
-				lexicon word;
-				const node_info& ENG_1Con=sparser->get_node_info($1);
-				word.gcat="ENG_1Con";
-				$$=sparser->set_node_info(word,ENG_1Con);
-				std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
+lexicon word;
+const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($1);
+word.gcat="ENG_N_Sg";
+$$=sparser->set_node_info(word,ENG_N_Sg_0Con_swC);
+std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC"<<std::endl;
 
 }
-	|	ENG_N_Sg_0Con_swC 
+|ENG_N_Sg_0Con_swC ENG_1Con
 {
-				lexicon word;
-				const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($1);
-				word.gcat="ENG_N_Sg_0Con_swC";
-				$$=sparser->set_node_info(word,ENG_N_Sg_0Con_swC);
-				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC"<<std::endl;
+const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($1);
+const node_info& ENG_1Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swC,ENG_1Con);
+std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con"<<std::endl;
 
 }
-	|	ENG_N_Sg_0Con_swC ENG_1Con
+|ENG_N_Sg_0Con_swV 
 {
-				const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($1);
-				const node_info& ENG_1Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swC,ENG_1Con);
-				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con"<<std::endl;
+lexicon word;
+const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($1);
+word.gcat="ENG_N_Sg";
+$$=sparser->set_node_info(word,ENG_N_Sg_0Con_swV);
+std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV"<<std::endl;
 
 }
-	|	ENG_N_Sg_0Con_swV 
+|ENG_N_Sg_0Con_swV ENG_1Con
 {
-				lexicon word;
-				const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($1);
-				word.gcat="ENG_N_Sg_0Con_swV";
-				$$=sparser->set_node_info(word,ENG_N_Sg_0Con_swV);
-				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV"<<std::endl;
+const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($1);
+const node_info& ENG_1Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swV,ENG_1Con);
+std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV ENG_1Con"<<std::endl;
+
+};
+ENG_N_Sg_0Con:
+ENG_N_Stem ENG_N_lfea_Sg
+{
+const node_info& ENG_N_Stem=sparser->get_node_info($1);
+const node_info& ENG_N_lfea_Sg=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Sg_0Con",ENG_N_Stem,ENG_N_lfea_Sg);
+std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
+
+};
+ENG_N_Sg_0Con_swC:
+ENG_N_Sg_0Con ENG_lfea_swConsonant
+{
+const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
+const node_info& ENG_lfea_swConsonant=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Sg_0Con_swC",ENG_N_Sg_0Con,ENG_lfea_swConsonant);
+std::cout<<"ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant"<<std::endl;
+
+};
+ENG_N_Sg_0Con_swV:
+ENG_N_Sg_0Con ENG_lfea_swVowel
+{
+const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
+const node_info& ENG_lfea_swVowel=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_N_Sg_0Con_swV",ENG_N_Sg_0Con,ENG_lfea_swVowel);
+std::cout<<"ENG_N_Sg_0Con_swV->ENG_N_Sg_0Con ENG_lfea_swVowel"<<std::endl;
+
+};
+ENG_N_Stem:
+t_ENG_N_Stem 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_N_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_N_lfea_Pl:
+t_ENG_N_Pl 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_N_Pl);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_N_lfea_Sg:
+t_ENG_N_Sg 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_N_Sg);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_PP:
+ENG_Prep ENG_NP
+{
+const node_info& ENG_Prep=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
+std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
+
+};
+ENG_Prep:
+t_ENG_PREP 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_PREP);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_QPro:
+t_ENG_QPRO 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_QPRO);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_RC:
+ENG_RPro ENG_IVP
+{
+const node_info& ENG_RPro=sparser->get_node_info($1);
+const node_info& ENG_IVP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVP);
+std::cout<<"ENG_RC->ENG_RPro ENG_IVP"<<std::endl;
+
+};
+ENG_RPro:
+ENG_RPro_stem ENG_RPro_lfea_relative
+{
+const node_info& ENG_RPro_stem=sparser->get_node_info($1);
+const node_info& ENG_RPro_lfea_relative=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_RPro",ENG_RPro_stem,ENG_RPro_lfea_relative);
+std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
+
+};
+ENG_RPro_lfea_relative:
+t_ENG_RPRO_Relative 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_RPRO_Relative);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_RPro_stem:
+t_ENG_RPRO 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_RPRO);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_TP:
+ENG_Tense_particle ENG_V_Stem
+{
+const node_info& ENG_Tense_particle=sparser->get_node_info($1);
+const node_info& ENG_V_Stem=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_TP",ENG_Tense_particle,ENG_V_Stem);
+std::cout<<"ENG_TP->ENG_Tense_particle ENG_V_Stem"<<std::endl;
 
 }
-	|	ENG_N_Sg_0Con_swV ENG_1Con
+|ENG_V_ger 
 {
-				const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($1);
-				const node_info& ENG_1Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swV,ENG_1Con);
-				std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV ENG_1Con"<<std::endl;
+lexicon word;
+const node_info& ENG_V_ger=sparser->get_node_info($1);
+word.gcat="ENG_TP";
+$$=sparser->set_node_info(word,ENG_V_ger);
+std::cout<<"ENG_TP->ENG_V_ger"<<std::endl;
 
 };
-ENG_N_Sg_0Con	:	ENG_N_Stem ENG_N_lfea_Sg
+ENG_Tense_particle:
+t_ENG_PAR 
 {
-				const node_info& ENG_N_Stem=sparser->get_node_info($1);
-				const node_info& ENG_N_lfea_Sg=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg_0Con",ENG_N_Stem,ENG_N_lfea_Sg);
-				std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_PAR);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_N_Sg_0Con_swC	:	ENG_N_Sg_0Con ENG_lfea_swConsonant
+ENG_V:
+ENG_V_Stem 
 {
-				const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
-				const node_info& ENG_lfea_swConsonant=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg_0Con_swC",ENG_N_Sg_0Con,ENG_lfea_swConsonant);
-				std::cout<<"ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant"<<std::endl;
-
-};
-ENG_N_Sg_0Con_swV	:	ENG_N_Sg_0Con ENG_lfea_swVowel
-{
-				const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
-				const node_info& ENG_lfea_swVowel=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_N_Sg_0Con_swV",ENG_N_Sg_0Con,ENG_lfea_swVowel);
-				std::cout<<"ENG_N_Sg_0Con_swV->ENG_N_Sg_0Con ENG_lfea_swVowel"<<std::endl;
-
-};
-ENG_N_Stem	:	t_ENG_N_Stem 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_N_Stem);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_N_lfea_Pl	:	t_ENG_N_Pl 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_N_Pl);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_N_lfea_Sg	:	t_ENG_N_Sg 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_N_Sg);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_PP	:	ENG_Prep ENG_NP
-{
-				const node_info& ENG_Prep=sparser->get_node_info($1);
-				const node_info& ENG_NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
-				std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
-
-};
-ENG_Prep	:	t_ENG_PREP 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_PREP);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_QPro	:	t_ENG_QPRO 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_QPRO);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_RC	:	ENG_RPro ENG_IVP
-{
-				const node_info& ENG_RPro=sparser->get_node_info($1);
-				const node_info& ENG_IVP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVP);
-				std::cout<<"ENG_RC->ENG_RPro ENG_IVP"<<std::endl;
-
-};
-ENG_RPro	:	ENG_RPro_stem ENG_RPro_lfea_relative
-{
-				const node_info& ENG_RPro_stem=sparser->get_node_info($1);
-				const node_info& ENG_RPro_lfea_relative=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_RPro",ENG_RPro_stem,ENG_RPro_lfea_relative);
-				std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
-
-};
-ENG_RPro_lfea_relative	:	t_ENG_RPRO_Relative 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_RPRO_Relative);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_RPro_stem	:	t_ENG_RPRO 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_RPRO);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_TP	:	ENG_Tense_particle ENG_V_Stem
-{
-				const node_info& ENG_Tense_particle=sparser->get_node_info($1);
-				const node_info& ENG_V_Stem=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_TP",ENG_Tense_particle,ENG_V_Stem);
-				std::cout<<"ENG_TP->ENG_Tense_particle ENG_V_Stem"<<std::endl;
+lexicon word;
+const node_info& ENG_V_Stem=sparser->get_node_info($1);
+word.gcat="ENG_V";
+$$=sparser->set_node_info(word,ENG_V_Stem);
+std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 
 }
-	|	ENG_V_ger 
+|ENG_V_Stem ENG_V_lfea_aux
 {
-				lexicon word;
-				const node_info& ENG_V_ger=sparser->get_node_info($1);
-				word.gcat="ENG_V_ger";
-				$$=sparser->set_node_info(word,ENG_V_ger);
-				std::cout<<"ENG_TP->ENG_V_ger"<<std::endl;
+const node_info& ENG_V_Stem=sparser->get_node_info($1);
+const node_info& ENG_V_lfea_aux=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_V",ENG_V_Stem,ENG_V_lfea_aux);
+std::cout<<"ENG_V->ENG_V_Stem ENG_V_lfea_aux"<<std::endl;
 
 };
-ENG_Tense_particle	:	t_ENG_PAR 
+ENG_VP:
+ENG_Vbar1 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_PAR);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-ENG_V	:	ENG_V_Stem 
-{
-				lexicon word;
-				const node_info& ENG_V_Stem=sparser->get_node_info($1);
-				word.gcat="ENG_V_Stem";
-				$$=sparser->set_node_info(word,ENG_V_Stem);
-				std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
+lexicon word;
+const node_info& ENG_Vbar1=sparser->get_node_info($1);
+word.gcat="ENG_VP";
+$$=sparser->set_node_info(word,ENG_Vbar1);
+std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
 
 }
-	|	ENG_V_Stem ENG_V_lfea_aux
+|ENG_Vbar1 ENG_AdvP
 {
-				const node_info& ENG_V_Stem=sparser->get_node_info($1);
-				const node_info& ENG_V_lfea_aux=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_V",ENG_V_Stem,ENG_V_lfea_aux);
-				std::cout<<"ENG_V->ENG_V_Stem ENG_V_lfea_aux"<<std::endl;
-
-};
-ENG_VP	:	ENG_Vbar1 
-{
-				lexicon word;
-				const node_info& ENG_Vbar1=sparser->get_node_info($1);
-				word.gcat="ENG_Vbar1";
-				$$=sparser->set_node_info(word,ENG_Vbar1);
-				std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
+const node_info& ENG_Vbar1=sparser->get_node_info($1);
+const node_info& ENG_AdvP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
+std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 
 }
-	|	ENG_Vbar1 ENG_AdvP
+|ENG_Vbar1 ENG_RC
 {
-				const node_info& ENG_Vbar1=sparser->get_node_info($1);
-				const node_info& ENG_AdvP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
-				std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
+const node_info& ENG_Vbar1=sparser->get_node_info($1);
+const node_info& ENG_RC=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
+std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
 
 }
-	|	ENG_Vbar1 ENG_RC
+|ENG_Vbar2 
 {
-				const node_info& ENG_Vbar1=sparser->get_node_info($1);
-				const node_info& ENG_RC=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
-				std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
+lexicon word;
+const node_info& ENG_Vbar2=sparser->get_node_info($1);
+word.gcat="ENG_VP";
+$$=sparser->set_node_info(word,ENG_Vbar2);
+std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
 
 }
-	|	ENG_Vbar2 
+|ENG_Vbar2 ENG_PP
 {
-				lexicon word;
-				const node_info& ENG_Vbar2=sparser->get_node_info($1);
-				word.gcat="ENG_Vbar2";
-				$$=sparser->set_node_info(word,ENG_Vbar2);
-				std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
+const node_info& ENG_Vbar2=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
+std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 
 }
-	|	ENG_Vbar2 ENG_PP
+|ENG_Vbar2 ENG_RC
 {
-				const node_info& ENG_Vbar2=sparser->get_node_info($1);
-				const node_info& ENG_PP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
-				std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
+const node_info& ENG_Vbar2=sparser->get_node_info($1);
+const node_info& ENG_RC=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
+std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
 
 }
-	|	ENG_Vbar2 ENG_RC
+|ENG_Vbar3 ENG_NP
 {
-				const node_info& ENG_Vbar2=sparser->get_node_info($1);
-				const node_info& ENG_RC=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
-				std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
+const node_info& ENG_Vbar3=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
+std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 
 }
-	|	ENG_Vbar3 ENG_NP
+|ENG_Vbar4 ENG_DP
 {
-				const node_info& ENG_Vbar3=sparser->get_node_info($1);
-				const node_info& ENG_NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
-				std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
+const node_info& ENG_Vbar4=sparser->get_node_info($1);
+const node_info& ENG_DP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_VP",ENG_Vbar4,ENG_DP);
+std::cout<<"ENG_VP->ENG_Vbar4 ENG_DP"<<std::endl;
+
+};
+ENG_V_Stem:
+t_ENG_V_Stem 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_V_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_V_ger:
+ENG_V_Stem ENG_V_lfea_ger
+{
+const node_info& ENG_V_Stem=sparser->get_node_info($1);
+const node_info& ENG_V_lfea_ger=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_V_ger",ENG_V_Stem,ENG_V_lfea_ger);
+std::cout<<"ENG_V_ger->ENG_V_Stem ENG_V_lfea_ger"<<std::endl;
+
+};
+ENG_V_lfea_aux:
+t_ENG_V_Aux 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_V_Aux);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_V_lfea_ger:
+t_ENG_V_Gerund 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_V_Gerund);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_Vbar1:
+ENG_V ENG_NP
+{
+const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
+std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
+};
+ENG_Vbar2:
+ENG_Vbar1 ENG_NP
+{
+const node_info& ENG_Vbar1=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
+std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 
 }
-	|	ENG_Vbar4 ENG_DP
+|ENG_Vbar1 ENG_PP
 {
-				const node_info& ENG_Vbar4=sparser->get_node_info($1);
-				const node_info& ENG_DP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_VP",ENG_Vbar4,ENG_DP);
-				std::cout<<"ENG_VP->ENG_Vbar4 ENG_DP"<<std::endl;
+const node_info& ENG_Vbar1=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_PP);
+std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
 
 };
-ENG_V_Stem	:	t_ENG_V_Stem 
+ENG_Vbar3:
+ENG_V ENG_AdvP
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_V_Stem);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_AdvP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Vbar3",ENG_V,ENG_AdvP);
+std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
 
 };
-ENG_V_ger	:	ENG_V_Stem ENG_V_lfea_ger
+ENG_Vbar4:
+ENG_DP ENG_V
 {
-				const node_info& ENG_V_Stem=sparser->get_node_info($1);
-				const node_info& ENG_V_lfea_ger=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_V_ger",ENG_V_Stem,ENG_V_lfea_ger);
-				std::cout<<"ENG_V_ger->ENG_V_Stem ENG_V_lfea_ger"<<std::endl;
+const node_info& ENG_DP=sparser->get_node_info($1);
+const node_info& ENG_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
+std::cout<<"ENG_Vbar4->ENG_DP ENG_V"<<std::endl;
+}
+|ENG_TP ENG_V
+{
+const node_info& ENG_TP=sparser->get_node_info($1);
+const node_info& ENG_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
+std::cout<<"ENG_Vbar4->ENG_TP ENG_V"<<std::endl;
+};
+ENG_lfea_IndefDet:
+t_ENG_DET_Indef 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_DET_Indef);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_V_lfea_aux	:	t_ENG_V_Aux 
+ENG_lfea_fwConsonant:
+t_ENG_DET_fwConsonant 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_V_Aux);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_DET_fwConsonant);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_V_lfea_ger	:	t_ENG_V_Gerund 
+ENG_lfea_fwVowel:
+t_ENG_DET_fwVowel 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_V_Gerund);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_DET_fwVowel);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_Vbar1	:	ENG_V ENG_NP
+ENG_lfea_swConsonant:
+t_ENG_N_swConsonant 
 {
-				const node_info& ENG_V=sparser->get_node_info($1);
-				const node_info& ENG_NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
-				std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_N_swConsonant);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_Vbar2	:	ENG_Vbar1 ENG_NP
+ENG_lfea_swVowel:
+t_ENG_N_swVowel 
 {
-				const node_info& ENG_Vbar1=sparser->get_node_info($1);
-				const node_info& ENG_NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
-				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_N_swVowel);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+ENG_nCon:
+ENG_1Con ENG_Con
+{
+const node_info& ENG_1Con=sparser->get_node_info($1);
+const node_info& ENG_Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
+std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 
 }
-	|	ENG_Vbar1 ENG_PP
+|ENG_nCon ENG_Con
 {
-				const node_info& ENG_Vbar1=sparser->get_node_info($1);
-				const node_info& ENG_PP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_PP);
-				std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
+const node_info& ENG_nCon=sparser->get_node_info($1);
+const node_info& ENG_Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
+std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
 
 };
-ENG_Vbar3	:	ENG_V ENG_AdvP
+HUN_1Con:
+HUN_Con 
 {
-				const node_info& ENG_V=sparser->get_node_info($1);
-				const node_info& ENG_AdvP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar3",ENG_V,ENG_AdvP);
-				std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
+lexicon word;
+const node_info& HUN_Con=sparser->get_node_info($1);
+word.gcat="HUN_1Con";
+$$=sparser->set_node_info(word,HUN_Con);
+std::cout<<"HUN_1Con->HUN_Con"<<std::endl;
 
 };
-ENG_Vbar4	:	ENG_DP ENG_V
+HUN_AccCon:
+HUN_1Con HUN_Con_lfea_Acc
 {
-				const node_info& ENG_DP=sparser->get_node_info($1);
-				const node_info& ENG_V=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar4",ENG_DP,ENG_V);
-				std::cout<<"ENG_Vbar4->ENG_DP ENG_V"<<std::endl;
+const node_info& HUN_1Con=sparser->get_node_info($1);
+const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_AccCon",HUN_1Con,HUN_Con_lfea_Acc);
+std::cout<<"HUN_AccCon->HUN_1Con HUN_Con_lfea_Acc"<<std::endl;
 
 }
-	|	ENG_TP ENG_V
+|HUN_nCon HUN_Con_lfea_Acc
 {
-				const node_info& ENG_TP=sparser->get_node_info($1);
-				const node_info& ENG_V=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_Vbar4",ENG_TP,ENG_V);
-				std::cout<<"ENG_Vbar4->ENG_TP ENG_V"<<std::endl;
+const node_info& HUN_nCon=sparser->get_node_info($1);
+const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_AccCon",HUN_nCon,HUN_Con_lfea_Acc);
+std::cout<<"HUN_AccCon->HUN_nCon HUN_Con_lfea_Acc"<<std::endl;
 
 };
-ENG_lfea_IndefDet	:	t_ENG_DET_Indef 
+HUN_Con:
+t_Con 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_DET_Indef);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_Con);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<"Konstans:"<<word.word<<std::endl;
+};
+HUN_Con_lfea_Acc:
+t_HUN_Con_lfea_Acc 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_HUN_Con_lfea_Acc);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
 
 };
-ENG_lfea_fwConsonant	:	t_ENG_DET_fwConsonant 
+HUN_ImpVerb:
+HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_DET_fwConsonant);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+const node_info& HUN_Verb_stem=sparser->get_node_info($1);
+const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
+$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
+std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
+};
+HUN_ImpVerbPfx:
+HUN_ImpVerb HUN_Vbpfx
+{
+const node_info& HUN_ImpVerb=sparser->get_node_info($1);
+const node_info& HUN_Vbpfx=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
+std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
 
 };
-ENG_lfea_fwVowel	:	t_ENG_DET_fwVowel 
+HUN_N:
+HUN_N_Sg 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_DET_fwVowel);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& HUN_N_Sg=sparser->get_node_info($1);
+word.gcat="HUN_N";
+$$=sparser->set_node_info(word,HUN_N_Sg);
+std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
 
 };
-ENG_lfea_swConsonant	:	t_ENG_N_swConsonant 
+HUN_NP:
+HUN_N 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_N_swConsonant);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& HUN_N=sparser->get_node_info($1);
+word.gcat="HUN_NP";
+$$=sparser->set_node_info(word,HUN_N);
+std::cout<<"HUN_NP->HUN_N"<<std::endl;
 
 };
-ENG_lfea_swVowel	:	t_ENG_N_swVowel 
+HUN_N_Sg:
+HUN_AccCon 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_ENG_N_swVowel);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+lexicon word;
+const node_info& HUN_AccCon=sparser->get_node_info($1);
+word.gcat="HUN_N_Sg";
+$$=sparser->set_node_info(word,HUN_AccCon);
+std::cout<<"HUN_N_Sg->HUN_AccCon"<<std::endl;
 
 };
-ENG_nCon	:	ENG_1Con ENG_Con
+HUN_VP:
+HUN_ImpVerbPfx HUN_NP
 {
-				const node_info& ENG_1Con=sparser->get_node_info($1);
-				const node_info& ENG_Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
-				std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
+const node_info& HUN_ImpVerbPfx=sparser->get_node_info($1);
+const node_info& HUN_NP=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
+std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
+
+};
+HUN_Vbpfx:
+t_HUN_Vbpfx 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_HUN_Vbpfx);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+HUN_Verb_lfea_ConjDefSg2:
+t_HUN_Verb_lfea_ConjDefSg2 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_HUN_Verb_lfea_ConjDefSg2);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+HUN_Verb_stem:
+t_HUN_Verb_stem 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_HUN_Verb_stem);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+
+};
+HUN_nCon:
+HUN_1Con HUN_Con
+{
+const node_info& HUN_1Con=sparser->get_node_info($1);
+const node_info& HUN_Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
+std::cout<<"HUN_nCon->HUN_1Con HUN_Con"<<std::endl;
 
 }
-	|	ENG_nCon ENG_Con
+|HUN_AccCon HUN_Con
 {
-				const node_info& ENG_nCon=sparser->get_node_info($1);
-				const node_info& ENG_Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
-				std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
-
-};
-HUN_1Con	:	HUN_Con 
-{
-				lexicon word;
-				const node_info& HUN_Con=sparser->get_node_info($1);
-				word.gcat="HUN_Con";
-				$$=sparser->set_node_info(word,HUN_Con);
-				std::cout<<"HUN_1Con->HUN_Con"<<std::endl;
-
-};
-HUN_AccCon	:	HUN_1Con HUN_Con_lfea_Acc
-{
-				const node_info& HUN_1Con=sparser->get_node_info($1);
-				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_AccCon",HUN_1Con,HUN_Con_lfea_Acc);
-				std::cout<<"HUN_AccCon->HUN_1Con HUN_Con_lfea_Acc"<<std::endl;
+const node_info& HUN_AccCon=sparser->get_node_info($1);
+const node_info& HUN_Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_nCon",HUN_AccCon,HUN_Con);
+std::cout<<"HUN_nCon->HUN_AccCon HUN_Con"<<std::endl;
 
 }
-	|	HUN_nCon HUN_Con_lfea_Acc
+|HUN_nCon HUN_Con
 {
-				const node_info& HUN_nCon=sparser->get_node_info($1);
-				const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_AccCon",HUN_nCon,HUN_Con_lfea_Acc);
-				std::cout<<"HUN_AccCon->HUN_nCon HUN_Con_lfea_Acc"<<std::endl;
+const node_info& HUN_nCon=sparser->get_node_info($1);
+const node_info& HUN_Con=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
+std::cout<<"HUN_nCon->HUN_nCon HUN_Con"<<std::endl;
 
 };
-HUN_Con	:	t_Con 
+S:
+ENG_VP 
 {
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_Con);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-HUN_Con_lfea_Acc	:	t_HUN_Con_lfea_Acc 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_HUN_Con_lfea_Acc);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-HUN_ImpVerb	:	HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
-{
-				const node_info& HUN_Verb_stem=sparser->get_node_info($1);
-				const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
-				std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;
-
-};
-HUN_ImpVerbPfx	:	HUN_ImpVerb HUN_Vbpfx
-{
-				const node_info& HUN_ImpVerb=sparser->get_node_info($1);
-				const node_info& HUN_Vbpfx=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
-				std::cout<<"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx"<<std::endl;
-
-};
-HUN_N	:	HUN_N_Sg 
-{
-				lexicon word;
-				const node_info& HUN_N_Sg=sparser->get_node_info($1);
-				word.gcat="HUN_N_Sg";
-				$$=sparser->set_node_info(word,HUN_N_Sg);
-				std::cout<<"HUN_N->HUN_N_Sg"<<std::endl;
-
-};
-HUN_NP	:	HUN_N 
-{
-				lexicon word;
-				const node_info& HUN_N=sparser->get_node_info($1);
-				word.gcat="HUN_N";
-				$$=sparser->set_node_info(word,HUN_N);
-				std::cout<<"HUN_NP->HUN_N"<<std::endl;
-
-};
-HUN_N_Sg	:	HUN_AccCon 
-{
-				lexicon word;
-				const node_info& HUN_AccCon=sparser->get_node_info($1);
-				word.gcat="HUN_AccCon";
-				$$=sparser->set_node_info(word,HUN_AccCon);
-				std::cout<<"HUN_N_Sg->HUN_AccCon"<<std::endl;
-
-};
-HUN_VP	:	HUN_ImpVerbPfx HUN_NP
-{
-				const node_info& HUN_ImpVerbPfx=sparser->get_node_info($1);
-				const node_info& HUN_NP=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
-				std::cout<<"HUN_VP->HUN_ImpVerbPfx HUN_NP"<<std::endl;
-
-};
-HUN_Vbpfx	:	t_HUN_Vbpfx 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_HUN_Vbpfx);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-HUN_Verb_lfea_ConjDefSg2	:	t_HUN_Verb_lfea_ConjDefSg2 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_HUN_Verb_lfea_ConjDefSg2);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-HUN_Verb_stem	:	t_HUN_Verb_stem 
-{
-				lexicon word;
-				const node_info& empty_node_info={};
-				word=lex->last_word_scanned(t_HUN_Verb_stem);
-				$$=sparser->set_node_info(word,empty_node_info);
-				std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
-
-};
-HUN_nCon	:	HUN_1Con HUN_Con
-{
-				const node_info& HUN_1Con=sparser->get_node_info($1);
-				const node_info& HUN_Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
-				std::cout<<"HUN_nCon->HUN_1Con HUN_Con"<<std::endl;
+lexicon word;
+const node_info& ENG_VP=sparser->get_node_info($1);
+word.gcat="S";
+$$=sparser->set_node_info(word,ENG_VP);
+std::cout<<"S->ENG_VP"<<std::endl;
 
 }
-	|	HUN_AccCon HUN_Con
+|HUN_VP 
 {
-				const node_info& HUN_AccCon=sparser->get_node_info($1);
-				const node_info& HUN_Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_nCon",HUN_AccCon,HUN_Con);
-				std::cout<<"HUN_nCon->HUN_AccCon HUN_Con"<<std::endl;
-
-}
-	|	HUN_nCon HUN_Con
-{
-				const node_info& HUN_nCon=sparser->get_node_info($1);
-				const node_info& HUN_Con=sparser->get_node_info($2);
-				$$=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
-				std::cout<<"HUN_nCon->HUN_nCon HUN_Con"<<std::endl;
-
-};
-S	:	ENG_VP 
-{
-				lexicon word;
-				const node_info& ENG_VP=sparser->get_node_info($1);
-				word.gcat="ENG_VP";
-				$$=sparser->set_node_info(word,ENG_VP);
-				std::cout<<"S->ENG_VP"<<std::endl;
-
-}
-	|	HUN_VP 
-{
-				lexicon word;
-				const node_info& HUN_VP=sparser->get_node_info($1);
-				word.gcat="HUN_VP";
-				$$=sparser->set_node_info(word,HUN_VP);
-				std::cout<<"S->HUN_VP"<<std::endl;
+lexicon word;
+const node_info& HUN_VP=sparser->get_node_info($1);
+word.gcat="S";
+$$=sparser->set_node_info(word,HUN_VP);
+std::cout<<"S->HUN_VP"<<std::endl;
 
 };
 %%

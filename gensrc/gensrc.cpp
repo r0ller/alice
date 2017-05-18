@@ -125,10 +125,10 @@ int main(int argc, char* argv[]){
 		action=*grammar_rules->field_value_at_row_position(i,"action");
 		if(action.empty()==true){
 			if(head_symbol.empty()==false&&non_head_symbol.empty()==false){
-				action="\t\t\t\tconst node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
-				"\t\t\t\tconst node_info& "+non_head_symbol+"=sparser->get_node_info($2);\n"
-				"\t\t\t\t$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol+","+non_head_symbol+");\n"
-				"\t\t\t\tstd::cout<<\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\"<<std::endl;\n";
+				action="const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
+				"const node_info& "+non_head_symbol+"=sparser->get_node_info($2);\n"
+				"$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol+","+non_head_symbol+");\n"
+				"std::cout<<\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\"<<std::endl;\n";
 			}
 			else if(head_symbol.empty()==false&&non_head_symbol.empty()==true){
 				symbols=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE SYMBOL = '"+head_symbol+"';");
@@ -141,18 +141,18 @@ int main(int argc, char* argv[]){
 					//won't blow it up:D
 					//If yes, then the framework needs to be fixed, not the source generator here!
 					delete symbols;
-					action="\t\t\t\tlexicon word;\n"
-					"\t\t\t\tconst node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
-					"\t\t\t\tword.gcat=\""+head_symbol+"\";\n"
-					"\t\t\t\t$$=sparser->set_node_info(word,"+head_symbol+");\n"
-					"\t\t\t\tstd::cout<<\""+parent_symbol+"->"+head_symbol+"\"<<std::endl;\n";
+					action="lexicon word;\n"
+					"const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
+					"word.gcat=\""+parent_symbol+"\";\n"
+					"$$=sparser->set_node_info(word,"+head_symbol+");\n"
+					"std::cout<<\""+parent_symbol+"->"+head_symbol+"\"<<std::endl;\n";
 				}
 				else{//terminal
-					action="\t\t\t\tlexicon word;\n"
-					"\t\t\t\tconst node_info& empty_node_info={};\n"
-					"\t\t\t\tword=lex->last_word_scanned("+head_symbol+");\n"
-					"\t\t\t\t$$=sparser->set_node_info(word,empty_node_info);\n"
-					"\t\t\t\tstd::cout<<word.gcat<<\"->\"<<word.lexeme<<std::endl;\n";
+					action="lexicon word;\n"
+					"const node_info& empty_node_info={};\n"
+					"word=lex->last_word_scanned("+head_symbol+");\n"
+					"$$=sparser->set_node_info(word,empty_node_info);\n"
+					"std::cout<<word.gcat<<\"->\"<<word.lexeme<<std::endl;\n";
 				}
 			}
 			else{
@@ -160,7 +160,11 @@ int main(int argc, char* argv[]){
 			}
 		}
 		else{
-			if(action.front()!='\"'){
+			if(action.front()=='\"'){
+				action.erase(action.begin());
+				if(action.back()=='\"') action.pop_back();
+			}
+			else{
 				filestream=new std::ifstream(action);
 				if(filestream!=NULL){
 					stringstream=new std::stringstream();
@@ -178,15 +182,15 @@ int main(int argc, char* argv[]){
 		}
 		if(prev_parent_symbol!=parent_symbol){
 			if(prev_parent_symbol.empty()==true){
-				grammar+="\n"+parent_symbol+"\t:\t"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
+				grammar+="\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
 			}
 			else{
-				grammar+=";\n"+parent_symbol+"\t:\t"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
+				grammar+=";\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
 			}
 			prev_parent_symbol=parent_symbol;
 		}
 		else{
-			grammar+="\n\t|\t"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
+			grammar+="\n|"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
 		}
 	}
 	grammar+=";\n%%\n";

@@ -518,7 +518,7 @@ const std::pair<const unsigned int,field>* interpreter::followup_dependency(cons
 	else{
 		next_counter=*dependencies.field_value_at_row_position(previous_dependency_row_index,"d_failover");
 	}
-//	std::cout<<"next counter: "<<next_counter<<std::endl;
+	//std::cout<<"next counter: "<<next_counter<<std::endl;
 	if(std::atoi(next_counter.c_str())>0&&std::atoi(next_counter.c_str())>std::atoi(dependencies.field_value_at_row_position(previous_dependency_row_index,"d_counter")->c_str())){
 		depolex_entry=dependencies.value_for_field_name_found_after_row_position(previous_dependency_row_index,"lexeme",lexeme);
 		while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"d_key")==d_key
@@ -544,7 +544,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	std::stack<p_m1_node_id_m2_d_key> traversal_stack;
 
 	const node_info& node=get_node_info(node_id);
-//	std::cout<<"checking dependency for functor "<<node.expression.lexeme<<" d_key "<<d_key<<std::endl;
+	//std::cout<<"checking dependency for functor "<<node.expression.lexeme<<" d_key "<<d_key<<std::endl;
 	if(node.expression.gcat=="CON"){
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme","CON");
 	}
@@ -565,9 +565,9 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		manner=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"manner");
 		d_failover=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 		d_successor=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_successor");
-//		std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<node.expression.lexeme<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
+		//std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<node.expression.lexeme<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
 		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
-//			std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
+			//std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
 			d_counter_validated_dependencies.clear();
 			//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
@@ -586,13 +586,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
 					||manner=="1"&&d_counter_validated_dependencies.size()>=1
 					||manner=="2"&&d_counter_validated_dependencies.size()>1){
-//				std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<node.expression.lexeme<<std::endl;
+				//std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<node.expression.lexeme<<std::endl;
 				dependency_found_for_functor=true;
 			}
 			else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()!=1
 					||manner=="1"&&d_counter_validated_dependencies.size()<1
 					||manner=="2"&&d_counter_validated_dependencies.size()<=1){
-//				std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<std::endl;
+				//std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<std::endl;
 				if(std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str())){
 					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),node_id,d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 				}
@@ -638,7 +638,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		else if(semantic_dependency.empty()==true&&ref_d_key.empty()==true){
 			//A leaf in the dependency tree is found so the semantic dependency is empty. As such, there's no
 			//functor-dependency pair to be checked in the dep.vld.matrix so let's go on with the next dependency.
-//			std::cout<<"leaf dependency "<<semantic_dependency<<" checked for functor "<<node.expression.lexeme<<" and has no further dependency"<<std::endl;
+			//std::cout<<"leaf dependency "<<semantic_dependency<<" checked for functor "<<node.expression.lexeme<<" and has no further dependency"<<std::endl;
 			dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(d_key.c_str())));
 			if(dependencies_found_entry!=dependencies_found.end()){
 				//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
@@ -659,7 +659,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		else{
 			depolex_entry=followup_dependency(depolex_entry->first,node.expression.lexeme,d_key,dependency_found_for_functor,*node.expression.dependencies);
 		}
-//		if(depolex_entry!=NULL) std::cout<<"followup d_counter: "<<*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")<<std::endl;
+		//if(depolex_entry!=NULL) std::cout<<"followup d_counter: "<<*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")<<std::endl;
 	}
 	for(j=node.node_links.begin();j!=node.node_links.end();++j){
 		node_being_processed=false;
@@ -707,7 +707,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0,path_nr=0,odep_level=0;
 
 	const node_info& node=get_node_info(node_id);
-//	std::cout<<"checking dependency for optional functor "<<functor<<" d_key "<<d_key<<std::endl;
+	//std::cout<<"checking dependency for optional functor "<<functor<<" d_key "<<d_key<<std::endl;
 	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
 	if(depolex_entry==NULL){
 		//throw exception as for each functor there must be one entry with at least NULL dependency
@@ -725,17 +725,17 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			manner=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"manner");
 			d_failover=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 			d_successor=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_successor");
-//			std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<functor<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
+			//std::cout<<"checking dependency entry "<<semantic_dependency<<" ref_d_key "<<ref_d_key<<" for functor "<<functor<<" d_key "<<d_key<<" d_counter "<<d_counter<<std::endl;
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
-//				std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
+				//std::cout<<"looking up depolex entry with row id "<<depolex_entry->first<<" in dep.val.matrix"<<std::endl;
 				d_counter_validated_dependencies.clear();
 				//Insert the corresponding entry into optional_dependencies_checked to indicate that the node id is already being checked
 				if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
 				else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
 				odep_level=optional_dependencies_checked.size()+1;
 				optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,std::atoi(parent_d_key.c_str()),parent_d_counter,path_nr,odep_level,std::atoi(d_counter.c_str()))));
-//				std::cout<<"optional dependency level:"<<odep_level<<std::endl;
-//				std::cout<<"path_nr:"<<path_nr<<std::endl;
+				//std::cout<<"optional dependency level:"<<odep_level<<std::endl;
+				//std::cout<<"path_nr:"<<path_nr<<std::endl;
 				for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 						dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 						++dependency_matrix_entry){
@@ -751,13 +751,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
 						||manner=="1"&&d_counter_validated_dependencies.size()>=1
 						||manner=="2"&&d_counter_validated_dependencies.size()>1){
-//					std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<std::endl;
+					//std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<std::endl;
 					dependency_found_for_functor=true;
 				}
 				else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()!=1
 						||manner=="1"&&d_counter_validated_dependencies.size()<1
 						||manner=="2"&&d_counter_validated_dependencies.size()<=1){
-//					std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<functor<<" with d_key "<<d_key<<std::endl;
+					//std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<functor<<" with d_key "<<d_key<<std::endl;
 					if((std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str()))
 						&&optional_dependencies_checked.find(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())))==optional_dependencies_checked.end()){
 						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
@@ -785,8 +785,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 								}
 							}
 							if(dependency_already_found_for_node_id==false){
-//								std::cout<<"register dependency "<<semantic_dependency<<" for functor "<<get_node_info(node_id).expression.lexeme<<" node_id "<<node_id<<" with optional functor "<<functor<<std::endl;
-//								std::cout<<"optional dependency level:"<<odep_level<<std::endl;
+								//std::cout<<"register dependency "<<semantic_dependency<<" for functor "<<get_node_info(node_id).expression.lexeme<<" node_id "<<node_id<<" with optional functor "<<functor<<std::endl;
+								//std::cout<<"optional dependency level:"<<odep_level<<std::endl;
 								dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
 								++nr_of_deps_to_add;
 							}
@@ -816,8 +816,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 								}
 							}
 							if(dependency_already_found_for_node_id==false){
-//								std::cout<<"register dependency "<<semantic_dependency<<" for functor "<<get_node_info(node_id).expression.lexeme<<" node_id "<<node_id<<" with optional functor "<<functor<<std::endl;
-//								std::cout<<"optional dependency level:"<<odep_level<<std::endl;
+								//std::cout<<"register dependency "<<semantic_dependency<<" for functor "<<get_node_info(node_id).expression.lexeme<<" node_id "<<node_id<<" with optional functor "<<functor<<std::endl;
+								//std::cout<<"optional dependency level:"<<odep_level<<std::endl;
 								dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
 								++nr_of_deps_to_add;
 							}
@@ -839,7 +839,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			else if(semantic_dependency.empty()==true&&ref_d_key.empty()==true){
 				//A leaf in the dependency tree is found so the semantic dependency is empty. As such, there's no
 				//functor-dependency pair to be checked in the dep.vld.matrix so let's go on with the next dependency.
-//				std::cout<<"leaf dependency "<<semantic_dependency<<" checked for functor "<<functor<<" and has no further dependency"<<std::endl;
+				//std::cout<<"leaf dependency "<<semantic_dependency<<" checked for functor "<<functor<<" and has no further dependency"<<std::endl;
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependencies_found_entry!=dependencies_found.end()){
 					//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
@@ -861,7 +861,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		depolex_entry=followup_dependency(depolex_entry->first,functor,d_key,dependency_found_for_functor,*node.expression.dependencies);
 	}
 	if(nr_of_rules>0&&nr_of_rules==nr_of_skipped_opa_rules){
-//		std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<" but has no further dependency"<<std::endl;
+		//std::cout<<"dependency "<<semantic_dependency<<" checked for functor "<<functor<<" but has no further dependency"<<std::endl;
 		dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 		if(dependencies_found_entry!=dependencies_found.end()){
 			//Don't increase the number of dependencies as earlier:
@@ -888,7 +888,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 	for(auto&& i:node_infos){
 		if(i.expression.lexeme.empty()==false&&i.ref_node_ids.empty()==true&&gcats->first_value_for_field_name_found("gcat",i.expression.gcat)!=NULL){
 			++nr_of_non_ref_leafs;
-//			std::cout<<"Dependency to be found:"<<i.expression.lexeme<<std::endl;
+			//std::cout<<"Dependency to be found:"<<i.expression.lexeme<<std::endl;
 		}
 	}
 	return nr_of_non_ref_leafs;
@@ -946,7 +946,7 @@ std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_
 	std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 
 	for(auto&& i:node_dependency_traversal_stack_tree){
-//		std::cout<<"tree level: "<<i.first.first<<std::endl;
+		//std::cout<<"tree level: "<<i.first.first<<std::endl;
 		if(i.first.first==node_level){
 			std::get<1>(nr_of_deps)=0;
 			std::get<2>(nr_of_deps)=0;
@@ -1000,8 +1000,8 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 			&&nodes_to_be_validated.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)==nodes_to_be_validated.end()){
 			nodes_to_be_validated.insert(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
 		}
-//		std::cout<<"for node id "<<i->first.first<<" with functor "<<get_node_info(i->first.first).expression.lexeme<<" and d_key "<<i->first.second;
-//		std::cout<<" the nr_of_dependencies_found is: "<<i->second<<std::endl;
+		//std::cout<<"for node id "<<i->first.first<<" with functor "<<get_node_info(i->first.first).expression.lexeme<<" and d_key "<<i->first.second;
+		//std::cout<<" the nr_of_dependencies_found is: "<<i->second<<std::endl;
 		node_id_with_longest_match_and_d_key=map_of_node_ids_to_total_nr_of_deps_and_d_key.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
 		if(node_id_with_longest_match_and_d_key!=map_of_node_ids_to_total_nr_of_deps_and_d_key.end()){
 			if(std::get<1>(node_id_with_longest_match_and_d_key->second.first)<std::get<1>(node_id_and_d_key_with_nr_of_deps->nr_of_deps)){
@@ -1307,6 +1307,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 			main_node=&get_private_node_info(i.first);
 			dependent_node=&get_private_node_info(i.second.second);
 			main_node->dependency_validation_matrix.insert(i.second);
+			//std::cout<<"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme<<std::endl;
 			if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
 				dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
 			}

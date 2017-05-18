@@ -191,15 +191,40 @@ insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar3','ENG_NP',NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_RC',NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_RC',NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar4','ENG_DP',NULL);
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',NULL);
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',
+'"const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
+std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;"');
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',
+'"const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
+std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;"');
 insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_NEG',NULL);
 insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_V','ENG_AdvP',NULL);
 insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_PP',NULL);
 insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar1','ENG_V','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_DP','ENG_V',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_TP','ENG_V',NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar1','ENG_V','ENG_NP',
+'"const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
+std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;"');
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_DP','ENG_V',
+'"const node_info& ENG_DP=sparser->get_node_info($1);
+const node_info& ENG_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
+std::cout<<"ENG_Vbar4->ENG_DP ENG_V"<<std::endl;"');
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_TP','ENG_V',
+'"const node_info& ENG_TP=sparser->get_node_info($1);
+const node_info& ENG_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
+std::cout<<"ENG_Vbar4->ENG_TP ENG_V"<<std::endl;"');
 insert into GRAMMAR values('ENG','ENG_PP','ENG_Prep','ENG_NP',NULL);
 insert into GRAMMAR values('ENG','ENG_NP','ENG_CNP',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_NP','ENG_AP',NULL,NULL);
@@ -237,7 +262,11 @@ insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC','ENG_nCon',NULL);
 insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV','ENG_nCon',NULL);
 insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_nCon',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',
+'"//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
+//that a singular noun cannot combine with more than one constant like in ''list file abc def''
+//TODO: Any better solution???
+return -1;"');
 insert into GRAMMAR values('ENG','ENG_N_Stem','t_ENG_N_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N_lfea_Sg','t_ENG_N_Sg',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N_lfea_Pl','t_ENG_N_Pl',NULL,NULL);
@@ -245,7 +274,12 @@ insert into GRAMMAR values('ENG','ENG_A','t_ENG_A_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_AP','ENG_1Con','ENG_N_Pl_0Con_swC',NULL);
 insert into GRAMMAR values('ENG','ENG_AP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL);
 insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,
+'"lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_Con);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<"Constant:"<<word.word<<std::endl;"');
 insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_RPro','ENG_RPro_stem','ENG_RPro_lfea_relative',NULL);
 insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO',NULL,NULL);
@@ -266,7 +300,12 @@ insert into GRAMMAR values('ENG','ENG_lfea_swVowel','t_ENG_N_swVowel',NULL,NULL)
 insert into GRAMMAR values('ENG','ENG_lfea_swConsonant','t_ENG_N_swConsonant',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_NP',NULL);
 insert into GRAMMAR values('HUN','HUN_ImpVerbPfx','HUN_ImpVerb','HUN_Vbpfx',NULL);
-insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_ConjDefSg2',NULL);
+insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_ConjDefSg2',
+'"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
+const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
+$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
+std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;"');
 insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_lfea_ConjDefSg2',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_stem',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Vbpfx','t_HUN_Vbpfx',NULL,NULL);
@@ -279,7 +318,12 @@ insert into GRAMMAR values('HUN','HUN_nCon','HUN_nCon','HUN_Con',NULL);
 insert into GRAMMAR values('HUN','HUN_nCon','HUN_AccCon','HUN_Con',NULL);
 insert into GRAMMAR values('HUN','HUN_AccCon','HUN_1Con','HUN_Con_lfea_Acc',NULL);
 insert into GRAMMAR values('HUN','HUN_AccCon','HUN_nCon','HUN_Con_lfea_Acc',NULL);
-insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,
+'"lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_Con);
+$$=sparser->set_node_info(word,empty_node_info);
+std::cout<<"Konstans:"<<word.word<<std::endl;"');
 insert into GRAMMAR values('HUN','HUN_Con_lfea_Acc','t_HUN_Con_lfea_Acc',NULL,NULL);
 
 COMMIT;
