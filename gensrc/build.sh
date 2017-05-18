@@ -1,0 +1,1 @@
+clang++ -g -std=c++11 gensrc.cpp -o gensrc -I/home/r0ller/hi/alice -L/usr/lib -lsqlite3;

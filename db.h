@@ -1,11 +1,11 @@
 #ifndef DB_H
 	#define DB_H
 
-	#include <map>
+	#define EMBEDDED 1
+	#define NODEJS 2
+	#define NETWORK 3
+
 	#include <string>
-	#include "sqlite3.h"
-	#include <iterator>
-	#include <utility>
 	#include <exception>
 	#include "query_result.h"
 	#include <deque>
@@ -23,23 +23,45 @@
 	}lexicon;
 
 	class db{
+		public:
+			virtual ~db(){};
+			virtual void open(const std::string&)=0;
+			virtual void close()=0;
+			virtual const std::string error_message()=0;
+			virtual query_result *exec_sql(const std::string&)=0;
+	};
+
+	#if defined(__ANDROID__)
+		#include "jni_db.h"
+	#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+		#include "js_db.h"
+	#else
+		#include "sqlite_db.h"
+	#endif
+
+	class db_factory{
 		private:
-			db();
-			static int store_row_data(void *, int, char **, char **);
-			sqlite3 *sqlite;
-			static int (*fptr_store_row_data)(void *, int, char **, char **);
 			static db *singleton_instance;
 		public:
-			~db();
 			static db *get_instance(){
-				if(db::singleton_instance==NULL) db::singleton_instance=new db;
-				return db::singleton_instance;
+				if(db_factory::singleton_instance==NULL){
+					#if defined(__ANDROID__)
+						db_factory::singleton_instance=new jni_db;
+					#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+						db_factory::singleton_instance=new js_db;
+					#else
+						db_factory::singleton_instance=new sqlite_db;
+					#endif
+				}
+				return db_factory::singleton_instance;
 			};
-			void open(const std::string&);
-			void close();
-			const std::string error_message();
-			query_result *exec_sql(const std::string&);
+			static void delete_instance(){
+				delete singleton_instance;
+				singleton_instance=NULL;
+			};
 	};
+
+	db *db_factory::singleton_instance=NULL;
 
 	class db_error:public std::exception{
 		public:
@@ -47,7 +69,7 @@
 				//Since the C-string returned by what() is valid until the exception object
 				//gets destroyed and the sqlite error message string is managed by sqlite
 				//internally, the best bet is to get a copy of it to avoid any crash.
-				return db::get_instance()->error_message().c_str();
+				return db_factory::get_instance()->error_message().c_str();
 			}
 	};
 
@@ -56,5 +78,13 @@
 	class failed_to_open_db:public db_error{};
 
 	class failed_to_close_db:public db_error{};
+
+	#if defined(__ANDROID__)
+		#include "jni_db.cpp"
+	#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+		#include "js_db.cpp"
+	#else
+		#include "sqlite_db.cpp"
+	#endif
 
 #endif

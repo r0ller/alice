@@ -20,6 +20,7 @@
 			void destroy_words();
 			query_result* dependencies_read_for_functor(const std::string&);
 			void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
+			unsigned int token;
 		public:
 			lexer(const char *,const char *);
 			~lexer();
@@ -32,6 +33,7 @@
 			bool is_end_of_input();
 			std::string validated_words();
 			std::vector<lexicon> word_entries();
+			unsigned int last_token_returned();
 	};
 
 	class lexer_error:public std::exception{

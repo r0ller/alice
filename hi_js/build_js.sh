@@ -1,1 +1,6 @@
-emcc -s EXPORTED_FUNCTIONS="['_hi']" hi.bc libsqlite3.a libfoma.a libz.a libreadline.a -o hi.js --embed-file hi.db --embed-file english.fst
+#!/usr/pkg/bin/bash
+
+dir=(`dirname $1`);
+base=`echo $1|rev|cut -d '/' -f1|rev|cut -d '.' -f1`;
+js=$dir'/'$base'.js';
+emcc -s EXPORTED_FUNCTIONS="['_hi']" $1 -L$2 -lsqlite3 -lfoma -lz -lreadline -o $js --embed-file $3 --embed-file $4

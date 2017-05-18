@@ -24,13 +24,12 @@ create table GCAT(/*Eventually, table for terminal symbols, i.e. to which yacc t
 gcat varchar(12), /*references SYMBOLS(symbol),*/
 feature varchar(12), /*references SYMBOLS(symbol),*/
 lid varchar(5) references LANGUAGES(lid),
-token smallint,
-/*description varchar(128),*/
-PRIMARY KEY(gcat, feature, lid) /*gcat, feature, lid are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
+token smallint,/*unsigned ints are assigned as tokens to terminal symbols, NULLs being unconvertable by std::atoi() won't get a generated token in the bison source*/
+PRIMARY KEY(gcat, feature) /*gcat, feature, lid are all keys as once token literals in yacc source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 );
-/*create unique index i_gcat_lid on GCAT(gcat, lid);*/
+create index i_token on GCAT(token);/*TODO: this should be "create unique index" but it fails e.g. if two CONs are defined in the GCAT for two different languages with token 0*/
 
 create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
@@ -101,35 +100,60 @@ FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid) /*TODO: figure out how to
 /*FOREIGN KEY(lexeme) REFERENCES FUNCTORS(functor)*/ /*TODO: figure out, how to connect functors table functor field and lexicon table lexeme field*/
 );
 
-/*Searchable XML for context field? Instead of one context field for the context structure, we could have a scheme like: <keys>,tag,value
-e.g. the xml structure <xmltag1>value for xmltag1<xmltag2>value for xmltag2</xmltag2></xmltag1> would look like:
-<keys>,"<xmltag1>","value for xmltag1"
-<keys>,"<xmltag2>","value for xmltag2"
-<keys>,"</xmltag2>",NULL
-<keys>,"</xmltag1>",NULL
-This way, the context content would be searchable. Actually, XML tagging convention is not even necessary.
-*/
-create table CONTEXTS(
+create table TAGCONTEXT(/*Extracted tags, just for fast tag search to find the right fcontext*/
 model_id text,/*id for the model in which the context was interpreted*/
 context_source text,/*user or other source of context*/
 session_id text,
 timestamp text,
-stype smallint,/*0:imperative,1:declarative,2:interrogative*/
-context text,/*already compiled, interpreted result*/
+tag_counter smallint,
+tag text,
+value text,
+PRIMARY KEY(model_id,context_source,session_id,timestamp,tag_counter)
+);
+
+create table FCONTEXT(
+model_id text,/*id for the model in which the context was interpreted*/
+context_source text,/*user or other source of context*/
+session_id text,
+timestamp text,
+fcontext text,/*already compiled, interpreted result*/
 PRIMARY KEY(model_id,context_source,session_id,timestamp)
 );
 
 create table FUNCTOR_DEFS(
 functor_id varchar(51),
-/*definition_type smallint references DEFTYPE(deftype),*/
 definition text,
 PRIMARY KEY(functor_id)
+);
+
+create table FUNCTOR_TAGS(
+functor_id varchar(51),
+trigger_tag text,
+counter smallint,
+tag text,
+value text,
+PRIMARY KEY(functor_id, trigger_tag, counter)
+FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
 );
 
 create table FUNCTORS(
 functor varchar(47),
 d_key smallint,
 functor_id varchar(51),
+/*ftag_id varchar(51),*/
 PRIMARY KEY(functor, d_key)
 FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
+/*FOREIGN KEY(ftag_id) REFERENCES FUNCTOR_TAGS(functor_id)*/
+);
+
+create table GRAMMAR(
+lid varchar(5) references LANGUAGES(lid),
+parent_symbol varchar(12),
+head_symbol varchar(12),
+non_head_symbol varchar(12),
+action text,/*if content is in quotes then it is regarded as code, if not then it is regarded as filename*/
+PRIMARY KEY(lid, parent_symbol, head_symbol, non_head_symbol)
+FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 );

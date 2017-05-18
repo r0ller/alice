@@ -12,7 +12,10 @@ extern "C" {
     	const char *cstringin=env->GetStringUTFChars(text, JNI_FALSE);
     	const char *cstringlanguage=env->GetStringUTFChars(language, JNI_FALSE);
     	char *cstringerror=new char[1024];
-    	cstringout=hi(cstringin,cstringlanguage,cstringerror);
+    	JavaVM* javaVM=NULL;
+    	env->GetJavaVM(&javaVM);
+    	jobject activity = env->NewGlobalRef(obj);
+    	cstringout=hi(cstringin,cstringlanguage,cstringerror,javaVM,activity);
 		__android_log_print(ANDROID_LOG_INFO, "hi", "jtranslation: %s", cstringout);
     	env->ReleaseStringUTFChars(text, cstringin);
     	env->ReleaseStringUTFChars(language, cstringlanguage);

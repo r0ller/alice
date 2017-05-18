@@ -9,36 +9,36 @@ morphan::morphan(const std::string& lid){
 	query_result *fsts=NULL;
 	unsigned int fstname_length=0;
 
-	sqlite=db::get_instance();
+	sqlite=db_factory::get_instance();
 	fsts=sqlite->exec_sql("SELECT FST FROM LANGUAGES WHERE LID = '"+lid+"';");
 	if(fsts==NULL){
-		//TODO: throw exception
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("No entry found for language id "+lid+" in LANGUAGES db table.");
 	}
 	fstname=*fsts->field_value_at_row_position(0,"fst");
 	#ifdef __ANDROID__
 		__android_log_print(ANDROID_LOG_INFO, "hi", "fst used: %s", fstname.c_str());
 		fstname="/data/data/hi.pkg/"+fstname;//TODO: get cwd on android
+	#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+		fstname="/virtual/"+fstname;
 	#endif
 	fstname_length=fstname.length();
 	pfstname=new char[fstname_length+1];
 	fstname_length=fstname.copy(pfstname,fstname_length+1);
 	pfstname[fstname_length]='\0';
+	//std::cout<<"opening fst: "<<fstname<<std::endl;
 	morphan::fst=fsm_read_binary_file(pfstname);
 	if(morphan::fst==NULL){
 		#ifdef __ANDROID__
 			__android_log_print(ANDROID_LOG_INFO, "hi", "failed to read binary fst %s",pfstname);
 		#endif
-		//TODO: throw exception
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Failed to read binary fst "+fstname);
 	}
 	morphan::morphan_handle=apply_init(morphan::fst);
 	if(morphan::morphan_handle==NULL){
 		#ifdef __ANDROID__
 			__android_log_print(ANDROID_LOG_INFO, "hi", "fst apply_init failed");
 		#endif
-		//TODO: throw exception
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Fst initialization failed for "+fstname);
 	}
 	delete fsts;
 	#ifdef __ANDROID__

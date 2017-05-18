@@ -20,8 +20,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 			}
 		}
 		else if(word_gcat.empty()==false&&morphemes[i].find("[gcat]")!=std::string::npos){
-			//TODO: throw exception
-			exit(EXIT_FAILURE);
+			throw std::runtime_error("More than one [gcat] tag found in the morphemes of the word "+word);
 		}
 		if(tag_found==false){
 			if(word_stem.empty()==true){
@@ -32,8 +31,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 				}
 			}
 			else if(word_stem.empty()==false&&morphemes[i].find("[stem]")!=std::string::npos){
-				//TODO: throw exception
-				exit(EXIT_FAILURE);
+				throw std::runtime_error("More than one [stem] tag found in the morphemes of the word "+word);
 			}
 		}
 		if(tag_found==false){

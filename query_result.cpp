@@ -47,6 +47,9 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 	bool entry_already_exists=false;
 	std::multimap<unsigned int,field>::iterator upper_bound,erase_invalidation_iterator_copy;
 
+//	#ifdef __ANDROID__
+//	__android_log_print(ANDROID_LOG_INFO, "hi", std::string("query_result->insert() "+std::to_string(row.first)+","+row.second.field_name+","+row.second.field_value).c_str());
+//	#endif
 	if(raw_result_set.empty()==false){
 		//check to avoid inserting a value for an existing field with the same name with the same row id
 		if(field_value_at_row_position(row.first,row.second.field_name)==NULL){
@@ -76,7 +79,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 			}
 		}
 		if(fields_inserted!=fields){
-			exit(EXIT_FAILURE);//TODO: throw exception, field names to be inserted and that of the table structure do not match
+			throw std::runtime_error("Field names to be inserted and that of the table structure do not match.");
 		}
 		for(std::set<unsigned int>::const_iterator i=keys_found.begin();i!=keys_found.end();++i){
 			if(fields_found.count(*i)==nr_of_columns){
@@ -96,13 +99,11 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 			row_buffer.erase(row.first);
 		}
 		if(row_buffer.find(row.first)!=row_buffer.end()){
-			std::cout<<"exiting, row_buffer not cleared up"<<std::endl;
-			exit(EXIT_FAILURE);//TODO: throw exception
+			throw std::runtime_error("Exiting, row_buffer not cleared up.");
 		}
 	}
 	else if(nr_of_inserted_columns>nr_of_columns){
-		std::cout<<"exiting, row_buffer is inconsistent"<<std::endl;
-		exit(EXIT_FAILURE);//TODO: throw exception
+		throw std::runtime_error("Exiting, row_buffer is inconsistent");
 	}
 }
 
