@@ -1,7 +1,7 @@
 !!!engnoun.lexc!!!
 
-Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat]
-+Relative[lfea] +NEG[gcat] [Guess] +CON[gcat] +fwConsonant[lfea] +fwVowel[lfea] +Indef[lfea] +DET[gcat]
+Multichar_Symbols [stem] +N +V +Sg +Pl +PREP +ADV +A +Aux +RPRO
++Relative +NEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET
 
 LEXICON Root
 
@@ -14,9 +14,9 @@ file Ninf;
 directory Ninf;
 
 LEXICON Constant
-[stem]+CON[gcat]:0	#;
+[stem]+CON:0	#;
 
 LEXICON Ninf
 
-[stem]+N[gcat]+Sg[lfea]:0   #;
-[stem]+N[gcat]+Pl[lfea]:^s  #;
+[stem]+N+Sg:0   #;
+[stem]+N+Pl:^s  #;

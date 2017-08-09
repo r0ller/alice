@@ -21,8 +21,9 @@
 			query_result* dependencies_read_for_functor(const std::string&);
 			void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 			unsigned int token;
+			std::locale locale;
 		public:
-			lexer(const char *,const char *);
+			lexer(const char *,const char *,std::locale&);
 			~lexer();
 			unsigned int next_token();
 			lexicon last_word_scanned();

@@ -7,8 +7,8 @@
 	}
 
 	#include <iostream>
+	#include <locale>
 	#ifdef __ANDROID__
-		#include "log.h"
 		#include "jni.h"
 		JavaVM *jvm=NULL;
 		jobject activity;
@@ -16,6 +16,7 @@
 	#ifdef __EMSCRIPTEN__
 		#include <emscripten.h>
 	#endif
+	#include "logger.cpp"
 	#include "db.h"
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;

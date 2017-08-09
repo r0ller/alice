@@ -1,14 +1,12 @@
 package hi.pkg;
 //source: http://stackoverflow.com/questions/14517338/android-check-whether-the-phone-is-dual-sim
+import android.content.Context;
+import android.telephony.TelephonyManager;
+import android.util.Pair;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import android.content.Context;
-import android.support.v4.util.Pair;
-import android.telephony.TelephonyManager;
 
 public final class TelephonyInfo {
 

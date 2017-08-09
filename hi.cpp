@@ -7,16 +7,13 @@
 int main(void){
 
 	FILE *fp;
-	char command[4096],line[256],script[4096]="",*emsg=NULL;
+	char command[4096],line[256],script[8192]="",*emsg=NULL;
 	const char *translation;
 
-	//TODO:Environment variables should be taken from config file (DB table read by the library on first call)
-//	putenv("source=.");
-//	putenv("target=.");
 	fgets(command,4096,stdin);
 	emsg=new char[1024];
 	while(command[0]!='\n'){
-		translation=hi(command,"ENG",emsg);
+		translation=hi(command,"HUN",emsg);
 		if(!translation){
 			std::cout<<"Invalid command\n"<<std::endl;
 			if(emsg!=NULL){

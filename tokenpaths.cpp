@@ -1,109 +1,140 @@
 #include "tokenpaths.h"
 
 tokenpaths::tokenpaths(){
-
+	is_any_path_left=true;
 }
 
 tokenpaths::~tokenpaths(){
-
 }
 
 bool tokenpaths::is_any_left(){
-	unsigned int nr_of_paths=1,nr_of_paths_covered=0;
-	t_word_count *word_count=NULL;
+	return is_any_path_left;
+}
 
-	if(wordtoken_counter.empty()==true&&(valid_paths.empty()==false||invalid_paths.empty()==false)
-		||wordtoken_counter.empty()==false&&valid_paths.empty()==true&&invalid_paths.empty()==true){
-		throw std::runtime_error("Well, I'm prepared for this. Cannot handle the state of word token counter, valid and invalid token paths.");
-	}
-	else if(wordtoken_counter.empty()==false&&(valid_paths.empty()==false||invalid_paths.empty()==false)){
-		for(std::map<std::string,unsigned int>::iterator i=wordtoken_counter.begin();i!=wordtoken_counter.end();++i){
-			word_count=new t_word_count(i);
-			nr_of_paths=nr_of_paths*word_count->count;
-			delete word_count;
+lexicon tokenpaths::next_word(const std::vector<lexicon>& words){
+	std::vector<lexicon> new_path;
+	bool add_word,add_path_as_validated=false,add_path_as_invalidated=false;
+
+	for(auto&& word:words){
+		new_path.clear();
+		new_path=this->words;
+		new_path.push_back(word);
+		add_word=true;
+		for(auto&& invalid_path:invalid_paths){
+			if(invalid_path.size()==new_path.size()){
+				unsigned int nr_of_matching_words=0;
+				for(auto&& new_path_word:new_path){
+					if(new_path_word.word!=invalid_path.at(nr_of_matching_words).word||new_path_word.tokens!=invalid_path.at(nr_of_matching_words).tokens){
+						break;
+					}
+					++nr_of_matching_words;
+				}
+				if(nr_of_matching_words==new_path.size()){
+					add_word=false;
+					add_path_as_invalidated=true;
+					break;
+				}
+			}
 		}
-		nr_of_paths_covered=valid_paths.size()+invalid_paths.size();
-//		std::cout<<"nr_of_paths="<<nr_of_paths<<", nr_of_paths_covered="<<nr_of_paths_covered<<std::endl;
-		if(nr_of_paths==nr_of_paths_covered) return false;
-		else if(nr_of_paths_covered<nr_of_paths) return true;
+		if(add_word==true){
+			for(auto&& invalid_path:internal_invalid_paths){
+				if(invalid_path.size()==new_path.size()){
+					unsigned int nr_of_matching_words=0;
+					for(auto&& new_path_word:new_path){
+						if(new_path_word.word!=invalid_path.at(nr_of_matching_words).word||new_path_word.tokens!=invalid_path.at(nr_of_matching_words).tokens){
+							break;
+						}
+						++nr_of_matching_words;
+					}
+					if(nr_of_matching_words==new_path.size()){
+						add_word=false;
+						add_path_as_invalidated=true;
+						break;
+					}
+				}
+			}
+		}
+		if(add_word==true){
+			for(auto&& valid_path:valid_paths){
+				if(valid_path.size()==new_path.size()){
+					unsigned int nr_of_matching_words=0;
+					for(auto&& new_path_word:new_path){
+						if(new_path_word.word!=valid_path.at(nr_of_matching_words).word||new_path_word.tokens!=valid_path.at(nr_of_matching_words).tokens){
+							break;
+						}
+						++nr_of_matching_words;
+					}
+					if(nr_of_matching_words==new_path.size()){
+						add_word=false;
+						add_path_as_validated=true;
+						break;
+					}
+				}
+			}
+		}
+		if(add_word==true){
+			for(auto&& valid_path:internal_valid_paths){
+				if(valid_path.size()==new_path.size()){
+					unsigned int nr_of_matching_words=0;
+					for(auto&& new_path_word:new_path){
+						if(new_path_word.word!=valid_path.at(nr_of_matching_words).word||new_path_word.tokens!=valid_path.at(nr_of_matching_words).tokens){
+							break;
+						}
+						++nr_of_matching_words;
+					}
+					if(nr_of_matching_words==new_path.size()){
+						add_word=false;
+						add_path_as_validated=true;
+						break;
+					}
+				}
+			}
+		}
+		if(add_word==true){
+			this->words.push_back(word);
+			return word;
+		}
+	}
+	if(add_word==false){
+		if(this->words.empty()==false){
+			if(add_path_as_validated==true&&add_path_as_invalidated==false){
+				add_internal_valid_path(this->words);
+			}
+			else if(add_path_as_validated==false&&add_path_as_invalidated==true){
+				add_internal_invalid_path(this->words);
+			}
+			else{
+				throw std::runtime_error("Can't decide if token path to add is invalid or valid.");
+			}
+		}
 		else{
-			throw std::runtime_error("What!? There are more token paths covered than the total number of all paths? I quit.");
+			//Theoretically, this indicates that every possibility has been checked. Let's see:)
+			is_any_path_left=false;
 		}
-	}
-	else if(wordtoken_counter.empty()==true){
-		return true;
-	}
-	else{
-		throw std::runtime_error("I'm not prepared for this. Cannot handle the state of word token counter, valid and invalid token paths.");
+		reset();
+		throw invalid_token_path();
 	}
 }
 
-void tokenpaths::add_word(const lexicon& word){
-	bool exists_already=false;
-	unsigned int nr_of_matching_words=0;
-	t_word_count *word_count=NULL;
-	std::map<std::string,unsigned int>::iterator it_wordtoken_counter;
-
-	for(auto&& i:words){
-		if(i.word==word.word){
-			++nr_of_matching_words;
-			if(i.tokens==word.tokens){
-				exists_already=true;
-			}
-		}
-	}
-	if(exists_already==false){
-		words.push_back(word);
-		++nr_of_matching_words;
-	}
-	it_wordtoken_counter=wordtoken_counter.find(word.word);
-	if(it_wordtoken_counter!=wordtoken_counter.end()){
-		word_count=new t_word_count(it_wordtoken_counter);
-		if(word_count->count<nr_of_matching_words) word_count->count=nr_of_matching_words;
-		delete word_count;
-	}
-	else{
-		wordtoken_counter.insert(std::make_pair(word.word,1));
-	}
+void tokenpaths::reset(){
+	words.clear();
 }
 
-lexicon tokenpaths::next_word(const std::string& word){
-	lexicon word_found={};
-
-	for(auto&& i:words){
-		if(i.word==word){
-			word_found=i;
-			break;
-		}
-	}
-	return word_found;
-}
-
-void tokenpaths::mark_syntax_error(const lexicon& word){
-	bool exists_already=false;
-
-	for(auto&& i:words_with_token_errors){
-		if(i.word==word.word&&i.tokens==word.tokens){
-			exists_already=true;
-			break;
-		}
-	}
-	if(exists_already==false){
-		words_with_token_errors.push_back(word);
-		for(std::vector<lexicon>::iterator i=words.begin();i!=words.end();++i){
-			if(i->word==word.word&&i->tokens==word.tokens){
-				words.erase(i);
-				break;
-			}
-		}
-	}
-}
-
-void tokenpaths::add_valid_path(const std::vector<lexicon>& words){
+void tokenpaths::validate_path(const std::vector<lexicon>& words){
 	valid_paths.push_back(words);
+	reset();
 }
 
-void tokenpaths::add_invalid_path(const std::vector<lexicon>& words){
+void tokenpaths::add_internal_valid_path(const std::vector<lexicon>& words){
+	internal_valid_paths.push_back(words);
+}
+
+void tokenpaths::invalidate_path(const std::vector<lexicon>& words){
+	invalid_paths.push_back(words);
+	reset();
+}
+
+void tokenpaths::add_internal_invalid_path(const std::vector<lexicon>& words){
 	invalid_paths.push_back(words);
 }
 

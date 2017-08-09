@@ -1,12 +1,4 @@
 package hi.pkg;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
@@ -25,6 +18,14 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements OnClickListener {
     private native byte[] jhi(String text, String language, byte[] error);
@@ -184,6 +185,12 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     }
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		triggerSpeechRecoginzer();
+	}
+
 	  @Override
 	  protected void onNewIntent(Intent intent) {
 		  if (intent!=null && intent.getExtras()!=null){
@@ -277,6 +284,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 //beginNormalDebug
 						    Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+								i.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+							}
 					    	try {
 					    		startActivityForResult(i, REQUEST_OK);
 					        } catch (Exception e) {
@@ -316,6 +326,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 //beginNormalDebug
 				  Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                      i.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+                  }
 				  try {
 					  startActivityForResult(i, REQUEST_OK);
 				  } catch (Exception e) {
@@ -328,7 +341,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	  }
 
 	@Override
-    public void onClick(View v){
+    public void onClick(View v) {
+		triggerSpeechRecoginzer();
+	}
+
+	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
 //		nrOfTrials=0;
 //		recognisedText="hívd fel a liszt";

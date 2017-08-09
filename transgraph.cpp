@@ -1,9 +1,9 @@
 #include "transgraph.h"
 
-transgraph::transgraph(const std::pair<std::string,unsigned int>& functor,const morphan_result *lfeas){
+transgraph::transgraph(const std::pair<std::string,unsigned int>& functor,const morphan_result *morphan){
 	this->functor=functor;
-	if(lfeas!=NULL)	this->lfeas=lfeas;
-	else this->lfeas=NULL;
+	if(morphan!=NULL)	this->morphan=morphan;
+	else this->morphan=NULL;
 }
 
 transgraph::~transgraph(){
@@ -25,9 +25,9 @@ std::string transgraph::transcript(const std::string& type) const{
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
 	const std::string *semantic_dependency=NULL,*ref_d_key=NULL,*functor_id=NULL,*functor_def=NULL;
 	std::map<d_counter,std::string> argument_scripts;
-	unsigned int feature_index=0;
+	unsigned int morphan_index=0;
 
-	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
+	logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
 	sqlite=db_factory::get_instance();
 	if(type!="CON"){
 		dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
@@ -99,12 +99,15 @@ std::string transgraph::transcript(const std::string& type) const{
 			}
 		}
 		transcript+="function "+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+"){ ";
-		if(lfeas!=NULL){
-			transcript+=functor.first+"_"+std::to_string(functor.second)+"_LFEAS=new Array();";
-			for(auto&& i:lfeas->lfeas()){
-				transcript+=functor.first+"_"+std::to_string(functor.second)+"_LFEAS["+std::to_string(feature_index)+"]='";
+		if(morphan!=NULL){
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_WORD='"+morphan->word()+"';";
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_STEM='"+morphan->stem()+"';";
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_GCAT='"+morphan->gcat()+"';";
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_MORPHEMES=new Array();";
+			for(auto&& i:morphan->morphemes()){
+				transcript+=functor.first+"_"+std::to_string(functor.second)+"_MORPHEMES["+std::to_string(morphan_index)+"]='";
 				transcript+=i+"';";
-				++feature_index;
+				++morphan_index;
 			}
 		}
 		functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"';");
@@ -140,7 +143,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
 	const std::string *semantic_dependency=NULL,*ref_d_key=NULL,*functor_id=NULL,*functor_def=NULL;
 	std::map<d_counter,std::string> argument_scripts;
-	unsigned int feature_index=0;
+	unsigned int morphan_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
 	sqlite=db_factory::get_instance();
@@ -177,12 +180,15 @@ std::string transgraph::transcript(const std::string& type) const{
 	}
 	else{
 		transcript+="{\"functor\":\""+functor.first+"_"+std::to_string(functor.second)+"\",";
-		if(lfeas!=NULL){
-			transcript+="\"lfeas\":[";
-			for(auto&& i:lfeas->lfeas()){
-				transcript+="{\"lfea\":\"";
+		if(morphan!=NULL){
+			transcript+="\"word\":\""+morphan->word()+"\",";
+			transcript+="\"stem\":\""+morphan->stem()+"\",";
+			transcript+="\"gcat\":\""+morphan->gcat()+"\",";
+			transcript+="\"morphemes\":[";
+			for(auto&& i:morphan->morphemes()){
+				transcript+="{\"morpheme\":\"";
 				transcript+=i+"\"},";
-				++feature_index;
+				++morphan_index;
 			}
 			if(transcript.back()==',') transcript.pop_back();
 			transcript+="],";
@@ -281,7 +287,7 @@ std::string transgraph::transcript(const std::string& type) const{
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
 	const std::string *semantic_dependency=NULL,*ref_d_key=NULL,*functor_id=NULL,*functor_def=NULL;
 	std::map<d_counter,std::string> argument_scripts;
-	unsigned int feature_index=0;
+	unsigned int morphan_index=0;
 
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
 	sqlite=db_factory::get_instance();
@@ -345,11 +351,14 @@ std::string transgraph::transcript(const std::string& type) const{
 			}
 		}
 		transcript+=functor.first+"_"+std::to_string(functor.second)+"(){ ";
-		if(lfeas!=NULL){
-			for(auto&& i:lfeas->lfeas()){
-				transcript+=functor.first+"_"+std::to_string(functor.second)+"_LFEAS["+std::to_string(feature_index)+"]='";
+		if(morphan!=NULL){
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_WORD='"+morphan->word()+"';";
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_STEM='"+morphan->stem()+"';";
+			transcript+=functor.first+"_"+std::to_string(functor.second)+"_GCAT='"+morphan->gcat()+"';";
+			for(auto&& i:morphan->morphemes()){
+				transcript+=functor.first+"_"+std::to_string(functor.second)+"_MORPHEMES["+std::to_string(morphan_index)+"]='";
 				transcript+=i+"';";
-				++feature_index;
+				++morphan_index;
 			}
 		}
 		functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"';");

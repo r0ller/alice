@@ -4,44 +4,77 @@
 morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes){
 	unsigned int nr_of_morphemes=0,i;
 	size_t hit=0;
-	std::string morpheme;
-	bool tag_found=false;
+	query_result *gcat_with_lingfeas=NULL,*gcats=NULL;
+	db *sqlite=NULL;
+	const std::pair<const unsigned int,field> *field;
 
 	word_form=word;
 	word_morphemes=morphemes;
 	nr_of_morphemes=morphemes.size();
+	sqlite=db_factory::get_instance();
+	gcats=sqlite->exec_sql("SELECT DISTINCT GCAT FROM GCAT WHERE LID = '"+lex->language()+"';");
+	if(gcats==NULL){
+		throw std::runtime_error("GCAT db table is empty.");
+	}
 	for(i=0;i<nr_of_morphemes;++i){
-		tag_found=false;
-		if(word_gcat.empty()==true){
-			hit=morphemes[i].find("[gcat]");
-			if(hit!=std::string::npos){
-				word_gcat=morphemes[i].substr(0,hit);//the algorithm is based on the assumption that [...] tags are added as suffixes
-				tag_found=true;
-			}
+		hit=morphemes[i].find("[stem]");
+		if(hit!=std::string::npos&&word_stem.empty()==true){
+			word_stem=morphemes[i].substr(0,hit);//the algorithm is based on the assumption that [...] tags are added as suffixes
 		}
-		else if(word_gcat.empty()==false&&morphemes[i].find("[gcat]")!=std::string::npos){
-			throw std::runtime_error("More than one [gcat] tag found in the morphemes of the word "+word);
+		else if(hit!=std::string::npos&&word_stem.empty()==false){
+//			logger::singleton()->log(0,"erroneous morphan: more than one [stem] tag found");
+			erroneous=true;
 		}
-		if(tag_found==false){
-			if(word_stem.empty()==true){
-				hit=morphemes[i].find("[stem]");
-				if(hit!=std::string::npos){
-					word_stem=morphemes[i].substr(0,hit);//the algorithm is based on the assumption that [...] tags are added as suffixes
-					tag_found=true;
+		else{
+			if(gcats->first_value_for_field_name_found("gcat",morphemes[i])!=NULL){
+				if(gcat_with_lingfeas!=NULL){
+//					logger::singleton()->log(0,"erroneous morphan: more than one gcat found");
+					erroneous=true;
+				}
+				else{
+					gcat_with_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+morphemes[i]+"' AND LID = '"+lex->language()+"';");
+					if(gcat_with_lingfeas==NULL){
+//						logger::singleton()->log(0,"erroneous morphan: no gcat entries found for "+morphemes[i]);
+						erroneous=true;
+					}
+					word_gcat=morphemes[i];
 				}
 			}
-			else if(word_stem.empty()==false&&morphemes[i].find("[stem]")!=std::string::npos){
-				throw std::runtime_error("More than one [stem] tag found in the morphemes of the word "+word);
-			}
-		}
-		if(tag_found==false){
-			hit=morphemes[i].find("[lfea]");
-			if(hit!=std::string::npos){
-				features.insert(morphemes[i].substr(0,hit));
-				tag_found=true;
+			else{
+				features.insert(morphemes[i]);
 			}
 		}
 	}
+	if(gcat_with_lingfeas!=NULL){
+		if(word_stem.empty()==false){
+			field=gcat_with_lingfeas->first_value_for_field_name_found("feature","Stem");
+			if(field==NULL){
+				field=gcat_with_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
+					if(field==NULL){
+//						logger::singleton()->log(0,"erroneous morphan: no Stem is defined for gcat "+word_gcat+" in GCAT db table.");
+						erroneous=true;
+					}
+			}
+		}
+		else{
+//			logger::singleton()->log(0,"erroneous morphan: no stem found");
+			erroneous=true;
+		}
+		for(auto feature=features.begin();feature!=features.end();){
+			if(gcat_with_lingfeas->first_value_for_field_name_found("feature",*feature)!=NULL){
+				++feature;
+			}
+			else{
+				feature=features.erase(feature);
+			}
+		}
+	}
+	else{
+//		logger::singleton()->log(0,"erroneous morphan: no gcat entries found");
+		erroneous=true;
+	}
+	delete gcats;
+	delete gcat_with_lingfeas;
 }
 
 morphan_result::~morphan_result(){
@@ -74,4 +107,8 @@ void morphan_result::add_feature(const std::string& feature){
 
 const std::set<std::string>& morphan_result::lfeas() const{
 	return features;
+}
+
+bool morphan_result::is_erroneous() const{
+	return erroneous;
 }

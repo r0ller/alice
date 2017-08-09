@@ -1,3 +1,4 @@
+PRAGMA encoding="UTF-8";
 PRAGMA foreign_keys = ON;
 
 create table ROOT_TYPE(
@@ -128,7 +129,10 @@ PRIMARY KEY(functor_id)
 
 create table FUNCTOR_TAGS(
 functor_id varchar(51),
-trigger_tag text,
+trigger_tag text,/*a tag created during the interpretation that triggers taking into account (during transcription)
+the tag-value pairs of the entry e.g. grammatical mood of the verb (imperative, interrogative, indicative),
+since different tag-value pairs may belong to an indicative mood and an imperative mood as in case of
+"a directory lists files" and "list files"*/
 counter smallint,
 tag text,
 value text,

@@ -125,10 +125,21 @@ int main(int argc, char* argv[]){
 		action=*grammar_rules->field_value_at_row_position(i,"action");
 		if(action.empty()==true){
 			if(head_symbol.empty()==false&&non_head_symbol.empty()==false){
-				action="const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
-				"const node_info& "+non_head_symbol+"=sparser->get_node_info($2);\n"
-				"$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol+","+non_head_symbol+");\n"
-				"std::cout<<\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\"<<std::endl;\n";
+				std::string head_symbol_var;
+				std::string non_head_symbol_var;
+				if(head_symbol==non_head_symbol){
+					head_symbol_var=head_symbol+"1";
+					non_head_symbol_var=non_head_symbol+"2";
+				}
+				else{
+					head_symbol_var=head_symbol;
+					non_head_symbol_var=non_head_symbol;
+				}
+				action="const node_info& "+head_symbol_var+"=sparser->get_node_info($1);\n"
+				"const node_info& "+non_head_symbol_var+"=sparser->get_node_info($2);\n"
+				"$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol_var+","+non_head_symbol_var+");\n"
+				//"std::cout<<\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\"<<std::endl;\n";
+				"logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\");\n";
 			}
 			else if(head_symbol.empty()==false&&non_head_symbol.empty()==true){
 				symbols=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE SYMBOL = '"+head_symbol+"';");
@@ -145,14 +156,16 @@ int main(int argc, char* argv[]){
 					"const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
 					"word.gcat=\""+parent_symbol+"\";\n"
 					"$$=sparser->set_node_info(word,"+head_symbol+");\n"
-					"std::cout<<\""+parent_symbol+"->"+head_symbol+"\"<<std::endl;\n";
+					//"std::cout<<\""+parent_symbol+"->"+head_symbol+"\"<<std::endl;\n";
+					"logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+"\");\n";
 				}
 				else{//terminal
 					action="lexicon word;\n"
 					"const node_info& empty_node_info={};\n"
 					"word=lex->last_word_scanned("+head_symbol+");\n"
 					"$$=sparser->set_node_info(word,empty_node_info);\n"
-					"std::cout<<word.gcat<<\"->\"<<word.lexeme<<std::endl;\n";
+					//"std::cout<<word.gcat<<\"->\"<<word.lexeme<<std::endl;\n";
+					"logger::singleton()->log(0,word.gcat+\"->\"+word.lexeme);\n";
 				}
 			}
 			else{

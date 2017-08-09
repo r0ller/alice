@@ -17,6 +17,7 @@
 		std::string lid;
 		std::string gcat;
 		std::string lexeme;
+		bool lexicon_entry;
 		query_result *dependencies=NULL;
 		morphan_result *morphalytics=NULL;
 		std::deque<unsigned int> tokens;

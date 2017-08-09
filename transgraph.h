@@ -11,7 +11,7 @@
 		private:
 		std::pair<std::string,unsigned int> functor;
 		std::multimap<d_counter,const transgraph *> arguments;
-		const morphan_result *lfeas;
+		const morphan_result *morphan;
 		public:
 		transgraph(const std::pair<std::string,unsigned int>&,const morphan_result *);
 		~transgraph();

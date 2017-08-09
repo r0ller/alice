@@ -12,6 +12,7 @@
 			std::vector<std::string> word_morphemes;
 			std::string word_form;
 			std::set<std::string> features;
+			bool erroneous=false;
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&);
 			~morphan_result();
@@ -22,8 +23,16 @@
 			bool has_feature(const std::string) const;
 			void add_feature(const std::string&);
 			const std::set<std::string>& lfeas() const;
+			bool is_erroneous() const;
 			//prefix();
 			//suffix();
 			//infix();
+	};
+
+	class morphan_error:public std::exception{
+		public:
+			virtual const char *what() const throw(){
+				return "Error while processing morphological analysis\n";
+			}
 	};
 #endif

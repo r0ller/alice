@@ -7,8 +7,8 @@
 	}
 
 	#include <iostream>
+	#include <locale>
 	#ifdef __ANDROID__
-		#include "log.h"
 		#include "jni.h"
 		JavaVM *jvm=NULL;
 		jobject activity;
@@ -16,6 +16,7 @@
 	#ifdef __EMSCRIPTEN__
 		#include <emscripten.h>
 	#endif
+	#include "logger.cpp"
 	#include "db.h"
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
@@ -63,7 +64,7 @@ lexicon word;
 const node_info& ENG_Con=sparser->get_node_info($1);
 word.gcat="ENG_1Con";
 $$=sparser->set_node_info(word,ENG_Con);
-std::cout<<"ENG_1Con->ENG_Con"<<std::endl;
+logger::singleton()->log(0,"ENG_1Con->ENG_Con");
 
 };
 ENG_A:
@@ -73,7 +74,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_A_Stem);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_AP:
@@ -82,7 +83,7 @@ ENG_1Con ENG_N_Pl_0Con_swC
 const node_info& ENG_1Con=sparser->get_node_info($1);
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swC);
-std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC"<<std::endl;
+logger::singleton()->log(0,"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC");
 
 }
 |ENG_1Con ENG_N_Pl_0Con_swV
@@ -90,7 +91,7 @@ std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC"<<std::endl;
 const node_info& ENG_1Con=sparser->get_node_info($1);
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swV);
-std::cout<<"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swV"<<std::endl;
+logger::singleton()->log(0,"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swV");
 
 };
 ENG_Adv:
@@ -100,7 +101,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_ADV);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_AdvP:
@@ -110,7 +111,7 @@ lexicon word;
 const node_info& ENG_Adv=sparser->get_node_info($1);
 word.gcat="ENG_AdvP";
 $$=sparser->set_node_info(word,ENG_Adv);
-std::cout<<"ENG_AdvP->ENG_Adv"<<std::endl;
+logger::singleton()->log(0,"ENG_AdvP->ENG_Adv");
 
 };
 ENG_CNP:
@@ -119,7 +120,7 @@ ENG_A ENG_CNP
 const node_info& ENG_A=sparser->get_node_info($1);
 const node_info& ENG_CNP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
-std::cout<<"ENG_CNP->ENG_A ENG_CNP"<<std::endl;
+logger::singleton()->log(0,"ENG_CNP->ENG_A ENG_CNP");
 
 }
 |ENG_N 
@@ -128,7 +129,7 @@ lexicon word;
 const node_info& ENG_N=sparser->get_node_info($1);
 word.gcat="ENG_CNP";
 $$=sparser->set_node_info(word,ENG_N);
-std::cout<<"ENG_CNP->ENG_N"<<std::endl;
+logger::singleton()->log(0,"ENG_CNP->ENG_N");
 
 };
 ENG_Con:
@@ -146,7 +147,7 @@ ENG_Indef_Det_a ENG_N_Sg_0Con_swC
 const node_info& ENG_Indef_Det_a=sparser->get_node_info($1);
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_a,ENG_N_Sg_0Con_swC);
-std::cout<<"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC"<<std::endl;
+logger::singleton()->log(0,"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC");
 
 }
 |ENG_Indef_Det_an ENG_N_Sg_0Con_swV
@@ -154,7 +155,7 @@ std::cout<<"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC"<<std::endl;
 const node_info& ENG_Indef_Det_an=sparser->get_node_info($1);
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_an,ENG_N_Sg_0Con_swV);
-std::cout<<"ENG_DP->ENG_Indef_Det_an ENG_N_Sg_0Con_swV"<<std::endl;
+logger::singleton()->log(0,"ENG_DP->ENG_Indef_Det_an ENG_N_Sg_0Con_swV");
 
 };
 ENG_Det_stem:
@@ -164,7 +165,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_DET);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_IVP:
@@ -190,7 +191,7 @@ ENG_Det_stem ENG_lfea_IndefDet
 const node_info& ENG_Det_stem=sparser->get_node_info($1);
 const node_info& ENG_lfea_IndefDet=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Indef_Det",ENG_Det_stem,ENG_lfea_IndefDet);
-std::cout<<"ENG_Indef_Det->ENG_Det_stem ENG_lfea_IndefDet"<<std::endl;
+logger::singleton()->log(0,"ENG_Indef_Det->ENG_Det_stem ENG_lfea_IndefDet");
 
 };
 ENG_Indef_Det_a:
@@ -199,7 +200,7 @@ ENG_Indef_Det ENG_lfea_fwConsonant
 const node_info& ENG_Indef_Det=sparser->get_node_info($1);
 const node_info& ENG_lfea_fwConsonant=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Indef_Det_a",ENG_Indef_Det,ENG_lfea_fwConsonant);
-std::cout<<"ENG_Indef_Det_a->ENG_Indef_Det ENG_lfea_fwConsonant"<<std::endl;
+logger::singleton()->log(0,"ENG_Indef_Det_a->ENG_Indef_Det ENG_lfea_fwConsonant");
 
 };
 ENG_Indef_Det_an:
@@ -208,7 +209,7 @@ ENG_Indef_Det ENG_lfea_fwVowel
 const node_info& ENG_Indef_Det=sparser->get_node_info($1);
 const node_info& ENG_lfea_fwVowel=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Indef_Det_an",ENG_Indef_Det,ENG_lfea_fwVowel);
-std::cout<<"ENG_Indef_Det_an->ENG_Indef_Det ENG_lfea_fwVowel"<<std::endl;
+logger::singleton()->log(0,"ENG_Indef_Det_an->ENG_Indef_Det ENG_lfea_fwVowel");
 
 };
 ENG_N:
@@ -218,7 +219,7 @@ lexicon word;
 const node_info& ENG_N_Pl=sparser->get_node_info($1);
 word.gcat="ENG_N";
 $$=sparser->set_node_info(word,ENG_N_Pl);
-std::cout<<"ENG_N->ENG_N_Pl"<<std::endl;
+logger::singleton()->log(0,"ENG_N->ENG_N_Pl");
 
 }
 |ENG_N_Sg 
@@ -227,7 +228,7 @@ lexicon word;
 const node_info& ENG_N_Sg=sparser->get_node_info($1);
 word.gcat="ENG_N";
 $$=sparser->set_node_info(word,ENG_N_Sg);
-std::cout<<"ENG_N->ENG_N_Sg"<<std::endl;
+logger::singleton()->log(0,"ENG_N->ENG_N_Sg");
 
 };
 ENG_NEG:
@@ -237,7 +238,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_NEG_Stem);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_NP:
@@ -247,7 +248,7 @@ lexicon word;
 const node_info& ENG_AP=sparser->get_node_info($1);
 word.gcat="ENG_NP";
 $$=sparser->set_node_info(word,ENG_AP);
-std::cout<<"ENG_NP->ENG_AP"<<std::endl;
+logger::singleton()->log(0,"ENG_NP->ENG_AP");
 
 }
 |ENG_CNP 
@@ -256,7 +257,7 @@ lexicon word;
 const node_info& ENG_CNP=sparser->get_node_info($1);
 word.gcat="ENG_NP";
 $$=sparser->set_node_info(word,ENG_CNP);
-std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
+logger::singleton()->log(0,"ENG_NP->ENG_CNP");
 
 }
 |ENG_QPro ENG_CNP
@@ -264,7 +265,7 @@ std::cout<<"ENG_NP->ENG_CNP"<<std::endl;
 const node_info& ENG_QPro=sparser->get_node_info($1);
 const node_info& ENG_CNP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
-std::cout<<"ENG_NP->ENG_QPro ENG_CNP"<<std::endl;
+logger::singleton()->log(0,"ENG_NP->ENG_QPro ENG_CNP");
 
 };
 ENG_NV:
@@ -273,7 +274,7 @@ ENG_V ENG_NEG
 const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_NEG=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
-std::cout<<"ENG_NV->ENG_V ENG_NEG"<<std::endl;
+logger::singleton()->log(0,"ENG_NV->ENG_V ENG_NEG");
 
 };
 ENG_N_Pl:
@@ -283,7 +284,7 @@ lexicon word;
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($1);
 word.gcat="ENG_N_Pl";
 $$=sparser->set_node_info(word,ENG_N_Pl_0Con_swC);
-std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swC");
 
 }
 |ENG_N_Pl_0Con_swC ENG_nCon
@@ -291,7 +292,7 @@ std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC"<<std::endl;
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($1);
 const node_info& ENG_nCon=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swC,ENG_nCon);
-std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swC ENG_nCon"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swC ENG_nCon");
 
 }
 |ENG_N_Pl_0Con_swV 
@@ -300,7 +301,7 @@ lexicon word;
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($1);
 word.gcat="ENG_N_Pl";
 $$=sparser->set_node_info(word,ENG_N_Pl_0Con_swV);
-std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swV");
 
 }
 |ENG_N_Pl_0Con_swV ENG_nCon
@@ -308,7 +309,7 @@ std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV"<<std::endl;
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($1);
 const node_info& ENG_nCon=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
-std::cout<<"ENG_N_Pl->ENG_N_Pl_0Con_swV ENG_nCon"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swV ENG_nCon");
 
 }
 |ENG_N_Sg ENG_nCon
@@ -324,7 +325,7 @@ lexicon word;
 const node_info& ENG_nCon=sparser->get_node_info($1);
 word.gcat="ENG_N_Pl";
 $$=sparser->set_node_info(word,ENG_nCon);
-std::cout<<"ENG_N_Pl->ENG_nCon"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl->ENG_nCon");
 
 };
 ENG_N_Pl_0Con:
@@ -333,7 +334,7 @@ ENG_N_Stem ENG_N_lfea_Pl
 const node_info& ENG_N_Stem=sparser->get_node_info($1);
 const node_info& ENG_N_lfea_Pl=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
-std::cout<<"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl");
 
 };
 ENG_N_Pl_0Con_swC:
@@ -342,7 +343,7 @@ ENG_N_Pl_0Con ENG_lfea_swConsonant
 const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
 const node_info& ENG_lfea_swConsonant=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Pl_0Con_swC",ENG_N_Pl_0Con,ENG_lfea_swConsonant);
-std::cout<<"ENG_N_Pl_0Con_swC->ENG_N_Pl_0Con ENG_lfea_swConsonant"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl_0Con_swC->ENG_N_Pl_0Con ENG_lfea_swConsonant");
 
 };
 ENG_N_Pl_0Con_swV:
@@ -351,7 +352,7 @@ ENG_N_Pl_0Con ENG_lfea_swVowel
 const node_info& ENG_N_Pl_0Con=sparser->get_node_info($1);
 const node_info& ENG_lfea_swVowel=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Pl_0Con_swV",ENG_N_Pl_0Con,ENG_lfea_swVowel);
-std::cout<<"ENG_N_Pl_0Con_swV->ENG_N_Pl_0Con ENG_lfea_swVowel"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Pl_0Con_swV->ENG_N_Pl_0Con ENG_lfea_swVowel");
 
 };
 ENG_N_Sg:
@@ -361,7 +362,7 @@ lexicon word;
 const node_info& ENG_1Con=sparser->get_node_info($1);
 word.gcat="ENG_N_Sg";
 $$=sparser->set_node_info(word,ENG_1Con);
-std::cout<<"ENG_N_Sg->ENG_1Con"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg->ENG_1Con");
 
 }
 |ENG_N_Sg_0Con_swC 
@@ -370,7 +371,7 @@ lexicon word;
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($1);
 word.gcat="ENG_N_Sg";
 $$=sparser->set_node_info(word,ENG_N_Sg_0Con_swC);
-std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swC");
 
 }
 |ENG_N_Sg_0Con_swC ENG_1Con
@@ -378,7 +379,7 @@ std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC"<<std::endl;
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info($1);
 const node_info& ENG_1Con=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swC,ENG_1Con);
-std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con");
 
 }
 |ENG_N_Sg_0Con_swV 
@@ -387,7 +388,7 @@ lexicon word;
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($1);
 word.gcat="ENG_N_Sg";
 $$=sparser->set_node_info(word,ENG_N_Sg_0Con_swV);
-std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swV");
 
 }
 |ENG_N_Sg_0Con_swV ENG_1Con
@@ -395,7 +396,7 @@ std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV"<<std::endl;
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info($1);
 const node_info& ENG_1Con=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swV,ENG_1Con);
-std::cout<<"ENG_N_Sg->ENG_N_Sg_0Con_swV ENG_1Con"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swV ENG_1Con");
 
 };
 ENG_N_Sg_0Con:
@@ -404,7 +405,7 @@ ENG_N_Stem ENG_N_lfea_Sg
 const node_info& ENG_N_Stem=sparser->get_node_info($1);
 const node_info& ENG_N_lfea_Sg=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Sg_0Con",ENG_N_Stem,ENG_N_lfea_Sg);
-std::cout<<"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg");
 
 };
 ENG_N_Sg_0Con_swC:
@@ -413,7 +414,7 @@ ENG_N_Sg_0Con ENG_lfea_swConsonant
 const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
 const node_info& ENG_lfea_swConsonant=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Sg_0Con_swC",ENG_N_Sg_0Con,ENG_lfea_swConsonant);
-std::cout<<"ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant");
 
 };
 ENG_N_Sg_0Con_swV:
@@ -422,7 +423,7 @@ ENG_N_Sg_0Con ENG_lfea_swVowel
 const node_info& ENG_N_Sg_0Con=sparser->get_node_info($1);
 const node_info& ENG_lfea_swVowel=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_N_Sg_0Con_swV",ENG_N_Sg_0Con,ENG_lfea_swVowel);
-std::cout<<"ENG_N_Sg_0Con_swV->ENG_N_Sg_0Con ENG_lfea_swVowel"<<std::endl;
+logger::singleton()->log(0,"ENG_N_Sg_0Con_swV->ENG_N_Sg_0Con ENG_lfea_swVowel");
 
 };
 ENG_N_Stem:
@@ -432,7 +433,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_N_Stem);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_N_lfea_Pl:
@@ -442,7 +443,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_N_Pl);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_N_lfea_Sg:
@@ -452,7 +453,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_N_Sg);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_PP:
@@ -461,7 +462,7 @@ ENG_Prep ENG_NP
 const node_info& ENG_Prep=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
-std::cout<<"ENG_PP->ENG_Prep ENG_NP"<<std::endl;
+logger::singleton()->log(0,"ENG_PP->ENG_Prep ENG_NP");
 
 };
 ENG_Prep:
@@ -471,7 +472,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_PREP);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_QPro:
@@ -481,7 +482,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_QPRO);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_RC:
@@ -490,7 +491,7 @@ ENG_RPro ENG_IVP
 const node_info& ENG_RPro=sparser->get_node_info($1);
 const node_info& ENG_IVP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVP);
-std::cout<<"ENG_RC->ENG_RPro ENG_IVP"<<std::endl;
+logger::singleton()->log(0,"ENG_RC->ENG_RPro ENG_IVP");
 
 };
 ENG_RPro:
@@ -499,7 +500,7 @@ ENG_RPro_stem ENG_RPro_lfea_relative
 const node_info& ENG_RPro_stem=sparser->get_node_info($1);
 const node_info& ENG_RPro_lfea_relative=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_RPro",ENG_RPro_stem,ENG_RPro_lfea_relative);
-std::cout<<"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative"<<std::endl;
+logger::singleton()->log(0,"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative");
 
 };
 ENG_RPro_lfea_relative:
@@ -509,7 +510,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_RPRO_Relative);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_RPro_stem:
@@ -519,7 +520,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_RPRO);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_TP:
@@ -528,7 +529,7 @@ ENG_Tense_particle ENG_V_Stem
 const node_info& ENG_Tense_particle=sparser->get_node_info($1);
 const node_info& ENG_V_Stem=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_TP",ENG_Tense_particle,ENG_V_Stem);
-std::cout<<"ENG_TP->ENG_Tense_particle ENG_V_Stem"<<std::endl;
+logger::singleton()->log(0,"ENG_TP->ENG_Tense_particle ENG_V_Stem");
 
 }
 |ENG_V_ger 
@@ -537,7 +538,7 @@ lexicon word;
 const node_info& ENG_V_ger=sparser->get_node_info($1);
 word.gcat="ENG_TP";
 $$=sparser->set_node_info(word,ENG_V_ger);
-std::cout<<"ENG_TP->ENG_V_ger"<<std::endl;
+logger::singleton()->log(0,"ENG_TP->ENG_V_ger");
 
 };
 ENG_Tense_particle:
@@ -547,7 +548,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_PAR);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_V:
@@ -557,7 +558,7 @@ lexicon word;
 const node_info& ENG_V_Stem=sparser->get_node_info($1);
 word.gcat="ENG_V";
 $$=sparser->set_node_info(word,ENG_V_Stem);
-std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
+logger::singleton()->log(0,"ENG_V->ENG_V_Stem");
 
 }
 |ENG_V_Stem ENG_V_lfea_aux
@@ -565,7 +566,7 @@ std::cout<<"ENG_V->ENG_V_Stem"<<std::endl;
 const node_info& ENG_V_Stem=sparser->get_node_info($1);
 const node_info& ENG_V_lfea_aux=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_V",ENG_V_Stem,ENG_V_lfea_aux);
-std::cout<<"ENG_V->ENG_V_Stem ENG_V_lfea_aux"<<std::endl;
+logger::singleton()->log(0,"ENG_V->ENG_V_Stem ENG_V_lfea_aux");
 
 };
 ENG_VP:
@@ -575,7 +576,7 @@ lexicon word;
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 word.gcat="ENG_VP";
 $$=sparser->set_node_info(word,ENG_Vbar1);
-std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar1");
 
 }
 |ENG_Vbar1 ENG_AdvP
@@ -583,7 +584,7 @@ std::cout<<"ENG_VP->ENG_Vbar1"<<std::endl;
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 const node_info& ENG_AdvP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
-std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 ENG_AdvP");
 
 }
 |ENG_Vbar1 ENG_RC
@@ -591,7 +592,7 @@ std::cout<<"ENG_VP->ENG_Vbar1 ENG_AdvP"<<std::endl;
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 const node_info& ENG_RC=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
-std::cout<<"ENG_VP->ENG_Vbar1 ENG_RC"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 ENG_RC");
 
 }
 |ENG_Vbar2 
@@ -600,7 +601,7 @@ lexicon word;
 const node_info& ENG_Vbar2=sparser->get_node_info($1);
 word.gcat="ENG_VP";
 $$=sparser->set_node_info(word,ENG_Vbar2);
-std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar2");
 
 }
 |ENG_Vbar2 ENG_PP
@@ -608,7 +609,7 @@ std::cout<<"ENG_VP->ENG_Vbar2"<<std::endl;
 const node_info& ENG_Vbar2=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
-std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 ENG_PP");
 
 }
 |ENG_Vbar2 ENG_RC
@@ -616,7 +617,7 @@ std::cout<<"ENG_VP->ENG_Vbar2 ENG_PP"<<std::endl;
 const node_info& ENG_Vbar2=sparser->get_node_info($1);
 const node_info& ENG_RC=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
-std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 ENG_RC");
 
 }
 |ENG_Vbar3 ENG_NP
@@ -624,7 +625,7 @@ std::cout<<"ENG_VP->ENG_Vbar2 ENG_RC"<<std::endl;
 const node_info& ENG_Vbar3=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
-std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar3 ENG_NP");
 
 }
 |ENG_Vbar4 ENG_DP
@@ -632,7 +633,7 @@ std::cout<<"ENG_VP->ENG_Vbar3 ENG_NP"<<std::endl;
 const node_info& ENG_Vbar4=sparser->get_node_info($1);
 const node_info& ENG_DP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_VP",ENG_Vbar4,ENG_DP);
-std::cout<<"ENG_VP->ENG_Vbar4 ENG_DP"<<std::endl;
+logger::singleton()->log(0,"ENG_VP->ENG_Vbar4 ENG_DP");
 
 };
 ENG_V_Stem:
@@ -642,7 +643,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_V_Stem);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_V_ger:
@@ -651,7 +652,7 @@ ENG_V_Stem ENG_V_lfea_ger
 const node_info& ENG_V_Stem=sparser->get_node_info($1);
 const node_info& ENG_V_lfea_ger=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_V_ger",ENG_V_Stem,ENG_V_lfea_ger);
-std::cout<<"ENG_V_ger->ENG_V_Stem ENG_V_lfea_ger"<<std::endl;
+logger::singleton()->log(0,"ENG_V_ger->ENG_V_Stem ENG_V_lfea_ger");
 
 };
 ENG_V_lfea_aux:
@@ -661,7 +662,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_V_Aux);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_V_lfea_ger:
@@ -671,7 +672,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_V_Gerund);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_Vbar1:
@@ -689,7 +690,7 @@ ENG_Vbar1 ENG_NP
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
-std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
+logger::singleton()->log(0,"ENG_Vbar2->ENG_Vbar1 ENG_NP");
 
 }
 |ENG_Vbar1 ENG_PP
@@ -697,7 +698,7 @@ std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_NP"<<std::endl;
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_PP);
-std::cout<<"ENG_Vbar2->ENG_Vbar1 ENG_PP"<<std::endl;
+logger::singleton()->log(0,"ENG_Vbar2->ENG_Vbar1 ENG_PP");
 
 };
 ENG_Vbar3:
@@ -706,7 +707,7 @@ ENG_V ENG_AdvP
 const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_AdvP=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Vbar3",ENG_V,ENG_AdvP);
-std::cout<<"ENG_Vbar3->ENG_V ENG_AdvP"<<std::endl;
+logger::singleton()->log(0,"ENG_Vbar3->ENG_V ENG_AdvP");
 
 };
 ENG_Vbar4:
@@ -733,7 +734,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_DET_Indef);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_lfea_fwConsonant:
@@ -743,7 +744,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_DET_fwConsonant);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_lfea_fwVowel:
@@ -753,7 +754,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_DET_fwVowel);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_lfea_swConsonant:
@@ -763,7 +764,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_N_swConsonant);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_lfea_swVowel:
@@ -773,7 +774,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_ENG_N_swVowel);
 $$=sparser->set_node_info(word,empty_node_info);
-std::cout<<word.gcat<<"->"<<word.lexeme<<std::endl;
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_nCon:
@@ -782,7 +783,7 @@ ENG_1Con ENG_Con
 const node_info& ENG_1Con=sparser->get_node_info($1);
 const node_info& ENG_Con=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
-std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
+logger::singleton()->log(0,"ENG_nCon->ENG_1Con ENG_Con");
 
 }
 |ENG_nCon ENG_Con
@@ -790,7 +791,7 @@ std::cout<<"ENG_nCon->ENG_1Con ENG_Con"<<std::endl;
 const node_info& ENG_nCon=sparser->get_node_info($1);
 const node_info& ENG_Con=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
-std::cout<<"ENG_nCon->ENG_nCon ENG_Con"<<std::endl;
+logger::singleton()->log(0,"ENG_nCon->ENG_nCon ENG_Con");
 
 };
 S:
@@ -800,7 +801,7 @@ lexicon word;
 const node_info& ENG_VP=sparser->get_node_info($1);
 word.gcat="S";
 $$=sparser->set_node_info(word,ENG_VP);
-std::cout<<"S->ENG_VP"<<std::endl;
+logger::singleton()->log(0,"S->ENG_VP");
 
 };
 %%
@@ -810,7 +811,7 @@ int yylex(void){
 
 	if(lex->is_end_of_input()==false){
 		token=lex->next_token();
-		//std::cout<<"next token:"<<token<<std::endl;
+		std::cout<<"next token:"<<token<<std::endl;
 		return token+1;
 	}
 	else return 0;//historic indicator of YACC about end of input stream
@@ -839,11 +840,12 @@ const char *hi(const char *human_input,const char *language,char *error){
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *commandchr=NULL;
+	logger *logger=NULL;
+	std::locale locale;
 
+	logger=logger::singleton("console",3,"LE");
 	token_paths=new tokenpaths;
-	//TODO: remove commandchr==NULL condition check when a complete implementation for
-	//token paths coverage is done i.e. when all token paths are interpreted and not the
-	//first interpretable token path wins
+	//TODO: remove commandchr==NULL condition and implement code to return all valid results
 	while(human_input!=NULL&&commandchr==NULL&&token_paths->is_any_left()==true){
 		std::cout<<"picking new token path"<<std::endl;
 		try{
@@ -870,7 +872,8 @@ const char *hi(const char *human_input,const char *language,char *error){
 				sqlite->open("hi.db");
 				#endif
 			}
-			lex=new lexer(human_input,language);
+			locale=std::locale();
+			lex=new lexer(human_input,language,locale);
 			#ifdef __ANDROID__
 				__android_log_print(ANDROID_LOG_INFO, "hi", "lexer started");
 			#endif
@@ -882,18 +885,19 @@ const char *hi(const char *human_input,const char *language,char *error){
 				transgraph=sparser->longest_match_for_semantic_rules_found();
 				if(transgraph!=NULL){
 					token_paths->add_valid_path(lex->word_entries());
-					std::cout<<"TRUE"<<std::endl;
+					logger::singleton()->log(0,"TRUE");
 					commandstr=transgraph->transcript(std::string());
 					std::cout<<commandstr<<std::endl;
 				}
 				else{
+					logger::singleton()->log(0,"semantic error");
 					token_paths->add_invalid_path(lex->word_entries());
 					validated_words=lex->validated_words();
-					std::cout<<"validated words:"<<validated_words<<std::endl;
+					logger::singleton()->log(0,"validated words:"+validated_words);
 					if(lex->last_word_scanned().morphalytics!=NULL)
 						last_word=lex->last_word_scanned().morphalytics->word();
 					else last_word=lex->last_word_scanned().word;
-					std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
+					logger::singleton()->log(0,"FALSE: error at "+last_word);
 					if(error!=NULL){
 						if(validated_words.empty()==false){
 							validated_words.copy(error,validated_words.length(),0);
@@ -909,8 +913,8 @@ const char *hi(const char *human_input,const char *language,char *error){
 				}
 			}
 			else{//syntax error for token in yychar
+				logger::singleton()->log(0,"syntax error");
 				token_paths->add_invalid_path(lex->word_entries());
-				token_paths->mark_syntax_error(lex->last_word_scanned());
 /*				std::cout<<"yychar="<<yychar<<std::endl;
 				std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
 				std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
@@ -935,11 +939,11 @@ const char *hi(const char *human_input,const char *language,char *error){
 				//TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token
 				token_paths->followup_token(lex->last_token_returned());*/
 				validated_words=lex->validated_words();
-				std::cout<<"validated words:"<<validated_words<<std::endl;
+				logger::singleton()->log(0,"validated words:"+validated_words);
 				if(lex->last_word_scanned().morphalytics!=NULL)
 					last_word=lex->last_word_scanned().morphalytics->word();
 				else last_word=lex->last_word_scanned().word;
-				std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
+				logger::singleton()->log(0,"FALSE: error at "+last_word);
 				if(error!=NULL){
 					if(validated_words.empty()==false){
 						validated_words.copy(error,validated_words.length(),0);
@@ -953,6 +957,7 @@ const char *hi(const char *human_input,const char *language,char *error){
 					}
 				}
 			}
+			token_paths->reset();
 			delete sparser;
 			sparser=NULL;
 			delete lex;
@@ -966,90 +971,102 @@ const char *hi(const char *human_input,const char *language,char *error){
 			}
 		}
 		catch(sql_execution_error& exception){
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
-			#else
-				std::cout<<exception.what()<<std::endl;
-			#endif
+			logger::singleton()->log(0,"sql_execution_error:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(failed_to_open_db& exception){
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
-			#else
-				std::cout<<exception.what()<<std::endl;
-			#endif
+			logger::singleton()->log(0,"failed_to_open_db:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(failed_to_close_db& exception){
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
-			#else
-				std::cout<<exception.what()<<std::endl;
-			#endif
+			logger::singleton()->log(0,"failed_to_close_db:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(lexicon_type_and_db_table_schema_mismatch& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"lexicon_type_and_db_table_schema_mismatch:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(more_than_one_token_found& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"more_than_one_token_found:"+std::string(exception.what()));
+			return NULL;
+		}
+		catch(morphan_error& exception){
+			logger::singleton()->log(0,"morphan_error:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(object_node_missing& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"object_node_missing:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(head_node_missing& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"head_node_missing:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(invalid_combination& exception){
 			token_paths->add_invalid_path(lex->word_entries());
 			validated_words=lex->validated_words();
-			std::cout<<"validated words:"<<validated_words<<std::endl;
-			std::cout<<exception.what()<<std::endl;
-			if(error!=NULL){
-				if(validated_words.empty()==false){
-					validated_words.copy(error,validated_words.length(),0);
-					error[validated_words.length()]='/';
-					std::string left_node_words=exception.get_left();
-					left_node_words.copy(&error[validated_words.length()+1],left_node_words.length(),0);
-					error[validated_words.length()+left_node_words.length()+1]=' ';
-					std::string right_node_words=exception.get_right();
-					right_node_words.copy(&error[validated_words.length()+left_node_words.length()+2],right_node_words.length(),0);
-					error[validated_words.length()+left_node_words.length()+right_node_words.length()+2]='\0';
-				}
-				else{
-					std::string left_node_words=exception.get_left();
-					left_node_words.copy(error,left_node_words.length(),0);
-					error[left_node_words.length()]=' ';
-					std::string right_node_words=exception.get_right();
-					right_node_words.copy(&error[left_node_words.length()+1],right_node_words.length(),0);
-					error[left_node_words.length()+right_node_words.length()+1]='\0';
+			logger::singleton()->log(0,"validated words:"+validated_words);
+			logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+			if(token_paths->is_any_left()==true){
+				token_paths->reset();
+				delete sparser;
+				sparser=NULL;
+				delete lex;
+				lex=NULL;
+				delete transgraph;
+			}
+			else{
+				if(error!=NULL){
+					if(validated_words.empty()==false){
+						validated_words.copy(error,validated_words.length(),0);
+						error[validated_words.length()]='/';
+						std::string left_node_words=exception.get_left();
+						left_node_words.copy(&error[validated_words.length()+1],left_node_words.length(),0);
+						error[validated_words.length()+left_node_words.length()+1]=' ';
+						std::string right_node_words=exception.get_right();
+						right_node_words.copy(&error[validated_words.length()+left_node_words.length()+2],right_node_words.length(),0);
+						error[validated_words.length()+left_node_words.length()+right_node_words.length()+2]='\0';
+					}
+					else{
+						std::string left_node_words=exception.get_left();
+						left_node_words.copy(error,left_node_words.length(),0);
+						error[left_node_words.length()]=' ';
+						std::string right_node_words=exception.get_right();
+						right_node_words.copy(&error[left_node_words.length()+1],right_node_words.length(),0);
+						error[left_node_words.length()+right_node_words.length()+1]='\0';
+					}
+					return NULL;
 				}
 			}
-			return NULL;
+		}
+		catch(invalid_token_path& exception){
+			token_paths->reset();
+			delete sparser;
+			sparser=NULL;
+			delete lex;
+			lex=NULL;
+			delete transgraph;
 		}
 		catch(missing_prerequisite_symbol& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"missing_prerequisite_symbol:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(std::runtime_error& exception){//Catch underived exceptions thrown with string based messages
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"runtime exception:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(...){
-			std::cout<<"Unexpected error ..."<<std::endl;
+			logger::singleton()->log(0,"Unexpected error ..."+validated_words);
 			return NULL;
 		}
 	}
 	delete token_paths;
 	token_paths=NULL;
-	sqlite->close();
-	db_factory::delete_instance();
-	sqlite=NULL;
+	if(sqlite!=NULL){
+		sqlite->close();
+		db_factory::delete_instance();
+		sqlite=NULL;
+	}
 	return commandchr;
 }
 #ifdef __EMSCRIPTEN__

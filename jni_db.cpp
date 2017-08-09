@@ -4,7 +4,7 @@ jni_db::jni_db(){
 	env=jnienv();
 	cl_string=reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("java/lang/String")));
 	getBytes=env->GetMethodID(cl_string, "getBytes", "()[B");
-	cl_dbhelper=reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("hi/pkg/DatabaseHelper")));
+	cl_dbhelper=reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("com/bitroller/hi/DatabaseHelper")));
 	jmethodID dbhelper_constructor=env->GetMethodID(cl_dbhelper, "<init>", "()V");
 	dbhelperobj=reinterpret_cast<jobject>(env->NewGlobalRef(env->NewObject(cl_dbhelper,dbhelper_constructor)));
 	dbhelper_error_message=env->GetMethodID(cl_dbhelper, "error_message", "()Ljava/lang/String;");
