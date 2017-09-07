@@ -196,10 +196,22 @@ insert into FUNCTOR_DEFS values('DETAILENGN_1', NULL);
 insert into FUNCTOR_DEFS values('SHOWENGV_1',	'if(typeof FORENGPREP_1_OUT===''undefined'') Android.showProduct('''');else Android.showProduct(FORENGPREP_1_OUT)');
 insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', NULL);
 insert into FUNCTOR_DEFS values('HIVHUNV_1',
-'if(typeof HIVHUNV_1_CON_2_IN!==''undefined'') Android.Call(HIVHUNV_1_CON_2_IN);
-else if(typeof Num_1_OUT!==''undefined''){
-
-}');
+'contact="";
+parameter_list=arguments[1];
+for(i=0;i<parameter_list.length;++i){
+	if(parameter_list[i].indexOf(''_CON_'')>-1){
+		if(typeof arguments[i+2]!==''undefined''){
+			contact=arguments[i+2];
+			break;
+		}
+	}
+	else if(parameter_list[i].indexOf(''Num_'')>-1){
+		if(typeof arguments[i+2]!==''undefined''){
+			contact+=arguments[i+2];
+		}
+	}
+}
+Android.Call(contact);');
 insert into FUNCTOR_DEFS values('Num_1',
 'number='''';
 prevNpref='''';
@@ -376,11 +388,11 @@ for(i=0;i<Num_1_MORPHEMES.length;++i){
     else number+=''000'';
   }
   else;
-  if(Num_1_MORPHEMES[i].startsWith(''Npref'')===true) prevNpref=Num_1_MORPHEMES[i];
+  if(Num_1_MORPHEMES[i].indexOf(''Npref'')===0) prevNpref=Num_1_MORPHEMES[i];
   if(Num_1_MORPHEMES[i]===''Ik'') isOrdinal=true;
 }
 if(isOrdinal===true) number+=''.'';
-return number');
+return number;');
 insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1', 'if(ELSOUTSOHUNNOUN_1_STEM===''első'') return 1;if(ELSOUTSOHUNNOUN_1_STEM===''utolsó'') return 0;');
 
 insert into FUNCTORS values('CON', '1', NULL);

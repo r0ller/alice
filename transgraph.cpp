@@ -1,15 +1,21 @@
 #include "transgraph.h"
+unsigned int transgraph::global_id=0;
 
 transgraph::transgraph(const std::pair<std::string,unsigned int>& functor,const morphan_result *morphan){
 	this->functor=functor;
-	if(morphan!=NULL)	this->morphan=morphan;
+	if(morphan!=NULL) this->morphan=morphan;
 	else this->morphan=NULL;
+	my_id=++transgraph::global_id;
 }
 
 transgraph::~transgraph(){
 	for(auto&& i:arguments){
 		delete i.second;
 	}
+}
+
+unsigned int transgraph::id() const{
+	return my_id;
 }
 
 void transgraph::insert(const unsigned int d_counter, const transgraph *functor){
@@ -19,7 +25,7 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 
 #if defined(__ANDROID__)
 std::string transgraph::transcript(const std::string& type) const{
-	std::string transcript,initial_argscript,argument_list;
+	std::string transcript,initial_argscript,argument_list,parameter_list;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL;
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
@@ -39,6 +45,7 @@ std::string transgraph::transcript(const std::string& type) const{
 		transcript=functor.first;
 	}
 	else{
+		parameter_list="[";
 		for(auto&& i:arguments){
 			d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
 			if(d_counter_field==NULL){
@@ -54,7 +61,7 @@ std::string transgraph::transcript(const std::string& type) const{
 					argument_script->second+=" "+i.second->transcript(*semantic_dependency);
 				}
 				else{
-					initial_argscript=functor.first+"_"+std::to_string(functor.second)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_IN='";
+					initial_argscript=functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN='";
 					initial_argscript+=i.second->transcript(*semantic_dependency);
 					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
 				}
@@ -75,21 +82,26 @@ std::string transgraph::transcript(const std::string& type) const{
 			}
 			if(*semantic_dependency=="CON"){
 				if(argument_list.empty()==true){
-					argument_list+=functor.first+"_"+std::to_string(functor.second)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_IN";
+					argument_list+=functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN";
+					parameter_list+="'"+functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN"+"'";
 				}
 				else{
-					argument_list+=","+functor.first+"_"+std::to_string(functor.second)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_IN";
+					argument_list+=","+functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN";
+					parameter_list+=",'"+functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN"+"'";
 				}
 			}
 			else{
 				if(argument_list.empty()==true){
-					argument_list+=*semantic_dependency+"_"+*ref_d_key+"_OUT";
+					argument_list+=*semantic_dependency+"_"+*ref_d_key+"_"+std::to_string(i.second->id())+"_OUT";
+					parameter_list+="'"+*semantic_dependency+"_"+*ref_d_key+"_"+std::to_string(i.second->id())+"_OUT"+"'";
 				}
 				else{
-					argument_list+=","+*semantic_dependency+"_"+*ref_d_key+"_OUT";
+					argument_list+=","+*semantic_dependency+"_"+*ref_d_key+"_"+std::to_string(i.second->id())+"_OUT";
+					parameter_list+=",'"+*semantic_dependency+"_"+*ref_d_key+"_"+std::to_string(i.second->id())+"_OUT"+"'";
 				}
 			}
 		}
+		parameter_list+="]";
 		for(auto&& i:argument_scripts){
 			if(*dependencies->field_value_at_row_position(dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first))->first,"semantic_dependency")=="CON"){
 				transcript+=i.second+"';";
@@ -98,7 +110,13 @@ std::string transgraph::transcript(const std::string& type) const{
 				transcript+=i.second;
 			}
 		}
-		transcript+="function "+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+"){ ";
+		std::string function_name=functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id);
+		if(argument_list.empty()==false){
+			transcript+="function "+function_name+"("+"function_name,parameter_list,"+argument_list+"){ ";
+		}
+		else{
+			transcript+="function "+function_name+"(){ ";
+		}
 		if(morphan!=NULL){
 			transcript+=functor.first+"_"+std::to_string(functor.second)+"_WORD='"+morphan->word()+"';";
 			transcript+=functor.first+"_"+std::to_string(functor.second)+"_STEM='"+morphan->stem()+"';";
@@ -127,10 +145,15 @@ std::string transgraph::transcript(const std::string& type) const{
 			throw std::runtime_error("Empty definition field found for functor id "+*functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTOR_DEFS db table.");
 		}
 		if(functor_def->empty()==false){
-			transcript+=*functor_def+" };"+functor.first+"_"+std::to_string(functor.second)+"_OUT="+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+")"+";";
+			if(argument_list.empty()==false){
+				transcript+=*functor_def+" }\n"+function_name+"_OUT="+function_name+"("+"'"+function_name+"',"+parameter_list+","+argument_list+")"+";";
+			}
+			else{
+				transcript+=*functor_def+" }\n"+function_name+"_OUT="+function_name+"("+"'"+function_name+"');";
+			}
 		}
 		else{
-			transcript+="true; };"+functor.first+"_"+std::to_string(functor.second)+"_OUT="+functor.first+"_"+std::to_string(functor.second)+"("+argument_list+")"+";";
+			transcript+="true; }\n"+function_name+"_OUT="+function_name+"();";
 		}
 	}
 	return transcript;
@@ -281,7 +304,7 @@ std::string transgraph::transcript(const std::string& type) const{
 }
 #else
 std::string transgraph::transcript(const std::string& type) const{
-	std::string transcript,initial_argscript,argument_list;
+	std::string transcript,initial_argscript,argument_list,parameter_list;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL;
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
@@ -301,6 +324,7 @@ std::string transgraph::transcript(const std::string& type) const{
 		transcript=functor.first;
 	}
 	else{
+		parameter_list="\"";
 		for(auto&& i:arguments){
 			d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
 			if(d_counter_field==NULL){
@@ -316,7 +340,7 @@ std::string transgraph::transcript(const std::string& type) const{
 					argument_script->second+=" "+i.second->transcript(*semantic_dependency);
 				}
 				else{
-					initial_argscript=functor.first+"_"+std::to_string(functor.second)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_IN=(";
+					initial_argscript=functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN=(";
 					initial_argscript+=i.second->transcript(*semantic_dependency);
 					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
 				}
@@ -336,12 +360,15 @@ std::string transgraph::transcript(const std::string& type) const{
 				throw std::runtime_error("Empty ref_d_key field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
 			}
 			if(*semantic_dependency=="CON"){
-				argument_list+=" "+functor.first+"_"+std::to_string(functor.second)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_IN";
+				argument_list+=" $"+functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN";
+				parameter_list+=" "+functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id)+"_"+*semantic_dependency+"_"+std::to_string(i.first)+"_"+std::to_string(i.second->id())+"_IN ";
 			}
 			else{
-				argument_list+=" "+*semantic_dependency+"_"+*ref_d_key+"_OUT";
+				argument_list+=" $"+*semantic_dependency+"_"+*ref_d_key+"_"+std::to_string(i.second->id())+"_OUT";
+				parameter_list+=" "+*semantic_dependency+"_"+*ref_d_key+"_"+std::to_string(i.second->id())+"_OUT ";
 			}
 		}
+		parameter_list+="\"";
 		for(auto&& i:argument_scripts){
 			if(*dependencies->field_value_at_row_position(dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first))->first,"semantic_dependency")=="CON"){
 				transcript+=i.second+");";
@@ -350,7 +377,8 @@ std::string transgraph::transcript(const std::string& type) const{
 				transcript+=i.second;
 			}
 		}
-		transcript+=functor.first+"_"+std::to_string(functor.second)+"(){ ";
+		std::string function_name=functor.first+"_"+std::to_string(functor.second)+"_"+std::to_string(my_id);
+		transcript+=function_name+"(){ ";
 		if(morphan!=NULL){
 			transcript+=functor.first+"_"+std::to_string(functor.second)+"_WORD='"+morphan->word()+"';";
 			transcript+=functor.first+"_"+std::to_string(functor.second)+"_STEM='"+morphan->stem()+"';";
@@ -378,10 +406,10 @@ std::string transgraph::transcript(const std::string& type) const{
 			throw std::runtime_error("Empty definition field found for functor id "+*functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTOR_DEFS db table.");
 		}
 		if(functor_def->empty()==false){
-			transcript+=*functor_def+" };"+functor.first+"_"+std::to_string(functor.second)+argument_list+";";
+			transcript+=*functor_def+" };"+function_name+" \""+function_name+"\" "+parameter_list+" "+argument_list+";";
 		}
 		else{
-			transcript+="true; };"+functor.first+"_"+std::to_string(functor.second)+argument_list+";";
+			transcript+="true; };"+function_name+" \""+function_name+"\" "+parameter_list+" "+argument_list+";";
 		}
 	}
 	return transcript;

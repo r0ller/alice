@@ -1,328 +1,175 @@
 ./obj/local/armeabi-v7a/objs/jhi/jhi.o: jni/jhi.cpp \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\jni.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/cdefs.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/cdefs_elf.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\android/api-level.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\iostream \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__config \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ios \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\iosfwd \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\wchar.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\stdio.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\stdio.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\stdint.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\stdint.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/_types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/_types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\limits.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/limits.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/limits.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/internal_types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/limits.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/syslimits.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/page.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/posix_types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/stddef.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/compiler.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/posix_types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/kernel.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/sysmacros.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\xlocale.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\wctype.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__locale \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\string \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstring \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\string.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\string.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\malloc.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdio \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cwchar \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cwctype \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cctype \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\ctype.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\ctype.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\algorithm \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\initializer_list \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstddef \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\type_traits \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\utility \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__tuple \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\memory \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\typeinfo \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\exception \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdint \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\new \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\limits \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\iterator \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__functional_base \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\tuple \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\atomic \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__undef_min_max \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\stdexcept \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\mutex \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__mutex_base \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\chrono \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ctime \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\time.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\time.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/time.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/time.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/siginfo.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/siginfo.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ratio \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\climits \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\system_error \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cerrno \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\errno.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\errno.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/errno.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/errno.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/errno.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/errno-base.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\pthread.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\signal.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/signal.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/signal.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/sigcontext.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/ucontext.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/user.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sched.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\functional \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\locale.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\locale.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\streambuf \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\istream \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ostream \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\locale \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdarg \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdlib \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\stdlib.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\stdlib.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\alloca.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\strings.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\memory.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\nl_types.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\bitset \
-  jni/hilib.h \
-  C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\android/log.h
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\iostream \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ios \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\iosfwd \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\wchar.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__locale \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\string \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstring \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\string.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdio \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\stdio.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cwchar \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cwctype \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cctype \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ctype.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\algorithm \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\initializer_list \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstddef \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\type_traits \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\utility \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__tuple \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\memory \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\typeinfo \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\exception \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdint \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\new \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__undef___deallocate \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\limits \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\iterator \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__functional_base \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__debug \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\tuple \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\stdexcept \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\atomic \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__undef_min_max \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\mutex \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__mutex_base \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\chrono \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ctime \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/android/support/include\time.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ratio \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\climits \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\system_error \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cerrno \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__threading_support \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\functional \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/android/support/include\locale.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\support/android/locale_bionic.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\stdlib.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\support/xlocale/__posix_l_fallback.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\support/xlocale/__strtonum_fallback.h \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\streambuf \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\istream \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ostream \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\locale \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdarg \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdlib \
+  C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\bitset \
+  jni/hilib.h
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\jni.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\iostream:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/cdefs.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ios:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/cdefs_elf.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\iosfwd:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\android/api-level.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\wchar.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\iostream:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__locale:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__config:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\string:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ios:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstring:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\iosfwd:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\string.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\wchar.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdio:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\stdio.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\stdio.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\stdio.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cwchar:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cwctype:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\stdint.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cctype:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\stdint.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ctype.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/_types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\algorithm:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/_types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\initializer_list:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\limits.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstddef:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/limits.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\type_traits:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/limits.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\utility:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/internal_types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__tuple:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/limits.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\memory:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/syslimits.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\typeinfo:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/page.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\exception:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/posix_types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdint:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/stddef.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\new:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/compiler.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__undef___deallocate:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/posix_types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\limits:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\iterator:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/types.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__functional_base:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\machine/kernel.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__debug:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/sysmacros.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\tuple:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\xlocale.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\stdexcept:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\wctype.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\atomic:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__locale:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__undef_min_max:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\string:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\mutex:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstring:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__mutex_base:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\string.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\chrono:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\string.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ctime:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\malloc.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/android/support/include\time.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdio:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ratio:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cwchar:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\climits:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cwctype:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\system_error:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cctype:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cerrno:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\ctype.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\__threading_support:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\ctype.h:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\functional:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\algorithm:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/android/support/include\locale.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\initializer_list:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\support/android/locale_bionic.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstddef:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\stdlib.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\type_traits:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\support/xlocale/__posix_l_fallback.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\utility:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\support/xlocale/__strtonum_fallback.h:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__tuple:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\streambuf:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\memory:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\istream:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\typeinfo:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\ostream:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\exception:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\locale:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdint:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdarg:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\new:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\cstdlib:
 
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\limits:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\iterator:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__functional_base:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\tuple:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\atomic:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__undef_min_max:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\stdexcept:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\mutex:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\__mutex_base:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\chrono:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ctime:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\time.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\time.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/time.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/time.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/siginfo.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/siginfo.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ratio:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\climits:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\system_error:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cerrno:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\errno.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\errno.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\linux/errno.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/errno.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/errno.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/errno-base.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\pthread.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\signal.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/signal.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm-generic/signal.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\asm/sigcontext.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/ucontext.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sys/user.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\sched.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\functional:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\locale.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\locale.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\streambuf:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\istream:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\ostream:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\locale:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdarg:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\cstdlib:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\stdlib.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\stdlib.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\alloca.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\strings.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\memory.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/../../android/support/include\nl_types.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/sources/cxx-stl/llvm-libc++/libcxx/include\bitset:
+C:/Users/i033768/AppData/Local/Android/sdk/ndk-bundle/build//../sources/cxx-stl/llvm-libc++/include\bitset:
 
 jni/hilib.h:
-
-C:/Users/i033768/AppData/Local/Android/android-ndk-r10e/platforms/android-17/arch-arm/usr/include\android/log.h:

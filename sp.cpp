@@ -1332,7 +1332,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	}
 	if(std::atoi(parent.first.c_str())>0){
 		const node_info& nodeinfo=get_node_info(std::atoi(parent.first.c_str()));
-		if(nodeinfo.expression.lexicon_entry==true){
+		if(nodeinfo.expression.lexicon_entry==true||nodeinfo.expression.gcat=="CON"){
 //			std::cout<<nodeinfo.expression.lexeme<<"_"<<parent.second<<std::endl;
 			functor_transgraph=new transgraph(std::make_pair(nodeinfo.expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 		}

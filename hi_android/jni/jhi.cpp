@@ -3,9 +3,16 @@
 #include "hilib.h"
 #include <android/log.h>
 
+//As the project is not gradle aware, this one needs to be compiled by simply invoking
+//ndk-build.cmd (like c:\Users\username\AppData\Local\Android\sdk\ndk-bundle\ndk-build.cmd)
+//in the project directory
+//If Android Studio cannot correctly pack and build it with the java part,
+//in the Module Settings add the jni directory on the Path tab as External Annotation
+//and on the Dependencies tab add as Library the libs (or even as specfic as libs/armeabi-v7a) directory.
+//Not sure which of them helped kickstarting the build as after removing both it still works:)
 extern "C" {
     JNIEXPORT jbyteArray JNICALL
-    Java_hi_pkg_MainActivity_jhi
+    Java_com_bitroller_hi_MainActivity_jhi
     (JNIEnv *env, jobject obj, jstring text, jstring language, jbyteArray error)
     {
     	const char *cstringout=NULL;
