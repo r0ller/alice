@@ -14,7 +14,6 @@
 			std::string human_input;
 			std::string::iterator human_input_iterator;
 			morphan *stemmer;
-			std::vector<morphan_result> *morphalytics;
 			std::deque<unsigned int> token_deque;
 			lexicon tokenize_word(morphan_result&);
 			void destroy_words();

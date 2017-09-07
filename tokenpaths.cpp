@@ -274,3 +274,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 		token_paths.insert(std::make_pair(std::make_pair(anchor_symbol,anchor_symbol_counter),symbol));
 	}
 }
+
+unsigned int tokenpaths::nr_of_valid_paths(){
+	return valid_paths.size();
+}

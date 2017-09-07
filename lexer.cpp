@@ -7,7 +7,6 @@ lexer::lexer(const char *input_string,const char *language, std::locale& locale)
 		human_input=std::string(input_string);
 		human_input_iterator=human_input.begin();
 		stemmer=morphan::get_instance(lid);
-		morphalytics=NULL;
 		token=0;
 		this->locale=locale;
 }
@@ -15,7 +14,6 @@ lexer::lexer(const char *input_string,const char *language, std::locale& locale)
 lexer::~lexer(){
 	destroy_words();
 	delete stemmer;
-	delete morphalytics;
 }
 
 unsigned int lexer::next_token(){
@@ -23,6 +21,7 @@ unsigned int lexer::next_token(){
 	std::string last_word,new_word_form;
 	lexicon new_word;
 	std::vector<lexicon> new_words;
+	std::vector<morphan_result> *morphalytics;
 
 	if(token_deque.empty()==false){
 		token=token_deque.front();
@@ -40,13 +39,7 @@ unsigned int lexer::next_token(){
 		#endif
 		if(last_word.empty()==false){
 			//std::cout<<"last word:"<<last_word<<std::endl;
-			morphalytics=stemmer->analyze(last_word);//TODO:add cache to stemmer
-			//TODO: if there're >1 analyses for the same word form:
-			//1) the analyses with multiple results should be stored
-			//2) if the bison parser breaks down due to an error, store the erroneous token
-			//3) the whole parsing should be restarted (with parser reset)
-			//4) delete (or mark as "wrong") the analysis for the erroneous token from the previously stored analyses with multiple results
-			//5) when the parsing gets to the same word form for which the erroneous token was returned, take a new analysis from the multiple results
+			morphalytics=stemmer->analyze(last_word);
 			if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
 				new_word.token=0;
 				new_word.word=last_word;

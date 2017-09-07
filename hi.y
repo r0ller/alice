@@ -1751,6 +1751,13 @@ const char *hi(const char *human_input,const char *language,char *error){
 			return NULL;
 		}
 	}
+	if(token_paths->nr_of_valid_paths()==0){
+		//TODO: carry out partial syntactic parsing by iterating over invalid paths
+		//and checking if there's any semantically valid combination of the lexemes in a path
+		//can be found according to the depolex table. If there's any such hit, prepare them to be
+		//returned in the JSON structure. If not, return the morphan analyses of each word.
+	}
+	morphan::delete_cache();
 	delete token_paths;
 	token_paths=NULL;
 	if(sqlite!=NULL){

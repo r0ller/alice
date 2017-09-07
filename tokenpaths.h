@@ -31,6 +31,7 @@
 			void validate_path(const std::vector<lexicon>&);
 			void invalidate_path(const std::vector<lexicon>&);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
+			unsigned int nr_of_valid_paths();
 	};
 
 	class invalid_token_path:public std::exception{
