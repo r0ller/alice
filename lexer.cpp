@@ -1,86 +1,116 @@
 #include "lexer.h"
 #include "db.h"
 
+morphan* lexer::stemmer=NULL;
+std::vector<std::string> lexer::word_forms_;
+std::map<std::string,std::vector<lexicon> > lexer::cache;
+
 /*PUBLIC*/
-lexer::lexer(const char *input_string,const char *language){
+lexer::lexer(const char *input_string,const char *language, std::locale& locale){
 		lid=std::string(language);
-		human_input=std::string (input_string);
-		human_input_iterator=human_input.begin();
+		human_input=std::string(input_string);
 		stemmer=morphan::get_instance(lid);
-		morphalytics=NULL;
 		token=0;
+		this->locale=locale;
+		word_form_iterator=analyze_and_cache(human_input);
 }
 
 lexer::~lexer(){
 	destroy_words();
-	delete stemmer;
-	delete morphalytics;
 }
 
 unsigned int lexer::next_token(){
-//	unsigned int token=0;
 	std::string last_word,new_word_form;
 	lexicon new_word;
+	std::vector<lexicon> new_words;
+//	std::vector<morphan_result> *morphalytics;
 
 	if(token_deque.empty()==false){
 		token=token_deque.front();
 		token_deque.pop_front();
 	}
 	else{
-		last_word.clear();
-		do{
-			for(;human_input_iterator<human_input.end()&&std::isspace(human_input[std::distance(human_input.begin(),human_input_iterator)])==false;++human_input_iterator){
-				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)]);
-			}
-		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
-		#ifdef __ANDROID__
-			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
-		#endif
+		last_word=next_word();
+		//std::cout<<"last word:"<<last_word<<std::endl;
 		if(last_word.empty()==false){
-			//std::cout<<"last word:"<<last_word<<std::endl;
-			morphalytics=stemmer->analyze(last_word);
-			//TODO: if there're >1 analyses for the same word form:
-			//1) the analyses with multiple results should be stored
-			//2) if the bison parser breaks down due to an error, store the erroneous token
-			//3) the whole parsing should be restarted (with parser reset)
-			//4) delete (or mark as "wrong") the analysis for the erroneous token from the previously stored analyses with multiple results
-			//5) when the parsing gets to the same word form for which the erroneous token was returned, take a new analysis from the multiple results
-			if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
-				new_word.token=0;
-				new_word.word=last_word;
-				new_word.gcat="CON";
-				new_word.lexeme=last_word;
-				new_word.dependencies=dependencies_read_for_functor("CON");
-				new_word.morphalytics=NULL;
-				new_word.tokens.push_back(0);
-				token_paths->add_word(new_word);
-				new_word_form=last_word;
+			auto cache_hit=cache.find(last_word);
+			if(cache_hit!=cache.end()){
+				new_words=cache_hit->second;
 			}
 			else{
-				for(auto&& i:*morphalytics){
-					new_word=tokenize_word(i);
-					if(new_word.tokens.empty()==true){//TODO: throw exception
-						throw std::runtime_error("No tokens found for word:"+last_word);
-					}
-					token_paths->add_word(new_word);
-					if(new_word_form.empty()==true){
-						//Due to the fact, that the last_word is read from input and the tokenize_word()
-						//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
-						//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
-						//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
-						//So let's store the word form as it's added to token_paths.
-						new_word_form=new_word.word;
-					}
-					new_word.tokens.clear();
-				}
+				throw std::runtime_error("Word not found in cache:"+last_word);
 			}
-			new_word=token_paths->next_word(new_word_form);
+			new_word=token_paths->next_word(new_words);
+			if(new_word.word.empty()==true){
+				throw std::runtime_error("Got no next word from token paths.");
+			}
+			//std::cout<<"new word:"<<last_word<<std::endl;
 			words.push_back(new_word);
 			token_deque=new_word.tokens;
 			token=token_deque.front();
 			token_deque.pop_front();
 		}
-		else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input
+
+//		last_word.clear();
+//		do{
+//			for(;human_input_iterator<human_input.end()&&std::isspace(human_input[std::distance(human_input.begin(),human_input_iterator)],locale)==false;++human_input_iterator){
+//				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)],locale);
+//			}
+//		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
+//		#ifdef __ANDROID__
+//			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
+//		#endif
+//		if(last_word.empty()==false){
+//			//std::cout<<"last word:"<<last_word<<std::endl;
+//			auto cache_hit=cache.find(last_word);
+//			if(cache_hit!=cache.end()){
+//				new_words=cache_hit->second;
+//			}
+//			else{
+//				morphalytics=stemmer->analyze(last_word);
+//				if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
+//					new_word.token=0;
+//					new_word.word=last_word;
+//					new_word.gcat="CON";
+//					new_word.lexeme=last_word;
+//					new_word.dependencies=dependencies_read_for_functor("CON");
+//					new_word.morphalytics=NULL;
+//					new_word.tokens.push_back(0);
+//					new_word.lexicon_entry=false;
+//					new_word_form=last_word;
+//					new_words.push_back(new_word);
+//				}
+//				else{
+//					for(auto&& i:*morphalytics){
+//						new_word=tokenize_word(i);
+//						if(new_word.tokens.empty()==true){//TODO: throw exception
+//							throw std::runtime_error("No tokens found for word:"+last_word);
+//						}
+//						new_words.push_back(new_word);
+//						if(new_word_form.empty()==true){
+//							//Due to the fact, that the last_word is read from input and the tokenize_word()
+//							//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
+//							//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
+//							//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
+//							//So let's store the word form as it's added to token_paths.
+//							new_word_form=new_word.word;
+//						}
+//						new_word.tokens.clear();
+//					}
+//				}
+//				//std::cout<<"Inserting "<<last_word<<" in lexer cache"<<std::endl;
+//				cache.insert(std::make_pair(last_word,new_words));
+//			}
+//			new_word=token_paths->next_word(new_words);
+//			if(new_word.word.empty()==true){
+//				throw std::runtime_error("Got no next word from token paths.");
+//			}
+//			words.push_back(new_word);
+//			token_deque=new_word.tokens;
+//			token=token_deque.front();
+//			token_deque.pop_front();
+//		}
+//		else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input
 	}
 	return token;
 }
@@ -98,6 +128,7 @@ lexicon lexer::last_word_scanned(){
 	word.dependencies=words[nr_of_words-1].dependencies;
 	word.morphalytics=words[nr_of_words-1].morphalytics;
 	word.tokens=words[nr_of_words-1].tokens;
+	word.lexicon_entry=words[nr_of_words-1].lexicon_entry;
 	return word;
 }
 
@@ -123,8 +154,8 @@ lexicon lexer::last_word_scanned(const unsigned int token){
 			word.dependencies=NULL;//Leave empty
 			word.morphalytics=words[nr_of_words-1].morphalytics;
 			word.tokens=words[nr_of_words-1].tokens;
+			word.lexicon_entry=words[nr_of_words-1].lexicon_entry;
 			sqlite=db_factory::get_instance();
-			//TODO:if the logic works, consider reorg of GCAT table to make the token field (or token and lid) the key
 			gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+words[nr_of_words-1].gcat+"' AND LID = '"+language()+"' AND TOKEN = '"+std::to_string(internal_token)+"';");
 			if(gcats_and_lingfeas==NULL||gcats_and_lingfeas!=NULL&&gcats_and_lingfeas->nr_of_result_rows()>1){
 				throw std::runtime_error("No entry found in GCAT db table for token "+std::to_string(internal_token)+", gcat "+words[nr_of_words-1].gcat+", language "+language());
@@ -153,6 +184,8 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 				word.lexeme=words[i].lexeme;
 				word.dependencies=words[i].dependencies;
 				word.morphalytics=words[i].morphalytics;
+				word.lexicon_entry=words[i].lexicon_entry;
+				word.tokens=words[i].tokens;//Why was this not returned?
 			}
 		}
 	}
@@ -184,6 +217,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 			else if(field_position->second.field_name=="gcat")
 				new_word.gcat=field_position->second.field_value;
 			else if(field_position->second.field_name=="lexeme"){
+				new_word.lexicon_entry=true;
 				new_word.lexeme=field_position->second.field_value;
 				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme);
 				new_word.morphalytics=&morphalytics;
@@ -191,35 +225,35 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 				morphemes=morphalytics.morphemes();
 				nr_of_morphemes=morphemes.size();
 				for(i=0;i<nr_of_morphemes;++i){
-					tag_position=morphemes[i].find("[lfea]");
-					if(tag_position!=std::string::npos){
-						lingfea=morphemes[i].substr(0,tag_position);
-//						std::cout<<"lingfea:"<<lingfea<<std::endl;
+					tag_position=morphemes[i].find("[stem]");
+					if(tag_position==std::string::npos){
+						lingfea=morphemes[i];
+//						logger::singleton()->log(0,"lingfea:"+lingfea);
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 						if(field==NULL||field->second.field_value.empty()==true){
-							throw std::runtime_error("Linguistic feature "+lingfea+" for gcat "+new_word.gcat+" is not found in GCAT db table.");
+//							Don't do anything, just skip lfeas that are not registered
+//							This will skip gcat as well for good reason -otherwise we would need to add gcats as feature as well for themselves
 						}
-//						std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
-						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-						if(token>0){
-							new_word.tokens.push_back(token);
+						else{
+//							logger::singleton()->log(0,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
+							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
+							if(token>0){
+								new_word.tokens.push_back(token);
+							}
 						}
 					}
 					else{
-						tag_position=morphemes[i].find("[stem]");
-						if(tag_position!=std::string::npos){
-							field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
-							if(field==NULL){
-								field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
-									if(field==NULL){
- 										throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
-									}
-							}
-//							std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
-							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-							new_word.tokens.push_back(token);
-							new_word.token=token;
+						field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
+						if(field==NULL){
+							field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
+								if(field==NULL){
+									throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
+								}
 						}
+//						logger::singleton()->log(0,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
+						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
+						new_word.tokens.push_back(token);
+						new_word.token=token;
 					}
 				}
 			}
@@ -231,45 +265,58 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 		delete lexeme;
 		delete gcats_and_lingfeas;
 	}
-	else{//Happens if the stemmer could guess a stem and provide an analysis but the stem is not found in the lexicon
+	else{//Happens if the stemmer could provide an analysis but the stem is not found in the lexicon.
+		//Another possibility would be to make it strictly available for CONs like if(morphalytics.gcat()=="CON")
+		//but let's make a bold step. See comment at the line below when reading dependencies.
+		new_word.lexicon_entry=false;
 		new_word.word=morphalytics.word();
 		new_word.lid=language();
 		new_word.gcat=morphalytics.gcat();
 		new_word.lexeme=morphalytics.stem();
-		new_word.dependencies=dependencies_read_for_functor("CON");
+		new_word.dependencies=dependencies_read_for_functor(new_word.gcat);
+		//By passing in gcat, the old behaviour for reading dependencies of "CON" is retained and a new
+		//feature is introduced by which one can bind lexemes not existing in the lexicon to a functor by
+		//their gcat.
+		//Furthermore, if neither a lexeme is registered for a stem in the lexicon, nor a dependency entry
+		//in the depolex table, it poses no problem any more unless the node of the stem is combined.
+		//As it has been historically always assumed that there's a dependency entry for the stems,
+		//no checks are set up in the code for checking the 'dependencies' attribute being NULL.
+		//Currently, combining such a node (i.e. having no dependency entries) with another node will
+		//result in a dump.
+		//TODO: Set up checks for the dependencies attribute being NULL.
 		new_word.morphalytics=&morphalytics;
 		gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
 		morphemes=morphalytics.morphemes();
 		nr_of_morphemes=morphemes.size();
 		for(i=0;i<nr_of_morphemes;++i){
-			tag_position=morphemes[i].find("[lfea]");
-			if(tag_position!=std::string::npos){
-				lingfea=morphemes[i].substr(0,tag_position);
+			tag_position=morphemes[i].find("[stem]");
+			if(tag_position==std::string::npos){
+				lingfea=morphemes[i];
 				field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 				if(field==NULL||field->second.field_value.empty()==true){
-					throw std::runtime_error("Linguistic feature "+lingfea+" for gcat "+new_word.gcat+" is not found in GCAT db table.");
+//					Don't do anything, just skip lfeas that are not registered
+//					This will skip gcat as well for good reason -otherwise we would need to add gcats as feature as well for themselves
 				}
-//				std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
-				token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-				if(token>0){
-					new_word.tokens.push_back(token);
+				else{
+//					logger::singleton()->log(0,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
+					token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
+					if(token>0){
+						new_word.tokens.push_back(token);
+					}
 				}
 			}
 			else{
-				tag_position=morphemes[i].find("[stem]");
-				if(tag_position!=std::string::npos){
-					field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
-					if(field==NULL){
-						field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
-							if(field==NULL){
-								throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
-							}
-					}
-//					std::cout<<"token:"<<*gcats_and_lingfeas->field_value_at_row_position(field->first,"token")<<std::endl;
-					token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-					new_word.tokens.push_back(token);
-					new_word.token=token;
+				field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
+				if(field==NULL){
+					field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
+						if(field==NULL){
+							throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
+						}
 				}
+//				logger::singleton()->log(0,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
+				token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
+				new_word.tokens.push_back(token);
+				new_word.token=token;
 			}
 		}
 		delete gcats_and_lingfeas;
@@ -285,11 +332,18 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 
 	sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
-	for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
-		semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
-		ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
-		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
-			read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+	if(dependencies==NULL){
+//		logger::singleton()->log(0,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
+		//Don't throw anything, see comment in tokenize_word() when calling this function for lexemes not being found in the lexicon
+		//throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
+	}
+	else{
+		for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
+			semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
+			ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
+			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
+				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+			}
 		}
 	}
 	return dependencies;
@@ -305,6 +359,9 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 	sqlite=db_factory::get_instance();
 	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 //	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
+	if(result==NULL){
+		throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
+	}
 	dependencies->append(*result);
 	for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
 		semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");
@@ -340,15 +397,7 @@ std::string lexer::language(){
 }
 
 bool lexer::is_end_of_input(){
-	bool only_ws_found=true;
-
-	for(std::string::iterator i=human_input_iterator;i<human_input.end();++i){
-		if(std::isspace(*i)==false){
-			only_ws_found=false;
-			break;
-		}
-	}
-	if((human_input_iterator==human_input.end()||only_ws_found==true)&&token_deque.empty()==true) return true;
+	if(word_form_iterator==word_forms_.end()&&token_deque.empty()==true) return true;
 	else return false;
 }
 
@@ -359,7 +408,7 @@ std::string lexer::validated_words(){
 
 	validated_terminals=sparser->validated_terminals();
 	for(auto&& i:validated_terminals){
-		if(sparser->get_node_info(i).expression.morphalytics!=NULL&&sparser->get_node_info(i).expression.word.empty()==false){
+		if(sparser->get_node_info(i).expression.morphalytics!=NULL&&sparser->get_node_info(i).expression.morphalytics->is_mocked()==false&&sparser->get_node_info(i).expression.word.empty()==false){
 			validated_words.insert(sparser->get_node_info(i).expression.morphalytics->word());
 //			std::cout<<"validated word:"<<sparser->get_node_info(i).expression.morphalytics->word()<<std::endl;
 		}
@@ -370,7 +419,7 @@ std::string lexer::validated_words(){
 	}
 	for(auto&& i:words){
 //		std::cout<<"word in lexicon:"<<i.word<<std::endl;
-		if(i.morphalytics!=NULL&&i.word.empty()==false&&i.gcat!="CON")
+		if(i.morphalytics!=NULL&&i.morphalytics->is_mocked()==false&&i.word.empty()==false&&i.gcat!="CON")
 			if(validated_words.find(i.morphalytics->word())!=validated_words.end()) words_found+=i.morphalytics->word()+" ";
 		else if(i.word.empty()==false&&i.gcat!="CON")
 			if(validated_words.find(i.word)!=validated_words.end()) words_found+=i.word+" ";
@@ -385,4 +434,77 @@ std::vector<lexicon> lexer::word_entries(){
 
 unsigned int lexer::last_token_returned(){
 	return token;
+}
+
+std::vector<std::string>::iterator lexer::analyze_and_cache(std::string& human_input){
+	std::string::iterator human_input_iterator;
+	std::string last_word,new_word_form;
+	lexicon new_word;
+	std::vector<lexicon> new_words;
+	std::vector<morphan_result> *morphalytics;
+
+	word_forms_.clear();
+	human_input_iterator=human_input.begin();
+	while(human_input_iterator<human_input.end()){
+		last_word.clear();
+		new_words.clear();
+		new_word_form.clear();
+		do{
+			for(;human_input_iterator<human_input.end()&&std::isspace(human_input[std::distance(human_input.begin(),human_input_iterator)],locale)==false;++human_input_iterator){
+				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)],locale);
+			}
+		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
+		if(last_word.empty()==false){
+			//std::cout<<"last word:"<<last_word<<std::endl;
+			word_forms_.push_back(last_word);
+			auto cache_hit=cache.find(last_word);
+			if(cache_hit==cache.end()){
+				morphalytics=stemmer->analyze(last_word);
+				if(morphalytics!=NULL&&morphalytics->empty()==false){
+					if(morphalytics->size()==1&&morphalytics->front().is_mocked()==true){//The word could not be analysed -> treat it as constant
+						new_word.token=0;
+						new_word.word=last_word;
+						new_word.gcat="CON";
+						new_word.lexeme=last_word;
+						new_word.dependencies=dependencies_read_for_functor("CON");
+						new_word.morphalytics=&morphalytics->front();
+						new_word.tokens.push_back(0);
+						new_word.lexicon_entry=false;
+						new_word_form=last_word;
+						new_words.push_back(new_word);
+					}
+					else{
+						for(auto&& i:*morphalytics){
+							new_word=tokenize_word(i);
+							if(new_word.tokens.empty()==true){//TODO: throw exception
+								throw std::runtime_error("No tokens found for word:"+last_word);
+							}
+							new_words.push_back(new_word);
+							if(new_word_form.empty()==true){
+								//Due to the fact, that the last_word is read from input and the tokenize_word()
+								//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
+								//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
+								//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
+								//So let's store the word form as it's added to token_paths.
+								new_word_form=new_word.word;
+							}
+							new_word.tokens.clear();
+						}
+					}
+					//std::cout<<"Inserting "<<last_word<<" in lexer cache"<<std::endl;
+					cache.insert(std::make_pair(last_word,new_words));
+				}
+				else throw std::runtime_error("Got neither real nor mocked morphological analysis. Stop.");
+			}
+		}
+		else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input
+	}
+	return word_forms_.begin();
+}
+
+std::string lexer::next_word(){
+	std::string word;
+
+	if(word_form_iterator!=word_forms_.end()) word=*(word_form_iterator++);
+	return word;
 }

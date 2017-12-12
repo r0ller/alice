@@ -12,13 +12,9 @@
 		{
 			var userInput = document.getElementById("userInput").value;
 			userInput=userInput+'\n';
-			var error = new Uint8Array(1024);
-			var perror = Module._malloc(error.length*error.BYTES_PER_ELEMENT);
-			var cmd=Module.ccall('hi','string',['string','string','number'],[userInput,'ENG',perror]);
-			var jstring = Module.Pointer_stringify(perror);
-			var result = cmd || jstring;
-			window.alert(result);
-			Module._free(perror);
+			var analysis=Module.ccall('hi','string',['string','string','number','string','string'],[userInput,'ENG',5,'','hi.db']);
+			console.log(analysis);
+			window.alert(analysis);
 		}
 	</script>
 	<script type="text/javascript" src="hi_js/hi.js"></script>

@@ -15,10 +15,16 @@
 			fsm *fst=NULL;
 			apply_handle *morphan_handle=NULL;
 			char *pfstname=NULL;
+			std::string lid_;
+			std::string lid();
 		public:
 			~morphan();
 			static morphan *get_instance(const std::string& lid){
 				if(morphan::singleton_instance==NULL){
+					morphan::singleton_instance=new morphan(lid);
+				}
+				else if(morphan::singleton_instance->lid()!=lid){
+					delete morphan::singleton_instance;
 					morphan::singleton_instance=new morphan(lid);
 				}
 				return morphan::singleton_instance;

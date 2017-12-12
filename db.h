@@ -17,6 +17,7 @@
 		std::string lid;
 		std::string gcat;
 		std::string lexeme;
+		bool lexicon_entry;
 		query_result *dependencies=NULL;
 		morphan_result *morphalytics=NULL;
 		std::deque<unsigned int> tokens;
@@ -29,6 +30,7 @@
 			virtual void close()=0;
 			virtual const std::string error_message()=0;
 			virtual query_result *exec_sql(const std::string&)=0;
+			virtual std::string db_uri()=0;
 	};
 
 	#if defined(__ANDROID__)

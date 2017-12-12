@@ -5,24 +5,27 @@
 	#include "morphan.h"
 	#include <vector>
 	#include <deque>
-//	#include <algorithm>
+	#include <map>
 
 	class lexer{
 		private:
 			std::string lid;
 			std::vector<lexicon> words;
 			std::string human_input;
-			std::string::iterator human_input_iterator;
-			morphan *stemmer;
-			std::vector<morphan_result> *morphalytics;
+			std::vector<std::string>::iterator word_form_iterator;
+			static morphan *stemmer;
 			std::deque<unsigned int> token_deque;
+			static std::vector<std::string> word_forms_;
 			lexicon tokenize_word(morphan_result&);
 			void destroy_words();
-			query_result* dependencies_read_for_functor(const std::string&);
-			void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
+			static void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 			unsigned int token;
+			std::locale locale;
+			static std::map<std::string,std::vector<lexicon> > cache;
+			std::vector<std::string>::iterator analyze_and_cache(std::string&);
+			std::string next_word();
 		public:
-			lexer(const char *,const char *);
+			lexer(const char *,const char *,std::locale&);
 			~lexer();
 			unsigned int next_token();
 			lexicon last_word_scanned();
@@ -34,6 +37,22 @@
 			std::string validated_words();
 			std::vector<lexicon> word_entries();
 			unsigned int last_token_returned();
+			static query_result* dependencies_read_for_functor(const std::string&);
+			static std::vector<std::string>& word_forms(){
+				return word_forms_;
+			}
+			static std::map<std::string,std::vector<lexicon> >& words_analyses(){
+				return cache;
+			}
+			static void delete_cache(){
+				cache.clear();
+				//TODO: consider providing a release() function for the library.
+				//Not freeing the stemmer is a huge performance gain as fst load
+				//can take seconds depending on file size.
+				//For the time being, trust the OS to delete all objects when the calling program exits.
+				//delete stemmer;
+				return;
+			}
 	};
 
 	class lexer_error:public std::exception{

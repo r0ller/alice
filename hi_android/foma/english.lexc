@@ -1,10 +1,10 @@
 !!!english.lexc!!!
 
-Multichar_Symbols [stem] +N[gcat] +V[gcat] +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat] +Aux[lfea] +RPRO[gcat] +Relative[lfea] +NEG[gcat]
+Multichar_Symbols [stem] +N +V +Sg +Pl +PREP +ADV +A +Aux +RPRO
++Relative +NEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET +PAR
 
 LEXICON Root
 
-Noun ;
 Verb ;
 Preposition ;
 Adverb ;
@@ -12,42 +12,28 @@ Adjective ;
 Pronoun ;
 Negation ;
 
-LEXICON Noun
-
-contact Ninf;
-name Ninf;
-detail Ninf;
-product Ninf;
-
 LEXICON Verb
 
 list   Vinf;
 be	Vinf;
-be[stem]+V[gcat]+Sg[lfea]:is #;
-be[stem]+V[gcat]+Pl[lfea]:are #;
-show   Vinf;
-
-LEXICON Ninf
-
-[stem]+N[gcat]+Sg[lfea]:0   #;
-[stem]+N[gcat]+Pl[lfea]:^s  #;
+be[stem]+V+Sg:is #;
+be[stem]+V+Pl:are #;
 
 LEXICON Vinf
 
-[stem]+V[gcat]:0 #;
+[stem]+V:0 #;
 
 LEXICON Vaux
 
-[stem]+V[gcat]+Aux[lfea]:0 #;
+[stem]+V+Aux:0 #;
 
 LEXICON Preposition
 
 with Pinf;
-for Pinf;
 
 LEXICON Pinf
 
-[stem]+PREP[gcat]:0 #;
+[stem]+PREP:0 #;
 
 LEXICON Adverb
 
@@ -55,7 +41,7 @@ down Advinf;
 
 LEXICON Advinf
 
-[stem]+ADV[gcat]:0 #;
+[stem]+ADV:0 #;
 
 LEXICON Adjective
 
@@ -64,7 +50,7 @@ last Adjinf;
 
 LEXICON Adjinf
 
-[stem]+A[gcat]:0 #;
+[stem]+A:0 #;
 
 LEXICON Pronoun
 
@@ -72,7 +58,7 @@ that RPro;
 
 LEXICON RPro
 
-[stem]+RPRO[gcat]+Relative[lfea]:0 #;
+[stem]+RPRO+Relative:0 #;
 
 LEXICON Negation
 
@@ -80,4 +66,4 @@ not Neg;
 
 LEXICON Neg
 
-[stem]+NEG[gcat]:0 #;
+[stem]+NEG:0 #;

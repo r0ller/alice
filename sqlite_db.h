@@ -12,6 +12,7 @@
 			static int store_row_data(void *, int, char **, char **);
 			sqlite3 *sqlite;
 			static int (*fptr_store_row_data)(void *, int, char **, char **);
+			std::string db_uri_;
 		public:
 			sqlite_db();
 			~sqlite_db() override;
@@ -19,6 +20,7 @@
 			void close() override;
 			const std::string error_message() override;
 			query_result *exec_sql(const std::string&) override;
+			std::string db_uri() override;
 	};
 
 #endif

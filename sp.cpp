@@ -26,11 +26,6 @@ int interpreter::set_node_info(const lexicon& word, const node_info& node){
 	nodeinfo.left_child=0;
 	nodeinfo.right_child=node.node_id;
 	node_infos.push_back(nodeinfo);
-	/*printf("set node id:%d\n",node_infos[nr_of_nodes-1].node_id);
-	printf("symbol:%s\n",node_infos[nr_of_nodes-1].symbol.c_str());
-	printf("expression:%s\n",node_infos[nr_of_nodes-1].expression.c_str());
-	printf("left_child:%d\n",node_infos[nr_of_nodes-1].left_child);
-	printf("right_child:%d\n",node_infos[nr_of_nodes-1].right_child);*/
 	if(nodeinfo.right_child!=0){//This means that no checks can be set up for nonterminal->terminal symbol rules
 		rule_step_failed=check_prerequisite_symbols(nodeinfo,get_node_info(nodeinfo.right_child));
 		if(rule_step_failed!=0){
@@ -149,20 +144,10 @@ unsigned int interpreter::check_prerequisite_symbols(const node_info& parent_nod
 }
 
 const node_info& interpreter::get_node_info(unsigned int node_id){
-	/*printf("node info:\nnode id:%d\n",node_infos.at(node_id-1).node_id);
-	printf("symbol:%s\n",node_infos.at(node_id-1).symbol.c_str());
-	printf("expression:%s\n",node_infos.at(node_id-1).expression.c_str());
-	printf("left_child:%d\n",node_infos.at(node_id-1).left_child);
-	printf("right_child:%d\n",node_infos.at(node_id-1).right_child);*/
 	if(node_id>0) return node_infos.at(node_id-1);//Make use of out_of_range exception
 }
 
 node_info& interpreter::get_private_node_info(unsigned int node_id){
-	/*printf("node info:\nnode id:%d\n",node_infos.at(node_id-1).node_id);
-	printf("symbol:%s\n",node_infos.at(node_id-1).symbol.c_str());
-	printf("expression:%s\n",node_infos.at(node_id-1).expression.c_str());
-	printf("left_child:%d\n",node_infos.at(node_id-1).left_child);
-	printf("right_child:%d\n",node_infos.at(node_id-1).right_child);*/
 	if(node_id>0) return node_infos.at(node_id-1);//Make use of out_of_range exception
 }
 
@@ -189,9 +174,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	if(new_phrase_head_root.node_id!=0&&new_phrase_non_head_root.node_id!=0){
 		/*TODO:valamit kezdeni kell azzal ha a left_node->symbol='QPro' ill. ha az object_node-nak van gyereke*/
 		nodeinfo.node_id=++nr_of_nodes;
-		/*printf("combined node id:%d\n",(*this->private.node_info[this->private.nr_of_nodes-1]).node_id);*/
 		nodeinfo.symbol=symbol;
-		/*printf("symbol:%s\n",(*this->private.node_info[this->private.nr_of_nodes-1]).symbol);*/
 		sqlite=db_factory::get_instance();
 //		std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
 		rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
@@ -211,29 +194,23 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 				for(auto&& i:head_leafs){
 					//TODO: check why certain leaves don't have morphalytics
 					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
-					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.word.empty()==false)
+					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
 						head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
 				}
 				if(head_leaf_words.empty()==false) head_leaf_words.pop_back();
 				for(auto&& i:non_head_leafs){
 					//TODO: check why certain leaves don't have morphalytics
 					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
-					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.word.empty()==false)
+					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
 						non_head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
 				}
 				if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
 				throw invalid_combination(head_leaf_words,non_head_leaf_words);
 			}
-		/*printf("valid combination:%s %s\n",head_node->expression,((node_info *)object_node)->expression);*/
 		}
 		nodeinfo.left_child=left_node.node_id;
 		nodeinfo.right_child=right_node.node_id;
 		node_infos.push_back(nodeinfo);
-		/*printf("combined node id:%d\n",node_infos[nr_of_nodes-1].node_id);
-		printf("symbol:%s\n",node_infos[nr_of_nodes-1].symbol.c_str());
-		printf("expression:%s\n",node_infos[nr_of_nodes-1].expression.c_str());
-		printf("left_child:%d\n",node_infos[nr_of_nodes-1].left_child);
-		printf("right_child:%d\n",node_infos[nr_of_nodes-1].right_child);*/
 		validated_nodes.push_back(nodeinfo.node_id);
 	}
 	return nodeinfo.node_id;
@@ -287,6 +264,9 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	functors_found=new std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >();
 	if(dependent_node.expression.gcat=="CON"){
 		find_functors_for_dependency("CON",*main_node.expression.dependencies,*functors_found,dependency_stack);
+	}
+	else if(dependent_node.expression.lexicon_entry==false){
+		find_functors_for_dependency(dependent_node.expression.gcat,*main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	else{
 		find_functors_for_dependency(dependent_node.expression.lexeme,*main_node.expression.dependencies,*functors_found,dependency_stack);
@@ -358,7 +338,7 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	//std::cout<<"symbol: "<<symbol<<std::endl;
 	if(symbol.empty()==false){
 		if(root_node.symbol==symbol&&lexeme.empty()==true
-			||root_node.symbol!=symbol&&lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->has_feature(symbol)==true
+			||root_node.symbol!=symbol&&lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->is_mocked()==false&&root_node.expression.morphalytics->has_feature(symbol)==true
 			||root_node.symbol==symbol&&lexeme.empty()==false&&root_node.expression.lexeme==lexeme){
 			//std::cout<<"node_found_by_symbol '"<<symbol<<"':"<<root_node.node_id<<std::endl;
 			nodes_found.push_back(root_node.node_id);
@@ -548,6 +528,9 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	if(node.expression.gcat=="CON"){
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme","CON");
 	}
+	else if(node.expression.lexicon_entry==false){
+		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.gcat);
+	}
 	else{
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
 	}
@@ -617,18 +600,17 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				}
 			}
 			else{
-				if(d_failover.empty()==true||d_failover=="0"||std::atoi(d_failover.c_str())<std::atoi(d_counter.c_str())){
-					if(manner.empty()==true||manner=="0"||manner=="1"){
-						std::get<2>(dependencies_found_entry->second)+=1;
-//						dependencies_found_entry->second.second+=1;
-					}
-					else if(manner=="2"){
-						std::get<2>(dependencies_found_entry->second)+=2;
-//						dependencies_found_entry->second.second+=2;
-					}
-				}
 				if(dependencies_found_entry!=dependencies_found.end()){
-					//No manner condition was fulfilled, nothing to add
+					//No manner condition was fulfilled, don't increase the number of dependencies found
+					//but increase the number of dependencies to be found
+					if(d_failover.empty()==true||d_failover=="0"||std::atoi(d_failover.c_str())<std::atoi(d_counter.c_str())){
+						if(manner.empty()==true||manner=="0"||manner=="1"){
+							std::get<2>(dependencies_found_entry->second)+=1;
+						}
+						else if(manner=="2"){
+							std::get<2>(dependencies_found_entry->second)+=2;
+						}
+					}
 				}
 				else{
 					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
@@ -888,7 +870,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 	for(auto&& i:node_infos){
 		if(i.expression.lexeme.empty()==false&&i.ref_node_ids.empty()==true&&gcats->first_value_for_field_name_found("gcat",i.expression.gcat)!=NULL){
 			++nr_of_non_ref_leafs;
-			//std::cout<<"Dependency to be found:"<<i.expression.lexeme<<std::endl;
+			//logger::singleton()->log(0,"Dependency to be found:"+i.expression.lexeme);
 		}
 	}
 	return nr_of_non_ref_leafs;
@@ -916,17 +898,22 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 		find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
 		functor_found=calculate_longest_matching_dependency_route(longest_traversals);
 		d_key=functor_found.first.second;
+		//TODO: min nr of deps is shown differently here than in calculate_longest_matching_dependency_route
+		//in case of e.g. the first dependency is not found as in "list peter" instead of "list contacts" on android
 		min_nr_of_deps=std::get<2>(functor_found.second);
-		std::cout<<"Minimum number of dependencies to match:"<<min_nr_of_deps<<std::endl;
+		logger::singleton()->log(0,"Minimum number of dependencies to match:"+std::to_string(min_nr_of_deps));
 		nr_of_dependencies_found=std::get<1>(functor_found.second);
+		logger::singleton()->log(0,"Matching nr of dependencies found for functor "+node.expression.lexeme+" with d_key "+std::to_string(d_key)+":"+std::to_string(nr_of_dependencies_found));
 		total_nr_of_dependencies=nr_of_dependencies_to_be_found()-1;
-		std::cout<<"Total number of dependencies:"<<total_nr_of_dependencies<<std::endl;
-		if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps){
-			std::cout<<"Matching nr of dependencies found for functor "<<node.expression.lexeme<<" with d_key "<<d_key<<":"<<nr_of_dependencies_found<<std::endl;
+		logger::singleton()->log(0,"Total number of dependencies:"+std::to_string(total_nr_of_dependencies));
+		if(nr_of_dependencies_found>=min_nr_of_deps){
+			//The original condition if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps)
+			//seems to be too strict as it requires that all dependencies need to be found.
+			//Made it looser due to enabling partial analysis to experiment with this condition and see if it fits the bill.
 			return build_transgraph(functor_found.first,std::make_pair(std::to_string(functor_found.first.first),functor_found.first.second),longest_traversals);
 		}
 		else{
-			std::cout<<"No matching nr of dependencies found for functor "<<node.expression.lexeme<<" with any d_key "<<std::endl;
+			logger::singleton()->log(0,"No matching nr of dependencies found for functor "+node.expression.lexeme+" with any d_key");
 			return NULL;
 		}
 	}
@@ -1026,7 +1013,7 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 	if(nodes_to_be_validated.empty()==true){
 		std::cout<<"dependencies with longest match:"<<std::endl;
 		for(auto&& i:map_of_node_ids_to_total_nr_of_deps_and_d_key){
-			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<":"<<std::get<1>(i.second.first)<<"/"<<std::get<2>(i.second.first)<<std::endl;
+			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<": "<<std::get<1>(i.second.first)<<" deps found out of the expected "<<std::get<2>(i.second.first)<<" deps to be found"<<std::endl;
 			std::get<1>(nr_of_deps_found)+=std::get<1>(i.second.first);
 			std::get<2>(nr_of_deps_found)+=std::get<2>(i.second.first);
 		}
@@ -1193,7 +1180,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 									if(l->second==dependent_node->node_id) break;
 								}
 								if(l==main_node->dependency_validation_matrix.end()){
-									if(dependent_node->expression.morphalytics!=NULL
+									if(dependent_node->expression.morphalytics!=NULL&&dependent_node->expression.morphalytics->is_mocked()==false
 										&&dependent_node->expression.morphalytics->has_feature("Relative")==true){
 										ref_node_ids_to_set.insert(std::make_pair(dependent_node->node_id,main_node->node_id));
 										valid_combination=true;
@@ -1306,8 +1293,16 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 		for(auto&& i:functors_validated_for_nodes){
 			main_node=&get_private_node_info(i.first);
 			dependent_node=&get_private_node_info(i.second.second);
+			if(main_node->expression.dependencies==NULL||dependent_node->expression.dependencies==NULL){
+				//TODO: check if rule_step_failed needs to be set here or exception should be thrown.
+				//This may be the right place (check it!) to prevent dumps if a word gets combined with another
+				//one where one of them is not registered in the DEPOLEX.
+				//See comments in lexer::dependencies_read_for_functor().
+				//As there may be more than one functors, it might be the case that execution can continue if
+				//there's at least one, where the dependencies attributes are not null.
+			}
 			main_node->dependency_validation_matrix.insert(i.second);
-			//std::cout<<"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme<<std::endl;
+			logger::singleton()->log(0,"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme);
 			if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
 				dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
 			}
@@ -1337,8 +1332,15 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 		throw std::runtime_error("Root node not found.");
 	}
 	if(std::atoi(parent.first.c_str())>0){
-//		std::cout<<get_node_info(std::atoi(parent.first.c_str())).expression.lexeme<<"_"<<parent.second<<std::endl;
-		functor_transgraph=new transgraph(std::make_pair(get_node_info(std::atoi(parent.first.c_str())).expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
+		const node_info& nodeinfo=get_node_info(std::atoi(parent.first.c_str()));
+		if(nodeinfo.expression.lexicon_entry==true){//||nodeinfo.expression.gcat=="CON"
+//			std::cout<<nodeinfo.expression.lexeme<<"_"<<parent.second<<std::endl;
+			functor_transgraph=new transgraph(std::make_pair(nodeinfo.expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
+		}
+		else{
+//			std::cout<<nodeinfo.expression.gcat<<"_"<<parent.second<<std::endl;
+			functor_transgraph=new transgraph(std::make_pair(nodeinfo.expression.gcat,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
+		}
 	}
 	else{
 //		std::cout<<parent.first<<"_"<<parent.second<<std::endl;

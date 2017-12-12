@@ -4,14 +4,15 @@ int yylex(void){
 
 	if(lex->is_end_of_input()==false){
 		token=lex->next_token();
-		//std::cout<<"next token:"<<token<<std::endl;
+		std::cout<<"next token:"<<token<<std::endl;
 		return token+1;
 	}
 	else return 0;//historic indicator of YACC about end of input stream
 }
 
 void yyerror(char const *yymsgp){
-	std::cout<<yymsgp<<std::endl;
+	std::cout<<yymsgp<<std::endl;//Could as well return as error till our own syntax error reporting gets better
+	token_paths->log_yyerror(std::string(yymsgp));
 	return;
 }
 
@@ -20,25 +21,21 @@ extern "C"{
 #endif
 
 #ifdef __ANDROID__
-const char *hi(const char *human_input,const char *language,char *error, JavaVM *vm, jobject activityobj){
-#elif defined(__EMSCRIPTEN__) && FS==NETWORK
-const char *hi(const char *human_input,const char *language,const char *db_uri,char *error){
-#elif defined(__EMSCRIPTEN__) && FS==NODEJS
-const char *hi(const char *human_input,const char *language,const char *db_file_path,char *error){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj){
 #else
-const char *hi(const char *human_input,const char *language,char *error){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri){
 #endif
 
-	std::string commandstr,last_word,validated_words;
+	std::string analysis;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
-	char *commandchr=NULL;
+	char *analysischr=NULL;
+	logger *logger=NULL;
+	std::locale locale;
 
+	logger=logger::singleton("console",3,"LE");
 	token_paths=new tokenpaths;
-	//TODO: remove commandchr==NULL condition check when a complete implementation for
-	//token paths coverage is done i.e. when all token paths are interpreted and not the
-	//first interpretable token path wins
-	while(human_input!=NULL&&commandchr==NULL&&token_paths->is_any_left()==true){
+	while(human_input!=NULL&&token_paths->is_any_left()==true){
 		std::cout<<"picking new token path"<<std::endl;
 		try{
 			if(sqlite==NULL){
@@ -59,12 +56,13 @@ const char *hi(const char *human_input,const char *language,char *error){
 					FS.mkdir('/virtual');
 					FS.mount(NODEFS, { root: '.' }, '/virtual');
 				);
-				sqlite->open("/virtual/"+std::string(db_file_path));
+				sqlite->open("/virtual/"+std::string(db_uri));
 				#else
-				sqlite->open("hi.db");
+				sqlite->open(db_uri);
 				#endif
 			}
-			lex=new lexer(human_input,language);
+			locale=std::locale();
+			lex=new lexer(human_input,language,locale);
 			#ifdef __ANDROID__
 				__android_log_print(ANDROID_LOG_INFO, "hi", "lexer started");
 			#endif
@@ -75,176 +73,105 @@ const char *hi(const char *human_input,const char *language,char *error){
 			if(yyparse()==0){
 				transgraph=sparser->longest_match_for_semantic_rules_found();
 				if(transgraph!=NULL){
-					token_paths->add_valid_path(lex->word_entries());
-					std::cout<<"TRUE"<<std::endl;
-					commandstr=transgraph->transcript(std::string());
-					std::cout<<commandstr<<std::endl;
+					token_paths->validate_path(lex->word_entries(),transgraph);
+					logger::singleton()->log(0,"TRUE");
 				}
 				else{
-					token_paths->add_invalid_path(lex->word_entries());
-					validated_words=lex->validated_words();
-					std::cout<<"validated words:"<<validated_words<<std::endl;
-					if(lex->last_word_scanned().morphalytics!=NULL)
-						last_word=lex->last_word_scanned().morphalytics->word();
-					else last_word=lex->last_word_scanned().word;
-					std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
-					if(error!=NULL){
-						if(validated_words.empty()==false){
-							validated_words.copy(error,validated_words.length(),0);
-							error[validated_words.length()]='/';
-							last_word.copy(&error[validated_words.length()+1],last_word.length(),0);
-							error[validated_words.length()+last_word.length()+1]='\0';
-						}
-						else{
-							last_word.copy(error,last_word.length(),0);
-							error[last_word.length()]='\0';
-						}
-					}
+					logger::singleton()->log(0,"semantic error");
+					token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
 				}
 			}
 			else{//syntax error for token in yychar
-				token_paths->add_invalid_path(lex->word_entries());
-				token_paths->mark_syntax_error(lex->last_word_scanned());
-/*				std::cout<<"yychar="<<yychar<<std::endl;
-				std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
-				std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
-				//checking sparser->validated_terminals() may help in either this or the else branch
-				std::set<unsigned int> validated_terminals;
-				validated_terminals=sparser->validated_terminals();
-				if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)!=validated_terminals.end()){
-					std::cout<<"yychar found in validated terminals!"<<std::endl;
-				}
-				else if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)==validated_terminals.end()){
-					std::cout<<"yychar NOT found in validated terminals!"<<std::endl;
-				}
-				else std::cout<<"yychar is empty or 0"<<std::endl;
-				if(validated_terminals.find(lex->last_token_returned())!=validated_terminals.end()){
-					std::cout<<"last token found in validated terminals!"<<std::endl;
-				}
-				else{
-					std::cout<<"last token NOT found in validated terminals!"<<std::endl;
-				}
-//				if(lex->nr_of_words==1&&lex->last_word_scanned().token==lex->last_token_returned()){
-//				}
-				//TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token
-				token_paths->followup_token(lex->last_token_returned());*/
-				validated_words=lex->validated_words();
-				std::cout<<"validated words:"<<validated_words<<std::endl;
-				if(lex->last_word_scanned().morphalytics!=NULL)
-					last_word=lex->last_word_scanned().morphalytics->word();
-				else last_word=lex->last_word_scanned().word;
-				std::cout<<"FALSE:"<<" error at "<<last_word<<std::endl;
-				if(error!=NULL){
-					if(validated_words.empty()==false){
-						validated_words.copy(error,validated_words.length(),0);
-						error[validated_words.length()]='/';
-						last_word.copy(&error[validated_words.length()+1],last_word.length(),0);
-						error[validated_words.length()+last_word.length()+1]='\0';
-					}
-					else{
-						last_word.copy(error,last_word.length(),0);
-						error[last_word.length()]='\0';
-					}
-				}
+				logger::singleton()->log(0,"syntax error");
+				token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
 			}
 			delete sparser;
 			sparser=NULL;
 			delete lex;
 			lex=NULL;
-			delete transgraph;
-			if(commandstr.empty()==false){
-				commandchr=new char[commandstr.length()+1];
-				commandstr.copy(commandchr,commandstr.length(),0);
-				commandchr[commandstr.length()]='\0';
-				if(error!=NULL) error[0]='\0';
-			}
+			transgraph=NULL;
 		}
 		catch(sql_execution_error& exception){
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
-			#else
-				std::cout<<exception.what()<<std::endl;
-			#endif
+			logger::singleton()->log(0,"sql_execution_error:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(failed_to_open_db& exception){
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
-			#else
-				std::cout<<exception.what()<<std::endl;
-			#endif
+			logger::singleton()->log(0,"failed_to_open_db:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(failed_to_close_db& exception){
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", exception.what());
-			#else
-				std::cout<<exception.what()<<std::endl;
-			#endif
+			logger::singleton()->log(0,"failed_to_close_db:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(lexicon_type_and_db_table_schema_mismatch& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"lexicon_type_and_db_table_schema_mismatch:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(more_than_one_token_found& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"more_than_one_token_found:"+std::string(exception.what()));
+			return NULL;
+		}
+		catch(morphan_error& exception){
+			logger::singleton()->log(0,"morphan_error:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(object_node_missing& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"object_node_missing:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(head_node_missing& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"head_node_missing:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(invalid_combination& exception){
-			token_paths->add_invalid_path(lex->word_entries());
-			validated_words=lex->validated_words();
-			std::cout<<"validated words:"<<validated_words<<std::endl;
-			std::cout<<exception.what()<<std::endl;
-			if(error!=NULL){
-				if(validated_words.empty()==false){
-					validated_words.copy(error,validated_words.length(),0);
-					error[validated_words.length()]='/';
-					std::string left_node_words=exception.get_left();
-					left_node_words.copy(&error[validated_words.length()+1],left_node_words.length(),0);
-					error[validated_words.length()+left_node_words.length()+1]=' ';
-					std::string right_node_words=exception.get_right();
-					right_node_words.copy(&error[validated_words.length()+left_node_words.length()+2],right_node_words.length(),0);
-					error[validated_words.length()+left_node_words.length()+right_node_words.length()+2]='\0';
-				}
-				else{
-					std::string left_node_words=exception.get_left();
-					left_node_words.copy(error,left_node_words.length(),0);
-					error[left_node_words.length()]=' ';
-					std::string right_node_words=exception.get_right();
-					right_node_words.copy(&error[left_node_words.length()+1],right_node_words.length(),0);
-					error[left_node_words.length()+right_node_words.length()+1]='\0';
-				}
+			token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
+			logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+			if(token_paths->is_any_left()==true){
+				delete sparser;
+				sparser=NULL;
+				delete lex;
+				lex=NULL;
+				transgraph=NULL;
 			}
-			return NULL;
+		}
+		catch(invalid_token_path& exception){
+			delete sparser;
+			sparser=NULL;
+			delete lex;
+			lex=NULL;
+			transgraph=NULL;
 		}
 		catch(missing_prerequisite_symbol& exception){
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"missing_prerequisite_symbol:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(std::runtime_error& exception){//Catch underived exceptions thrown with string based messages
-			std::cout<<exception.what()<<std::endl;
+			logger::singleton()->log(0,"runtime exception:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(...){
-			std::cout<<"Unexpected error ..."<<std::endl;
+			logger::singleton()->log(0,"Unexpected error ...");
 			return NULL;
 		}
 	}
+	analysis=token_paths->create_analysis(toa);
+	if(analysis.empty()==false){
+		analysischr=new char[analysis.length()+1];
+		analysis.copy(analysischr,analysis.length(),0);
+		analysischr[analysis.length()]='\0';
+	}
+	lexer::delete_cache();
 	delete token_paths;
 	token_paths=NULL;
-	sqlite->close();
-	db_factory::delete_instance();
-	sqlite=NULL;
-	return commandchr;
+	if(sqlite!=NULL){
+		//TODO: consider providing a release() function for the library
+		//and NOT closing+freeing the db here as it'd increase performance
+		//as in case of not freeing the stemmer.
+		sqlite->close();
+		db_factory::delete_instance();
+		sqlite=NULL;
+	}
+	return analysischr;
 }
 #ifdef __EMSCRIPTEN__
 }
