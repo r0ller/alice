@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
 	std::ofstream *bison_file=NULL;
 	db *sqlite=NULL;
 	query_result *grammar_rules=NULL, *tokens=NULL, *symbols=NULL;
-	std::set<std::string> lids;
+	std::set<std::string> lids,terminals;
 
 	if(argc<3){
 		std::cerr<<"Usage: gensrc /path/to/dbfile.db /path/to/snippets [/path/with/output/file/name]"<<std::endl;
@@ -103,10 +103,14 @@ int main(int argc, char* argv[]){
 			//Currently, "%token t_Con 1" is declared directly in bison_declarations.cpp
 			token=std::to_string(itoken+1);
 			if(feature.empty()==true){
+				std::string terminal="t_"+lid+"_"+gcat;
 				bison_declarations+="%token\tt_"+lid+"_"+gcat+" "+token+"\n";
+				terminals.insert(terminal);
 			}
 			else{
+				std::string terminal="t_"+lid+"_"+gcat+"_"+feature;
 				bison_declarations+="%token\tt_"+lid+"_"+gcat+"_"+feature+" "+token+"\n";
+				terminals.insert(terminal);
 			}
 		}
 	}
@@ -142,8 +146,8 @@ int main(int argc, char* argv[]){
 				"logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\");\n";
 			}
 			else if(head_symbol.empty()==false&&non_head_symbol.empty()==true){
-				symbols=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE SYMBOL = '"+head_symbol+"';");
-				if(symbols!=NULL){//non-terminal
+				//symbols=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE SYMBOL = '"+head_symbol+"';");
+				if(terminals.find(head_symbol)==terminals.end()){//non-terminal
 					//TODO: figure out what shall be generated in case of the last rule leading to S
 					//as currently it seems I always combine everything into a single VP node
 					//and that VP leads to S but nothing happens in that rule.
@@ -151,7 +155,7 @@ int main(int argc, char* argv[]){
 					//if the interpeter is written well enough so that a properly generated code
 					//won't blow it up:D
 					//If yes, then the framework needs to be fixed, not the source generator here!
-					delete symbols;
+					//delete symbols;
 					action="lexicon word;\n"
 					"const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
 					"word.gcat=\""+parent_symbol+"\";\n"

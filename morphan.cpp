@@ -2,7 +2,6 @@
 #include "morphan_result.h"
 
 morphan *morphan::singleton_instance=NULL;
-std::map<std::pair<std::string,std::string>,std::vector<morphan_result>* > morphan::cache;
 
 morphan::morphan(const std::string& lid){
 	db *sqlite=NULL;
@@ -10,42 +9,39 @@ morphan::morphan(const std::string& lid){
 	query_result *fsts=NULL;
 	unsigned int fstname_length=0;
 
-	this->lid=lid;
+	lid_=lid;
 	sqlite=db_factory::get_instance();
 	fsts=sqlite->exec_sql("SELECT FST FROM LANGUAGES WHERE LID = '"+lid+"';");
 	if(fsts==NULL){
 		throw std::runtime_error("No entry found for language id "+lid+" in LANGUAGES db table.");
 	}
 	fstname=*fsts->field_value_at_row_position(0,"fst");
-	#ifdef __ANDROID__
-		__android_log_print(ANDROID_LOG_INFO, "hi", "fst used: %s", fstname.c_str());
-		fstname="/data/data/com.bitroller.hi/"+fstname;//TODO: get cwd on android
-	#elif defined(__EMSCRIPTEN__) && FS==NODEJS
+	#if defined(__EMSCRIPTEN__) && FS==NODEJS
 		fstname="/virtual/"+fstname;
+	#else
+		std::string path;
+		std::string db_uri=sqlite->db_uri();
+		auto path_end=db_uri.find_last_of('/');
+		if(path_end!=std::string::npos)	path=db_uri.substr(0,path_end+1);//path_end+1 is ok as db already used db_uri as filename
+		fstname=path+fstname;
 	#endif
+	logger::singleton()->log(0,"opening fst: "+fstname);
 	fstname_length=fstname.length();
 	pfstname=new char[fstname_length+1];
 	fstname_length=fstname.copy(pfstname,fstname_length+1);
 	pfstname[fstname_length]='\0';
-	//std::cout<<"opening fst: "<<fstname<<std::endl;
 	morphan::fst=fsm_read_binary_file(pfstname);
 	if(morphan::fst==NULL){
-		#ifdef __ANDROID__
-			__android_log_print(ANDROID_LOG_INFO, "hi", "failed to read binary fst %s",pfstname);
-		#endif
+		logger::singleton()->log(0,"failed to read binary fst "+fstname);
 		throw std::runtime_error("Failed to read binary fst "+fstname);
 	}
 	morphan::morphan_handle=apply_init(morphan::fst);
 	if(morphan::morphan_handle==NULL){
-		#ifdef __ANDROID__
-			__android_log_print(ANDROID_LOG_INFO, "hi", "fst apply_init failed");
-		#endif
+		logger::singleton()->log(0,"fst apply_init failed");
 		throw std::runtime_error("Fst initialization failed for "+fstname);
 	}
 	delete fsts;
-	#ifdef __ANDROID__
-		__android_log_print(ANDROID_LOG_INFO, "hi", "stemmer started");
-	#endif
+	logger::singleton()->log(0,"stemmer started");
 }
 
 morphan::~morphan(){
@@ -68,15 +64,11 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word){
 	#ifdef __ANDROID__
 		__android_log_print(ANDROID_LOG_INFO, "hi", "analyzing word %s", word.c_str());
 	#endif
-	auto cache_hit=morphan::cache.find(std::make_pair(lid,word));
-	if(cache_hit!=cache.end()){
-		analyses=cache_hit->second;
-	}
-	else{
-		c_word.assign(word.begin(),word.end());
-		c_word.push_back('\0');
-		result=apply_up(morphan::morphan_handle, &c_word[0]);
-		if(result!=NULL) analyses=new std::vector<morphan_result>();
+	c_word.assign(word.begin(),word.end());
+	c_word.push_back('\0');
+	analyses=new std::vector<morphan_result>();
+	result=apply_up(morphan::morphan_handle, &c_word[0]);
+	if(result!=NULL){
 		while(result!=NULL){//result==NULL means that it cannot be analyzed -> treat it as constant. However, one thing TODO is:
 			//think over, what should happen the other way around i.e. when a constant appears which can be analysed???
 			morphemes=std::string((const char *)result);
@@ -91,9 +83,10 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word){
 				start_position=separator_position+1;
 				separator_position=morphemes.find('+',start_position);
 			}
-			morphemes_vector.push_back(morphemes.substr(start_position,std::string::npos));
+			morphemes_vector.push_back(morphemes.substr(start_position,std::string::npos));//This will throw if no substr can be returned
+			if(morphemes_vector.empty()==true) throw morphan_error();
 	//		logger::singleton()->log(0,"morpheme:"+morphemes_vector.back());
-			analysis=new morphan_result(word,morphemes_vector);
+			analysis=new morphan_result(word,morphemes_vector,lid_);
 			if(analysis->is_erroneous()==false){
 				if(analysis->gcat()=="CON"){
 					//quick fix for having >1 meaningful interpretation by putting analysis for a constant at the end
@@ -118,7 +111,21 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word){
 			logger::singleton()->log(0,"morphan pushed:"+con_morphemes);
 			analyses->push_back(*con_morphan);
 		}
-		morphan::cache.insert(std::make_pair(std::make_pair(lid,word),analyses));
+	}
+	else{
+		analysis=new morphan_result(word,lid_);
+		if(analysis->is_erroneous()==false){
+			logger::singleton()->log(0,"morphan pushed without analysis");
+			analyses->push_back(*analysis);
+		}
+		else{
+//			logger::singleton()->log(0,"dropping this morphan");
+			delete analysis;
+		}
 	}
 	return analyses;
+}
+
+std::string morphan::lid(){
+	return lid_;
 }

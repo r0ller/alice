@@ -1,17 +1,2 @@
 #!/usr/pkg/bin/bash
-FELHUNVBPFX_1_2(){ FELHUNVBPFX_1_WORD='fel';FELHUNVBPFX_1_STEM='fel';FELHUNVBPFX_1_GCAT='Vbpfx';FELHUNVBPFX_1_MORPHEMES[0]='fel[stem]';FELHUNVBPFX_1_MORPHEMES[1]='Vbpfx';true; };FELHUNVBPFX_1_2 "FELHUNVBPFX_1_2" "" ;HIVHUNV_1_1_CON_2_3_IN=(orvos);HIVHUNV_1_1(){ HIVHUNV_1_WORD='hívd';HIVHUNV_1_STEM='hív';HIVHUNV_1_GCAT='Verb';HIVHUNV_1_MORPHEMES[0]='hív[stem]';HIVHUNV_1_MORPHEMES[1]='Verb';HIVHUNV_1_MORPHEMES[2]='ConjDefSg2';contact="";
-parameter_list=arguments[1];
-for(i=0;i<parameter_list.length;++i){
-	if(parameter_list[i].indexOf('_CON_')>-1){
-		if(typeof arguments[i+2]!=='undefined'){
-			contact=arguments[i+2];
-			break;
-		}
-	}
-	else if(parameter_list[i].indexOf('Num_')>-1){
-		if(typeof arguments[i+2]!=='undefined'){
-			contact+=arguments[i+2];
-		}
-	}
-}
-Android.Call(contact); };HIVHUNV_1_1 "HIVHUNV_1_1" " FELHUNVBPFX_1_2_OUT  HIVHUNV_1_1_CON_2_3_IN "  $FELHUNVBPFX_1_2_OUT $HIVHUNV_1_1_CON_2_3_IN;
+{"analysis":[{"morphology":{{"id":"4","functor":"HIVHUNV_1","word":"hívd","stem":"hív","gcat":"Verb","functor definition":"contact=\"\";parameter_list=arguments[1];for(i=0;i<parameter_list.length;++i){if(parameter_list[i].indexOf('_CON_')>-1){if(typeof arguments[i+2]!=='undefined'){contact=arguments[i+2];break;}}else if(parameter_list[i].indexOf('Num_')>-1){if(typeof arguments[i+2]!=='undefined'){contact+=arguments[i+2];}}}Android.Call(contact);","dependencies":[]},{"id":"5","functor":"FELHUNVBPFX_1","word":"fel","stem":"fel","gcat":"Vbpfx","functor definition":"","dependencies":[]},{"id":"6","functor":"alíz_1","word":"alízt","stem":"alíz","gcat":"CON"}"semantics":{{"id":"1","functor":"HIVHUNV_1","word":"hívd","stem":"hív","gcat":"Verb","functor definition":"contact=\"\";parameter_list=arguments[1];for(i=0;i<parameter_list.length;++i){if(parameter_list[i].indexOf('_CON_')>-1){if(typeof arguments[i+2]!=='undefined'){contact=arguments[i+2];break;}}else if(parameter_list[i].indexOf('Num_')>-1){if(typeof arguments[i+2]!=='undefined'){contact+=arguments[i+2];}}}Android.Call(contact);","dependencies":[{"id":"2","functor":"FELHUNVBPFX_1","word":"fel","stem":"fel","gcat":"Vbpfx","functor definition":"","dependencies":[]},{"id":"3","functor":"CON_1","word":"alízt","stem":"alíz","gcat":"CON"}]}}}]}

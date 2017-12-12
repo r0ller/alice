@@ -12,6 +12,7 @@ sqlite_db::~sqlite_db(){
 }
 
 void sqlite_db::open(const std::string& filename){
+	db_uri_=filename;
 	if(sqlite3_open(filename.c_str(),&sqlite)!=SQLITE_OK) throw failed_to_open_db();
 	return;
 }
@@ -60,4 +61,8 @@ int sqlite_db::store_row_data(void *p_result, int nr_of_columns, char **field_va
 		}
 	}
 	return 0; 
+}
+
+std::string sqlite_db::db_uri(){
+	return db_uri_;
 }

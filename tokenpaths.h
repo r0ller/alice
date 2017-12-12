@@ -3,6 +3,8 @@
 
 	#include <vector>
 	#include <string>
+	#include <map>
+	#include "transgraph.h"
 
 	typedef std::string token_symbol;
 	typedef std::pair<token_symbol,unsigned int> p_m1_token_symbol_m2_counter;
@@ -15,23 +17,30 @@
 			std::vector<lexicon> words;
 			std::vector<std::vector<lexicon> > valid_paths;
 			std::vector<std::vector<lexicon> > invalid_paths;
-			std::vector<std::vector<lexicon> > internal_valid_paths;
 			std::vector<std::vector<lexicon> > internal_invalid_paths;
+			std::vector<const transgraph *> valid_graphs;
+			std::vector<std::string> invalid_path_errors;
 			bool is_any_path_left;
 			void find_rhs_up(const std::string&, const unsigned int, const std::string&, std::multimap<p_m1_token_symbol_m2_counter,token_symbol>&, std::set<t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol>&, std::set<t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol>&);
 			void find_lhs_down(const std::string&, const unsigned int, const std::string&, std::multimap<p_m1_token_symbol_m2_counter,token_symbol>&, std::set<t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol>&);
-			void add_internal_valid_path(const std::vector<lexicon>&);
 			void add_internal_invalid_path(const std::vector<lexicon>&);
 			void reset();
+			std::string semantics(std::vector<lexicon>&, std::map<std::string,std::string>&,unsigned int&);
+			std::string morphology(std::vector<lexicon>&);
+			bool is_path_already_evaluated(const std::vector<lexicon>&, std::vector<std::vector<lexicon> >&);
+			std::string yyerror;
+			std::string functors(const std::map<std::string,std::map<std::string,std::string> >&,const std::map<std::string,std::vector<lexicon> >&,const unsigned int&,std::string&);
+			std::string dependencies(query_result&,std::map<std::pair<std::string,std::string>,std::string>&);
 		public:
 			tokenpaths();
 			~tokenpaths();
 			bool is_any_left();
 			lexicon next_word(const std::vector<lexicon>&);
-			void validate_path(const std::vector<lexicon>&);
-			void invalidate_path(const std::vector<lexicon>&);
+			void validate_path(const std::vector<lexicon>&, const transgraph *);
+			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
-			unsigned int nr_of_valid_paths();
+			std::string create_analysis(const unsigned char&);
+			void log_yyerror(const std::string&);
 	};
 
 	class invalid_token_path:public std::exception{

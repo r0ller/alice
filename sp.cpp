@@ -194,14 +194,14 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 				for(auto&& i:head_leafs){
 					//TODO: check why certain leaves don't have morphalytics
 					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
-					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.word.empty()==false)
+					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
 						head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
 				}
 				if(head_leaf_words.empty()==false) head_leaf_words.pop_back();
 				for(auto&& i:non_head_leafs){
 					//TODO: check why certain leaves don't have morphalytics
 					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
-					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.word.empty()==false)
+					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
 						non_head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
 				}
 				if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
@@ -338,7 +338,7 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	//std::cout<<"symbol: "<<symbol<<std::endl;
 	if(symbol.empty()==false){
 		if(root_node.symbol==symbol&&lexeme.empty()==true
-			||root_node.symbol!=symbol&&lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->has_feature(symbol)==true
+			||root_node.symbol!=symbol&&lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->is_mocked()==false&&root_node.expression.morphalytics->has_feature(symbol)==true
 			||root_node.symbol==symbol&&lexeme.empty()==false&&root_node.expression.lexeme==lexeme){
 			//std::cout<<"node_found_by_symbol '"<<symbol<<"':"<<root_node.node_id<<std::endl;
 			nodes_found.push_back(root_node.node_id);
@@ -600,18 +600,17 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				}
 			}
 			else{
-				if(d_failover.empty()==true||d_failover=="0"||std::atoi(d_failover.c_str())<std::atoi(d_counter.c_str())){
-					if(manner.empty()==true||manner=="0"||manner=="1"){
-						std::get<2>(dependencies_found_entry->second)+=1;
-//						dependencies_found_entry->second.second+=1;
-					}
-					else if(manner=="2"){
-						std::get<2>(dependencies_found_entry->second)+=2;
-//						dependencies_found_entry->second.second+=2;
-					}
-				}
 				if(dependencies_found_entry!=dependencies_found.end()){
-					//No manner condition was fulfilled, nothing to add
+					//No manner condition was fulfilled, don't increase the number of dependencies found
+					//but increase the number of dependencies to be found
+					if(d_failover.empty()==true||d_failover=="0"||std::atoi(d_failover.c_str())<std::atoi(d_counter.c_str())){
+						if(manner.empty()==true||manner=="0"||manner=="1"){
+							std::get<2>(dependencies_found_entry->second)+=1;
+						}
+						else if(manner=="2"){
+							std::get<2>(dependencies_found_entry->second)+=2;
+						}
+					}
 				}
 				else{
 					dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
@@ -899,6 +898,8 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 		find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
 		functor_found=calculate_longest_matching_dependency_route(longest_traversals);
 		d_key=functor_found.first.second;
+		//TODO: min nr of deps is shown differently here than in calculate_longest_matching_dependency_route
+		//in case of e.g. the first dependency is not found as in "list peter" instead of "list contacts" on android
 		min_nr_of_deps=std::get<2>(functor_found.second);
 		logger::singleton()->log(0,"Minimum number of dependencies to match:"+std::to_string(min_nr_of_deps));
 		nr_of_dependencies_found=std::get<1>(functor_found.second);
@@ -908,7 +909,7 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 		if(nr_of_dependencies_found>=min_nr_of_deps){
 			//The original condition if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps)
 			//seems to be too strict as it requires that all dependencies need to be found.
-			//Made it looser to experiment with this condition and see if it fits the bill.
+			//Made it looser due to enabling partial analysis to experiment with this condition and see if it fits the bill.
 			return build_transgraph(functor_found.first,std::make_pair(std::to_string(functor_found.first.first),functor_found.first.second),longest_traversals);
 		}
 		else{
@@ -1012,7 +1013,7 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 	if(nodes_to_be_validated.empty()==true){
 		std::cout<<"dependencies with longest match:"<<std::endl;
 		for(auto&& i:map_of_node_ids_to_total_nr_of_deps_and_d_key){
-			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<":"<<std::get<1>(i.second.first)<<"/"<<std::get<2>(i.second.first)<<std::endl;
+			std::cout<<"functor "<<get_node_info(i.first).expression.lexeme<<" d_key "<<i.second.second<<": "<<std::get<1>(i.second.first)<<" deps found out of the expected "<<std::get<2>(i.second.first)<<" deps to be found"<<std::endl;
 			std::get<1>(nr_of_deps_found)+=std::get<1>(i.second.first);
 			std::get<2>(nr_of_deps_found)+=std::get<2>(i.second.first);
 		}
@@ -1179,7 +1180,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 									if(l->second==dependent_node->node_id) break;
 								}
 								if(l==main_node->dependency_validation_matrix.end()){
-									if(dependent_node->expression.morphalytics!=NULL
+									if(dependent_node->expression.morphalytics!=NULL&&dependent_node->expression.morphalytics->is_mocked()==false
 										&&dependent_node->expression.morphalytics->has_feature("Relative")==true){
 										ref_node_ids_to_set.insert(std::make_pair(dependent_node->node_id,main_node->node_id));
 										valid_combination=true;
@@ -1332,7 +1333,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	}
 	if(std::atoi(parent.first.c_str())>0){
 		const node_info& nodeinfo=get_node_info(std::atoi(parent.first.c_str()));
-		if(nodeinfo.expression.lexicon_entry==true||nodeinfo.expression.gcat=="CON"){
+		if(nodeinfo.expression.lexicon_entry==true){//||nodeinfo.expression.gcat=="CON"
 //			std::cout<<nodeinfo.expression.lexeme<<"_"<<parent.second<<std::endl;
 			functor_transgraph=new transgraph(std::make_pair(nodeinfo.expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 		}

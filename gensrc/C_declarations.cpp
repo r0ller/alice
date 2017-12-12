@@ -16,18 +16,20 @@
 	#ifdef __EMSCRIPTEN__
 		#include <emscripten.h>
 	#endif
+
 	#include "logger.cpp"
+	#include "hilib.h"
 	#include "db.h"
+	#include "lexer.h"
+	#include "sp.h"
+	morphan *stemmer=NULL;
+	lexer *lex=NULL;
+	interpreter *sparser=NULL;
 	#include "tokenpaths.cpp"
 	tokenpaths *token_paths=NULL;
-	#include "lexer.h"
-	lexer *lex=NULL;
 	#include "query_result.cpp"
 	#include "morphan_result.cpp"
 	#include "morphan.cpp"
-	morphan *stemmer=NULL;
-	#include "sp.h"
-	interpreter *sparser=NULL;
 	#include "lexer.cpp"
 	#include "sp.cpp"
 	#include "transgraph.cpp"

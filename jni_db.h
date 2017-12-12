@@ -21,6 +21,7 @@
 			jmethodID getBytes;
 			JNIEnv *jnienv();
 			std::string jstring2string(const jstring&);
+			std::string db_uri_;
 		public:
 			jni_db();
 			~jni_db() override;
@@ -28,6 +29,7 @@
 			void close() override;
 			const std::string error_message() override;
 			query_result *exec_sql(const std::string&) override;
+			std::string db_uri() override;
 	};
 
 #endif

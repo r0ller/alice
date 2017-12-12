@@ -7,7 +7,6 @@
 	#include "morphan_result.h"
 	#include <string>
 	#include <vector>
-	#include <map>
 
 	class morphan{
 		private:
@@ -16,21 +15,19 @@
 			fsm *fst=NULL;
 			apply_handle *morphan_handle=NULL;
 			char *pfstname=NULL;
-			std::string lid;
-			static std::map<std::pair<std::string,std::string>,std::vector<morphan_result>* > cache;
+			std::string lid_;
+			std::string lid();
 		public:
 			~morphan();
 			static morphan *get_instance(const std::string& lid){
 				if(morphan::singleton_instance==NULL){
 					morphan::singleton_instance=new morphan(lid);
 				}
-				return morphan::singleton_instance;
-			};
-			static void delete_cache(){
-				for(auto&& i:cache){
-					delete i.second;
+				else if(morphan::singleton_instance->lid()!=lid){
+					delete morphan::singleton_instance;
+					morphan::singleton_instance=new morphan(lid);
 				}
-				cache.clear();
+				return morphan::singleton_instance;
 			};
 			std::vector<morphan_result> *analyze(const std::string&);
 	};

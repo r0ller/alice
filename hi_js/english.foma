@@ -61,8 +61,8 @@ define YReplacement y -> i e || _ "^" s ;
 # Cleanup: remove morpheme boundaries
 define Cleanup "^" -> 0;
 
-def AddTag [..] -> "+swVowel[lfea]" || .#. V ?* _ .#. .o. 
-           [..] -> "+swConsonant[lfea]" || .#. C ?* _ .#. ;
+def AddTag [..] -> "+swVowel" || .#. V ?* _ .#. .o. 
+           [..] -> "+swConsonant" || .#. C ?* _ .#. ;
 
 read lexc engnoun.lexc
 define LexiconN

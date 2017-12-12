@@ -1,84 +1,116 @@
 #include "lexer.h"
 #include "db.h"
 
+morphan* lexer::stemmer=NULL;
+std::vector<std::string> lexer::word_forms_;
+std::map<std::string,std::vector<lexicon> > lexer::cache;
+
 /*PUBLIC*/
 lexer::lexer(const char *input_string,const char *language, std::locale& locale){
 		lid=std::string(language);
 		human_input=std::string(input_string);
-		human_input_iterator=human_input.begin();
 		stemmer=morphan::get_instance(lid);
 		token=0;
 		this->locale=locale;
+		word_form_iterator=analyze_and_cache(human_input);
 }
 
 lexer::~lexer(){
 	destroy_words();
-	delete stemmer;
 }
 
 unsigned int lexer::next_token(){
-//	unsigned int token=0;
 	std::string last_word,new_word_form;
 	lexicon new_word;
 	std::vector<lexicon> new_words;
-	std::vector<morphan_result> *morphalytics;
+//	std::vector<morphan_result> *morphalytics;
 
 	if(token_deque.empty()==false){
 		token=token_deque.front();
 		token_deque.pop_front();
 	}
 	else{
-		last_word.clear();
-		do{
-			for(;human_input_iterator<human_input.end()&&std::isspace(human_input[std::distance(human_input.begin(),human_input_iterator)],locale)==false;++human_input_iterator){
-				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)],locale);
-			}
-		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
-		#ifdef __ANDROID__
-			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
-		#endif
+		last_word=next_word();
+		//std::cout<<"last word:"<<last_word<<std::endl;
 		if(last_word.empty()==false){
-			//std::cout<<"last word:"<<last_word<<std::endl;
-			morphalytics=stemmer->analyze(last_word);
-			if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
-				new_word.token=0;
-				new_word.word=last_word;
-				new_word.gcat="CON";
-				new_word.lexeme=last_word;
-				new_word.dependencies=dependencies_read_for_functor("CON");
-				new_word.morphalytics=NULL;
-				new_word.tokens.push_back(0);
-				new_word_form=last_word;
-				new_words.push_back(new_word);
+			auto cache_hit=cache.find(last_word);
+			if(cache_hit!=cache.end()){
+				new_words=cache_hit->second;
 			}
 			else{
-				for(auto&& i:*morphalytics){
-					new_word=tokenize_word(i);
-					if(new_word.tokens.empty()==true){//TODO: throw exception
-						throw std::runtime_error("No tokens found for word:"+last_word);
-					}
-					new_words.push_back(new_word);
-					if(new_word_form.empty()==true){
-						//Due to the fact, that the last_word is read from input and the tokenize_word()
-						//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
-						//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
-						//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
-						//So let's store the word form as it's added to token_paths.
-						new_word_form=new_word.word;
-					}
-					new_word.tokens.clear();
-				}
+				throw std::runtime_error("Word not found in cache:"+last_word);
 			}
 			new_word=token_paths->next_word(new_words);
 			if(new_word.word.empty()==true){
 				throw std::runtime_error("Got no next word from token paths.");
 			}
+			//std::cout<<"new word:"<<last_word<<std::endl;
 			words.push_back(new_word);
 			token_deque=new_word.tokens;
 			token=token_deque.front();
 			token_deque.pop_front();
 		}
-		else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input
+
+//		last_word.clear();
+//		do{
+//			for(;human_input_iterator<human_input.end()&&std::isspace(human_input[std::distance(human_input.begin(),human_input_iterator)],locale)==false;++human_input_iterator){
+//				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)],locale);
+//			}
+//		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
+//		#ifdef __ANDROID__
+//			__android_log_print(ANDROID_LOG_INFO, "hi", "last word %s", last_word.c_str());
+//		#endif
+//		if(last_word.empty()==false){
+//			//std::cout<<"last word:"<<last_word<<std::endl;
+//			auto cache_hit=cache.find(last_word);
+//			if(cache_hit!=cache.end()){
+//				new_words=cache_hit->second;
+//			}
+//			else{
+//				morphalytics=stemmer->analyze(last_word);
+//				if(morphalytics==NULL){//The word could not be analysed -> treat it as constant
+//					new_word.token=0;
+//					new_word.word=last_word;
+//					new_word.gcat="CON";
+//					new_word.lexeme=last_word;
+//					new_word.dependencies=dependencies_read_for_functor("CON");
+//					new_word.morphalytics=NULL;
+//					new_word.tokens.push_back(0);
+//					new_word.lexicon_entry=false;
+//					new_word_form=last_word;
+//					new_words.push_back(new_word);
+//				}
+//				else{
+//					for(auto&& i:*morphalytics){
+//						new_word=tokenize_word(i);
+//						if(new_word.tokens.empty()==true){//TODO: throw exception
+//							throw std::runtime_error("No tokens found for word:"+last_word);
+//						}
+//						new_words.push_back(new_word);
+//						if(new_word_form.empty()==true){
+//							//Due to the fact, that the last_word is read from input and the tokenize_word()
+//							//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
+//							//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
+//							//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
+//							//So let's store the word form as it's added to token_paths.
+//							new_word_form=new_word.word;
+//						}
+//						new_word.tokens.clear();
+//					}
+//				}
+//				//std::cout<<"Inserting "<<last_word<<" in lexer cache"<<std::endl;
+//				cache.insert(std::make_pair(last_word,new_words));
+//			}
+//			new_word=token_paths->next_word(new_words);
+//			if(new_word.word.empty()==true){
+//				throw std::runtime_error("Got no next word from token paths.");
+//			}
+//			words.push_back(new_word);
+//			token_deque=new_word.tokens;
+//			token=token_deque.front();
+//			token_deque.pop_front();
+//		}
+//		else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input
 	}
 	return token;
 }
@@ -365,15 +397,7 @@ std::string lexer::language(){
 }
 
 bool lexer::is_end_of_input(){
-	bool only_ws_found=true;
-
-	for(std::string::iterator i=human_input_iterator;i<human_input.end();++i){
-		if(std::isspace(*i)==false){
-			only_ws_found=false;
-			break;
-		}
-	}
-	if((human_input_iterator==human_input.end()||only_ws_found==true)&&token_deque.empty()==true) return true;
+	if(word_form_iterator==word_forms_.end()&&token_deque.empty()==true) return true;
 	else return false;
 }
 
@@ -384,7 +408,7 @@ std::string lexer::validated_words(){
 
 	validated_terminals=sparser->validated_terminals();
 	for(auto&& i:validated_terminals){
-		if(sparser->get_node_info(i).expression.morphalytics!=NULL&&sparser->get_node_info(i).expression.word.empty()==false){
+		if(sparser->get_node_info(i).expression.morphalytics!=NULL&&sparser->get_node_info(i).expression.morphalytics->is_mocked()==false&&sparser->get_node_info(i).expression.word.empty()==false){
 			validated_words.insert(sparser->get_node_info(i).expression.morphalytics->word());
 //			std::cout<<"validated word:"<<sparser->get_node_info(i).expression.morphalytics->word()<<std::endl;
 		}
@@ -395,7 +419,7 @@ std::string lexer::validated_words(){
 	}
 	for(auto&& i:words){
 //		std::cout<<"word in lexicon:"<<i.word<<std::endl;
-		if(i.morphalytics!=NULL&&i.word.empty()==false&&i.gcat!="CON")
+		if(i.morphalytics!=NULL&&i.morphalytics->is_mocked()==false&&i.word.empty()==false&&i.gcat!="CON")
 			if(validated_words.find(i.morphalytics->word())!=validated_words.end()) words_found+=i.morphalytics->word()+" ";
 		else if(i.word.empty()==false&&i.gcat!="CON")
 			if(validated_words.find(i.word)!=validated_words.end()) words_found+=i.word+" ";
@@ -410,4 +434,77 @@ std::vector<lexicon> lexer::word_entries(){
 
 unsigned int lexer::last_token_returned(){
 	return token;
+}
+
+std::vector<std::string>::iterator lexer::analyze_and_cache(std::string& human_input){
+	std::string::iterator human_input_iterator;
+	std::string last_word,new_word_form;
+	lexicon new_word;
+	std::vector<lexicon> new_words;
+	std::vector<morphan_result> *morphalytics;
+
+	word_forms_.clear();
+	human_input_iterator=human_input.begin();
+	while(human_input_iterator<human_input.end()){
+		last_word.clear();
+		new_words.clear();
+		new_word_form.clear();
+		do{
+			for(;human_input_iterator<human_input.end()&&std::isspace(human_input[std::distance(human_input.begin(),human_input_iterator)],locale)==false;++human_input_iterator){
+				last_word+=std::tolower(human_input[std::distance(human_input.begin(),human_input_iterator)],locale);
+			}
+		}while(last_word.empty()==true&&human_input_iterator++<human_input.end());
+		if(last_word.empty()==false){
+			//std::cout<<"last word:"<<last_word<<std::endl;
+			word_forms_.push_back(last_word);
+			auto cache_hit=cache.find(last_word);
+			if(cache_hit==cache.end()){
+				morphalytics=stemmer->analyze(last_word);
+				if(morphalytics!=NULL&&morphalytics->empty()==false){
+					if(morphalytics->size()==1&&morphalytics->front().is_mocked()==true){//The word could not be analysed -> treat it as constant
+						new_word.token=0;
+						new_word.word=last_word;
+						new_word.gcat="CON";
+						new_word.lexeme=last_word;
+						new_word.dependencies=dependencies_read_for_functor("CON");
+						new_word.morphalytics=&morphalytics->front();
+						new_word.tokens.push_back(0);
+						new_word.lexicon_entry=false;
+						new_word_form=last_word;
+						new_words.push_back(new_word);
+					}
+					else{
+						for(auto&& i:*morphalytics){
+							new_word=tokenize_word(i);
+							if(new_word.tokens.empty()==true){//TODO: throw exception
+								throw std::runtime_error("No tokens found for word:"+last_word);
+							}
+							new_words.push_back(new_word);
+							if(new_word_form.empty()==true){
+								//Due to the fact, that the last_word is read from input and the tokenize_word()
+								//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
+								//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
+								//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
+								//So let's store the word form as it's added to token_paths.
+								new_word_form=new_word.word;
+							}
+							new_word.tokens.clear();
+						}
+					}
+					//std::cout<<"Inserting "<<last_word<<" in lexer cache"<<std::endl;
+					cache.insert(std::make_pair(last_word,new_words));
+				}
+				else throw std::runtime_error("Got neither real nor mocked morphological analysis. Stop.");
+			}
+		}
+		else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input
+	}
+	return word_forms_.begin();
+}
+
+std::string lexer::next_word(){
+	std::string word;
+
+	if(word_form_iterator!=word_forms_.end()) word=*(word_form_iterator++);
+	return word;
 }

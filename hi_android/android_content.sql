@@ -1,3 +1,4 @@
+PRAGMA foreign_keys = ON;
 BEGIN;
 /*
 insert into DEFTYPE values('0');
@@ -49,13 +50,7 @@ insert into SYMBOLS values('fwConsonant', 'ENG', 'following word starts with con
 insert into SYMBOLS values('swVowel', 'ENG', 'word starts with vowel');
 insert into SYMBOLS values('swConsonant', 'ENG', 'word starts with consonant');
 insert into SYMBOLS values('Gerund', 'ENG', 'Gerund');
-insert into SYMBOLS values('Verb', 'HUN', 'Ige');
-insert into SYMBOLS values('ConjDefSg2', 'HUN', 'Felszólító');
-insert into SYMBOLS values('Vbpfx', 'HUN', 'Igekötő');
-insert into SYMBOLS values('Acc', 'HUN', 'Tárgyas');
-insert into SYMBOLS values('CON', 'HUN', 'Konstans');
 insert into SYMBOLS values('S','ENG',NULL);
-insert into SYMBOLS values('HUN_VP','ENG',NULL);
 insert into SYMBOLS values('ENG_NEG','ENG',NULL);
 insert into SYMBOLS values('ENG_AdvP','ENG',NULL);
 insert into SYMBOLS values('ENG_Prep','ENG',NULL);
@@ -95,6 +90,28 @@ insert into SYMBOLS values('ENG_lfea_fwVowel','ENG',NULL);
 insert into SYMBOLS values('ENG_lfea_fwConsonant','ENG',NULL);
 insert into SYMBOLS values('ENG_lfea_swVowel','ENG',NULL);
 insert into SYMBOLS values('ENG_lfea_swConsonant','ENG',NULL);
+insert into SYMBOLS values('t_ENG_V_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_V_Aux','ENG',NULL);
+insert into SYMBOLS values('t_ENG_V_Gerund','ENG',NULL);
+insert into SYMBOLS values('t_ENG_QPRO','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_Pl','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_Sg','ENG',NULL);
+insert into SYMBOLS values('t_ENG_A_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_PREP','ENG',NULL);
+insert into SYMBOLS values('t_Con','ENG',NULL);
+insert into SYMBOLS values('t_ENG_ADV','ENG',NULL);
+insert into SYMBOLS values('t_ENG_RPRO','ENG',NULL);
+insert into SYMBOLS values('t_ENG_RPRO_Relative','ENG',NULL);
+insert into SYMBOLS values('t_ENG_PAR','ENG',NULL);
+insert into SYMBOLS values('t_ENG_NEG_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_Indef','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_fwVowel','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_fwConsonant','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_swVowel','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_swConsonant','ENG',NULL);
+
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerb','HUN',NULL);
 insert into SYMBOLS values('HUN_Verb_lfea_ConjDefSg2','HUN',NULL);
@@ -116,6 +133,96 @@ insert into SYMBOLS values('HUN_Num_Stem','HUN',NULL);
 insert into SYMBOLS values('HUN_N_Acc','HUN',NULL);
 insert into SYMBOLS values('HUN_Noun_lfea_Acc','HUN',NULL);
 insert into SYMBOLS values('HUN_Nums','HUN',NULL);
+insert into SYMBOLS values('Stem','HUN',NULL);
+insert into SYMBOLS values('Num','HUN',NULL);
+insert into SYMBOLS values('Ik','HUN',NULL);
+insert into SYMBOLS values('Par','HUN',NULL);
+insert into SYMBOLS values('Npref1','HUN',NULL);
+insert into SYMBOLS values('Npref2','HUN',NULL);
+insert into SYMBOLS values('Npref3','HUN',NULL);
+insert into SYMBOLS values('Npref4','HUN',NULL);
+insert into SYMBOLS values('Npref5','HUN',NULL);
+insert into SYMBOLS values('Npref6','HUN',NULL);
+insert into SYMBOLS values('Npref7','HUN',NULL);
+insert into SYMBOLS values('Npref8','HUN',NULL);
+insert into SYMBOLS values('Npref9','HUN',NULL);
+insert into SYMBOLS values('Npref1n','HUN',NULL);
+insert into SYMBOLS values('Npref2n','HUN',NULL);
+insert into SYMBOLS values('Npref3n','HUN',NULL);
+insert into SYMBOLS values('Npref4n','HUN',NULL);
+insert into SYMBOLS values('Npref5n','HUN',NULL);
+insert into SYMBOLS values('Npref6n','HUN',NULL);
+insert into SYMBOLS values('Npref7n','HUN',NULL);
+insert into SYMBOLS values('Npref8n','HUN',NULL);
+insert into SYMBOLS values('Npref9n','HUN',NULL);
+insert into SYMBOLS values('Npref1nn','HUN',NULL);
+insert into SYMBOLS values('Npref1nnn','HUN',NULL);
+insert into SYMBOLS values('Det','HUN',NULL);
+insert into SYMBOLS values('Def','HUN',NULL);
+insert into SYMBOLS values('fwVowel','HUN',NULL);
+insert into SYMBOLS values('fwConsonant','HUN',NULL);
+insert into SYMBOLS values('swVowel','HUN',NULL);
+insert into SYMBOLS values('swConsonant','HUN',NULL);
+insert into SYMBOLS values('Noun','HUN',NULL);
+insert into SYMBOLS values('Verb', 'HUN', 'Ige');
+insert into SYMBOLS values('ConjDefSg2', 'HUN', 'Felszólító');
+insert into SYMBOLS values('Vbpfx', 'HUN', 'Igekötő');
+insert into SYMBOLS values('Acc', 'HUN', 'Tárgyas');
+insert into SYMBOLS values('CON', 'HUN', 'Konstans');
+insert into SYMBOLS values('S','HUN',NULL);
+insert into SYMBOLS values('HUN_VP','HUN',NULL);
+insert into SYMBOLS values('HUN_DP','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_ConjDefSg2','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Vbpfx_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Stem','HUN',NULL);
+insert into SYMBOLS values('t_Con','HUN',NULL);
+insert into SYMBOLS values('HUN_lfea_swVowel','HUN',NULL);
+insert into SYMBOLS values('HUN_lfea_swConsonant','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_Acc','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Acc','HUN',NULL);
+insert into SYMBOLS values('HUN_lfea_fwVowel','HUN',NULL);
+insert into SYMBOLS values('HUN_lfea_fwConsonant','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Det','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Det_Def','HUN',NULL);
+insert into SYMBOLS values('HUN_Def_Det','HUN',NULL);
+insert into SYMBOLS values('HUN_Def_Det_az','HUN',NULL);
+insert into SYMBOLS values('HUN_Def_Det_a','HUN',NULL);
+insert into SYMBOLS values('HUN_Det_stem','HUN',NULL);
+insert into SYMBOLS values('HUN_lfea_DefDet','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Det_fwVowel','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Det_fwConsonant','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_swVowel','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_swConsonant','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_swVowel','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_swConsonant','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_swVowel','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_swConsonant','HUN',NULL);
+insert into SYMBOLS values('HUN_DPbar','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref1','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref2','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref3','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref4','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref5','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref6','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref7','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref8','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref9','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref1n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref2n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref3n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref4n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref5n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref6n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref7n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref8n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref9n','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref1nn','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Npref1nnn','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Par','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Ik','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Acc','HUN',NULL);
 
 /*Constant has hardcoded token value 1 in the yacc source but to avoid collision, the values here are increased
 by 1 during runtime so, the smallest value here must at least be 1*/
@@ -186,26 +293,59 @@ insert into GCAT values('Noun', 'Acc', 'HUN', '58');
 insert into GCAT values('Noun', 'swVowel', 'HUN', '59');
 insert into GCAT values('Noun', 'swConsonant', 'HUN', '60');
 
-insert into FUNCTOR_DEFS values('NAMEENGN_1',	'return NAMEENGN_1_CON_1_IN;');
-insert into FUNCTOR_DEFS values('WITHENGPREP_1', 'return NAMEENGN_1_OUT;');
-insert into FUNCTOR_DEFS values('CONTACTENGN_1', NULL);
-insert into FUNCTOR_DEFS values('LISTENGV_1',	'if(typeof WITHENGPREP_1_OUT===''undefined'') Android.fetchContacts('''');else Android.fetchContacts(WITHENGPREP_1_OUT)');
-insert into FUNCTOR_DEFS values('PRODUCTENGN_1',	'if(PRODUCTENGN_1_CON_1_IN==''zero''||PRODUCTENGN_1_CON_1_IN==''bread'') return ''0'';else if(PRODUCTENGN_1_CON_1_IN==''one''||PRODUCTENGN_1_CON_1_IN==''milk'') return ''1'';');
-insert into FUNCTOR_DEFS values('FORENGPREP_1', 'return PRODUCTENGN_1_OUT;');
-insert into FUNCTOR_DEFS values('DETAILENGN_1', NULL);
-insert into FUNCTOR_DEFS values('SHOWENGV_1',	'if(typeof FORENGPREP_1_OUT===''undefined'') Android.showProduct('''');else Android.showProduct(FORENGPREP_1_OUT)');
-insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', NULL);
-insert into FUNCTOR_DEFS values('HIVHUNV_1',
+insert into FUNCTOR_DEFS values('NAMEENGN_1',
 'contact="";
-parameter_list=arguments[1];
-for(i=0;i<parameter_list.length;++i){
-	if(parameter_list[i].indexOf(''_CON_'')>-1){
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i].indexOf(''CON_'')>-1){
+		if(typeof arguments[i+2]!==''undefined''){
+			con=JSON.parse(arguments[i+2]);
+			contact=con.stem;
+			break;
+		}
+	}
+}
+return contact;');
+insert into FUNCTOR_DEFS values('WITHENGPREP_1',
+'out="";
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i].indexOf(''_out'')>-1){
+		if(typeof arguments[i+2]!==''undefined''){
+			out=arguments[i+2];
+			break;
+		}
+	}
+}
+return out;');
+insert into FUNCTOR_DEFS values('CONTACTENGN_1', NULL);
+insert into FUNCTOR_DEFS values('LISTENGV_1',
+'contact="";
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i].indexOf(''WITHENGPREP_1'')>-1){
 		if(typeof arguments[i+2]!==''undefined''){
 			contact=arguments[i+2];
 			break;
 		}
 	}
-	else if(parameter_list[i].indexOf(''Num_'')>-1){
+}
+if(contact) Android.fetchContacts(contact);
+else Android.fetchContacts("");');
+insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', NULL);
+insert into FUNCTOR_DEFS values('HIVHUNV_1',
+'contact="";
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i].indexOf(''CON_'')>-1){
+		if(typeof arguments[i+2]!==''undefined''){
+			con=JSON.parse(arguments[i+2]);
+			contact=con.stem;
+			break;
+		}
+	}
+	else if(parameterList[i].indexOf(''Num_'')>-1){
+		if(typeof arguments[i+2]!==''undefined''){
+			contact+=arguments[i+2];
+		}
+	}
+	else if(parameterList[i].indexOf(''ELSOUTSOHUNNOUN_'')>-1){
 		if(typeof arguments[i+2]!==''undefined''){
 			contact+=arguments[i+2];
 		}
@@ -216,6 +356,16 @@ insert into FUNCTOR_DEFS values('Num_1',
 'number='''';
 prevNpref='''';
 isOrdinal=false;
+Num_1_MORPHEMES='''';
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i]===functionName+''_morphology''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
+			Num=JSON.parse(arguments[i+2]);
+			Num_1_MORPHEMES=Num.tags;
+			break;
+		}
+	}
+}
 for(i=0;i<Num_1_MORPHEMES.length;++i){
   if(Num_1_MORPHEMES[i]===''Npref1nnn''){
     if((prevNpref.length===0||prevNpref.match(/^Npref[1-9]$/)===null)&&prevNpref.match(/^Npref[1-9]n$/)===null) number+=''1'';
@@ -295,6 +445,9 @@ for(i=0;i<Num_1_MORPHEMES.length;++i){
   else if(Num_1_MORPHEMES[i]===''Npref9''){
     if(prevNpref===''Npref1nn'')number+=''09'';
     else number+=''9'';
+  }
+  else if(Num_1_MORPHEMES[i]===''nulla[stem]''){
+  	number+=''0'';
   }
   else if(Num_1_MORPHEMES[i]===''egy[stem]''){
     if(prevNpref===''Npref1nnn'')number+=''001'';
@@ -393,21 +546,38 @@ for(i=0;i<Num_1_MORPHEMES.length;++i){
 }
 if(isOrdinal===true) number+=''.'';
 return number;');
-insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1', 'if(ELSOUTSOHUNNOUN_1_STEM===''első'') return 1;if(ELSOUTSOHUNNOUN_1_STEM===''utolsó'') return 0;');
+insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1',
+'
+elsoutso='''';
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i]===functionName+''_morphology''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
+			elsoutso=JSON.parse(arguments[i+2]);
+			elsoutso=elsoutso.stem;
+			break;
+		}
+	}
+}
+if(elsoutso===''első'') return ''1.'';else if(elsoutso===''utolsó'') return ''0.'';else return "";');
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('WITHENGPREP', '1', 'WITHENGPREP_1');
 insert into FUNCTORS values('LISTENGV', '1', 'LISTENGV_1');
 insert into FUNCTORS values('NAMEENGN', '1', 'NAMEENGN_1');
 insert into FUNCTORS values('CONTACTENGN', '1', 'CONTACTENGN_1');
-insert into FUNCTORS values('FORENGPREP', '1', 'FORENGPREP_1');
-insert into FUNCTORS values('SHOWENGV', '1', 'SHOWENGV_1');
-insert into FUNCTORS values('PRODUCTENGN', '1', 'PRODUCTENGN_1');
-insert into FUNCTORS values('DETAILENGN', '1', 'DETAILENGN_1');
 insert into FUNCTORS values('HIVHUNV', '1', 'HIVHUNV_1');
 insert into FUNCTORS values('FELHUNVBPFX', '1', 'FELHUNVBPFX_1');
 insert into FUNCTORS values('Num', '1', 'Num_1');
 insert into FUNCTORS values('ELSOUTSOHUNNOUN', '1', 'ELSOUTSOHUNNOUN_1');
+
+insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
+insert into LEXICON values('contact', 'ENG', 'N', 'CONTACTENGN');
+insert into LEXICON values('name', 'ENG', 'N', 'NAMEENGN');
+insert into LEXICON values('with', 'ENG', 'PREP', 'WITHENGPREP');
+insert into LEXICON values('hív', 'HUN', 'Verb', 'HIVHUNV');
+insert into LEXICON values('fel', 'HUN', 'Vbpfx', 'FELHUNVBPFX');
+insert into LEXICON values('első', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
+insert into LEXICON values('utolsó', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
 
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
@@ -436,36 +606,16 @@ insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '1', 
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, 'Num', NULL, 'N', NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '3', NULL, NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
 
-insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
-insert into LEXICON values('contact', 'ENG', 'N', 'CONTACTENGN');
-insert into LEXICON values('name', 'ENG', 'N', 'NAMEENGN');
-insert into LEXICON values('with', 'ENG', 'PREP', 'WITHENGPREP');
-insert into LEXICON values('first', 'ENG', 'A', 'FIRSTENGA');
-insert into LEXICON values('last', 'ENG', 'A', 'LASTENGA');
-insert into LEXICON values('show', 'ENG', 'V', 'SHOWENGV');
-insert into LEXICON values('detail', 'ENG', 'N', 'DETAILENGN');
-insert into LEXICON values('for', 'ENG', 'PREP', 'FORENGPREP');
-insert into LEXICON values('product', 'ENG', 'N', 'PRODUCTENGN');
-insert into LEXICON values('hív', 'HUN', 'Verb', 'HIVHUNV');
-insert into LEXICON values('fel', 'HUN', 'Vbpfx', 'FELHUNVBPFX');
-insert into LEXICON values('első', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
-insert into LEXICON values('utolsó', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
-
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, '2', '0', 'CONTACTENGN', '1');
 insert into DEPOLEX values('LISTENGV', '1', '2', NULL, '2', NULL, '0', 'WITHENGPREP', '1');
 insert into DEPOLEX values('WITHENGPREP', '1', '1', NULL, '1', NULL, '0', 'NAMEENGN', '1');
 insert into DEPOLEX values('NAMEENGN', '1', '1', '1', NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('CONTACTENGN', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('SHOWENGV', '1', '1', NULL, NULL, '2', '0', 'DETAILENGN', '1');
-insert into DEPOLEX values('SHOWENGV', '1', '2', NULL, '2', NULL, '0', 'FORENGPREP', '1');
-insert into DEPOLEX values('FORENGPREP', '1', '1', NULL, '1', NULL, '0', 'PRODUCTENGN', '1');
-insert into DEPOLEX values('PRODUCTENGN', '1', '1', '1', NULL, NULL, '1', 'CON', '1');
-insert into DEPOLEX values('DETAILENGN', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('HIVHUNV', '1', '1', NULL, NULL, '2', '0', 'FELHUNVBPFX', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '2', NULL, '3', NULL, '1', 'CON', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '3', NULL, '4', NULL, '1', 'Num', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '4', NULL, NULL, NULL, '1', 'ELSOUTSOHUNNOUN', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '1', NULL, '2', '2', '0', 'FELHUNVBPFX', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '2', '1', '3', NULL, '1', 'Num', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '3', '1', '4', NULL, '0', 'ELSOUTSOHUNNOUN', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '4', '1', NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('FELHUNVBPFX', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('Num', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('ELSOUTSOHUNNOUN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);

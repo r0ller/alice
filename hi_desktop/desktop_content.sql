@@ -132,9 +132,13 @@ insert into GCAT values('V', 'Gerund', 'ENG', '24');
 insert into FUNCTOR_DEFS values('LISTENGV_1', NULL);
 insert into FUNCTOR_DEFS values('LISTENGV_2', NULL);
 insert into FUNCTOR_DEFS values('FILEENGN_1', NULL);
+insert into FUNCTOR_DEFS values('FILEENGN_2', NULL);
 insert into FUNCTOR_DEFS values('INENGPREP_1', NULL);
 insert into FUNCTOR_DEFS values('BEENGV_1', NULL);
 insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', NULL);
+insert into FUNCTOR_DEFS values('NOTENGNEG_1', NULL);
+insert into FUNCTOR_DEFS values('FROMENGPREP_1', NULL);
+insert into FUNCTOR_DEFS values('EXECUTABLEENGA_1', NULL);
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
@@ -178,14 +182,16 @@ insert into LEXICON values('directory', 'ENG', 'N', 'DIRECTORYENGN');
 insert into LEXICON values('from', 'ENG', 'PREP', 'FROMENGPREP');
 insert into LEXICON values('in', 'ENG', 'PREP', 'INENGPREP');
 insert into LEXICON values('are', 'ENG', 'V', 'BEENGV');
-insert into LEXICON values('be', 'ENG', 'V', 'BEENGV');
 insert into LEXICON values('not', 'ENG', 'NEG', 'NOTENGNEG');
 insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
 insert into LEXICON values('executable', 'ENG', 'A', 'EXECUTABLEENGA');
 insert into LEXICON values('a', 'ENG', 'DET', 'AENGDET');
 insert into LEXICON values('an', 'ENG', 'DET', 'ANENGDET');
+/*
 insert into LEXICON values('to', 'ENG', 'PREP', 'TOENGPREP');
 insert into LEXICON values('to', 'ENG', 'PAR', 'TOENGPAR');
+insert into LEXICON values('be', 'ENG', 'V', 'BEENGV');
+*/
 
 /*no value in the semantic_dependency field means no dependency*/
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);

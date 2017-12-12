@@ -30,6 +30,7 @@
 			virtual void close()=0;
 			virtual const std::string error_message()=0;
 			virtual query_result *exec_sql(const std::string&)=0;
+			virtual std::string db_uri()=0;
 	};
 
 	#if defined(__ANDROID__)

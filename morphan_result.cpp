@@ -1,18 +1,30 @@
 #include "morphan_result.h"
+unsigned int morphan_result::global_id=0;
 
 /*PUBLIC*/
-morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes){
+morphan_result::morphan_result(const std::string& word, const std::string& lid){
+
+	this->lid=lid;
+	my_id=++morphan_result::global_id;
+	word_form=word;
+	word_stem=word;
+	word_gcat="CON";
+}
+
+morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes, const std::string& lid){
 	unsigned int nr_of_morphemes=0,i;
 	size_t hit=0;
 	query_result *gcat_with_lingfeas=NULL,*gcats=NULL;
 	db *sqlite=NULL;
 	const std::pair<const unsigned int,field> *field;
 
+	this->lid=lid;
+	my_id=++morphan_result::global_id;
 	word_form=word;
 	word_morphemes=morphemes;
 	nr_of_morphemes=morphemes.size();
 	sqlite=db_factory::get_instance();
-	gcats=sqlite->exec_sql("SELECT DISTINCT GCAT FROM GCAT WHERE LID = '"+lex->language()+"';");
+	gcats=sqlite->exec_sql("SELECT DISTINCT GCAT FROM GCAT WHERE LID = '"+lid+"';");
 	if(gcats==NULL){
 		throw std::runtime_error("GCAT db table is empty.");
 	}
@@ -32,7 +44,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 					erroneous=true;
 				}
 				else{
-					gcat_with_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+morphemes[i]+"' AND LID = '"+lex->language()+"';");
+					gcat_with_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+morphemes[i]+"' AND LID = '"+lid+"';");
 					if(gcat_with_lingfeas==NULL){
 //						logger::singleton()->log(0,"erroneous morphan: no gcat entries found for "+morphemes[i]);
 						erroneous=true;
@@ -80,6 +92,10 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 morphan_result::~morphan_result(){
 }
 
+const unsigned int& morphan_result::id() const{
+	return my_id;
+}
+
 const std::string& morphan_result::word() const{
 	return word_form;
 }
@@ -111,4 +127,8 @@ const std::set<std::string>& morphan_result::lfeas() const{
 
 bool morphan_result::is_erroneous() const{
 	return erroneous;
+}
+
+bool morphan_result::is_mocked() const{
+	return word_morphemes.empty();
 }
