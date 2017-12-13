@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        sign_config {
+            keyAlias 'Hi_key'
+            keyPassword 'H1_k3y'
+            storePassword 'H1_k3y'
+            storeFile file('C:/Users/i033768/.android/.keystore/hi_key.jks')
+        }
+    }
     compileSdkVersion 24
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.1'
@@ -9,7 +17,7 @@ android {
         applicationId "com.bitroller.hi"
         minSdkVersion 23
         targetSdkVersion 24
-        versionCode 1
+        versionCode 2
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -31,6 +39,10 @@ android {
             buildConfigField "java.util.Date", "buildTime", "new java.util.Date(" + System.currentTimeMillis() + "L)"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.sign_config
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
         }
     }
     externalNativeBuild {
@@ -48,7 +60,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:24.2.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

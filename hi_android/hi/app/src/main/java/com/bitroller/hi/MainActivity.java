@@ -214,18 +214,21 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onStart() {
 		super.onStart();
+		registerReceiver(mBroadcastReceiver,new IntentFilter("hiBroadcast"));
+		jsi.registerLocalBroadcastReceiver();
 		triggerSpeechRecoginzer();
 	}
 
 	public void onResume() {
 		super.onResume();
-		IntentFilter intentFilter = new IntentFilter("hiBroadcast");
-		registerReceiver(mBroadcastReceiver,intentFilter);
-		jsi.registerLocalBroadcastReceiver();
 	}
 
 	public void onPause() {
 		super.onPause();
+	}
+
+	public void onStop() {
+		super.onStop();
 		unregisterReceiver(mBroadcastReceiver);
 		jsi.unregisterLocalBroadcastReceiver();
 	}

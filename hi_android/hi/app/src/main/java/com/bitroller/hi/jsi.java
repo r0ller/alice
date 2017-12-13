@@ -54,8 +54,7 @@ public class jsi {
     }
 
     public void registerLocalBroadcastReceiver(){
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mMessageReceiver,
-                new IntentFilter("jsi_permission"));
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mMessageReceiver, new IntentFilter("jsi_permission"));
     }
 
     public void unregisterLocalBroadcastReceiver(){
