@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        sign_config {
-            keyAlias 'Hi_key'
-            keyPassword 'H1_k3y'
-            storePassword 'H1_k3y'
-            storeFile file('C:/Users/i033768/.android/.keystore/hi_key.jks')
-        }
-    }
     compileSdkVersion 24
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.1'
