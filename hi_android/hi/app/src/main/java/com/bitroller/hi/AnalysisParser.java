@@ -64,7 +64,10 @@ public class AnalysisParser {
             for(int j=0;j<functors.length();++j){
                 JSONObject functor=functors.optJSONObject(j);
                 if(functor.getString("functor id").contentEquals(functorID)){
-                    functorDef="function "+functionName+"(functionName,parameterList,"+argStr+"){"+functor.getString("definition")+"};";
+                    functorDef=functor.getString("definition");
+                    if(functorDef.isEmpty()==false){
+                        functorDef = "function " + functionName + "(functionName,parameterList," + argStr + "){" + functorDef + "};";
+                    }
                     break;
                 }
             }
@@ -188,7 +191,7 @@ public class AnalysisParser {
                     if(semanticDependency.has("functor id")==true){
                         boolean failed=findFunctorDependenciesForSemanticOnes(dependencies,functorDependencies,relatedDependencies,semanticDependency,dependenciesFound);
                     }
-                    semanticDependency=getSemanticDependency(dependenciesFound,semanticDependency.getString("functor"),semanticDependency.getString("d_key"));
+                    semanticDependency=getSemanticDependencyById(dependenciesFound,semanticDependency.getString("id"));
                     addToPos(insertIndex,semanticDependency,dependenciesArray);
                 }
                 if(d_successor>d_counter) {
@@ -213,7 +216,7 @@ public class AnalysisParser {
                             boolean failed = findFunctorDependenciesForSemanticOnes(dependencies, functorDependencies, relatedDependencies, optionalDependency, dependenciesFound);
                             if(failed==true) previousDependencyFound=false;
                             else previousDependencyFound=true;
-                            optionalDependency=getSemanticDependency(dependenciesFound,semanticDependency,refDKey);
+                            optionalDependency=getSemanticDependencyById(dependenciesFound,optionalDependency.getString("id"));
                             addToPos(dependenciesArray.length(),optionalDependency,dependenciesArray);
                         }
                         else previousDependencyFound=false;
@@ -259,6 +262,18 @@ public class AnalysisParser {
             JSONObject functorObj=dependencies.optJSONObject(i);
             if(functorObj.getString("functor").contentEquals(functor)
                     &&functorObj.getString("d_key").contentEquals(d_key)){
+                functorFound=functorObj;
+                break;
+            }
+        }
+        return functorFound;
+    }
+
+    private JSONObject getSemanticDependencyById(JSONArray dependencies, String id) throws org.json.JSONException{
+        JSONObject functorFound=null;
+        for(int i=0;i<dependencies.length();++i){
+            JSONObject functorObj=dependencies.optJSONObject(i);
+            if(functorObj.getString("id").contentEquals(id)){
                 functorFound=functorObj;
                 break;
             }
@@ -365,14 +380,13 @@ public class AnalysisParser {
                 JSONArray functors=analysis.optJSONArray("functors");
                 JSONArray errors=analysis.optJSONArray("errors");
                 if(errors==null){
-                    if(semantics.length()==1){
+                    if(semantics.length()>0){
                         script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
                         prevMorphology=morphology;
                         prevSemantics=semantics;
                         prevFunctors=functors;
                     }
                     else{
-
                     }
                 }
                 else{

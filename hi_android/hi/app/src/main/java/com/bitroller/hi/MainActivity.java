@@ -338,7 +338,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
-//		if(recognisedText.isEmpty()==true) recognisedText="hívd fel pétert";
+//		if(recognisedText.isEmpty()==true) recognisedText="hívd az orvost";
 //		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 //        Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);//Get default (primary) language set for voice input
 //        LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();

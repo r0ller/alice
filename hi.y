@@ -1015,6 +1015,15 @@ $$=sparser->set_node_info(word,HUN_1Con);
 logger::singleton()->log(0,"HUN_N_Sg->HUN_1Con");
 
 }
+|HUN_Noun_Stem 
+{
+lexicon word;
+const node_info& HUN_Noun_Stem=sparser->get_node_info($1);
+word.gcat="HUN_N_Sg";
+$$=sparser->set_node_info(word,HUN_Noun_Stem);
+logger::singleton()->log(0,"HUN_N_Sg->HUN_Noun_Stem");
+
+}
 |HUN_nCon 
 {
 lexicon word;
@@ -1022,6 +1031,23 @@ const node_info& HUN_nCon=sparser->get_node_info($1);
 word.gcat="HUN_N_Sg";
 $$=sparser->set_node_info(word,HUN_nCon);
 logger::singleton()->log(0,"HUN_N_Sg->HUN_nCon");
+
+};
+HUN_Noun_Stem:
+HUN_lfea_swConsonant HUN_Noun_Stem
+{
+const node_info& HUN_lfea_swConsonant=sparser->get_node_info($1);
+const node_info& HUN_Noun_Stem=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_Noun_Stem",HUN_lfea_swConsonant,HUN_Noun_Stem);
+logger::singleton()->log(0,"HUN_Noun_Stem->HUN_lfea_swConsonant HUN_Noun_Stem");
+
+}
+|HUN_lfea_swVowel HUN_Noun_Stem
+{
+const node_info& HUN_lfea_swVowel=sparser->get_node_info($1);
+const node_info& HUN_Noun_Stem=sparser->get_node_info($2);
+$$=sparser->combine_nodes("HUN_Noun_Stem",HUN_lfea_swVowel,HUN_Noun_Stem);
+logger::singleton()->log(0,"HUN_Noun_Stem->HUN_lfea_swVowel HUN_Noun_Stem");
 
 }
 |t_HUN_Noun_Stem 

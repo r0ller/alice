@@ -120,6 +120,7 @@ insert into SYMBOLS values('HUN_Vbpfx','HUN',NULL);
 insert into SYMBOLS values('HUN_NP','HUN',NULL);
 insert into SYMBOLS values('HUN_N','HUN',NULL);
 insert into SYMBOLS values('HUN_N_Sg','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_Stem','HUN',NULL);
 insert into SYMBOLS values('HUN_1Con','HUN',NULL);
 insert into SYMBOLS values('HUN_nCon','HUN',NULL);
 insert into SYMBOLS values('HUN_Con','HUN',NULL);
@@ -293,11 +294,12 @@ insert into GCAT values('Noun', 'Acc', 'HUN', '58');
 insert into GCAT values('Noun', 'swVowel', 'HUN', '59');
 insert into GCAT values('Noun', 'swConsonant', 'HUN', '60');
 
+insert into FUNCTOR_DEFS values('Noun_1', NULL);
 insert into FUNCTOR_DEFS values('NAMEENGN_1',
 'contact="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''CON_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
 			con=JSON.parse(arguments[i+2]);
 			contact=con.stem;
 			break;
@@ -309,7 +311,7 @@ insert into FUNCTOR_DEFS values('WITHENGPREP_1',
 'out="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''_out'')>-1){
-		if(typeof arguments[i+2]!==''undefined''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
 			out=arguments[i+2];
 			break;
 		}
@@ -321,7 +323,7 @@ insert into FUNCTOR_DEFS values('LISTENGV_1',
 'contact="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''WITHENGPREP_1'')>-1){
-		if(typeof arguments[i+2]!==''undefined''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
 			contact=arguments[i+2];
 			break;
 		}
@@ -334,19 +336,26 @@ insert into FUNCTOR_DEFS values('HIVHUNV_1',
 'contact="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''CON_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
 			con=JSON.parse(arguments[i+2]);
-			contact=con.stem;
-			break;
+			if(contact.length>0)contact=contact+" "+con.stem;
+			else contact=con.stem;
+		}
+	}
+	else if(parameterList[i].indexOf(''Noun_'')>-1){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
+			con=JSON.parse(arguments[i+2]);
+			if(contact.length>0)contact=contact+" "+con.stem;
+			else contact=con.stem;
 		}
 	}
 	else if(parameterList[i].indexOf(''Num_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
 			contact+=arguments[i+2];
 		}
 	}
 	else if(parameterList[i].indexOf(''ELSOUTSOHUNNOUN_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''){
+		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
 			contact+=arguments[i+2];
 		}
 	}
@@ -568,6 +577,7 @@ insert into FUNCTORS values('CONTACTENGN', '1', 'CONTACTENGN_1');
 insert into FUNCTORS values('HIVHUNV', '1', 'HIVHUNV_1');
 insert into FUNCTORS values('FELHUNVBPFX', '1', 'FELHUNVBPFX_1');
 insert into FUNCTORS values('Num', '1', 'Num_1');
+insert into FUNCTORS values('Noun', '1', 'Noun_1');
 insert into FUNCTORS values('ELSOUTSOHUNNOUN', '1', 'ELSOUTSOHUNNOUN_1');
 
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -600,7 +610,8 @@ insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL,
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, 'NEG', NULL, 'H', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '2', NULL, NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_ImpVerbPfx', 'HUN_ImpVerb', 'Vbpfx', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, 'Vbpfx', NULL, 'N', NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, 'Num', NULL, 'N', NULL, 'HUN');
@@ -615,9 +626,11 @@ insert into DEPOLEX values('CONTACTENGN', '1', '1', NULL, NULL, NULL, '0', NULL,
 insert into DEPOLEX values('HIVHUNV', '1', '1', NULL, '2', '2', '0', 'FELHUNVBPFX', '1');
 insert into DEPOLEX values('HIVHUNV', '1', '2', '1', '3', NULL, '1', 'Num', '1');
 insert into DEPOLEX values('HIVHUNV', '1', '3', '1', '4', NULL, '0', 'ELSOUTSOHUNNOUN', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '4', '1', NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '4', '1', '5', NULL, '1', 'Noun', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '5', '1', NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('FELHUNVBPFX', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('Num', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('Noun', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('ELSOUTSOHUNNOUN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL);
@@ -756,7 +769,10 @@ insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_ConjDefS
 insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_Stem',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Vbpfx','t_HUN_Vbpfx_Stem',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_NP','HUN_N_Acc',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_N_Sg','t_HUN_Noun_Stem',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_Stem','HUN_lfea_swVowel','HUN_Noun_Stem',NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_Stem','HUN_lfea_swConsonant','HUN_Noun_Stem',NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_Stem','t_HUN_Noun_Stem',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_Noun_Stem',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_N_Sg','HUN_Con_lfea_Acc',NULL);
 insert into GRAMMAR values('HUN','HUN_1Con','HUN_Con',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_nCon','HUN_1Con','HUN_Con',NULL);
