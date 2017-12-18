@@ -214,18 +214,21 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onStart() {
 		super.onStart();
+		registerReceiver(mBroadcastReceiver,new IntentFilter("hiBroadcast"));
+		jsi.registerLocalBroadcastReceiver();
 		triggerSpeechRecoginzer();
 	}
 
 	public void onResume() {
 		super.onResume();
-		IntentFilter intentFilter = new IntentFilter("hiBroadcast");
-		registerReceiver(mBroadcastReceiver,intentFilter);
-		jsi.registerLocalBroadcastReceiver();
 	}
 
 	public void onPause() {
 		super.onPause();
+	}
+
+	public void onStop() {
+		super.onStop();
 		unregisterReceiver(mBroadcastReceiver);
 		jsi.unregisterLocalBroadcastReceiver();
 	}
@@ -335,7 +338,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
-//		if(recognisedText.isEmpty()==true) recognisedText="hívd fel pétert";
+//		if(recognisedText.isEmpty()==true) recognisedText="hívd az orvost";
 //		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 //        Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);//Get default (primary) language set for voice input
 //        LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();

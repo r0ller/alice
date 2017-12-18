@@ -54,8 +54,7 @@ public class jsi {
     }
 
     public void registerLocalBroadcastReceiver(){
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mMessageReceiver,
-                new IntentFilter("jsi_permission"));
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mMessageReceiver, new IntentFilter("jsi_permission"));
     }
 
     public void unregisterLocalBroadcastReceiver(){
@@ -229,8 +228,9 @@ public class jsi {
                         Iterator<String> contactKey = contactKeys.iterator();
                         while (contactKey.hasNext()) {
                             String contactKeyItem = contactKey.next();
-                            if (contactName.equalsIgnoreCase(contactKeyItem) == true) {
+                            if (contactKeyItem.equalsIgnoreCase(contactName) == true || contactKeyItem.equalsIgnoreCase(contactName) == false && Contacts.size()==1) {
                                 exactContact = contactKeyItem;
+                                contactName = contactKeyItem;
                                 break;
                             }
                         }
@@ -239,9 +239,9 @@ public class jsi {
                             List<String> contactNumbers = null;
                             while (contactList.hasNext()) {
                                 Entry<String, List<String>> contactListItem = contactList.next();
-                                if (contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(contactName) == true
-                                        || contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(contactName2) == true
-                                        || contactListItem.getKey().toLowerCase(Locale.getDefault()).contentEquals(contactName3) == true) {
+                                if (contactListItem.getKey().equalsIgnoreCase(contactName) == true
+                                        || contactListItem.getKey().equalsIgnoreCase(contactName2) == true
+                                        || contactListItem.getKey().equalsIgnoreCase(contactName3) == true) {
                                     contactNumbers = contactListItem.getValue();
                                     break;
                                 }
