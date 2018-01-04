@@ -1,3 +1,4 @@
+PRAGMA foreign_keys = ON;
 BEGIN;
 
 insert into ROOT_TYPE values('H');
@@ -46,7 +47,6 @@ insert into SYMBOLS values('swVowel', 'ENG', 'word starts with vowel');
 insert into SYMBOLS values('swConsonant', 'ENG', 'word starts with consonant');
 insert into SYMBOLS values('Gerund', 'ENG', 'Gerund');
 insert into SYMBOLS values('S','ENG',NULL);
-insert into SYMBOLS values('HUN_VP','ENG',NULL);
 insert into SYMBOLS values('ENG_NEG','ENG',NULL);
 insert into SYMBOLS values('ENG_AdvP','ENG',NULL);
 insert into SYMBOLS values('ENG_Prep','ENG',NULL);
@@ -86,6 +86,29 @@ insert into SYMBOLS values('ENG_lfea_fwVowel','ENG',NULL);
 insert into SYMBOLS values('ENG_lfea_fwConsonant','ENG',NULL);
 insert into SYMBOLS values('ENG_lfea_swVowel','ENG',NULL);
 insert into SYMBOLS values('ENG_lfea_swConsonant','ENG',NULL);
+insert into SYMBOLS values('t_ENG_V_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_V_Aux','ENG',NULL);
+insert into SYMBOLS values('t_ENG_V_Gerund','ENG',NULL);
+insert into SYMBOLS values('t_ENG_QPRO','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_Pl','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_Sg','ENG',NULL);
+insert into SYMBOLS values('t_ENG_A_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_PREP','ENG',NULL);
+insert into SYMBOLS values('t_Con','ENG',NULL);
+insert into SYMBOLS values('t_ENG_ADV','ENG',NULL);
+insert into SYMBOLS values('t_ENG_RPRO','ENG',NULL);
+insert into SYMBOLS values('t_ENG_RPRO_Relative','ENG',NULL);
+insert into SYMBOLS values('t_ENG_PAR','ENG',NULL);
+insert into SYMBOLS values('t_ENG_NEG_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_Indef','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_fwVowel','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_fwConsonant','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_swVowel','ENG',NULL);
+insert into SYMBOLS values('t_ENG_N_swConsonant','ENG',NULL);
+
+insert into SYMBOLS values('HUN_VP','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerb','HUN',NULL);
 insert into SYMBOLS values('HUN_Verb_lfea_ConjDefSg2','HUN',NULL);
@@ -99,6 +122,12 @@ insert into SYMBOLS values('HUN_nCon','HUN',NULL);
 insert into SYMBOLS values('HUN_AccCon','HUN',NULL);
 insert into SYMBOLS values('HUN_Con','HUN',NULL);
 insert into SYMBOLS values('HUN_Con_lfea_Acc','HUN',NULL);
+insert into SYMBOLS values('S','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_ConjDefSg2','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Vbpfx_Stem','HUN',NULL);
+insert into SYMBOLS values('t_Con','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_Acc','HUN',NULL);
 
 /*Constant has hardcoded token value 1 in the yacc source so to avoid collision, the values here are increased
 by 1 during runtime; Entries with NULL value for token are not to be generated in the yacc source.*/
@@ -129,16 +158,17 @@ insert into GCAT values('N', 'swVowel', 'ENG', '22');
 insert into GCAT values('N', 'swConsonant', 'ENG', '23');
 insert into GCAT values('V', 'Gerund', 'ENG', '24');
 
-insert into FUNCTOR_DEFS values('LISTENGV_1', NULL);
-insert into FUNCTOR_DEFS values('LISTENGV_2', NULL);
-insert into FUNCTOR_DEFS values('FILEENGN_1', NULL);
-insert into FUNCTOR_DEFS values('FILEENGN_2', NULL);
-insert into FUNCTOR_DEFS values('INENGPREP_1', NULL);
-insert into FUNCTOR_DEFS values('BEENGV_1', NULL);
-insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', NULL);
-insert into FUNCTOR_DEFS values('NOTENGNEG_1', NULL);
-insert into FUNCTOR_DEFS values('FROMENGPREP_1', NULL);
-insert into FUNCTOR_DEFS values('EXECUTABLEENGA_1', NULL);
+insert into FUNCTOR_DEFS values('LISTENGV_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('LISTENGV_2', '', '1', NULL);
+insert into FUNCTOR_DEFS values('FILEENGN_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('FILEENGN_2', '', '1', NULL);
+insert into FUNCTOR_DEFS values('INENGPREP_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('BEENGV_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('NOTENGNEG_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('FROMENGPREP_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('EXECUTABLEENGA_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('ANAENGDET_1', '', '1', NULL);
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
@@ -152,6 +182,9 @@ insert into FUNCTORS values('DIRECTORYENGN', '1', 'DIRECTORYENGN_1');
 insert into FUNCTORS values('BEENGV', '1', 'BEENGV_1');
 insert into FUNCTORS values('NOTENGNEG', '1', 'NOTENGNEG_1');
 insert into FUNCTORS values('EXECUTABLEENGA', '1', 'EXECUTABLEENGA_1');
+insert into FUNCTORS values('ANAENGDET', '1', 'ANAENGDET_1');
+
+insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
@@ -185,8 +218,8 @@ insert into LEXICON values('are', 'ENG', 'V', 'BEENGV');
 insert into LEXICON values('not', 'ENG', 'NEG', 'NOTENGNEG');
 insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
 insert into LEXICON values('executable', 'ENG', 'A', 'EXECUTABLEENGA');
-insert into LEXICON values('a', 'ENG', 'DET', 'AENGDET');
-insert into LEXICON values('an', 'ENG', 'DET', 'ANENGDET');
+insert into LEXICON values('a', 'ENG', 'DET', 'ANAENGDET');
+insert into LEXICON values('an', 'ENG', 'DET', 'ANAENGDET');
 /*
 insert into LEXICON values('to', 'ENG', 'PREP', 'TOENGPREP');
 insert into LEXICON values('to', 'ENG', 'PAR', 'TOENGPAR');
@@ -208,15 +241,14 @@ insert into DEPOLEX values('LISTENGV', '1', '3', NULL, '3', NULL, '0', 'FROMENGP
 insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '2', '2', '0', 'DIRECTORYENGN', '1');
 insert into DEPOLEX values('LISTENGV', '2', '2', NULL, '3', NULL, '0', 'INENGPREP', '1');
 insert into DEPOLEX values('LISTENGV', '2', '3', NULL, '3', NULL, '0', 'FROMENGPREP', '1');
-insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+/*insert into DEPOLEX values('NON-EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);*/
 insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 insert into DEPOLEX values('BEENGV', '1', '1', NULL, '2', '2', '0', 'NOTENGNEG', '1');
 insert into DEPOLEX values('BEENGV', '1', '2', NULL, NULL, NULL, '0', 'INENGPREP', '1');
 insert into DEPOLEX values('NOTENGNEG', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
-insert into DEPOLEX values('AENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('ANENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('ANAENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+/*insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);*/
 
 insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL);
 insert into GRAMMAR values('HUN','S','HUN_VP',NULL,NULL);
@@ -343,9 +375,9 @@ const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 $$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;"');
-insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_lfea_ConjDefSg2',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Vbpfx','t_HUN_Vbpfx',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_ConjDefSg2',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_Stem',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vbpfx','t_HUN_Vbpfx_Stem',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_NP','HUN_N',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_N','HUN_N_Sg',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_AccCon',NULL,NULL);
@@ -361,7 +393,7 @@ const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_Con);
 $$=sparser->set_node_info(word,empty_node_info);
 std::cout<<"Konstans:"<<word.word<<std::endl;"');
-insert into GRAMMAR values('HUN','HUN_Con_lfea_Acc','t_HUN_Con_lfea_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con_lfea_Acc','t_HUN_CON_Acc',NULL,NULL);
 
 COMMIT;
 

@@ -58,46 +58,6 @@
 %token	t_ENG_N_swVowel 23
 %token	t_ENG_N_swConsonant 24
 %token	t_ENG_V_Gerund 25
-%token	t_HUN_CON_Acc 15
-%token	t_HUN_Verb_Stem 16
-%token	t_HUN_Verb_ConjDefSg2 17
-%token	t_HUN_Vbpfx_Stem 18
-%token	t_HUN_Num_Stem 26
-%token	t_HUN_Num_Ik 27
-%token	t_HUN_Num_Par 28
-%token	t_HUN_Num_Npref1 29
-%token	t_HUN_Num_Npref2 30
-%token	t_HUN_Num_Npref3 31
-%token	t_HUN_Num_Npref4 32
-%token	t_HUN_Num_Npref5 33
-%token	t_HUN_Num_Npref6 34
-%token	t_HUN_Num_Npref7 35
-%token	t_HUN_Num_Npref8 36
-%token	t_HUN_Num_Npref9 37
-%token	t_HUN_Num_Npref1nn 38
-%token	t_HUN_Num_Npref1nnn 39
-%token	t_HUN_Det 40
-%token	t_HUN_Det_Def 41
-%token	t_HUN_Det_fwVowel 42
-%token	t_HUN_Det_fwConsonant 43
-%token	t_HUN_CON_swVowel 44
-%token	t_HUN_CON_swConsonant 45
-%token	t_HUN_Num_Acc 46
-%token	t_HUN_Num_Npref1n 47
-%token	t_HUN_Num_Npref2n 48
-%token	t_HUN_Num_Npref3n 49
-%token	t_HUN_Num_Npref4n 50
-%token	t_HUN_Num_Npref5n 51
-%token	t_HUN_Num_Npref6n 52
-%token	t_HUN_Num_Npref7n 53
-%token	t_HUN_Num_Npref8n 54
-%token	t_HUN_Num_Npref9n 55
-%token	t_HUN_Num_swVowel 56
-%token	t_HUN_Num_swConsonant 57
-%token	t_HUN_Noun_Stem 58
-%token	t_HUN_Noun_Acc 59
-%token	t_HUN_Noun_swVowel 60
-%token	t_HUN_Noun_swConsonant 61
 %%
 ENG_1Con:
 ENG_Con 
@@ -181,7 +141,7 @@ lexicon word;
 const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_Con);
 $$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,"Constant:"+word.word);
+std::cout<<"Constant:"<<word.word<<std::endl;
 };
 ENG_DP:
 ENG_Indef_Det_a ENG_N_Sg_0Con_swC
@@ -217,7 +177,7 @@ const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
+std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
 }
 |ENG_V ENG_PP
 {
@@ -225,7 +185,7 @@ const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"RCV");
 $$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
-logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
+std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;
 };
 ENG_Indef_Det:
 ENG_Det_stem ENG_lfea_IndefDet
@@ -724,7 +684,7 @@ const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
 $$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
-logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");
+std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;
 };
 ENG_Vbar2:
 ENG_Vbar1 ENG_NP
@@ -759,7 +719,7 @@ const node_info& ENG_DP=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
 $$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
-logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");
+std::cout<<"ENG_Vbar4->ENG_DP ENG_V"<<std::endl;
 }
 |ENG_TP ENG_V
 {
@@ -767,7 +727,7 @@ const node_info& ENG_TP=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
 $$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
-logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");
+std::cout<<"ENG_Vbar4->ENG_TP ENG_V"<<std::endl;
 };
 ENG_lfea_IndefDet:
 t_ENG_DET_Indef 
@@ -836,677 +796,6 @@ $$=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 logger::singleton()->log(0,"ENG_nCon->ENG_nCon ENG_Con");
 
 };
-HUN_1Con:
-HUN_Con 
-{
-lexicon word;
-const node_info& HUN_Con=sparser->get_node_info($1);
-word.gcat="HUN_1Con";
-$$=sparser->set_node_info(word,HUN_Con);
-logger::singleton()->log(0,"HUN_1Con->HUN_Con");
-
-};
-HUN_Con:
-HUN_lfea_swConsonant HUN_Con
-{
-const node_info& HUN_lfea_swConsonant=sparser->get_node_info($1);
-const node_info& HUN_Con=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Con",HUN_lfea_swConsonant,HUN_Con);
-logger::singleton()->log(0,"HUN_Con->HUN_lfea_swConsonant HUN_Con");
-
-}
-|HUN_lfea_swVowel HUN_Con
-{
-const node_info& HUN_lfea_swVowel=sparser->get_node_info($1);
-const node_info& HUN_Con=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Con",HUN_lfea_swVowel,HUN_Con);
-logger::singleton()->log(0,"HUN_Con->HUN_lfea_swVowel HUN_Con");
-
-}
-|t_Con 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_Con);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,"Konstans:"+word.word);
-};
-HUN_Con_lfea_Acc:
-t_HUN_CON_Acc 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_CON_Acc);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_DP:
-HUN_DPbar HUN_N_Acc
-{
-const node_info& HUN_DPbar=sparser->get_node_info($1);
-const node_info& HUN_N_Acc=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_DP",HUN_DPbar,HUN_N_Acc);
-logger::singleton()->log(0,"HUN_DP->HUN_DPbar HUN_N_Acc");
-
-};
-HUN_DPbar:
-HUN_Def_Det_a HUN_lfea_swConsonant
-{
-const node_info& HUN_Def_Det_a=sparser->get_node_info($1);
-const node_info& HUN_lfea_swConsonant=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_DPbar",HUN_Def_Det_a,HUN_lfea_swConsonant);
-logger::singleton()->log(0,"HUN_DPbar->HUN_Def_Det_a HUN_lfea_swConsonant");
-
-}
-|HUN_Def_Det_az HUN_lfea_swVowel
-{
-const node_info& HUN_Def_Det_az=sparser->get_node_info($1);
-const node_info& HUN_lfea_swVowel=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_DPbar",HUN_Def_Det_az,HUN_lfea_swVowel);
-logger::singleton()->log(0,"HUN_DPbar->HUN_Def_Det_az HUN_lfea_swVowel");
-
-};
-HUN_Def_Det:
-HUN_Det_stem HUN_lfea_DefDet
-{
-const node_info& HUN_Det_stem=sparser->get_node_info($1);
-const node_info& HUN_lfea_DefDet=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Def_Det",HUN_Det_stem,HUN_lfea_DefDet);
-logger::singleton()->log(0,"HUN_Def_Det->HUN_Det_stem HUN_lfea_DefDet");
-
-};
-HUN_Def_Det_a:
-HUN_Def_Det HUN_lfea_fwConsonant
-{
-const node_info& HUN_Def_Det=sparser->get_node_info($1);
-const node_info& HUN_lfea_fwConsonant=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Def_Det_a",HUN_Def_Det,HUN_lfea_fwConsonant);
-logger::singleton()->log(0,"HUN_Def_Det_a->HUN_Def_Det HUN_lfea_fwConsonant");
-
-};
-HUN_Def_Det_az:
-HUN_Def_Det HUN_lfea_fwVowel
-{
-const node_info& HUN_Def_Det=sparser->get_node_info($1);
-const node_info& HUN_lfea_fwVowel=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Def_Det_az",HUN_Def_Det,HUN_lfea_fwVowel);
-logger::singleton()->log(0,"HUN_Def_Det_az->HUN_Def_Det HUN_lfea_fwVowel");
-
-};
-HUN_Det_stem:
-t_HUN_Det 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Det);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_ImpVerb:
-HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
-{
-const node_info& HUN_Verb_stem=sparser->get_node_info($1);
-const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
-};
-HUN_ImpVerbPfx:
-HUN_ImpVerb HUN_Vbpfx
-{
-const node_info& HUN_ImpVerb=sparser->get_node_info($1);
-const node_info& HUN_Vbpfx=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
-logger::singleton()->log(0,"HUN_ImpVerbPfx->HUN_ImpVerb HUN_Vbpfx");
-
-};
-HUN_NP:
-HUN_N_Acc 
-{
-lexicon word;
-const node_info& HUN_N_Acc=sparser->get_node_info($1);
-word.gcat="HUN_NP";
-$$=sparser->set_node_info(word,HUN_N_Acc);
-logger::singleton()->log(0,"HUN_NP->HUN_N_Acc");
-
-};
-HUN_N_Acc:
-HUN_N_Sg HUN_Con_lfea_Acc
-{
-const node_info& HUN_N_Sg=sparser->get_node_info($1);
-const node_info& HUN_Con_lfea_Acc=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_N_Acc",HUN_N_Sg,HUN_Con_lfea_Acc);
-logger::singleton()->log(0,"HUN_N_Acc->HUN_N_Sg HUN_Con_lfea_Acc");
-
-}
-|HUN_N_Sg HUN_Noun_lfea_Acc
-{
-const node_info& HUN_N_Sg=sparser->get_node_info($1);
-const node_info& HUN_Noun_lfea_Acc=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_N_Acc",HUN_N_Sg,HUN_Noun_lfea_Acc);
-logger::singleton()->log(0,"HUN_N_Acc->HUN_N_Sg HUN_Noun_lfea_Acc");
-
-}
-|HUN_Num HUN_Num_lfea_Acc
-{
-const node_info& HUN_Num=sparser->get_node_info($1);
-const node_info& HUN_Num_lfea_Acc=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_N_Acc",HUN_Num,HUN_Num_lfea_Acc);
-logger::singleton()->log(0,"HUN_N_Acc->HUN_Num HUN_Num_lfea_Acc");
-
-}
-|HUN_Nums HUN_Num_lfea_Acc
-{
-const node_info& HUN_Nums=sparser->get_node_info($1);
-const node_info& HUN_Num_lfea_Acc=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_N_Acc",HUN_Nums,HUN_Num_lfea_Acc);
-logger::singleton()->log(0,"HUN_N_Acc->HUN_Nums HUN_Num_lfea_Acc");
-
-};
-HUN_N_Sg:
-HUN_1Con 
-{
-lexicon word;
-const node_info& HUN_1Con=sparser->get_node_info($1);
-word.gcat="HUN_N_Sg";
-$$=sparser->set_node_info(word,HUN_1Con);
-logger::singleton()->log(0,"HUN_N_Sg->HUN_1Con");
-
-}
-|HUN_Noun_Stem 
-{
-lexicon word;
-const node_info& HUN_Noun_Stem=sparser->get_node_info($1);
-word.gcat="HUN_N_Sg";
-$$=sparser->set_node_info(word,HUN_Noun_Stem);
-logger::singleton()->log(0,"HUN_N_Sg->HUN_Noun_Stem");
-
-}
-|HUN_nCon 
-{
-lexicon word;
-const node_info& HUN_nCon=sparser->get_node_info($1);
-word.gcat="HUN_N_Sg";
-$$=sparser->set_node_info(word,HUN_nCon);
-logger::singleton()->log(0,"HUN_N_Sg->HUN_nCon");
-
-};
-HUN_Noun_Stem:
-HUN_lfea_swConsonant HUN_Noun_Stem
-{
-const node_info& HUN_lfea_swConsonant=sparser->get_node_info($1);
-const node_info& HUN_Noun_Stem=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Noun_Stem",HUN_lfea_swConsonant,HUN_Noun_Stem);
-logger::singleton()->log(0,"HUN_Noun_Stem->HUN_lfea_swConsonant HUN_Noun_Stem");
-
-}
-|HUN_lfea_swVowel HUN_Noun_Stem
-{
-const node_info& HUN_lfea_swVowel=sparser->get_node_info($1);
-const node_info& HUN_Noun_Stem=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Noun_Stem",HUN_lfea_swVowel,HUN_Noun_Stem);
-logger::singleton()->log(0,"HUN_Noun_Stem->HUN_lfea_swVowel HUN_Noun_Stem");
-
-}
-|t_HUN_Noun_Stem 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Noun_Stem);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Noun_lfea_Acc:
-t_HUN_Noun_Acc 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Noun_Acc);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Num:
-HUN_Num HUN_Num_lfea_Ik
-{
-const node_info& HUN_Num=sparser->get_node_info($1);
-const node_info& HUN_Num_lfea_Ik=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Num",HUN_Num,HUN_Num_lfea_Ik);
-logger::singleton()->log(0,"HUN_Num->HUN_Num HUN_Num_lfea_Ik");
-
-}
-|HUN_Num HUN_Num_lfea_Par
-{
-const node_info& HUN_Num=sparser->get_node_info($1);
-const node_info& HUN_Num_lfea_Par=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Num",HUN_Num,HUN_Num_lfea_Par);
-logger::singleton()->log(0,"HUN_Num->HUN_Num HUN_Num_lfea_Par");
-
-}
-|HUN_Num_Pref HUN_Num
-{
-const node_info& HUN_Num_Pref=sparser->get_node_info($1);
-const node_info& HUN_Num=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Num",HUN_Num_Pref,HUN_Num);
-logger::singleton()->log(0,"HUN_Num->HUN_Num_Pref HUN_Num");
-
-}
-|HUN_Num_Stem 
-{
-lexicon word;
-const node_info& HUN_Num_Stem=sparser->get_node_info($1);
-word.gcat="HUN_Num";
-$$=sparser->set_node_info(word,HUN_Num_Stem);
-logger::singleton()->log(0,"HUN_Num->HUN_Num_Stem");
-
-}
-|HUN_lfea_swConsonant HUN_Num
-{
-const node_info& HUN_lfea_swConsonant=sparser->get_node_info($1);
-const node_info& HUN_Num=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Num",HUN_lfea_swConsonant,HUN_Num);
-logger::singleton()->log(0,"HUN_Num->HUN_lfea_swConsonant HUN_Num");
-
-}
-|HUN_lfea_swVowel HUN_Num
-{
-const node_info& HUN_lfea_swVowel=sparser->get_node_info($1);
-const node_info& HUN_Num=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Num",HUN_lfea_swVowel,HUN_Num);
-logger::singleton()->log(0,"HUN_Num->HUN_lfea_swVowel HUN_Num");
-
-};
-HUN_Num_Pref:
-t_HUN_Num_Npref1 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref1);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref1n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref1n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref1nn 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref1nn);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref1nnn 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref1nnn);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref2 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref2);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref2n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref2n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref3 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref3);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref3n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref3n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref4 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref4);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref4n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref4n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref5 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref5);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref5n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref5n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref6 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref6);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref6n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref6n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref7 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref7);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref7n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref7n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref8 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref8);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref8n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref8n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref9 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref9);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_Npref9n 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Npref9n);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Num_Stem:
-t_HUN_Num_Stem 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Stem);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Num_lfea_Acc:
-t_HUN_Num_Acc 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Acc);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Num_lfea_Ik:
-t_HUN_Num_Ik 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Ik);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Num_lfea_Par:
-t_HUN_Num_Par 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_Par);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Nums:
-HUN_Num HUN_Num
-{
-const node_info& HUN_Num1=sparser->get_node_info($1);
-const node_info& HUN_Num2=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Nums",HUN_Num1,HUN_Num2);
-logger::singleton()->log(0,"HUN_Nums->HUN_Num HUN_Num");
-
-}
-|HUN_Nums HUN_Num
-{
-const node_info& HUN_Nums=sparser->get_node_info($1);
-const node_info& HUN_Num=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_Nums",HUN_Nums,HUN_Num);
-logger::singleton()->log(0,"HUN_Nums->HUN_Nums HUN_Num");
-
-};
-HUN_VP:
-HUN_ImpVerbPfx HUN_DP
-{
-const node_info& HUN_ImpVerbPfx=sparser->get_node_info($1);
-const node_info& HUN_DP=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_DP);
-logger::singleton()->log(0,"HUN_VP->HUN_ImpVerbPfx HUN_DP");
-
-}
-|HUN_ImpVerbPfx HUN_NP
-{
-const node_info& HUN_ImpVerbPfx=sparser->get_node_info($1);
-const node_info& HUN_NP=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
-logger::singleton()->log(0,"HUN_VP->HUN_ImpVerbPfx HUN_NP");
-
-};
-HUN_Vbpfx:
-t_HUN_Vbpfx_Stem 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Vbpfx_Stem);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Verb_lfea_ConjDefSg2:
-t_HUN_Verb_ConjDefSg2 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Verb_ConjDefSg2);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_Verb_stem:
-t_HUN_Verb_Stem 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Verb_Stem);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_lfea_DefDet:
-t_HUN_Det_Def 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Det_Def);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_lfea_fwConsonant:
-t_HUN_Det_fwConsonant 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Det_fwConsonant);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_lfea_fwVowel:
-t_HUN_Det_fwVowel 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Det_fwVowel);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_lfea_swConsonant:
-t_HUN_CON_swConsonant 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_CON_swConsonant);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Noun_swConsonant 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Noun_swConsonant);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_swConsonant 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_swConsonant);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_lfea_swVowel:
-t_HUN_CON_swVowel 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_CON_swVowel);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Noun_swVowel 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Noun_swVowel);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-}
-|t_HUN_Num_swVowel 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_HUN_Num_swVowel);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
-HUN_nCon:
-HUN_1Con HUN_Con
-{
-const node_info& HUN_1Con=sparser->get_node_info($1);
-const node_info& HUN_Con=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
-logger::singleton()->log(0,"HUN_nCon->HUN_1Con HUN_Con");
-
-}
-|HUN_nCon HUN_Con
-{
-const node_info& HUN_nCon=sparser->get_node_info($1);
-const node_info& HUN_Con=sparser->get_node_info($2);
-$$=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
-logger::singleton()->log(0,"HUN_nCon->HUN_nCon HUN_Con");
-
-};
 S:
 ENG_VP 
 {
@@ -1515,15 +804,6 @@ const node_info& ENG_VP=sparser->get_node_info($1);
 word.gcat="S";
 $$=sparser->set_node_info(word,ENG_VP);
 logger::singleton()->log(0,"S->ENG_VP");
-
-}
-|HUN_VP 
-{
-lexicon word;
-const node_info& HUN_VP=sparser->get_node_info($1);
-word.gcat="S";
-$$=sparser->set_node_info(word,HUN_VP);
-logger::singleton()->log(0,"S->HUN_VP");
 
 };
 %%
@@ -1540,7 +820,6 @@ int yylex(void){
 }
 
 void yyerror(char const *yymsgp){
-	std::cout<<yymsgp<<std::endl;//Could as well return as error till our own syntax error reporting gets better
 	token_paths->log_yyerror(std::string(yymsgp));
 	return;
 }
@@ -1562,17 +841,17 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	logger *logger=NULL;
 	std::locale locale;
 
-	logger=logger::singleton("console",3,"LE");
+	logger=logger::singleton("console",3,"LE");//Don't forget to turn off log mode if necessary e.g. in android release versions
+	logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths;
-	while(human_input!=NULL&&token_paths->is_any_left()==true){
+	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
 		std::cout<<"picking new token path"<<std::endl;
 		try{
 			if(sqlite==NULL){
 				#ifdef __ANDROID__
-					__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
 					if(vm!=NULL) jvm=vm;
 					else{
-						__android_log_print(ANDROID_LOG_INFO, "hi", "vm is NULL!");
+						logger::singleton()->log(0,"vm is NULL!");
 						exit(EXIT_FAILURE);
 					}
 					activity=activityobj;
@@ -1592,33 +871,54 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 			locale=std::locale();
 			lex=new lexer(human_input,language,locale);
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", "lexer started");
-			#endif
-			sparser=new interpreter;
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", "interpreter started");
-			#endif
-			if(yyparse()==0){
-				transgraph=sparser->longest_match_for_semantic_rules_found();
-				if(transgraph!=NULL){
-					token_paths->validate_path(lex->word_entries(),transgraph);
-					logger::singleton()->log(0,"TRUE");
+			logger::singleton()->log(0,"lexer started");
+			sparser=new interpreter(toa);
+			logger::singleton()->log(0,"interpreter started");
+			if(toa&HI_SYNTAX||toa&HI_SEMANTICS){
+				int parse_error=yyparse();
+				if(parse_error==0){
+					if(toa&HI_SEMANTICS){
+						transgraph=sparser->longest_match_for_semantic_rules_found();
+						if(transgraph!=NULL){
+							token_paths->validate_parse_tree(sparser->nodes());
+							token_paths->validate_path(lex->word_entries(),transgraph);
+							logger::singleton()->log(0,"TRUE");
+						}
+						else{
+							logger::singleton()->log(0,"semantic error");
+							token_paths->invalidate_parse_tree(sparser->nodes());
+							token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+						}
+					}
+					else if(toa&HI_SYNTAX){
+						token_paths->validate_parse_tree(sparser->nodes());
+						token_paths->validate_path(lex->word_entries(),NULL);
+					}
+					else{
+						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of semantic error");
+					}
 				}
-				else{
-					logger::singleton()->log(0,"semantic error");
-					token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+				else{//syntax error for token in yychar
+					logger::singleton()->log(0,"syntax error");
+					if(toa&HI_SEMANTICS){
+						token_paths->invalidate_parse_tree(sparser->nodes());
+						token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
+					}
+					else if(toa&HI_SYNTAX){
+						token_paths->invalidate_parse_tree(sparser->nodes());
+						token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
+					}
+					else{
+						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of syntax error");
+					}
 				}
+				delete sparser;
+				sparser=NULL;
+				transgraph=NULL;
 			}
-			else{//syntax error for token in yychar
-				logger::singleton()->log(0,"syntax error");
-				token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
-			}
-			delete sparser;
-			sparser=NULL;
 			delete lex;
 			lex=NULL;
-			transgraph=NULL;
+			if(toa==HI_MORPHOLOGY) break;
 		}
 		catch(sql_execution_error& exception){
 			logger::singleton()->log(0,"sql_execution_error:"+std::string(exception.what()));
@@ -1683,7 +983,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-	analysis=token_paths->create_analysis(toa);
+	analysis=token_paths->create_analysis(toa,target_language);
 	if(analysis.empty()==false){
 		analysischr=new char[analysis.length()+1];
 		analysis.copy(analysischr,analysis.length(),0);

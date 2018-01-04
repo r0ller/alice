@@ -19,7 +19,7 @@
 		transgraph(const std::pair<std::string,unsigned int>&,const morphan_result *);
 		~transgraph();
 		void insert(const unsigned int, const transgraph *);
-		std::string transcript(std::map<std::string,std::string>&) const;
+		std::string transcript(std::map<std::string,std::string>&, const std::string&) const;
 		unsigned int id() const;
 		static std::string apply_json_escapes(const std::string&);
 	};

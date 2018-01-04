@@ -35,8 +35,8 @@ PRIMARY KEY(symbol, lid)
 /*That is, it is to store dependencies of one semantic unit (szótári egység)*/
 create table DEPOLEX(
 lexeme varchar(47),
-d_key smallint, /*smallest value: 1*/
-d_counter smallint, /*smallest value: 1*/
+d_key smallint not null check(d_key>0), /*start value: 1*/
+d_counter smallint not null check(d_counter>0), /*start value: 1*/
 optional_parent_allowed smallint, /*if true, dependency entry is taken into account as well even if the lexeme was not found as dependency one level above; 0:false, otherwise:true; note that NULL is evaulated as 0*/
 d_failover smallint, /*NULL or 0 means end of dependency chain; a failover dependency points to a d_counter (> than current d_counter) and is only executed if the current d_counter dependency check failed*/
 d_successor smallint, /*NULL or 0 means end of dependency chain; a successor dependency points to a d_counter (> than current d_counter) and is only executed if the current d_counter dependency check was successful*/
@@ -55,7 +55,7 @@ create table RULE_TO_RULE_MAP(
 parent_symbol varchar(12),
 head_root_symbol varchar(12),
 non_head_root_symbol varchar(12),
-step smallint, /*smallest value: 1*/
+step smallint not null check(step>0), /*start value: 1*/
 failover smallint, /*smallest value: 1; NULL or 0 means end of rule chain. A failover step is only executed if the current step failed (e.g. either symbols or functors are not found)*/
 successor smallint, /*smallest value: 1; NULL or 0 means end of rule chain. A successor step is only executed if the current step succeeded*/
 main_node_symbol varchar(12),
@@ -112,34 +112,35 @@ FOREIGN KEY(gcat, lid) REFERENCES GCAT(gcat, lid)
 /*);
 */
 
-create table FUNCTOR_DEFS(/*TODO:add target language field here and not in FUNCTORS as it'd break foreign key reference for DEPOLEX-FUNCTORS*/
+create table FUNCTOR_DEFS(
 functor_id varchar(51),
+tlid varchar(5),
+imp_counter smallint not null check(imp_counter>0),/*start value: 1*/
 definition text,
-PRIMARY KEY(functor_id)
+PRIMARY KEY(functor_id, tlid)
 );
+create unique index i_functor_ids on FUNCTOR_DEFS(functor_id) where imp_counter=1;
 
-/*create table FUNCTOR_TAGS(
-/*functor_id varchar(51),
-/*trigger_tag text,/*a tag created during the interpretation that triggers taking into account (during transcription)
-/*the tag-value pairs of the entry e.g. grammatical mood of the verb (imperative, interrogative, indicative),
-/*since different tag-value pairs may belong to an indicative mood and an imperative mood as in case of
-/*"a directory lists files" and "list files"*/
-/*counter smallint,
-/*tag text,
-/*value text,
-/*PRIMARY KEY(functor_id, trigger_tag, counter)
-/*FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
-/*);
-*/
+create table FUNCTOR_TAGS(
+functor varchar(47),
+d_key smallint,
+trigger_tag text,/*serves as condition: if such a tag was created during the interpretation it triggers taking into account (during transcription)
+the tag-value pairs of the entry e.g. grammatical mood of the verb (imperative, interrogative, indicative),
+since different tag-value pairs may belong to an indicative mood and an imperative mood as in case of
+"a directory lists files" and "list files"*/
+counter smallint,/*start value: 1*/
+tag text,/*if the trigger_tag is empty, tag-value pairs are added unconditionally*/
+value text,
+PRIMARY KEY(functor, d_key, trigger_tag, counter)
+FOREIGN KEY(functor, d_key) REFERENCES FUNCTORS(functor, d_key)
+);
 
 create table FUNCTORS(
 functor varchar(47),
 d_key smallint,
 functor_id varchar(51),
-/*ftag_id varchar(51),*/
 PRIMARY KEY(functor, d_key)
 FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
-/*FOREIGN KEY(ftag_id) REFERENCES FUNCTOR_TAGS(functor_id)*/
 );
 create unique index i_functors on FUNCTORS(functor) where d_key=1;
 

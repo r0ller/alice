@@ -1,3 +1,4 @@
+PRAGMA foreign_keys = ON;
 BEGIN;
 
 insert into ROOT_TYPE values('H');

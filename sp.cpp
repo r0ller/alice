@@ -4,8 +4,9 @@
 #include <functional>
 
 /*PUBLIC*/
-interpreter::interpreter(){
+interpreter::interpreter(const unsigned char toa){
 	nr_of_nodes=0;
+	toa_=toa;
 }
 
 interpreter::~interpreter(){
@@ -175,37 +176,39 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 		/*TODO:valamit kezdeni kell azzal ha a left_node->symbol='QPro' ill. ha az object_node-nak van gyereke*/
 		nodeinfo.node_id=++nr_of_nodes;
 		nodeinfo.symbol=symbol;
-		sqlite=db_factory::get_instance();
-//		std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
-		rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
-		//TODO:Check how to find out CON iotype so that CONs can be part of a combination
-		if(rule_to_rule_map!=NULL){
-		/* TODO: Instead of the current validation, the head node needs to be validated against
-		 * all child nodes of the right_node having a non-empty expression. This would ensure that
-		 * all constituents are checked against each other and not only the new head of the phrase and
-		 * the object of the phrase. E.g. 'list big small files!' is contradictory but now only
-		 * big<->files, small<->files and list<->files are validated and not small<->files, big<->small,
-		 * big<->files, list<->files.*/
-			rule_step_failed=is_valid_combination(symbol,new_phrase_head_root,new_phrase_non_head_root);
-			if(rule_step_failed!=0){
-				//TODO:depending of head first or head last left-to-right (lr) or right-to-left (rl) method needs to be called to collect leafs
-				get_leafs_of_node_lr(new_phrase_head_root,head_leafs);
-				get_leafs_of_node_lr(new_phrase_non_head_root,non_head_leafs);
-				for(auto&& i:head_leafs){
-					//TODO: check why certain leaves don't have morphalytics
-					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
-					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
-						head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
+		if(toa_&HI_SEMANTICS){
+			sqlite=db_factory::get_instance();
+			//std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
+			rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
+			//TODO:Check how to find out CON iotype so that CONs can be part of a combination
+			if(rule_to_rule_map!=NULL){
+			/* TODO: Instead of the current validation, the head node needs to be validated against
+			 * all child nodes of the right_node having a non-empty expression. This would ensure that
+			 * all constituents are checked against each other and not only the new head of the phrase and
+			 * the object of the phrase. E.g. 'list big small files!' is contradictory but now only
+			 * big<->files, small<->files and list<->files are validated and not small<->files, big<->small,
+			 * big<->files, list<->files.*/
+				rule_step_failed=is_valid_combination(symbol,new_phrase_head_root,new_phrase_non_head_root);
+				if(rule_step_failed!=0){
+					//TODO:depending of head first or head last left-to-right (lr) or right-to-left (rl) method needs to be called to collect leafs
+					get_leafs_of_node_lr(new_phrase_head_root,head_leafs);
+					get_leafs_of_node_lr(new_phrase_non_head_root,non_head_leafs);
+					for(auto&& i:head_leafs){
+						//TODO: check why certain leaves don't have morphalytics
+						//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
+						if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
+							head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
+					}
+					if(head_leaf_words.empty()==false) head_leaf_words.pop_back();
+					for(auto&& i:non_head_leafs){
+						//TODO: check why certain leaves don't have morphalytics
+						//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
+						if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
+							non_head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
+					}
+					if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
+					throw invalid_combination(head_leaf_words,non_head_leaf_words);
 				}
-				if(head_leaf_words.empty()==false) head_leaf_words.pop_back();
-				for(auto&& i:non_head_leafs){
-					//TODO: check why certain leaves don't have morphalytics
-					//Most probably it happens only with dummies but to be on the safe side, CHECK IT!
-					if(get_node_info(i).expression.morphalytics!=NULL&&get_node_info(i).expression.morphalytics->is_mocked()==false&&get_node_info(i).expression.word.empty()==false)
-						non_head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
-				}
-				if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
-				throw invalid_combination(head_leaf_words,non_head_leaf_words);
 			}
 		}
 		nodeinfo.left_child=left_node.node_id;
@@ -1452,6 +1455,10 @@ std::set<unsigned int> interpreter::validated_terminals(){
 		}
 	}
 	return terminals;
+}
+
+std::vector<node_info> interpreter::nodes(){
+	return node_infos;
 }
 
 void interpreter::destroy_node_infos(){

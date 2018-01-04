@@ -10,8 +10,8 @@ int main(void){
 	while(true){
 		std::getline(std::cin, command);
 		if(command.empty()==false){
-			translation=hi(command.c_str(),"ENG",HI_MORPHOLOGY|HI_SEMANTICS,"","hi.db");
-			std::cout<<translation<<std::endl;
+			translation=hi(command.c_str(),"ENG",HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS,"","hi_desktop/hi.db");
+			if(translation!=NULL) std::cout<<translation<<std::endl;
 			command.clear();
 		}
 		else break;

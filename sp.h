@@ -64,6 +64,7 @@
 
 	class interpreter{
 		private:
+			unsigned char toa_;
 			node_info& get_private_node_info(unsigned int);
 			unsigned int get_head_node(const node_info&);
 			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
@@ -86,8 +87,8 @@
 			std::vector<unsigned int> validated_nodes;
 			std::vector<node_info> node_infos;
 			unsigned int nr_of_nodes;
-			std::string command;
-			std::string options;
+			//std::string command;
+			//std::string options;
 			std::stack<p_m1_node_id_m2_d_key> node_dependency_traversal_stack;
 			std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> > node_dependency_traversal_stack_tree;
 			t_node_dependency_traversals  node_dependency_traversals;
@@ -95,7 +96,7 @@
 			void get_leafs_of_node_lr(const node_info&, std::vector<unsigned int>&);
 			unsigned int check_prerequisite_symbols(const node_info&, const node_info&);
 		public:
-			interpreter();
+			interpreter(const unsigned char toa);
 			~interpreter();
 			int set_node_info(const lexicon&, const node_info&);
 			const node_info& get_node_info(unsigned int);
@@ -104,6 +105,7 @@
 			unsigned int add_feature_to_leaf(const node_info&,const std::string&);
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&);
 			std::set<unsigned int> validated_terminals();
+			std::vector<node_info> nodes();
 	};
 
 	class semper_error:public std::exception{

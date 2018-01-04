@@ -277,7 +277,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 	}
 }
 
-std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<std::string,std::string>& functors, unsigned int& id_index){
+std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<std::string,std::string>& functors, unsigned int& id_index, const std::string& target_language){
 	const std::pair<const unsigned int,field> *rowid_field=NULL;
 	std::string transcript;
 	std::string functor;
@@ -302,13 +302,13 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(word.lexeme,d_key);
 						transgraph *graph=new transgraph(functor_dkey,word.morphalytics);
 						id_index=graph->id();
-						transcript+=graph->transcript(functors);
+						transcript+=graph->transcript(functors,target_language);
 					}
 					else{
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 						transgraph *graph=new transgraph(functor_dkey,word.morphalytics);
 						id_index=graph->id();
-						transcript+=graph->transcript(functors);
+						transcript+=graph->transcript(functors,target_language);
 					}
 				}
 				rowid_field=word.dependencies->value_for_field_name_found_after_row_position(rowid_field->first,"lexeme",functor);
@@ -320,7 +320,7 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 			transgraph *graph=new transgraph(functor_dkey,word.morphalytics);
 			id_index=graph->id();
-			transcript+=graph->transcript(functors);
+			transcript+=graph->transcript(functors,target_language);
 		}
 	}
 	return transcript;
@@ -454,7 +454,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	return functors;
 }
 
-std::string tokenpaths::create_analysis(const unsigned char& toa){
+std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& target_language){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
 
@@ -473,6 +473,8 @@ std::string tokenpaths::create_analysis(const unsigned char& toa){
 			analysis+="],";
 		}
 		if(toa&HI_SYNTAX){
+			analysis+="\"syntax\":[";
+			analysis+="],";
 		}
 		if(toa&HI_SEMANTICS){
 			std::string semantic_analysis="\"semantics\":[";
@@ -481,7 +483,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa){
 			for(auto&& word_form:word_forms){
 				auto&& word_analyses=words_analyses.find(word_form);
 				related_functors.clear();
-				semantic_analysis+=semantics(word_analyses->second,related_functors,id_index);
+				semantic_analysis+=semantics(word_analyses->second,related_functors,id_index,target_language);
 				functors_of_words.insert(std::make_pair(word_analyses->first,related_functors));
 			}
 			if(semantic_analysis.back()==',') semantic_analysis.pop_back();
@@ -497,13 +499,17 @@ std::string tokenpaths::create_analysis(const unsigned char& toa){
 			analysis+=related_semantics;
 			analysis+=functor_analysis;
 		}
-		analysis+="\"errors\":[";
-		unsigned int id=0;
-		for(auto&& error:invalid_path_errors){
-			analysis+="{\"tokenpath id\":\""+std::to_string(++id)+"\",\"messages\":["+error+"]},";
+		if(invalid_path_errors.empty()==false){
+			analysis+="\"errors\":[";
+			unsigned int id=0;
+			for(auto&& error:invalid_path_errors){
+				analysis+="{\"tokenpath id\":\""+std::to_string(++id)+"\",\"messages\":["+error+"]},";
+			}
+			if(analysis.back()==',') analysis.pop_back();
+			analysis+="]";
 		}
 		if(analysis.back()==',') analysis.pop_back();
-		analysis+="]}";
+		analysis+="}";
 	}
 	else{
 		for(unsigned int i=0;i<nr_of_analyses;++i){
@@ -515,9 +521,12 @@ std::string tokenpaths::create_analysis(const unsigned char& toa){
 				analysis+="],";
 			}
 			if(toa&HI_SYNTAX){
+				analysis+="\"syntax\":[";
+				analysis+=syntax(valid_parse_trees.at(i));
+				analysis+="],";
 			}
 			if(toa&HI_SEMANTICS){
-				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors);
+				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,target_language);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 				analysis+="\"functors\":[";
@@ -530,6 +539,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa){
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="]";
 			}
+			if(analysis.back()==',') analysis.pop_back();
 			analysis+="},";
 		}
 		if(analysis.back()==',') analysis.pop_back();
@@ -538,7 +548,39 @@ std::string tokenpaths::create_analysis(const unsigned char& toa){
 	return analysis;
 }
 
+std::string tokenpaths::syntax(const std::vector<node_info>& nodes){
+
+	const node_info& root=nodes.back();
+	std::string syntax=traverse_nodes_lr(root,nodes);
+	return syntax;
+}
+
+std::string tokenpaths::traverse_nodes_lr(const node_info& root_node, const std::vector<node_info>& nodes){
+
+	std::string syntax="{\"symbol\":\""+root_node.symbol+"\"";
+	if(root_node.left_child==0&&root_node.right_child==0){
+		if(root_node.expression.morphalytics!=NULL) syntax+=",\"morpheme id\":\""+std::to_string(root_node.expression.morphalytics->id())+"\"";
+		syntax+="}";
+		return syntax;
+	}
+	syntax+=",\"left child\":";
+	if(root_node.left_child!=0) syntax+=traverse_nodes_lr(nodes.at(root_node.left_child-1),nodes);
+	else syntax+="{}";
+	syntax+=",\"right child\":";
+	if(root_node.right_child!=0) syntax+=traverse_nodes_lr(nodes.at(root_node.right_child-1),nodes);
+	else syntax+="{}";
+	syntax+="}";
+	return syntax;
+}
+
 void tokenpaths::log_yyerror(const std::string& error){
 	yyerror=error;
 }
 
+void tokenpaths::validate_parse_tree(const std::vector<node_info>& nodes){
+	valid_parse_trees.push_back(nodes);
+}
+
+void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
+	invalid_parse_trees.push_back(nodes);
+}
