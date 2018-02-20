@@ -171,13 +171,29 @@ logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_IVP:
-ENG_NV ENG_PP
+ENG_NV ENG_A
+{
+const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_A=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_A);
+std::cout<<"ENG_IVP->ENG_NV ENG_A"<<std::endl;
+}
+|ENG_NV ENG_PP
 {
 const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
+}
+|ENG_V ENG_A
+{
+const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_A=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_A);
+std::cout<<"ENG_IVP->ENG_V ENG_A"<<std::endl;
 }
 |ENG_V ENG_PP
 {
@@ -820,7 +836,6 @@ int yylex(void){
 }
 
 void yyerror(char const *yymsgp){
-	std::cout<<yymsgp<<std::endl;//Could as well return as error till our own syntax error reporting gets better
 	token_paths->log_yyerror(std::string(yymsgp));
 	return;
 }
@@ -842,17 +857,17 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	logger *logger=NULL;
 	std::locale locale;
 
-	logger=logger::singleton("console",3,"LE");
+	logger=logger::singleton("console",3,"LE");//Don't forget to turn off log mode if necessary e.g. in android release versions
+	logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths;
-	while(human_input!=NULL&&token_paths->is_any_left()==true){
+	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
 		std::cout<<"picking new token path"<<std::endl;
 		try{
 			if(sqlite==NULL){
 				#ifdef __ANDROID__
-					__android_log_print(ANDROID_LOG_INFO, "hi", "human_input: %s", human_input);
 					if(vm!=NULL) jvm=vm;
 					else{
-						__android_log_print(ANDROID_LOG_INFO, "hi", "vm is NULL!");
+						logger::singleton()->log(0,"vm is NULL!");
 						exit(EXIT_FAILURE);
 					}
 					activity=activityobj;
@@ -872,33 +887,54 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 			locale=std::locale();
 			lex=new lexer(human_input,language,locale);
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", "lexer started");
-			#endif
-			sparser=new interpreter;
-			#ifdef __ANDROID__
-				__android_log_print(ANDROID_LOG_INFO, "hi", "interpreter started");
-			#endif
-			if(yyparse()==0){
-				transgraph=sparser->longest_match_for_semantic_rules_found();
-				if(transgraph!=NULL){
-					token_paths->validate_path(lex->word_entries(),transgraph);
-					logger::singleton()->log(0,"TRUE");
+			logger::singleton()->log(0,"lexer started");
+			sparser=new interpreter(toa);
+			logger::singleton()->log(0,"interpreter started");
+			if(toa&HI_SYNTAX||toa&HI_SEMANTICS){
+				int parse_error=yyparse();
+				if(parse_error==0){
+					if(toa&HI_SEMANTICS){
+						transgraph=sparser->longest_match_for_semantic_rules_found();
+						if(transgraph!=NULL){
+							token_paths->validate_parse_tree(sparser->nodes());
+							token_paths->validate_path(lex->word_entries(),transgraph);
+							logger::singleton()->log(0,"TRUE");
+						}
+						else{
+							logger::singleton()->log(0,"semantic error");
+							token_paths->invalidate_parse_tree(sparser->nodes());
+							token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+						}
+					}
+					else if(toa&HI_SYNTAX){
+						token_paths->validate_parse_tree(sparser->nodes());
+						token_paths->validate_path(lex->word_entries(),NULL);
+					}
+					else{
+						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of semantic error");
+					}
 				}
-				else{
-					logger::singleton()->log(0,"semantic error");
-					token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+				else{//syntax error for token in yychar
+					logger::singleton()->log(0,"syntax error");
+					if(toa&HI_SEMANTICS){
+						token_paths->invalidate_parse_tree(sparser->nodes());
+						token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
+					}
+					else if(toa&HI_SYNTAX){
+						token_paths->invalidate_parse_tree(sparser->nodes());
+						token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
+					}
+					else{
+						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of syntax error");
+					}
 				}
+				delete sparser;
+				sparser=NULL;
+				transgraph=NULL;
 			}
-			else{//syntax error for token in yychar
-				logger::singleton()->log(0,"syntax error");
-				token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
-			}
-			delete sparser;
-			sparser=NULL;
 			delete lex;
 			lex=NULL;
-			transgraph=NULL;
+			if(toa==HI_MORPHOLOGY) break;
 		}
 		catch(sql_execution_error& exception){
 			logger::singleton()->log(0,"sql_execution_error:"+std::string(exception.what()));
@@ -963,7 +999,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-	analysis=token_paths->create_analysis(toa);
+	analysis=token_paths->create_analysis(toa,target_language);
 	if(analysis.empty()==false){
 		analysischr=new char[analysis.length()+1];
 		analysis.copy(analysischr,analysis.length(),0);

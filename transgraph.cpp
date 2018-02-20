@@ -93,6 +93,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 		}
 		transcript+="\"functor id\":\""+*functor_id+"\"";
 		for(auto&& i:arguments){
+			std::cout<<"checking argument with d_counter "<<i.first<<std::endl;
 			d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
 			if(d_counter_field==NULL){
 				throw std::runtime_error("Empty d_counter field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");

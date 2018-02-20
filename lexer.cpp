@@ -333,7 +333,7 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	if(dependencies==NULL){
-//		logger::singleton()->log(0,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
+		logger::singleton()->log(0,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
 		//Don't throw anything, see comment in tokenize_word() when calling this function for lexemes not being found in the lexicon
 		//throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
 	}
@@ -345,6 +345,9 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
 			}
 		}
+	}
+	for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
+		std::cout<<"row index:"<<i<<" lexeme:"<<*dependencies->field_value_at_row_position(i,"lexeme")<<" d_key:"<<*dependencies->field_value_at_row_position(i,"d_key")<<" d_counter:"<<*dependencies->field_value_at_row_position(i,"d_counter")<<std::endl;
 	}
 	return dependencies;
 }
@@ -468,6 +471,7 @@ std::vector<std::string>::iterator lexer::analyze_and_cache(std::string& human_i
 						new_word.lexeme=last_word;
 						new_word.dependencies=dependencies_read_for_functor("CON");
 						new_word.morphalytics=&morphalytics->front();
+						new_word.tokens.clear();
 						new_word.tokens.push_back(0);
 						new_word.lexicon_entry=false;
 						new_word_form=last_word;

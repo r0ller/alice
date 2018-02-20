@@ -51,6 +51,8 @@ LEXICON Advinf
 LEXICON Adjective
 
 executable Adjinf;
+empty Adjinf;
+symbolic Adjinf;
 
 LEXICON Adjinf
 
