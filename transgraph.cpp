@@ -55,6 +55,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 			throw std::runtime_error("No entries found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}
 		functor_id=functor_id_entry->field_value_at_row_position(0,"functor_id");
+		//TODO:don't check for being null or empty, treat it as if the functor definition was empty
 		if(functor_id==NULL){
 			throw std::runtime_error("Empty functor_id field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}

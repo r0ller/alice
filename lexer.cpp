@@ -361,7 +361,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 
 	sqlite=db_factory::get_instance();
 	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
-//	std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
+	//std::cout<<"reading dependency "<<functor<<" ref_d_key "<<d_key<<std::endl;
 	if(result==NULL){
 		throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
 	}
@@ -371,8 +371,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 		ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
 		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
 			dependency=dependencies->first_value_for_field_name_found("lexeme",semantic_dependency);
-			while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key
-					&&*dependencies->field_value_at_row_position(dependency->first,"d_counter")!=*result->field_value_at_row_position(i,"d_counter")){
+			while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key){
 				dependency=dependencies->value_for_field_name_found_after_row_position(dependency->first,"lexeme",semantic_dependency);
 			}
 			if(dependency==NULL){

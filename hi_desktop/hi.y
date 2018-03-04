@@ -50,7 +50,8 @@
 %token	t_ENG_V_Aux 11
 %token	t_ENG_RPRO 12
 %token	t_ENG_RPRO_Relative 13
-%token	t_ENG_NEG_Stem 14
+%token	t_ENG_VNEG_Stem 14
+%token	t_ENG_ANEG_Stem 15
 %token	t_ENG_PAR 19
 %token	t_ENG_DET_Indef 20
 %token	t_ENG_DET_fwVowel 21
@@ -58,6 +59,7 @@
 %token	t_ENG_N_swVowel 23
 %token	t_ENG_N_swConsonant 24
 %token	t_ENG_V_Gerund 25
+%token	t_ENG_CONJ_Stem 26
 %%
 ENG_1Con:
 ENG_Con 
@@ -70,6 +72,81 @@ logger::singleton()->log(0,"ENG_1Con->ENG_Con");
 
 };
 ENG_A:
+ENG_A_Stem 
+{
+lexicon word;
+const node_info& ENG_A_Stem=sparser->get_node_info($1);
+word.gcat="ENG_A";
+$$=sparser->set_node_info(word,ENG_A_Stem);
+logger::singleton()->log(0,"ENG_A->ENG_A_Stem");
+
+};
+ENG_ACONJ:
+ENG_Abar1 ENG_CONJ
+{
+const node_info& ENG_Abar1=sparser->get_node_info($1);
+const node_info& ENG_CONJ=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_ACONJ",ENG_Abar1,ENG_CONJ);
+logger::singleton()->log(0,"ENG_ACONJ->ENG_Abar1 ENG_CONJ");
+
+}
+|ENG_Alist ENG_CONJ
+{
+const node_info& ENG_Alist=sparser->get_node_info($1);
+const node_info& ENG_CONJ=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_ACONJ",ENG_Alist,ENG_CONJ);
+logger::singleton()->log(0,"ENG_ACONJ->ENG_Alist ENG_CONJ");
+
+};
+ENG_ANEG:
+ENG_ANEG_Stem 
+{
+lexicon word;
+const node_info& ENG_ANEG_Stem=sparser->get_node_info($1);
+word.gcat="ENG_ANEG";
+$$=sparser->set_node_info(word,ENG_ANEG_Stem);
+logger::singleton()->log(0,"ENG_ANEG->ENG_ANEG_Stem");
+
+};
+ENG_ANEG_Stem:
+t_ENG_ANEG_Stem 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_ANEG_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+
+};
+ENG_AP:
+ENG_Abar1 
+{
+lexicon word;
+const node_info& ENG_Abar1=sparser->get_node_info($1);
+word.gcat="ENG_AP";
+$$=sparser->set_node_info(word,ENG_Abar1);
+logger::singleton()->log(0,"ENG_AP->ENG_Abar1");
+
+}
+|ENG_Abar2 
+{
+lexicon word;
+const node_info& ENG_Abar2=sparser->get_node_info($1);
+word.gcat="ENG_AP";
+$$=sparser->set_node_info(word,ENG_Abar2);
+logger::singleton()->log(0,"ENG_AP->ENG_Abar2");
+
+}
+|ENG_Alist 
+{
+lexicon word;
+const node_info& ENG_Alist=sparser->get_node_info($1);
+word.gcat="ENG_AP";
+$$=sparser->set_node_info(word,ENG_Alist);
+logger::singleton()->log(0,"ENG_AP->ENG_Alist");
+
+};
+ENG_A_Stem:
 t_ENG_A_Stem 
 {
 lexicon word;
@@ -79,21 +156,47 @@ $$=sparser->set_node_info(word,empty_node_info);
 logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
-ENG_AP:
-ENG_1Con ENG_N_Pl_0Con_swC
+ENG_Abar1:
+ENG_A 
 {
-const node_info& ENG_1Con=sparser->get_node_info($1);
-const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swC);
-logger::singleton()->log(0,"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swC");
+lexicon word;
+const node_info& ENG_A=sparser->get_node_info($1);
+word.gcat="ENG_Abar1";
+$$=sparser->set_node_info(word,ENG_A);
+logger::singleton()->log(0,"ENG_Abar1->ENG_A");
 
 }
-|ENG_1Con ENG_N_Pl_0Con_swV
+|ENG_ANEG ENG_A
 {
-const node_info& ENG_1Con=sparser->get_node_info($1);
-const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_AP",ENG_1Con,ENG_N_Pl_0Con_swV);
-logger::singleton()->log(0,"ENG_AP->ENG_1Con ENG_N_Pl_0Con_swV");
+const node_info& ENG_ANEG=sparser->get_node_info($1);
+const node_info& ENG_A=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Abar1",ENG_ANEG,ENG_A);
+logger::singleton()->log(0,"ENG_Abar1->ENG_ANEG ENG_A");
+
+};
+ENG_Abar2:
+ENG_ACONJ ENG_Abar1
+{
+const node_info& ENG_ACONJ=sparser->get_node_info($1);
+const node_info& ENG_Abar1=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Abar2",ENG_ACONJ,ENG_Abar1);
+logger::singleton()->log(0,"ENG_Abar2->ENG_ACONJ ENG_Abar1");
+
+}
+|ENG_ACONJ ENG_Alist
+{
+const node_info& ENG_ACONJ=sparser->get_node_info($1);
+const node_info& ENG_Alist=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Abar2",ENG_ACONJ,ENG_Alist);
+logger::singleton()->log(0,"ENG_Abar2->ENG_ACONJ ENG_Alist");
+
+}
+|ENG_Abar2 ENG_CONJA
+{
+const node_info& ENG_Abar2=sparser->get_node_info($1);
+const node_info& ENG_CONJA=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Abar2",ENG_Abar2,ENG_CONJA);
+logger::singleton()->log(0,"ENG_Abar2->ENG_Abar2 ENG_CONJA");
 
 };
 ENG_Adv:
@@ -116,13 +219,47 @@ $$=sparser->set_node_info(word,ENG_Adv);
 logger::singleton()->log(0,"ENG_AdvP->ENG_Adv");
 
 };
-ENG_CNP:
-ENG_A ENG_CNP
+ENG_Alist:
+ENG_Abar1 ENG_Abar1
 {
-const node_info& ENG_A=sparser->get_node_info($1);
-const node_info& ENG_CNP=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_CNP",ENG_A,ENG_CNP);
-logger::singleton()->log(0,"ENG_CNP->ENG_A ENG_CNP");
+const node_info& ENG_Abar11=sparser->get_node_info($1);
+const node_info& ENG_Abar12=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Alist",ENG_Abar11,ENG_Abar12);
+logger::singleton()->log(0,"ENG_Alist->ENG_Abar1 ENG_Abar1");
+
+}
+|ENG_Alist ENG_Abar1
+{
+const node_info& ENG_Alist=sparser->get_node_info($1);
+const node_info& ENG_Abar1=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Alist",ENG_Alist,ENG_Abar1);
+logger::singleton()->log(0,"ENG_Alist->ENG_Alist ENG_Abar1");
+
+};
+ENG_CAP:
+ENG_1Con ENG_N_Pl_0Con_swC
+{
+const node_info& ENG_1Con=sparser->get_node_info($1);
+const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_CAP",ENG_1Con,ENG_N_Pl_0Con_swC);
+logger::singleton()->log(0,"ENG_CAP->ENG_1Con ENG_N_Pl_0Con_swC");
+
+}
+|ENG_1Con ENG_N_Pl_0Con_swV
+{
+const node_info& ENG_1Con=sparser->get_node_info($1);
+const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_CAP",ENG_1Con,ENG_N_Pl_0Con_swV);
+logger::singleton()->log(0,"ENG_CAP->ENG_1Con ENG_N_Pl_0Con_swV");
+
+};
+ENG_CNP:
+ENG_AP ENG_N
+{
+const node_info& ENG_AP=sparser->get_node_info($1);
+const node_info& ENG_N=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_CNP",ENG_AP,ENG_N);
+logger::singleton()->log(0,"ENG_CNP->ENG_AP ENG_N");
 
 }
 |ENG_N 
@@ -132,6 +269,43 @@ const node_info& ENG_N=sparser->get_node_info($1);
 word.gcat="ENG_CNP";
 $$=sparser->set_node_info(word,ENG_N);
 logger::singleton()->log(0,"ENG_CNP->ENG_N");
+
+};
+ENG_CONJ:
+ENG_CONJ_Stem 
+{
+lexicon word;
+const node_info& ENG_CONJ_Stem=sparser->get_node_info($1);
+word.gcat="ENG_CONJ";
+$$=sparser->set_node_info(word,ENG_CONJ_Stem);
+logger::singleton()->log(0,"ENG_CONJ->ENG_CONJ_Stem");
+
+};
+ENG_CONJA:
+ENG_CONJ ENG_Abar1
+{
+const node_info& ENG_CONJ=sparser->get_node_info($1);
+const node_info& ENG_Abar1=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_CONJA",ENG_CONJ,ENG_Abar1);
+logger::singleton()->log(0,"ENG_CONJA->ENG_CONJ ENG_Abar1");
+
+}
+|ENG_CONJ ENG_Alist
+{
+const node_info& ENG_CONJ=sparser->get_node_info($1);
+const node_info& ENG_Alist=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_CONJA",ENG_CONJ,ENG_Alist);
+logger::singleton()->log(0,"ENG_CONJA->ENG_CONJ ENG_Alist");
+
+};
+ENG_CONJ_Stem:
+t_ENG_CONJ_Stem 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_CONJ_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_Con:
@@ -171,13 +345,13 @@ logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_IVP:
-ENG_NV ENG_A
+ENG_NV ENG_AP
 {
 const node_info& ENG_NV=sparser->get_node_info($1);
-const node_info& ENG_A=sparser->get_node_info($2);
+const node_info& ENG_AP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_A);
-std::cout<<"ENG_IVP->ENG_NV ENG_A"<<std::endl;
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);
+std::cout<<"ENG_IVP->ENG_NV ENG_AP"<<std::endl;
 }
 |ENG_NV ENG_PP
 {
@@ -187,13 +361,13 @@ sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
 }
-|ENG_V ENG_A
+|ENG_V ENG_AP
 {
 const node_info& ENG_V=sparser->get_node_info($1);
-const node_info& ENG_A=sparser->get_node_info($2);
+const node_info& ENG_AP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_A);
-std::cout<<"ENG_IVP->ENG_V ENG_A"<<std::endl;
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);
+std::cout<<"ENG_IVP->ENG_V ENG_AP"<<std::endl;
 }
 |ENG_V ENG_PP
 {
@@ -249,24 +423,14 @@ $$=sparser->set_node_info(word,ENG_N_Sg);
 logger::singleton()->log(0,"ENG_N->ENG_N_Sg");
 
 };
-ENG_NEG:
-t_ENG_NEG_Stem 
-{
-lexicon word;
-const node_info& empty_node_info={};
-word=lex->last_word_scanned(t_ENG_NEG_Stem);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
-
-};
 ENG_NP:
-ENG_AP 
+ENG_CAP 
 {
 lexicon word;
-const node_info& ENG_AP=sparser->get_node_info($1);
+const node_info& ENG_CAP=sparser->get_node_info($1);
 word.gcat="ENG_NP";
-$$=sparser->set_node_info(word,ENG_AP);
-logger::singleton()->log(0,"ENG_NP->ENG_AP");
+$$=sparser->set_node_info(word,ENG_CAP);
+logger::singleton()->log(0,"ENG_NP->ENG_CAP");
 
 }
 |ENG_CNP 
@@ -287,12 +451,12 @@ logger::singleton()->log(0,"ENG_NP->ENG_QPro ENG_CNP");
 
 };
 ENG_NV:
-ENG_V ENG_NEG
+ENG_V ENG_VNEG
 {
 const node_info& ENG_V=sparser->get_node_info($1);
-const node_info& ENG_NEG=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_NEG);
-logger::singleton()->log(0,"ENG_NV->ENG_V ENG_NEG");
+const node_info& ENG_VNEG=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_NV",ENG_V,ENG_VNEG);
+logger::singleton()->log(0,"ENG_NV->ENG_V ENG_VNEG");
 
 };
 ENG_N_Pl:
@@ -585,6 +749,26 @@ const node_info& ENG_V_Stem=sparser->get_node_info($1);
 const node_info& ENG_V_lfea_aux=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_V",ENG_V_Stem,ENG_V_lfea_aux);
 logger::singleton()->log(0,"ENG_V->ENG_V_Stem ENG_V_lfea_aux");
+
+};
+ENG_VNEG:
+ENG_VNEG_Stem 
+{
+lexicon word;
+const node_info& ENG_VNEG_Stem=sparser->get_node_info($1);
+word.gcat="ENG_VNEG";
+$$=sparser->set_node_info(word,ENG_VNEG_Stem);
+logger::singleton()->log(0,"ENG_VNEG->ENG_VNEG_Stem");
+
+};
+ENG_VNEG_Stem:
+t_ENG_VNEG_Stem 
+{
+lexicon word;
+const node_info& empty_node_info={};
+word=lex->last_word_scanned(t_ENG_VNEG_Stem);
+$$=sparser->set_node_info(word,empty_node_info);
+logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_VP:

@@ -178,7 +178,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 		nodeinfo.symbol=symbol;
 		if(toa_&HI_SEMANTICS){
 			sqlite=db_factory::get_instance();
-			//std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
+			std::cout<<"Looking for symbols for parent:"<<symbol<<", head root:"<<new_phrase_head_root.symbol<<", non-head root:"<<new_phrase_non_head_root.symbol<<std::endl;
 			rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
 			//TODO:Check how to find out CON iotype so that CONs can be part of a combination
 			if(rule_to_rule_map!=NULL){
@@ -1121,13 +1121,14 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	}
 	rule_entry=rule_to_rule_map->first_value_for_field_name_found("step","1");
 	while(rule_entry!=NULL){
+		valid_combination=false;
 		rule_entry_failure_copy=rule_entry;
 		current_step=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"step")->c_str());
-//		std::cout<<"step:"<<current_step<<std::endl;
+		std::cout<<"step:"<<current_step<<std::endl;
 		failover=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"failover")->c_str());
-//		std::cout<<"failover:"<<failover<<std::endl;
+		std::cout<<"failover:"<<failover<<std::endl;
 		successor=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"successor")->c_str());
-//		std::cout<<"successor:"<<successor<<std::endl;
+		std::cout<<"successor:"<<successor<<std::endl;
 		main_nodes_found_by_symbol.clear();
 		dependent_nodes_found_by_symbol.clear();
 		main_subtree_nodes_found_by_symbol.clear();
@@ -1218,9 +1219,9 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 				}
 				//1)Loop over main_nodes_found_by_symbol
 				for(j=main_nodes_found_by_symbol.begin();j!=main_nodes_found_by_symbol.end();++j){
-//					std::cout<<"loop pass on main_nodes_found_by_symbol:"<<*j<<std::endl;
+					std::cout<<"loop pass on main_nodes_found_by_symbol:"<<*j<<std::endl;
 					main_node=&get_private_node_info(*j);
-//					std::cout<<"main node lexeme:"<<main_node->expression.lexeme<<std::endl;
+					std::cout<<"main node lexeme:"<<main_node->expression.lexeme<<std::endl;
 					if(main_node->ref_node_ids.empty()==true) main_node_id=main_node->node_id;
 					else{
 						main_ref_node_id=main_node->ref_node_ids.begin();
@@ -1228,12 +1229,12 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 					}
 					while(main_node_id!=0){
 						node_info *main_or_ref_node=&get_private_node_info(main_node_id);
-//						std::cout<<"main node refnode lexeme:"<<main_or_ref_node->expression.lexeme<<std::endl;
+						std::cout<<"main node refnode lexeme:"<<main_or_ref_node->expression.lexeme<<std::endl;
 						//2)Loop over dependent_nodes_found_by_symbol where dependent_node is NOT in current_main_node.node_links
 						for(k=dependent_nodes_found_by_symbol.begin();k!=dependent_nodes_found_by_symbol.end();++k){
-//							std::cout<<"loop pass on dependent_nodes_found_by_symbol:"<<*k<<std::endl;
+							std::cout<<"loop pass on dependent_nodes_found_by_symbol:"<<*k<<std::endl;
 							dependent_node=&get_private_node_info(*k);
-//							std::cout<<"dependent node lexeme:"<<dependent_node->expression.lexeme<<std::endl;
+							std::cout<<"dependent node lexeme:"<<dependent_node->expression.lexeme<<std::endl;
 							if(dependent_node->ref_node_ids.empty()==true) dep_node_id=dependent_node->node_id;
 							else{
 								dep_ref_node_id=dependent_node->ref_node_ids.begin();
@@ -1241,7 +1242,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 							}
 							while(dep_node_id!=0){
 								node_info *dependent_or_ref_node=&get_private_node_info(dep_node_id);
-//								std::cout<<"dependent node refnode lexeme:"<<dependent_or_ref_node->expression.lexeme<<std::endl;
+								std::cout<<"dependent node refnode lexeme:"<<dependent_or_ref_node->expression.lexeme<<std::endl;
 								for(l=main_or_ref_node->dependency_validation_matrix.begin();l!=main_or_ref_node->dependency_validation_matrix.end();++l){
 									//TODO:Consider if this logic is ok:
 									//If a node is already registered in the main nodes's dvm for a dependency,
@@ -1322,9 +1323,9 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
 				&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
 				&&(main_nodes_found_by_symbol.empty()==true||dependent_nodes_found_by_symbol.empty()==true)){
-				if(failover==0||failover<current_step){
+//				if(failover==0||failover=<current_step){
 					valid_combination=false;
-				}
+//				}
 			}
 			else{
 				throw std::runtime_error("Either got empty main and/or dependent node symbol and/or if not empty then no nodes found for them to validate their combination.");
