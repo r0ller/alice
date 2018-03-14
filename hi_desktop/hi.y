@@ -81,21 +81,14 @@ $$=sparser->set_node_info(word,ENG_A_Stem);
 logger::singleton()->log(0,"ENG_A->ENG_A_Stem");
 
 };
-ENG_ACONJ:
-ENG_Abar1 ENG_CONJ
+ENG_A0NEG:
+ENG_A 
 {
-const node_info& ENG_Abar1=sparser->get_node_info($1);
-const node_info& ENG_CONJ=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_ACONJ",ENG_Abar1,ENG_CONJ);
-logger::singleton()->log(0,"ENG_ACONJ->ENG_Abar1 ENG_CONJ");
-
-}
-|ENG_Alist ENG_CONJ
-{
-const node_info& ENG_Alist=sparser->get_node_info($1);
-const node_info& ENG_CONJ=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_ACONJ",ENG_Alist,ENG_CONJ);
-logger::singleton()->log(0,"ENG_ACONJ->ENG_Alist ENG_CONJ");
+lexicon word;
+const node_info& ENG_A=sparser->get_node_info($1);
+word.gcat="ENG_A0NEG";
+$$=sparser->set_node_info(word,ENG_A);
+logger::singleton()->log(0,"ENG_A0NEG->ENG_A");
 
 };
 ENG_ANEG:
@@ -157,13 +150,13 @@ logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 };
 ENG_Abar1:
-ENG_A 
+ENG_A0NEG 
 {
 lexicon word;
-const node_info& ENG_A=sparser->get_node_info($1);
+const node_info& ENG_A0NEG=sparser->get_node_info($1);
 word.gcat="ENG_Abar1";
-$$=sparser->set_node_info(word,ENG_A);
-logger::singleton()->log(0,"ENG_Abar1->ENG_A");
+$$=sparser->set_node_info(word,ENG_A0NEG);
+logger::singleton()->log(0,"ENG_Abar1->ENG_A0NEG");
 
 }
 |ENG_ANEG ENG_A
@@ -175,28 +168,28 @@ logger::singleton()->log(0,"ENG_Abar1->ENG_ANEG ENG_A");
 
 };
 ENG_Abar2:
-ENG_ACONJ ENG_Abar1
-{
-const node_info& ENG_ACONJ=sparser->get_node_info($1);
-const node_info& ENG_Abar1=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_Abar2",ENG_ACONJ,ENG_Abar1);
-logger::singleton()->log(0,"ENG_Abar2->ENG_ACONJ ENG_Abar1");
-
-}
-|ENG_ACONJ ENG_Alist
-{
-const node_info& ENG_ACONJ=sparser->get_node_info($1);
-const node_info& ENG_Alist=sparser->get_node_info($2);
-$$=sparser->combine_nodes("ENG_Abar2",ENG_ACONJ,ENG_Alist);
-logger::singleton()->log(0,"ENG_Abar2->ENG_ACONJ ENG_Alist");
-
-}
-|ENG_Abar2 ENG_CONJA
+ENG_Abar2 ENG_CONJA
 {
 const node_info& ENG_Abar2=sparser->get_node_info($1);
 const node_info& ENG_CONJA=sparser->get_node_info($2);
 $$=sparser->combine_nodes("ENG_Abar2",ENG_Abar2,ENG_CONJA);
 logger::singleton()->log(0,"ENG_Abar2->ENG_Abar2 ENG_CONJA");
+
+}
+|ENG_Ahead ENG_CONJA
+{
+const node_info& ENG_Ahead=sparser->get_node_info($1);
+const node_info& ENG_CONJA=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Abar2",ENG_Ahead,ENG_CONJA);
+logger::singleton()->log(0,"ENG_Abar2->ENG_Ahead ENG_CONJA");
+
+}
+|ENG_Alist ENG_CONJA
+{
+const node_info& ENG_Alist=sparser->get_node_info($1);
+const node_info& ENG_CONJA=sparser->get_node_info($2);
+$$=sparser->combine_nodes("ENG_Abar2",ENG_Alist,ENG_CONJA);
+logger::singleton()->log(0,"ENG_Abar2->ENG_Alist ENG_CONJA");
 
 };
 ENG_Adv:
@@ -217,6 +210,16 @@ const node_info& ENG_Adv=sparser->get_node_info($1);
 word.gcat="ENG_AdvP";
 $$=sparser->set_node_info(word,ENG_Adv);
 logger::singleton()->log(0,"ENG_AdvP->ENG_Adv");
+
+};
+ENG_Ahead:
+ENG_Abar1 
+{
+lexicon word;
+const node_info& ENG_Abar1=sparser->get_node_info($1);
+word.gcat="ENG_Ahead";
+$$=sparser->set_node_info(word,ENG_Abar1);
+logger::singleton()->log(0,"ENG_Ahead->ENG_Abar1");
 
 };
 ENG_Alist:

@@ -7,6 +7,7 @@
 	#include <stack>
 	#include <utility>
 	#include <tuple>
+	#include <set>
 	#include "transgraph.h"
 
 	typedef struct functor_data{
