@@ -300,14 +300,14 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 					prev_dkey=d_key;
 					if(word.gcat=="CON"){
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(word.lexeme,d_key);
-						transgraph *graph=new transgraph(functor_dkey,word.morphalytics);
-						id_index=graph->id();
+						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
+						id_index=std::atoi(graph->id().c_str());
 						transcript+=graph->transcript(functors,target_language);
 					}
 					else{
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
-						transgraph *graph=new transgraph(functor_dkey,word.morphalytics);
-						id_index=graph->id();
+						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
+						id_index=std::atoi(graph->id().c_str());
 						transcript+=graph->transcript(functors,target_language);
 					}
 				}
@@ -318,8 +318,8 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			functor=word.lexeme;//this is the stem in such cases
 			unsigned int d_key=0;//0 is anyway not allowed, smallest value allowed is 1
 			const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
-			transgraph *graph=new transgraph(functor_dkey,word.morphalytics);
-			id_index=graph->id();
+			transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
+			id_index=std::atoi(graph->id().c_str());
 			transcript+=graph->transcript(functors,target_language);
 		}
 	}

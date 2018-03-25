@@ -427,7 +427,7 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 			std::cout<<"inserting in traversal tree at level "<<node_dependency_traversal_stack.size()<<": node_id "<<node_id<<" with d_key "<<d_key<<" the node_d_key_route"<<std::endl;
 		}
 		else{
-			throw std::runtime_error("What shall I do in this case? A previously processed node with its functor/d_key gets processed again.");
+			throw std::runtime_error("What shall I do in this case? A previously processed node with its functor/d_key gets processed again. There may be a conflict in the rule_to_rule_map table.");
 		}
 		find_dependencies_for_functor(std::to_string(node.node_id),d_key,d_counter,node.node_id,d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 		unique_optional_dependency_paths.clear();
@@ -794,23 +794,24 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 						||manner=="1"&&d_counter_validated_dependencies.size()<1
 						||manner=="2"&&d_counter_validated_dependencies.size()<=1){
 					std::cout<<"dependency check for "<<semantic_dependency<<" returned FALSE for functor "<<functor<<" with d_key "<<d_key<<std::endl;
-					bool optional_dependency_already_checked_for_node=false;
-					for(auto&& odep_checked_entry=optional_dependencies_checked.lower_bound(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())));
-						odep_checked_entry!=optional_dependencies_checked.upper_bound(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())));
-						++odep_checked_entry){
-						std::cout<<"checking if dependency "<<semantic_dependency<<" with d_key "<<ref_d_key
-						<<" was already checked for functor "<<functor<<" with d_key "<<d_key<<std::endl;
-						if(std::get<0>(odep_checked_entry->second)==functor
-							&&std::get<1>(odep_checked_entry->second)==std::atoi(d_key.c_str())){
-							std::cout<<"yepp, not going in"<<std::endl;
-							optional_dependency_already_checked_for_node=true;
-							break;
-						}
-					}
-					if((std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str()))
-//						&&optional_dependencies_checked.find(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())))==optional_dependencies_checked.end()){
-						&&optional_dependency_already_checked_for_node==false){
-						std::cout<<"no, going in"<<std::endl;
+//					bool optional_dependency_already_checked_for_node=false;
+//					for(auto&& odep_checked_entry=optional_dependencies_checked.lower_bound(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())));
+//						odep_checked_entry!=optional_dependencies_checked.upper_bound(std::make_pair(semantic_dependency,std::atoi(ref_d_key.c_str())));
+//						++odep_checked_entry){
+//						std::cout<<"checking if dependency "<<semantic_dependency<<" with d_key "<<ref_d_key
+//						<<" was already checked for functor "<<functor<<" with d_key "<<d_key<<std::endl;
+//						if(std::get<0>(odep_checked_entry->second)==functor
+//							&&std::get<1>(odep_checked_entry->second)==std::atoi(d_key.c_str())){
+//							std::cout<<"yepp, not going in"<<std::endl;
+//							optional_dependency_already_checked_for_node=true;
+//							break;
+//						}
+//					}
+					if((std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str()))){
+//						&&optional_dependency_already_checked_for_node==false){
+//						std::cout<<"checking if dependency "<<semantic_dependency<<" with d_key "<<ref_d_key
+//						<<" was already checked for functor "<<functor<<" with d_key "<<d_key<<std::endl;
+//						std::cout<<"no, going in"<<std::endl;
 						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 					}
 					dependency_found_for_functor=false;
@@ -891,12 +892,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					//delete this optional dependency from the list of odeps that are part of a path
 					//that leads to a real dependency.
 					for(auto&& i=optional_dependencies_checked.lower_bound(std::make_pair(functor,std::atoi(d_key.c_str())));
-							i!=optional_dependencies_checked.upper_bound(std::make_pair(functor,std::atoi(d_key.c_str())));
-							++i){
+							i!=optional_dependencies_checked.upper_bound(std::make_pair(functor,std::atoi(d_key.c_str())));){
 						if(std::get<4>(i->second)==odep_level){
 							std::cout<<"deleting optional dependency with functor "<<i->first.first<<" and d_key "<<i->first.second<<std::endl;
-							optional_dependencies_checked.erase(i);
-							break;
+							i=optional_dependencies_checked.erase(i);
+						}
+						else{
+							++i;
 						}
 					}
 				}
@@ -1415,20 +1417,20 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	if(root_found==longest_traversals.end()){
 		throw std::runtime_error("Root node not found.");
 	}
-	if(std::atoi(parent.first.c_str())>0){
+	if(std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true){
 		const node_info& nodeinfo=get_node_info(std::atoi(parent.first.c_str()));
-		if(nodeinfo.expression.lexicon_entry==true){//||nodeinfo.expression.gcat=="CON"
+		if(nodeinfo.expression.lexicon_entry==true){
 			std::cout<<nodeinfo.expression.lexeme<<"_"<<parent.second<<std::endl;
-			functor_transgraph=new transgraph(std::make_pair(nodeinfo.expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
+			functor_transgraph=new transgraph(std::to_string(nodeinfo.node_id),std::make_pair(nodeinfo.expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 		}
 		else{
 			std::cout<<nodeinfo.expression.gcat<<"_"<<parent.second<<std::endl;
-			functor_transgraph=new transgraph(std::make_pair(nodeinfo.expression.gcat,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
+			functor_transgraph=new transgraph(std::to_string(nodeinfo.node_id),std::make_pair(nodeinfo.expression.gcat,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 		}
 	}
 	else{
 		std::cout<<parent.first<<"_"<<parent.second<<std::endl;
-		functor_transgraph=new transgraph(std::make_pair(parent.first,parent.second),NULL);
+		functor_transgraph=new transgraph(std::to_string(prev_parent_node_id),std::make_pair(parent.first,parent.second),NULL);
 	}
 	for(auto&& i:root_found->second.second){
 		//TODO: think over if it's necessary to implement a logic after all the traversals
@@ -1443,7 +1445,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 		" parent d_key:"<<std::get<3>(i.second.first)<<
 		" parent d_counter:"<<std::get<4>(i.second.first)<<std::endl;
 		bool odep_parent_found=false;
-		if(std::atoi(std::get<0>(i.second.first).c_str())==0){
+		if(std::any_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){
 			tree_level_and_functor_node.first=node_level;
 			tree_level_and_functor_node.second=root;
 			auto functor_node_found=node_dependency_traversal_stack_tree.find(tree_level_and_functor_node);
@@ -1455,7 +1457,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 				throw std::runtime_error("Functor node not found in node (optional) dependency traversals.");
 			}
 			unsigned int top_parent_node_id=0;
-			if(prev_parent_node_id==0&&std::atoi(parent.first.c_str())>0) top_parent_node_id=std::atoi(parent.first.c_str());
+			if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true) top_parent_node_id=std::atoi(parent.first.c_str());
 			else top_parent_node_id=prev_parent_node_id;
 			std::pair<std::string,unsigned int> node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second.first),std::get<3>(i.second.first),std::get<4>(i.second.first),functor_node_odependencies->second,root_found->second.second);
 			std::cout<<"parent_node_found_via_optional_path:"<<node_found.first<<" with d_key:"<<node_found.second<<std::endl;
@@ -1472,15 +1474,19 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 				std::cout<<", parent node:"<<std::get<0>(i.second.first);
 				std::cout<<", parent d_key:"<<std::get<3>(i.second.first);
 				std::cout<<", parent d_counter:"<<std::get<4>(i.second.first)<<std::endl;
-				functor_transgraph->insert(std::get<4>(i.second.first),build_transgraph(root,std::make_pair(std::to_string(i.first),i.second.second),longest_traversals,node_level,i.first));
-				functors_processed.insert(std::make_pair(std::to_string(i.first),i.second.second));
+				transgraph *child_transgraph=NULL;
+				child_transgraph=build_transgraph(root,std::make_pair(std::to_string(i.first),i.second.second),longest_traversals,node_level,i.first);
+				if(child_transgraph!=NULL){
+					functor_transgraph->insert(std::get<4>(i.second.first),child_transgraph);
+					functors_processed.insert(std::make_pair(std::to_string(i.first),i.second.second));
+				}
 				std::cout<<"recursive return 1"<<std::endl;
 			}
 			else{
 				std::cout<<"functor already processed"<<std::endl;
 			}
 		}
-		else if(std::all_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){//checking for parent being string indeed
+		else if(std::any_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){//checking for parent being optional dependency
 			std::cout<<"looking for optional dependencies"<<std::endl;
 			tree_level_and_functor_node.first=node_level;
 			tree_level_and_functor_node.second=root;
@@ -1493,7 +1499,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 				throw std::runtime_error("Functor node not found in node (optional) dependency traversals.");
 			}
 			unsigned int top_parent_node_id=0;
-			if(prev_parent_node_id==0&&std::atoi(parent.first.c_str())>0) top_parent_node_id=std::atoi(parent.first.c_str());
+			if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true) top_parent_node_id=std::atoi(parent.first.c_str());
 			else top_parent_node_id=prev_parent_node_id;
 			std::pair<std::string,unsigned int> node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second.first),std::get<3>(i.second.first),std::get<4>(i.second.first),functor_node_odependencies->second,root_found->second.second);
 			std::cout<<"parent_node_found_via_optional_path:"<<node_found.first<<" with d_key:"<<node_found.second<<std::endl;
@@ -1506,8 +1512,12 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 						std::cout<<"debug lexeme:"<<j.first.first<<", d_key:"<<j.first.second<<
 						", parent node:"<<std::get<0>(j.second)<<", parent d_key:"<<std::get<1>(j.second)<<
 						", odep_level:"<<std::get<4>(j.second)<<std::endl;
-						functor_transgraph->insert(std::get<2>(j.second),build_transgraph(root,std::make_pair(j.first.first,j.first.second),longest_traversals,node_level,prev_parent_node_id));
-						functors_processed.insert(std::make_pair(j.first.first,j.first.second));
+						transgraph *child_transgraph=NULL;
+						child_transgraph=build_transgraph(root,std::make_pair(j.first.first,j.first.second),longest_traversals,node_level,prev_parent_node_id);
+						if(child_transgraph!=NULL){
+							functor_transgraph->insert(std::get<2>(j.second),child_transgraph);
+							functors_processed.insert(std::make_pair(j.first.first,j.first.second));
+						}
 						std::cout<<"recursive return 2"<<std::endl;
 					}
 					else{
@@ -1516,6 +1526,10 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 				}
 			}
 		}
+	}
+	if(std::any_of(parent.first.begin(),parent.first.end(),::isdigit)==false&&functors_processed.empty()==true){
+		delete functor_transgraph;
+		functor_transgraph=NULL;
 	}
 	return functor_transgraph;
 }

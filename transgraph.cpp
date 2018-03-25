@@ -1,11 +1,18 @@
 #include "transgraph.h"
 unsigned int transgraph::global_id=0;
 
-transgraph::transgraph(const std::pair<std::string,unsigned int>& functor,const morphan_result *morphan){
+transgraph::transgraph(const std::string& id,const std::pair<std::string,unsigned int>& functor,const morphan_result *morphan){
 	this->functor=functor;
-	if(morphan!=NULL) this->morphan=morphan;
-	else this->morphan=NULL;
-	my_id=++transgraph::global_id;
+	if(morphan!=NULL){
+		this->morphan=morphan;
+		if(id.empty()==false) my_id=id;
+		else my_id=std::to_string(++transgraph::global_id);
+	}
+	else{
+		this->morphan=NULL;
+		if(id.empty()==false) my_id=id+"_"+std::to_string(++transgraph::global_id);
+		else my_id=std::to_string(++transgraph::global_id);
+	}
 }
 
 transgraph::~transgraph(){
@@ -14,7 +21,7 @@ transgraph::~transgraph(){
 	}
 }
 
-unsigned int transgraph::id() const{
+std::string transgraph::id() const{
 	return my_id;
 }
 
@@ -34,7 +41,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
 	if(morphan!=NULL){
-		transcript="{\"id\":\""+std::to_string(my_id)+"\",";
+		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
 			transcript+="\"functor\":\"CON\",";
 		}
@@ -45,7 +52,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 		transcript+="\"morpheme id\":\""+std::to_string(morphan->id())+"\",";
 	}
 	else{
-		transcript="{\"id\":\""+std::to_string(my_id)+"\",";
+		transcript="{\"id\":\""+my_id+"\",";
 		transcript+="\"functor\":\""+functor.first+"\",";
 		transcript+="\"d_key\":\""+std::to_string(functor.second)+"\",";
 	}

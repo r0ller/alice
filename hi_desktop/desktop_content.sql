@@ -198,6 +198,7 @@ insert into FUNCTOR_DEFS values('SYMBOLICENGA_1', '', '1', NULL);
 insert into FUNCTOR_DEFS values('ANDENGCONJ_1', '', '1', NULL);
 insert into FUNCTOR_DEFS values('PROPERTIES_1', '', '1', NULL);
 insert into FUNCTOR_DEFS values('ORENGCONJ_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('LOCATED_1', '', '1', NULL);
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
@@ -226,6 +227,7 @@ insert into FUNCTORS values('PROPERTIES', '1', 'PROPERTIES_1');
 insert into FUNCTORS values('PROPERTIES', '2', 'PROPERTIES_1');
 insert into FUNCTORS values('ORENGCONJ', '1', 'ORENGCONJ_1');
 insert into FUNCTORS values('ORENGCONJ', '2', 'ORENGCONJ_1');
+insert into FUNCTORS values('LOCATED', '1', 'LOCATED_1');
 
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 
@@ -257,7 +259,12 @@ insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '8', '8', 
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_Vbar1', 'RPRO', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '4', NULL, 'V', NULL, 'N', NULL, 'PREP', NULL, 'H', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '5', '5', 'V', NULL, 'N', NULL, 'PREP', NULL, 'H', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '5', '6', '7', 'V', NULL, 'N', NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '6', '8', '7', 'V', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_Ahead', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '7', NULL, NULL, 'V', NULL, 'N', NULL, 'CONJ', NULL, 'H', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '8', '9', '9', 'V', NULL, 'N', NULL, 'ANEG', NULL, 'H', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '9', '9', NULL, 'V', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_A0NEG', 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, 'VNEG', NULL, 'H', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'VNEG', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
@@ -273,10 +280,6 @@ insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '4', NULL, N
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '5', '6', '6', 'VNEG', NULL, 'H', NULL, 'ANEG', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '6', '6', NULL, 'VNEG', NULL, 'H', NULL, 'A', NULL, 'N', 'ENG_A0NEG', 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Abar1', 'ENG_ANEG', 'ENG_A', '1', NULL, NULL, 'ANEG', NULL, 'H', NULL, 'A', NULL, 'N', NULL, 'ENG');
-/*insert into RULE_TO_RULE_MAP values( 'ENG_ACONJ', 'ENG_Abar1', 'ENG_CONJ', '1', '2', NULL, 'CONJ', NULL, 'N', NULL, 'ANEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_ACONJ', 'ENG_Abar1', 'ENG_CONJ', '2', NULL, NULL, 'CONJ', NULL, 'N', NULL, 'A', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Abar2', 'ENG_ACONJ', 'ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, 'ANEG', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Abar2', 'ENG_ACONJ', 'ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, 'A', NULL, 'N', NULL, 'ENG');*/
 insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, 'ANEG', NULL, 'N', NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, 'A', NULL, 'N', NULL, 'ENG');
 
@@ -330,8 +333,7 @@ insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '1', NULL, '0', 'DIRECTOR
 insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 insert into DEPOLEX values('BEENGV', '1', '1', '1', '1', NULL, '0', 'NOTENGVNEG', '1');
 insert into DEPOLEX values('BEENGV', '2', '1', '1', '2', '2', '0', 'NOTENGVNEG', '2');
-insert into DEPOLEX values('BEENGV', '2', '2', '1', '3', '3', '0', 'NOTENGANEG', '2');
-insert into DEPOLEX values('BEENGV', '2', '3', '1', '3', NULL, '0', 'DIRBEPROP', '1');
+insert into DEPOLEX values('BEENGV', '2', '2', '1', '2', NULL, '0', 'PROPERTIES', '2');
 insert into DEPOLEX values('PROPERTIES', '1', '1', '1', '1', NULL, '0', 'NOTENGANEG', '1');
 insert into DEPOLEX values('PROPERTIES', '2', '1', '1', '2', '2', '1', 'NOTENGANEG', '2');
 insert into DEPOLEX values('PROPERTIES', '2', '2', '1', '3', '3', '1', 'ANDENGCONJ', '2');
@@ -353,7 +355,8 @@ insert into DEPOLEX values('NOTENGANEG', '2', '1', NULL, '1', NULL, '0', 'DIRBEP
 insert into DEPOLEX values('DIRBEPROP', '1', '1', '1', '2', '2', '0', 'EMPTYENGA', '1');
 insert into DEPOLEX values('DIRBEPROP', '1', '2', '1', '3', '3', '0', 'SYMBOLICENGA', '1');
 insert into DEPOLEX values('DIRBEPROP', '1', '3', '1', '4', '4', '0', 'EXECUTABLEENGA', '2');
-insert into DEPOLEX values('DIRBEPROP', '1', '4', '1', NULL, NULL, '0', 'INENGPREP', '1');
+insert into DEPOLEX values('DIRBEPROP', '1', '4', '1', '4', NULL, '0', 'LOCATED', '1');
+insert into DEPOLEX values('LOCATED', '1', '1', '1', NULL, NULL, '0', 'INENGPREP', '1');
 insert into DEPOLEX values('ANAENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 /*insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);*/
@@ -496,8 +499,6 @@ insert into GRAMMAR values('ENG','ENG_Abar1','ENG_A0NEG',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Alist','ENG_Abar1','ENG_Abar1',NULL);
 insert into GRAMMAR values('ENG','ENG_Alist','ENG_Alist','ENG_Abar1',NULL);
 insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Abar1',NULL);
-/*insert into GRAMMAR values('ENG','ENG_Abar2','ENG_ACONJ','ENG_Abar1',NULL);
-insert into GRAMMAR values('ENG','ENG_ACONJ','ENG_Alist','ENG_CONJ',NULL);*/
 insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Alist',NULL);
 insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Ahead','ENG_CONJA',NULL);
 insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Alist','ENG_CONJA',NULL);
