@@ -4,7 +4,7 @@ int yylex(void){
 
 	if(lex->is_end_of_input()==false){
 		token=lex->next_token();
-		std::cout<<"next token:"<<token<<std::endl;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"next token:"+std::to_string(token));
 		return token+1;
 	}
 	else return 0;//historic indicator of YACC about end of input stream
@@ -29,20 +29,19 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
-	logger *logger=NULL;
 	std::locale locale;
 
-	logger=logger::singleton("console",3,"LE");//Don't forget to turn off log mode if necessary e.g. in android release versions
-	logger::singleton()->log(0,"human_input:"+std::string(human_input));
+	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths;
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
-		std::cout<<"picking new token path"<<std::endl;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
 		try{
 			if(sqlite==NULL){
 				#ifdef __ANDROID__
 					if(vm!=NULL) jvm=vm;
 					else{
-						logger::singleton()->log(0,"vm is NULL!");
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"vm is NULL!");
 						exit(EXIT_FAILURE);
 					}
 					activity=activityobj;
@@ -62,9 +61,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 			locale=std::locale();
 			lex=new lexer(human_input,language,locale);
-			logger::singleton()->log(0,"lexer started");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
 			sparser=new interpreter(toa);
-			logger::singleton()->log(0,"interpreter started");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
 			if(toa&HI_SYNTAX||toa&HI_SEMANTICS){
 				int parse_error=yyparse();
 				if(parse_error==0){
@@ -73,10 +72,10 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						if(transgraph!=NULL){
 							token_paths->validate_parse_tree(sparser->nodes());
 							token_paths->validate_path(lex->word_entries(),transgraph);
-							logger::singleton()->log(0,"TRUE");
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
 						}
 						else{
-							logger::singleton()->log(0,"semantic error");
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
 							token_paths->invalidate_parse_tree(sparser->nodes());
 							token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
 						}
@@ -90,7 +89,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 					}
 				}
 				else{//syntax error for token in yychar
-					logger::singleton()->log(0,"syntax error");
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"syntax error");
 					if(toa&HI_SEMANTICS){
 						token_paths->invalidate_parse_tree(sparser->nodes());
 						token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
@@ -112,40 +111,40 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			if(toa==HI_MORPHOLOGY) break;
 		}
 		catch(sql_execution_error& exception){
-			logger::singleton()->log(0,"sql_execution_error:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"sql_execution_error:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(failed_to_open_db& exception){
-			logger::singleton()->log(0,"failed_to_open_db:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"failed_to_open_db:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(failed_to_close_db& exception){
-			logger::singleton()->log(0,"failed_to_close_db:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"failed_to_close_db:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(lexicon_type_and_db_table_schema_mismatch& exception){
-			logger::singleton()->log(0,"lexicon_type_and_db_table_schema_mismatch:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"lexicon_type_and_db_table_schema_mismatch:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(more_than_one_token_found& exception){
-			logger::singleton()->log(0,"more_than_one_token_found:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"more_than_one_token_found:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(morphan_error& exception){
-			logger::singleton()->log(0,"morphan_error:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"morphan_error:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(object_node_missing& exception){
-			logger::singleton()->log(0,"object_node_missing:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"object_node_missing:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(head_node_missing& exception){
-			logger::singleton()->log(0,"head_node_missing:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"head_node_missing:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(invalid_combination& exception){
 			token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
-			logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
 			if(token_paths->is_any_left()==true){
 				delete sparser;
 				sparser=NULL;
@@ -162,15 +161,15 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			transgraph=NULL;
 		}
 		catch(missing_prerequisite_symbol& exception){
-			logger::singleton()->log(0,"missing_prerequisite_symbol:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"missing_prerequisite_symbol:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(std::runtime_error& exception){//Catch underived exceptions thrown with string based messages
-			logger::singleton()->log(0,"runtime exception:"+std::string(exception.what()));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"runtime exception:"+std::string(exception.what()));
 			return NULL;
 		}
 		catch(...){
-			logger::singleton()->log(0,"Unexpected error ...");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"Unexpected error ...");
 			return NULL;
 		}
 	}

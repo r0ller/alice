@@ -34,19 +34,19 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 			word_stem=morphemes[i].substr(0,hit);//the algorithm is based on the assumption that [...] tags are added as suffixes
 		}
 		else if(hit!=std::string::npos&&word_stem.empty()==false){
-//			logger::singleton()->log(0,"erroneous morphan: more than one [stem] tag found");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"erroneous morphan: more than one [stem] tag found");
 			erroneous=true;
 		}
 		else{
 			if(gcats->first_value_for_field_name_found("gcat",morphemes[i])!=NULL){
 				if(gcat_with_lingfeas!=NULL){
-//					logger::singleton()->log(0,"erroneous morphan: more than one gcat found");
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"erroneous morphan: more than one gcat found");
 					erroneous=true;
 				}
 				else{
 					gcat_with_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+morphemes[i]+"' AND LID = '"+lid+"';");
 					if(gcat_with_lingfeas==NULL){
-//						logger::singleton()->log(0,"erroneous morphan: no gcat entries found for "+morphemes[i]);
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"erroneous morphan: no gcat entries found for "+morphemes[i]);
 						erroneous=true;
 					}
 					word_gcat=morphemes[i];
@@ -63,13 +63,13 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 			if(field==NULL){
 				field=gcat_with_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
 					if(field==NULL){
-//						logger::singleton()->log(0,"erroneous morphan: no Stem is defined for gcat "+word_gcat+" in GCAT db table.");
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"erroneous morphan: no Stem is defined for gcat "+word_gcat+" in GCAT db table.");
 						erroneous=true;
 					}
 			}
 		}
 		else{
-//			logger::singleton()->log(0,"erroneous morphan: no stem found");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"erroneous morphan: no stem found");
 			erroneous=true;
 		}
 		for(auto feature=features.begin();feature!=features.end();){
@@ -82,7 +82,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 		}
 	}
 	else{
-//		logger::singleton()->log(0,"erroneous morphan: no gcat entries found");
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"erroneous morphan: no gcat entries found");
 		erroneous=true;
 	}
 	delete gcats;

@@ -47,19 +47,16 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 	bool entry_already_exists=false;
 	std::multimap<unsigned int,field>::iterator upper_bound,erase_invalidation_iterator_copy;
 
-//	#ifdef __ANDROID__
-//	__android_log_print(ANDROID_LOG_INFO, "hi", std::string("query_result->insert() "+std::to_string(row.first)+","+row.second.field_name+","+row.second.field_value).c_str());
-//	#endif
 	if(raw_result_set.empty()==false){
 		//check to avoid inserting a value for an existing field with the same name with the same row id
 		if(field_value_at_row_position(row.first,row.second.field_name)==NULL){
 			row_buffer.insert(row);
-//			std::cout<<"inserting with rowid "<<row.first<<":"<<row.second.field_name<<"="<<row.second.field_value<<" into row buffer"<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting with rowid "+std::to_string(row.first)+":"+row.second.field_name+"="+row.second.field_value+" into row buffer");
 		}
 	}
 	else{
 		row_buffer.insert(row);
-//		std::cout<<"inserting with rowid "<<row.first<<":"<<row.second.field_name<<"="<<row.second.field_value<<" into row buffer"<<std::endl;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting with rowid "+std::to_string(row.first)+":"+row.second.field_name+"="+row.second.field_value+" into row buffer");
 	}
 	nr_of_inserted_columns=row_buffer.count(row.first);
 	if(nr_of_inserted_columns==nr_of_columns){
@@ -68,12 +65,12 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 				i!=upper_bound;++i){
 			if(fields.find(i->second.field_name)!=fields.end()){
 				fields_inserted.insert(i->second.field_name);
-//				std::cout<<"looking up "<<i->second.field_name<<"="<<i->second.field_value<<" from row buffer in result set"<<std::endl;
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up "+i->second.field_name+"="+i->second.field_value+" from row buffer in result set");
 				field_found=first_value_for_field_name_found(i->second.field_name,i->second.field_value);
 				while(field_found!=NULL){
 					fields_found.insert(*field_found);
 					keys_found.insert(field_found->first);
-//					std::cout<<i->second.field_name<<"="<<i->second.field_value<<" found in result set in row "<<field_found->first<<std::endl;
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,i->second.field_name+"="+i->second.field_value+" found in result set in row "+std::to_string(field_found->first));
 					field_found=value_for_field_name_found_after_row_position(field_found->first,i->second.field_name,i->second.field_value);
 				}
 			}
@@ -85,7 +82,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 			if(fields_found.count(*i)==nr_of_columns){
 				entry_already_exists=true;
 				row_buffer.erase(row.first);
-//				std::cout<<"entry already exists in result set with row id "<<*i<<std::endl;
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"entry already exists in result set with row id "+std::to_string(*i));
 				break;
 			}
 		}
@@ -94,7 +91,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
  				upper_bound=row_buffer.upper_bound(row.first);
 				i!=upper_bound;++i){
 				raw_result_set.insert(*i);
-//				std::cout<<"inserting with rowid "<<i->first<<":"<<i->second.field_name<<"="<<i->second.field_value<<" from row buffer into result set"<<std::endl;
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting with rowid "+std::to_string(i->first)+":"+i->second.field_name+"="+i->second.field_value+" from row buffer into result set");
 			}
 			row_buffer.erase(row.first);
 		}

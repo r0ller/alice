@@ -30,16 +30,16 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 }
 
 std::string transgraph::transcript(std::map<std::string,std::string>& functors, const std::string& target_language) const{
-	std::string transcript,initial_argscript,argument_list;
+	std::string transcript,initial_argscript,argument_list,functor_id,functor_def;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL,*functor_tag_entries=NULL;
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
-	const std::string *semantic_dependency=NULL,*functor_id=NULL,*functor_def=NULL;
+	const std::string *semantic_dependency=NULL;
 	std::map<d_counter,std::string> argument_scripts;
 
 	sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
-	std::cout<<"transcripting:"<<functor.first<<"_"<<functor.second<<std::endl;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
 	if(morphan!=NULL){
 		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
@@ -61,25 +61,24 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 		if(functor_id_entry==NULL){
 			throw std::runtime_error("No entries found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}
-		functor_id=functor_id_entry->field_value_at_row_position(0,"functor_id");
-		//TODO:don't check for being null or empty, treat it as if the functor definition was empty
-		if(functor_id==NULL){
-			throw std::runtime_error("Empty functor_id field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
-		}
-		functor_def_entry=sqlite->exec_sql("SELECT * FROM FUNCTOR_DEFS WHERE FUNCTOR_ID = '"+*functor_id+"' AND TLID = '"+target_language+"';");
-		if(functor_def_entry==NULL){
-			throw std::runtime_error("No entries found for functor id "+*functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" with target language "+target_language+" in FUNCTOR_DEFS db table.");
-		}
-		functor_def=functor_def_entry->field_value_at_row_position(0,"definition");
-		if(functor_def==NULL){
-			throw std::runtime_error("Empty definition field found for functor id "+*functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTOR_DEFS db table.");
-		}
-		if(functor_def->empty()==false){
-			std::string functor_def_json=transgraph::apply_json_escapes(*functor_def);
-			functors.insert(std::make_pair(*functor_id,functor_def_json));
+		functor_id=*functor_id_entry->field_value_at_row_position(0,"functor_id");
+		if(functor_id.empty()==false){
+			functor_def_entry=sqlite->exec_sql("SELECT * FROM FUNCTOR_DEFS WHERE FUNCTOR_ID = '"+functor_id+"' AND TLID = '"+target_language+"';");
+			if(functor_def_entry==NULL){
+				throw std::runtime_error("No entries found for functor id "+functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" with target language "+target_language+" in FUNCTOR_DEFS db table.");
+			}
+			functor_def=*functor_def_entry->field_value_at_row_position(0,"definition");
+			if(functor_def.empty()==false){
+				std::string functor_def_json=transgraph::apply_json_escapes(functor_def);
+				functors.insert(std::make_pair(functor_id,functor_def_json));
+			}
+			else{
+				functors.insert(std::make_pair(functor_id,""));
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Empty definition field found for functor id "+functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTOR_DEFS db table.");
+			}
 		}
 		else{
-			functors.insert(std::make_pair(*functor_id,""));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Empty functor_id field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}
 		functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
 		if(functor_tag_entries!=NULL){
@@ -99,9 +98,9 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 			tags+="},";
 			transcript+=tags;
 		}
-		transcript+="\"functor id\":\""+*functor_id+"\"";
+		transcript+="\"functor id\":\""+functor_id+"\"";
 		for(auto&& i:arguments){
-			std::cout<<"checking argument with d_counter "<<i.first<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking argument with d_counter "+std::to_string(i.first));
 			d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
 			if(d_counter_field==NULL){
 				throw std::runtime_error("Empty d_counter field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");

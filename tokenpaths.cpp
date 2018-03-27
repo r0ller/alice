@@ -95,11 +95,11 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 
 	if(reason=="syntax error"||reason=="semantic error"){
 		validated_words=lex->validated_words();
-		logger::singleton()->log(0,"processed words:"+validated_words);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
 		if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
 			last_word=lex->last_word_scanned().morphalytics->word();
 		else last_word=lex->last_word_scanned().word;
-		logger::singleton()->log(0,"FALSE: error at "+last_word);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
 		error="{\"source\":\"hi\",";
 		error+="\"type\":\""+reason+"\",";
 		if(validated_words.empty()==false){
@@ -154,7 +154,7 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 		lid=*result->field_value_at_row_position(0,"lid");
 		if(gcat=="CON")	symbol="t_Con";
 		else symbol="t_"+lid+"_"+gcat+"_"+feature;
-		std::cout<<"token symbol:"<<symbol<<std::endl;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token symbol:"+symbol);
 		delete result;
 	}
 	else{
@@ -166,7 +166,7 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 			parent_symbol=*result->field_value_at_row_position(i,"parent_symbol");
 			head_symbol=*result->field_value_at_row_position(i,"head_symbol");
 			non_head_symbol=*result->field_value_at_row_position(i,"non_head_symbol");
-			std::cout<<parent_symbol<<" "<<head_symbol<<" "<<non_head_symbol<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,parent_symbol+" "+head_symbol+" "+non_head_symbol);
 			lhs_rules_processed.clear();
 			rhs_rules_processed.clear();
 			if(head_symbol==symbol&&non_head_symbol.empty()==false){
@@ -184,7 +184,7 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 		throw std::runtime_error("There's no entry for the head/non-head symbol "+symbol+" in the GRAMMAR db table.");
 	}
 	for(auto&& i:token_paths){
-		std::cout<<"anchor token:"<<i.first.first<<" anchor counter:"<<i.first.second<<" followup token:"<<i.second<<std::endl;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"anchor token:"+i.first.first+" anchor counter:"+std::to_string(i.first.second)+" followup token:"+i.second);
 	}
 	return token_paths;
 }
@@ -197,7 +197,7 @@ void tokenpaths::find_rhs_up(const std::string& anchor_symbol, const unsigned in
 	query_result *result=NULL;
 	std::string head_symbol, non_head_symbol, parent_symbol;
 
-	std::cout<<"find rhs up"<<std::endl;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"find rhs up");
 	sqlite=db_factory::get_instance();
 	result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE LID = '"+lex->language()+"' AND ( HEAD_SYMBOL = '"+symbol+"' OR NON_HEAD_SYMBOL = '"+symbol+"' );");
 	if(result!=NULL){
@@ -205,7 +205,7 @@ void tokenpaths::find_rhs_up(const std::string& anchor_symbol, const unsigned in
 			parent_symbol=*result->field_value_at_row_position(i,"parent_symbol");
 			head_symbol=*result->field_value_at_row_position(i,"head_symbol");
 			non_head_symbol=*result->field_value_at_row_position(i,"non_head_symbol");
-			std::cout<<parent_symbol<<" "<<head_symbol<<" "<<non_head_symbol<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,parent_symbol+" "+head_symbol+" "+non_head_symbol);
 			if(head_symbol==symbol&&non_head_symbol.empty()==false){
 				if(lhs_rules_processed.find(std::make_tuple(parent_symbol,head_symbol,non_head_symbol))==lhs_rules_processed.end()){
 					lhs_rules_processed.insert(std::make_tuple(parent_symbol,head_symbol,non_head_symbol));
@@ -238,7 +238,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 	query_result *result=NULL;
 	std::string head_symbol, non_head_symbol, parent_symbol;
 
-	std::cout<<"find lhs down"<<std::endl;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"find lhs down");
 	sqlite=db_factory::get_instance();
 	result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE LID = '"+lex->language()+"' AND PARENT_SYMBOL = '"+symbol+"';");
 	if(result!=NULL){
@@ -246,7 +246,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 			parent_symbol=*result->field_value_at_row_position(i,"parent_symbol");
 			head_symbol=*result->field_value_at_row_position(i,"head_symbol");
 			non_head_symbol=*result->field_value_at_row_position(i,"non_head_symbol");
-			std::cout<<parent_symbol<<" "<<head_symbol<<" "<<non_head_symbol<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,parent_symbol+" "+head_symbol+" "+non_head_symbol);
 			if(head_symbol.empty()==false&&non_head_symbol.empty()==false){
 				if(lhs_rules_processed.find(std::make_tuple(parent_symbol,head_symbol,non_head_symbol))==lhs_rules_processed.end()){
 					lhs_rules_processed.insert(std::make_tuple(parent_symbol,head_symbol,non_head_symbol));
@@ -272,7 +272,7 @@ void tokenpaths::find_lhs_down(const std::string& anchor_symbol, const unsigned 
 		delete result;
 	}
 	else{
-		std::cout<<"token "+symbol+" found for anchor "<<anchor_symbol<<std::endl;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token "+symbol+" found for anchor "+anchor_symbol);
 		token_paths.insert(std::make_pair(std::make_pair(anchor_symbol,anchor_symbol_counter),symbol));
 	}
 }
@@ -282,7 +282,6 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 	std::string transcript;
 	std::string functor;
 
-	//std::cout<<"transpiling word "<<word_analyses.first<<std::endl;
 	for(auto&& word:word_analyses){
 		if(word.dependencies!=NULL){
 			if(word.lexicon_entry==true){
@@ -291,7 +290,7 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			else{
 				functor=word.gcat;
 			}
-			//std::cout<<"transpiling functor "<<functor<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transpiling functor "+functor);
 			unsigned int prev_dkey=0;
 			rowid_field=word.dependencies->first_value_for_field_name_found("lexeme",functor);
 			while(rowid_field!=NULL){
@@ -459,7 +458,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
 
 	unsigned int nr_of_analyses=valid_paths.size();
-	std::cout<<"There are "<<nr_of_analyses<<" analyses."<<std::endl;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
 	std::string analysis="{\"analyses\":[";
 	if(nr_of_analyses==0){
 		analysis+="{";

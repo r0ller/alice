@@ -12,7 +12,7 @@ logger::logger(const std::string& log_mode, const unsigned char& error_level, co
 }
 
 logger::~logger(){
-
+	logger::singleton_instance=NULL;
 }
 
 void logger::log(const unsigned char& error_level, const std::string& message){
