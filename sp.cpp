@@ -611,7 +611,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+node.expression.lexeme);
 				dependency_found_for_functor=true;
 			}
-			else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()!=1
+			else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==0
 					||manner=="1"&&d_counter_validated_dependencies.size()<1
 					||manner=="2"&&d_counter_validated_dependencies.size()<=1){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency check for "+semantic_dependency+" returned FALSE for functor "+node.expression.lexeme+" with d_key "+d_key);
@@ -621,7 +621,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				dependency_found_for_functor=false;
 			}
 			else{
-				throw std::runtime_error("Dependency check failed for functor "+node.expression.lexeme+" when validating dependency counter and manner.");
+				throw dependency_counter_manner_validation_failed(node.expression.lexeme);
 			}
 			dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(d_key.c_str())));
 			if(dependency_found_for_functor==true){
@@ -773,7 +773,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+functor);
 					dependency_found_for_functor=true;
 				}
-				else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()!=1
+				else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==0
 						||manner=="1"&&d_counter_validated_dependencies.size()<1
 						||manner=="2"&&d_counter_validated_dependencies.size()<=1){
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency check for "+semantic_dependency+" returned FALSE for functor "+functor+" with d_key "+d_key);
@@ -783,7 +783,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					dependency_found_for_functor=false;
 				}
 				else{
-					throw std::runtime_error("Optional dependency check failed for functor "+functor+" when validating dependency counter and manner.");
+					throw dependency_counter_manner_validation_failed(functor);
 				}
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependency_found_for_functor==true){
@@ -961,6 +961,8 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 			//The original condition if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps)
 			//seems to be too strict as it requires that all dependencies need to be found.
 			//Made it looser due to enabling partial analysis to experiment with this condition and see if it fits the bill.
+			if(nr_of_dependencies_found!=total_nr_of_dependencies||nr_of_dependencies_found<min_nr_of_deps)
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Not all dependencies have been found for functor "+node.expression.lexeme);
 			return build_transgraph(functor_found.first,std::make_pair(std::to_string(functor_found.first.first),functor_found.first.second),longest_traversals);
 		}
 		else{
@@ -1409,6 +1411,8 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 		+" parent d_key:"+std::to_string(std::get<3>(i.second.first))
 		+" parent d_counter:"+std::to_string(std::get<4>(i.second.first)));
 		bool odep_parent_found=false;
+		std::pair<std::string,unsigned int> node_found=std::make_pair("",0);
+		auto functor_node_odependencies=node_odependency_traversals.end();
 		if(std::any_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){
 			tree_level_and_functor_node.first=node_level;
 			tree_level_and_functor_node.second=root;
@@ -1416,14 +1420,14 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 			if(functor_node_found==node_dependency_traversal_stack_tree.end()){
 				throw std::runtime_error("Functor node not found in node dependency traversal stack tree.");
 			}
-			auto functor_node_odependencies=node_odependency_traversals.find(functor_node_found->first.second);
+			functor_node_odependencies=node_odependency_traversals.find(functor_node_found->first.second);
 			if(functor_node_odependencies==node_odependency_traversals.end()){
 				throw std::runtime_error("Functor node not found in node (optional) dependency traversals.");
 			}
 			unsigned int top_parent_node_id=0;
 			if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true) top_parent_node_id=std::atoi(parent.first.c_str());
 			else top_parent_node_id=prev_parent_node_id;
-			std::pair<std::string,unsigned int> node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second.first),std::get<3>(i.second.first),std::get<4>(i.second.first),functor_node_odependencies->second,root_found->second.second);
+			node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second.first),std::get<3>(i.second.first),std::get<4>(i.second.first),functor_node_odependencies->second,root_found->second.second);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"parent_node_found_via_optional_path:"+node_found.first+" with d_key:"+std::to_string(node_found.second));
 			if(node_found.first.empty()==false&&node_found.second>0&&dep_node.node_links.find(top_parent_node_id)!=dep_node.node_links.end()) odep_parent_found=true;
 		}
@@ -1451,22 +1455,6 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 			}
 		}
 		else if(std::any_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){//checking for parent being optional dependency
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for optional dependencies");
-			tree_level_and_functor_node.first=node_level;
-			tree_level_and_functor_node.second=root;
-			auto functor_node_found=node_dependency_traversal_stack_tree.find(tree_level_and_functor_node);
-			if(functor_node_found==node_dependency_traversal_stack_tree.end()){
-				throw std::runtime_error("Functor node not found in node dependency traversal stack tree.");
-			}
-			auto functor_node_odependencies=node_odependency_traversals.find(functor_node_found->first.second);
-			if(functor_node_odependencies==node_odependency_traversals.end()){
-				throw std::runtime_error("Functor node not found in node (optional) dependency traversals.");
-			}
-			unsigned int top_parent_node_id=0;
-			if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true) top_parent_node_id=std::atoi(parent.first.c_str());
-			else top_parent_node_id=prev_parent_node_id;
-			std::pair<std::string,unsigned int> node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second.first),std::get<3>(i.second.first),std::get<4>(i.second.first),functor_node_odependencies->second,root_found->second.second);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"parent_node_found_via_optional_path:"+node_found.first+" with d_key:"+std::to_string(node_found.second));
 			for(auto&& j:functor_node_odependencies->second){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking for optional dependency with functor "+j.first.first+" d_key "+std::to_string(j.first.second)+" d_counter "+std::to_string(std::get<5>(j.second))+" parent node "+std::get<0>(j.second)+" d_key "+std::to_string(std::get<1>(j.second))+" d_counter "+std::to_string(std::get<2>(j.second))+" and path nr "+std::to_string(std::get<3>(j.second)));
 				if(std::get<0>(j.second)==parent.first&&std::get<1>(j.second)==parent.second&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==false
@@ -1477,7 +1465,12 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 						+", parent node:"+std::get<0>(j.second)+", parent d_key:"+std::to_string(std::get<1>(j.second))
 						+", odep_level:"+std::to_string(std::get<4>(j.second)));
 						transgraph *child_transgraph=NULL;
-						child_transgraph=build_transgraph(root,std::make_pair(j.first.first,j.first.second),longest_traversals,node_level,prev_parent_node_id);
+						if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true){
+							child_transgraph=build_transgraph(root,std::make_pair(j.first.first,j.first.second),longest_traversals,node_level,std::atoi(parent.first.c_str()));
+						}
+						else{
+							child_transgraph=build_transgraph(root,std::make_pair(j.first.first,j.first.second),longest_traversals,node_level,prev_parent_node_id);
+						}
 						if(child_transgraph!=NULL){
 							functor_transgraph->insert(std::get<2>(j.second),child_transgraph);
 							functors_processed.insert(std::make_pair(j.first.first,j.first.second));

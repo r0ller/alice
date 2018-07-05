@@ -1,19 +1,19 @@
-/*     Foma: a finite-state toolkit and library.                             */
-/*     Copyright © 2008-2012 Mans Hulden                                     */
+/*   Foma: a finite-state toolkit and library.                                 */
+/*   Copyright © 2008-2015 Mans Hulden                                         */
 
-/*     This file is part of foma.                                            */
+/*   This file is part of foma.                                                */
 
-/*     Foma is free software: you can redistribute it and/or modify          */
-/*     it under the terms of the GNU General Public License version 2 as     */
-/*     published by the Free Software Foundation. */
+/*   Licensed under the Apache License, Version 2.0 (the "License");           */
+/*   you may not use this file except in compliance with the License.          */
+/*   You may obtain a copy of the License at                                   */
 
-/*     Foma is distributed in the hope that it will be useful,               */
-/*     but WITHOUT ANY WARRANTY; without even the implied warranty of        */
-/*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         */
-/*     GNU General Public License for more details.                          */
+/*      http://www.apache.org/licenses/LICENSE-2.0                             */
 
-/*     You should have received a copy of the GNU General Public License     */
-/*     along with foma.  If not, see <http://www.gnu.org/licenses/>.         */
+/*   Unless required by applicable law or agreed to in writing, software       */
+/*   distributed under the License is distributed on an "AS IS" BASIS,         */
+/*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  */
+/*   See the License for the specific language governing permissions and       */
+/*   limitations under the License.                                            */
 
 struct state_array {
     struct fsm_state *transitions;
@@ -57,6 +57,7 @@ struct fsm_construct_handle {
     int maxstate;
     int maxsigma;
     int numfinals;
+    int hasinitial;
     char *name;
 };
 
@@ -147,6 +148,9 @@ struct apply_handle {
     int obey_flags;
     int show_flags;
     int print_space;
+    char *space_symbol;
+    char *separator;
+    char *epsilon_symbol;
     int print_pairs;
     int apply_stack_ptr;
     int apply_stack_top; 
@@ -215,7 +219,7 @@ void fsm_state_set_current_state(int state_no, int final_state, int start_state)
 void fsm_state_add_arc(int state_no, int in, int out, int target, int final_state, int start_state);
 
 /* Call fsm_state_close() when done with arcs to a state */
-void fsm_state_close();
+void fsm_state_close(struct fsm *net);
 
 /* Call this when done with entire FSM */
 void fsm_state_end_state();
@@ -226,10 +230,6 @@ FEXPORT void fsm_count(struct fsm *net);
 
 void fsm_sort_lines(struct fsm *net);
 void fsm_update_flags(struct fsm *net, int det, int pru, int min, int eps, int loop, int completed);
-
-/* Rewrite-related functions */
-struct fsm *rewrite_cp_to_fst(struct fsm *net, char *lower_symbol, char *zero_symbol);
-struct fsm *rewrite_cp(struct fsm *U, struct fsm *L);
 
 int sort_cmp(const void *a, const void *b);
 
@@ -275,6 +275,7 @@ void xprintf(char *string);
 
 /* UTF8 */
 unsigned char *utf8code16tostr(char *str);
+int utf8iscombining(unsigned char *s);
 int utf8skip(char *str);
 int utf8strlen(char *str);
 int ishexstr(char *str);
@@ -282,6 +283,7 @@ void decode_quoted(char *s);
 void dequote_string(char *s);
 char *remove_trailing(char *s, char c);
 char *escape_string(char *string, char chr);
+char *xstrrev(char *str);
 
 /* Flag-related */
 int flag_check(char *sm);

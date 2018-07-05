@@ -146,8 +146,8 @@ create unique index i_functors on FUNCTORS(functor) where d_key=1;
 
 create table GRAMMAR(
 lid varchar(5) references LANGUAGES(lid),
-parent_symbol varchar(12),
-head_symbol varchar(12),
+parent_symbol varchar(12) not null check(length(parent_symbol)>0),
+head_symbol varchar(12) not null check(length(head_symbol)>0),
 non_head_symbol varchar(12),
 action text,/*if content is in quotes then it is regarded as code, if not then it is regarded as filename*/
 PRIMARY KEY(lid, parent_symbol, head_symbol, non_head_symbol)

@@ -54,7 +54,7 @@ LEXICON Adjective
 
 executable Adjinf;
 empty Adjinf;
-symbolic Adjinf;
+symlinked Adjinf;
 
 LEXICON Adjinf
 

@@ -190,22 +190,41 @@
 	}
 
 	class missing_prerequisite_symbol:public semper_error{
-	private:
-		std::string parent_symbol;
-		std::string child_symbol;
-	public:
-		missing_prerequisite_symbol(std::string,std::string);
-		~missing_prerequisite_symbol() throw() {};
-		virtual const char *what() const throw(){
-			std::string message;
+		private:
+			std::string parent_symbol;
+			std::string child_symbol;
+		public:
+			missing_prerequisite_symbol(std::string,std::string);
+			~missing_prerequisite_symbol() throw() {};
+			virtual const char *what() const throw(){
+				std::string message;
 
-			message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
-			return message.c_str();
-		}
+				message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
+				return message.c_str();
+			}
 	};
 
 	missing_prerequisite_symbol::missing_prerequisite_symbol(std::string parent, std::string child){
 		parent_symbol=parent;
 		child_symbol=child;
 	}
+
+	class dependency_counter_manner_validation_failed:public semper_error{
+		private:
+			std::string functor;
+		public:
+			dependency_counter_manner_validation_failed(std::string);
+			~dependency_counter_manner_validation_failed() throw() {};
+			virtual const char *what() const throw(){
+				std::string message;
+
+				message="Dependency check failed for functor "+functor+" when validating dependency counter and manner.";
+				return message.c_str();
+			}
+	};
+
+	dependency_counter_manner_validation_failed::dependency_counter_manner_validation_failed(std::string functor){
+		this->functor=functor;
+	}
+
 #endif

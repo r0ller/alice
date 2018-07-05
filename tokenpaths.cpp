@@ -103,10 +103,13 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 		error="{\"source\":\"hi\",";
 		error+="\"type\":\""+reason+"\",";
 		if(validated_words.empty()==false){
-			error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+last_word+"\"";
+			error+="\"processed\":\""+validated_words+"\","+"\"last word\":\""+last_word+"\"";
 		}
 		else{
-			error+="\"failed\":\""+last_word+"\"";
+			error+="\"last word\":\""+last_word+"\"";
+		}
+		if(exception!=NULL){
+			error+=",\"message\":\""+std::string(exception->what())+"\"";
 		}
 		error+="}";
 	}

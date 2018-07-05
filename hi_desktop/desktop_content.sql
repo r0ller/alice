@@ -178,23 +178,590 @@ insert into GCAT values('N', 'swConsonant', 'ENG', '23');
 insert into GCAT values('V', 'Gerund', 'ENG', '24');
 insert into GCAT values('CONJ', 'Stem', 'ENG', '25');
 
-insert into FUNCTOR_DEFS values('LISTENGV_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('LISTENGV_2', '', '1', NULL);
-insert into FUNCTOR_DEFS values('FILEENGN_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('INENGPREP_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('BEENGV_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('NOTENGVNEG_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('NOTENGANEG_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('LISTENGV_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+unset script;
+c=1;
+for i in $2;
+do 
+	echo name;
+	echo $i;
+	echo content;
+	p=$(($c+2));
+	eval v="\$$p";
+	echo "$v";
+	case "$i" in 
+		*_out) op="$(echo "$v"|cut -c1)";
+			if [ "$op" = "\"" ];
+			then dirs="$(echo "$v"|tr "\"\"" "\""|tr "\"" " ")";
+				for j in $dirs;
+				do 
+					script="$script""find $j;";
+				done;
+				echo "$script";
+				eval "$script";
+				exit;
+			elif [ "$op" = "|" ];
+				then OIFS="$IFS";
+				IFS="|";
+				v="$(echo "$v"|cut -c2-)";
+				for j in $v;
+				do 
+					echo "$j";
+					unset path;
+					unset options;
+					unset script;
+					unset linked;
+					IFS="&";
+					for k in $j;
+					do 
+						echo "$k";
+						case "$k" in 
+							*-path*) if [ "$(echo "$k"|cut -c1)" != "!" ];
+								then path="$path ""$(echo "$k"|sed "s/-path//g")";
+								else options="$options ""$(echo "$k"|sed "s/ \"/ \"*\//g")";
+									options="${options%?}""/*\"";
+								fi;
+							 ;;
+							*-L*) if [ "$(echo "$k"|cut -c1)" != "!" ];
+								then linked=true;
+								fi;
+							 ;;
+							*) options="$options ""$k";							
+							 ;;
+						esac;
+					done;
+					if [ -z "$path" ];
+					then path="./";
+					fi;
+					if [ -z "$linked" ];
+						then script="find ""$path ""-type f $options";
+						else script="links=\"\$(find ""$path ""-type l $options)\";for l in \$links;do echo \"\$l\"|xargs readlink -f;done;";
+					fi;
+					echo "$script";
+					eval "$script";
+					IFS="|";
+				done;
+				exit;
+			elif [ -z "$op" ];
+				then script="find ./ -type f";
+				echo "$script";
+				eval "$script";
+			fi;
+		 ;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=$1;');
+insert into FUNCTOR_DEFS values('LISTENGV_2', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+unset script;
+c=1;
+for i in $2;
+do 
+	echo name;
+	echo $i;
+	echo content;
+	p=$(($c+2));
+	eval v="\$$p";
+	echo "$v";
+	case "$i" in 
+		*_out) op="$(echo "$v"|cut -c1)";
+			if [ "$op" = "\"" ];
+			then dirs="$(echo "$v"|tr "\"\"" "\""|tr "\"" " ")";
+				for j in $dirs;
+				do 
+					script="$script""find $j;";
+				done;
+				echo "$script";
+				eval "$script";
+				exit;
+			elif [ "$op" = "|" ];
+				then OIFS="$IFS";
+				IFS="|";
+				v="$(echo "$v"|cut -c2-)";
+				for j in $v;
+				do 
+					echo "$j";
+					unset path;
+					unset options;
+					unset optionhead;
+					unset pipehead;
+					unset pipetail;
+					unset script;
+					IFS="&";
+					for k in $j;
+					do 
+						echo "$k";
+						case "$k" in 
+							*-path*) if [ "$(echo "$k"|cut -c1)" != "!" ];
+								then path="$path ""$(echo "$k"|sed "s/-path//g")";
+								else options="$options ""$(echo "$k"|sed "s/ \"/ \"*\//g")";
+									options="${options%?}""/*\"";
+								fi;
+							 ;;
+							*-L*) if [ "$(echo "$k"|cut -c1)" != "!" ];
+								then optionhead="-L";
+									pipehead="grep \"\$(find ";
+									pipetail=" -type l)\"";
+								else pipehead="grep -v \"\$(find -H ";
+									pipetail=" -type l -ls|cut -f2 -d\">\"|cut -c2-)\"";
+								fi;
+							 ;;
+							*) options="$options ""$k";							
+							 ;;
+						esac;
+					done;
+					if [ -z "$path" ];
+					then path="./";
+					fi;
+					if [ -z "$pipehead" ];
+						then script="find ""$path ""-type d $options";
+						else script="find ""$optionhead ""$path ""-type d $options""|$pipehead ""$path ""$pipetail";
+					fi;
+					echo "$script";
+					eval "$script";
+					IFS="|";
+				done;
+				exit;
+			elif [ -z "$op" ];
+				then script="find ./ -type d";
+				echo "$script";
+				eval "$script";
+			fi;
+		 ;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=$1;');
+insert into FUNCTOR_DEFS values('FILEENGN_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) if [ -n "$(echo "$v"|grep ''"gcat":"CON"'')" ];
+		then out="$out""$(echo "$v"|cut -f3 -d:|cut -f1 -d,)";
+		else out="$v";
+		fi; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('INENGPREP_1', '', '1', 
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) out="$v"; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('BEENGV_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		PROPERTIES_*_out) if [ -n "$out" ];
+		then out="$(echo "$v"|sed "s/|/$out/g")";
+		else out="$v";
+		fi;
+		break; 
+		;;
+		*_out) out="$out""$v"; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) if [ -n "$(echo "$v"|grep ''"gcat":"CON"'')" ];
+		then out="$out""$(echo "$v"|cut -f3 -d:|cut -f1 -d,)";
+		else out="$v";
+		fi; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('NOTENGVNEG_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) eval morph="\$"$1"_morphology";
+		if [ -z "$morph" ];
+		then out="$v";
+		else out="$(echo "$v"|sed "s/-path/! -path/g")";
+		fi;
+		 ;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('NOTENGANEG_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) out="-$v"; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
 insert into FUNCTOR_DEFS values('FROMENGPREP_1', '', '1', NULL);
 insert into FUNCTOR_DEFS values('EXECUTABLEENGA_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('EXECUTABLEENGA_2', '', '1', NULL);
-insert into FUNCTOR_DEFS values('EMPTYENGA_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('EXECUTABLEENGA_2', '', '1', 'eval "$1"_out="executable";');
+insert into FUNCTOR_DEFS values('EMPTYENGA_1', '', '1', 'eval "$1"_out="empty";');
 insert into FUNCTOR_DEFS values('ANAENGDET_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('SYMBOLICENGA_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('SYMBOLICENGA_2', '', '1', NULL);
-insert into FUNCTOR_DEFS values('ANDENGCONJ_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('ORENGCONJ_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('SYMLINKEDENGA_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('SYMLINKEDENGA_2', '', '1', 'eval "$1"_out="symlinked";');
+insert into FUNCTOR_DEFS values('ANDENGCONJ_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) out="&$v"; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('ORENGCONJ_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) out="|$v"; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('FILEBEPROP_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
+c=1;
+for i in $ordered_args;
+do 
+	eval v="\$$i";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) option="$v";
+		if [ -z "$out" ];
+		then out="$option";
+		else out="$out&$option";
+		fi; 
+		;;
+		*_morphology) option="$v";
+		if [ -z "$out" ];
+		then out="$option";
+		else out="$out<$option";
+		fi; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('DIRBEPROP_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
+c=1;
+for i in $ordered_args;
+do 
+	eval v="\$$i";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) option="$v";
+		if [ -z "$out" ];
+		then out="$option";
+		else out="$out&$option";
+		fi; 
+		;;
+		*_morphology) option="$v";
+		if [ -z "$out" ];
+		then out="$option";
+		else out="$out<$option";
+		fi; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('PROPERTIES_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('PROPERTIES_2', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+unset head;
+unset head1;
+unset head2;
+head2pos=0;
+unset options;
+unset savepos;
+unset head2passed;
+listsize=0;
+optionlist="optionlist";
+rellistsize=0;
+reloptionlist="reloptionlist";
+ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
+c=1;
+for i in $ordered_args;
+do 
+	eval v="\$$i";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) op="$(echo "$v"|cut -c1)";
+			if [ "$op" != "&" -a "$op" != "\"" -a "$op" != "|" ];
+				then if [ -z "$head1" ];
+					then if [ -n "$(echo "$v"|grep "<")" ];
+						then head1="$(echo "$v"|cut -f1 -d"<"|tr "&" ".")";
+						else head1="$(echo "$v"|tr "&" ".")";
+						fi;
+						head2="$(echo "$v"|cut -f2 -d"<")";
+						if [ -n "$head2" -a "$head2" != "$v"  ];
+							then op="$(echo "$head2"|cut -c1)";
+								if [ "$op" != "&" -a "$op" != "\"" -a "$op" != "|" ];
+								then head2="$(echo "$head2"|tr "&" ".")";
+								else head2="$(echo "$head2"|cut -c2-|tr "&" ".")";
+								fi;
+							head2pos="$(echo "$i"|cut -f3 -d"_")";
+						else unset head2;
+						fi;
+				elif [ -n "$head1" -a -z "$head2" -a -z "$(echo "$v"|grep "<")" ];
+					then head2="$(echo "$v"|tr "&" ".")";
+					head2pos="$(echo "$i"|cut -f3 -d"_")";
+				elif [ -n "$head1" -a -n "$head2" ];
+					then head2="$head2"".""$(echo "$v"|tr "&" ".")";
+				fi;
+			fi; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+options="$(echo "$head1"|tr "&" ".")";
+c=1;
+for i in $ordered_args;
+do 
+	eval v="\$$i";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) op="$(echo "$v"|cut -c1)";
+			pos="$(echo "$i"|cut -f3 -d"_")";
+			if [ "$op" = "&" ];
+				then options="$options""$(echo "$v"|tr "&" ".")";
+				savepos="$pos";
+			elif [ "$op" = "|" -a -z "$head2" ];
+				then eval ${optionlist}${listsize}="\"$options\"";
+				options="$(echo $v|cut -c2-)";
+				listsize=$(($listsize+1));
+				savepos="$pos";
+			elif [ "$op" = "|" -a -n "$head2" -a "$pos" -lt "$head2pos" ];
+				then eval ${optionlist}${listsize}="\"$options\"";
+				options="$(echo $v|cut -c2-)";
+				listsize=$(($listsize+1));
+				savepos="$pos";
+			elif [ "$op" = "|" -a -n "$head2" -a "$pos" -ge "$head2pos" ];
+				then if [ "$savepos" -ge "$head2pos" ];
+					then eval ${reloptionlist}${rellistsize}="\"$options\"";
+						options="$(echo $v|cut -c2-)";
+						rellistsize=$(($rellistsize+1));
+						savepos="$pos";
+					else eval ${optionlist}${listsize}="\"$options\"";
+						options="$(echo $v|cut -c2-)";
+						listsize=$(($listsize+1));
+						savepos="$pos";
+					fi;
+			elif [ "$op" = "\"" ];
+				then options="$options"".""$(echo "$v"|tr "&" ".")";
+				savepos="$pos";
+			elif [ -n "$options" -a -n "$head2" ];
+				then if [ -z "$head2passed" ];
+					then eval ${optionlist}${listsize}="\"$options\"";
+					listsize=$(($listsize+1));
+					fi;
+				options="$(echo "$head2"|tr "&" ".")";
+				head2passed=true;
+				savepos="$pos";
+			elif [ -n "$options" -a -z "$head2" -a "$listsize" -eq 0  ];
+				then options="$options"".""$(echo "$v"|tr -d "<"|tr "&" ".")";
+				savepos="$pos";
+			elif [ -z "$head1" ];
+				then options="$options""$(echo "$v"|tr "&" ".")";
+			fi; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+if [ -n "$options" -a -z "$head2" ];
+	then echo "options:";
+	echo "$options";
+	eval ${optionlist}${listsize}=''"$options"'';
+	listsize=$(($listsize+1));
+elif [ -n "$options" -a "$savepos" -lt "$head2pos" ];
+	then echo "options:";
+	echo "$options";
+	eval ${optionlist}${listsize}=''"$options"'';
+	listsize=$(($listsize+1));
+elif [ -n "$options" -a "$savepos" -ge "$head2pos" ];
+	then echo "options:";
+	echo "$options";
+	eval ${reloptionlist}${rellistsize}=''"$options"'';
+	rellistsize=$(($rellistsize+1));
+fi;
+echo "optionlist:";
+if [ "$listsize" -eq 0 ];
+then eval ${optionlist}${listsize}="";
+listsize=$(($listsize+1));
+fi;
+if [ "$rellistsize" -eq 0 ];
+then eval ${reloptionlist}${rellistsize}="";
+rellistsize=$(($rellistsize+1));
+fi;
+unset paths;
+
+for r in $(seq 0 $(($rellistsize-1)));
+do 
+	echo "reloptionlist item:" "$(eval echo \$$reloptionlist${r})";
+	head=$(eval echo \$$reloptionlist${r});
+	for i in $(seq 0 $(($listsize-1)));
+	do 
+		echo "optionlist item:" "$head"".""$(eval echo \$$optionlist${i})";
+		args=$(echo "$head"".""$(eval echo \$$optionlist${i})");
+		args=$(echo "$args"|sed "s/\"\"/\/\//g"|tr "." "\n"|sort|uniq|xargs);
+		echo "xargs:" "$args";
+		unset options;
+		unset paths;
+		for j in $args;
+		do 
+			echo $j;
+			if [ "$j" = "executable" ];
+			then options="$options""&-perm -111";
+			elif [ "$j" = "-executable" ];
+			then options="$options""&! -perm -111";
+			elif [ "$j" = "empty" ];
+			then options="$options""&-empty";
+			elif [ "$j" = "-empty" ];
+			then options="$options""&! -empty";
+			elif [ "$j" = "symlinked" ];
+			then options="&-L""$options";
+			elif [ "$j" = "-symlinked" ];
+			then options="&! -L""$options";
+			else paths="$paths""&-path ""\""$(echo "$j"|sed "s/\/\//\" -path \"/g")"\"";
+			fi;
+		done;
+		if [ -n "$paths" ];
+		then options="$paths""$options";
+		fi;
+		out="$out""|""$options";
+	done;
+done;
+eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('LOCATED_1', '', '1',
+'echo "printing parameters and their contents for" $1;
+unset out;
+c=1;
+for i in $2;
+do 
+	p=$(($c+2));
+	eval v="\$$p";
+	echo name;
+	echo $i;
+	echo content;
+	echo "$v";
+	case "$i" in 
+		*_out) out="$v"; 
+		;;
+	esac;
+	c=$(($c+1));
+done;
+eval "$1"_out=''"$out"'';');
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
@@ -210,21 +777,21 @@ insert into FUNCTORS values('NOTENGVNEG', '1', 'NOTENGVNEG_1');
 insert into FUNCTORS values('NOTENGVNEG', '2', 'NOTENGVNEG_1');
 insert into FUNCTORS values('NOTENGANEG', '1', 'NOTENGANEG_1');
 insert into FUNCTORS values('NOTENGANEG', '2', 'NOTENGANEG_1');
-insert into FUNCTORS values('EXECUTABLEENGA', '1', 'EXECUTABLEENGA_1');
+insert into FUNCTORS values('EXECUTABLEENGA', '1', 'EXECUTABLEENGA_2');
 insert into FUNCTORS values('EXECUTABLEENGA', '2', 'EXECUTABLEENGA_2');
 insert into FUNCTORS values('EMPTYENGA', '1', 'EMPTYENGA_1');
-insert into FUNCTORS values('SYMBOLICENGA', '1', 'SYMBOLICENGA_1');
-insert into FUNCTORS values('SYMBOLICENGA', '2', 'SYMBOLICENGA_2');
+insert into FUNCTORS values('SYMLINKEDENGA', '1', 'SYMLINKEDENGA_2');
+insert into FUNCTORS values('SYMLINKEDENGA', '2', 'SYMLINKEDENGA_2');
 insert into FUNCTORS values('ANAENGDET', '1', 'ANAENGDET_1');
-insert into FUNCTORS values('FILEBEPROP', '1', NULL);
-insert into FUNCTORS values('DIRBEPROP', '1', NULL);
+insert into FUNCTORS values('FILEBEPROP', '1', 'FILEBEPROP_1');
+insert into FUNCTORS values('DIRBEPROP', '1', 'DIRBEPROP_1');
 insert into FUNCTORS values('ANDENGCONJ', '1', 'ANDENGCONJ_1');
 insert into FUNCTORS values('ANDENGCONJ', '2', 'ANDENGCONJ_1');
-insert into FUNCTORS values('PROPERTIES', '1', NULL);
-insert into FUNCTORS values('PROPERTIES', '2', NULL);
+insert into FUNCTORS values('PROPERTIES', '1', 'PROPERTIES_2');
+insert into FUNCTORS values('PROPERTIES', '2', 'PROPERTIES_2');
 insert into FUNCTORS values('ORENGCONJ', '1', 'ORENGCONJ_1');
 insert into FUNCTORS values('ORENGCONJ', '2', 'ORENGCONJ_1');
-insert into FUNCTORS values('LOCATED', '1', NULL);
+insert into FUNCTORS values('LOCATED', '1', 'LOCATED_1');
 
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 
@@ -302,7 +869,7 @@ insert into LEXICON values('not', 'ENG', 'ANEG', 'NOTENGANEG');
 insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
 insert into LEXICON values('executable', 'ENG', 'A', 'EXECUTABLEENGA');
 insert into LEXICON values('empty', 'ENG', 'A', 'EMPTYENGA');
-insert into LEXICON values('symbolic', 'ENG', 'A', 'SYMBOLICENGA');
+insert into LEXICON values('symlinked', 'ENG', 'A', 'SYMLINKEDENGA');
 insert into LEXICON values('a', 'ENG', 'DET', 'ANAENGDET');
 insert into LEXICON values('an', 'ENG', 'DET', 'ANAENGDET');
 insert into LEXICON values('and', 'ENG', 'CONJ', 'ANDENGCONJ');
@@ -318,8 +885,8 @@ insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('DIRECTORYENGN', '1', '1', NULL, '2', NULL, '0', 'BEENGV', '2');
 insert into DEPOLEX values('DIRECTORYENGN', '1', '2', '1', '2', NULL, '1', 'CON', '1');
 insert into DEPOLEX values('EMPTYENGA', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('SYMBOLICENGA', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('SYMBOLICENGA', '2', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('SYMLINKEDENGA', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('SYMLINKEDENGA', '2', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('EXECUTABLEENGA', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('EXECUTABLEENGA', '2', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('FILEENGN', '1', '1', NULL, '2', NULL, '0', 'BEENGV', '1');
@@ -329,10 +896,17 @@ insert into DEPOLEX values('INENGPREP', '1', '1', NULL, '1', NULL, '0', 'DIRECTO
 insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'FILEENGN', '1');
 insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
 insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+
 insert into DEPOLEX values('BEENGV', '1', '1', '1', '2', '2', '0', 'NOTENGVNEG', '1');
 insert into DEPOLEX values('BEENGV', '1', '2', '1', '2', NULL, '0', 'PROPERTIES', '1');
 insert into DEPOLEX values('BEENGV', '2', '1', '1', '2', '2', '0', 'NOTENGVNEG', '2');
 insert into DEPOLEX values('BEENGV', '2', '2', '1', '2', NULL, '0', 'PROPERTIES', '2');
+insert into DEPOLEX values('NOTENGVNEG', '1', '1', NULL, '1', NULL, '0', 'PROPERTIES', '1');
+insert into DEPOLEX values('NOTENGVNEG', '2', '1', NULL, '1', NULL, '0', 'PROPERTIES', '2');
+
+/*insert into DEPOLEX values('BEENGV', '1', '1', '1', '1', NULL, '0', 'PROPERTIES', '1');
+insert into DEPOLEX values('BEENGV', '2', '1', '1', '1', NULL, '0', 'PROPERTIES', '2');*/
+
 insert into DEPOLEX values('PROPERTIES', '1', '1', '1', '2', '2', '1', 'NOTENGANEG', '1');
 insert into DEPOLEX values('PROPERTIES', '1', '2', '1', '3', '3', '1', 'ANDENGCONJ', '1');
 insert into DEPOLEX values('PROPERTIES', '1', '3', '1', '4', '4', '1', 'ORENGCONJ', '1');
@@ -341,8 +915,6 @@ insert into DEPOLEX values('PROPERTIES', '2', '1', '1', '2', '2', '1', 'NOTENGAN
 insert into DEPOLEX values('PROPERTIES', '2', '2', '1', '3', '3', '1', 'ANDENGCONJ', '2');
 insert into DEPOLEX values('PROPERTIES', '2', '3', '1', '4', '4', '1', 'ORENGCONJ', '2');
 insert into DEPOLEX values('PROPERTIES', '2', '4', '1', '4', NULL, '0', 'DIRBEPROP', '1');
-insert into DEPOLEX values('NOTENGVNEG', '1', '1', '1', '1', NULL, '0', 'PROPERTIES', '1');
-insert into DEPOLEX values('NOTENGVNEG', '2', '1', '1', '1', NULL, '0', 'PROPERTIES', '2');
 insert into DEPOLEX values('NOTENGANEG', '1', '1', NULL, '1', NULL, '0', 'FILEBEPROP', '1');
 insert into DEPOLEX values('NOTENGANEG', '2', '1', NULL, '1', NULL, '0', 'DIRBEPROP', '1');
 insert into DEPOLEX values('ANDENGCONJ', '1', '1', NULL, '2', '2', '0', 'NOTENGANEG', '1');
@@ -353,11 +925,11 @@ insert into DEPOLEX values('ORENGCONJ', '1', '1', NULL, '2', '2', '0', 'NOTENGAN
 insert into DEPOLEX values('ORENGCONJ', '1', '2', NULL, '2', NULL, '0', 'FILEBEPROP', '1');
 insert into DEPOLEX values('ORENGCONJ', '2', '1', NULL, '2', '2', '0', 'NOTENGANEG', '2');
 insert into DEPOLEX values('ORENGCONJ', '2', '2', NULL, '2', NULL, '0', 'DIRBEPROP', '1');
-insert into DEPOLEX values('FILEBEPROP', '1', '1', '1', '2', '2', '0', 'SYMBOLICENGA', '1');
+insert into DEPOLEX values('FILEBEPROP', '1', '1', '1', '2', '2', '0', 'SYMLINKEDENGA', '1');
 insert into DEPOLEX values('FILEBEPROP', '1', '2', '1', '3', '3', '0', 'EXECUTABLEENGA', '1');
 insert into DEPOLEX values('FILEBEPROP', '1', '3', '1', '3', NULL, '0', 'LOCATED', '1');
 insert into DEPOLEX values('DIRBEPROP', '1', '1', '1', '2', '2', '0', 'EMPTYENGA', '1');
-insert into DEPOLEX values('DIRBEPROP', '1', '2', '1', '3', '3', '0', 'SYMBOLICENGA', '2');
+insert into DEPOLEX values('DIRBEPROP', '1', '2', '1', '3', '3', '0', 'SYMLINKEDENGA', '2');
 insert into DEPOLEX values('DIRBEPROP', '1', '3', '1', '4', '4', '0', 'EXECUTABLEENGA', '2');
 insert into DEPOLEX values('DIRBEPROP', '1', '4', '1', '4', NULL, '0', 'LOCATED', '1');
 insert into DEPOLEX values('LOCATED', '1', '1', '1', NULL, NULL, '0', 'INENGPREP', '1');
@@ -380,13 +952,6 @@ const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"RCV");
 $$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");"');
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',
-'"const node_info& ENG_NV=sparser->get_node_info($1);
-const node_info& ENG_PP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");"');
-insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_VNEG',NULL);
 insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_V','ENG_AdvP',NULL);
 insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_PP',NULL);
 insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_NP',NULL);
@@ -472,8 +1037,6 @@ insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_TP','ENG_Tense_particle','ENG_V_Stem',NULL);
 insert into GRAMMAR values('ENG','ENG_TP','ENG_V_ger',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVP',NULL);
-insert into GRAMMAR values('ENG','ENG_VNEG_Stem','t_ENG_VNEG_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VNEG','ENG_VNEG_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_ANEG_Stem','t_ENG_ANEG_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_ANEG','ENG_ANEG_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Indef_Det_an','ENG_Indef_Det','ENG_lfea_fwVowel',NULL);
@@ -491,12 +1054,6 @@ const node_info& ENG_AP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"RCV");
 $$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");"');
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_AP',
-'"const node_info& ENG_NV=sparser->get_node_info($1);
-const node_info& ENG_AP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_AP");"');
 insert into GRAMMAR values('ENG','ENG_A0NEG','ENG_A',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Abar1','ENG_ANEG','ENG_A',NULL);
 insert into GRAMMAR values('ENG','ENG_Abar1','ENG_A0NEG',NULL,NULL);
@@ -513,6 +1070,25 @@ insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar2',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_AP','ENG_Alist',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_CONJ_Stem','t_ENG_CONJ_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_CONJ','ENG_CONJ_Stem',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VNEG_Stem','t_ENG_VNEG_Stem',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VNEG','ENG_VNEG_Stem',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_VNEG',NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',
+'"const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");"');
+
+/*start: taking out rules for negating adejctive phrase in relative clause*/
+/*insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_AP',
+'"const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_AP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_AP");"');*/
+/*end: taking out rules for negating relative clause*/
+
 
 /*insert into GRAMMAR values('HUN','S','HUN_VP',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_NP',NULL);

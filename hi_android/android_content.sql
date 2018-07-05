@@ -294,8 +294,8 @@ insert into GCAT values('Noun', 'Acc', 'HUN', '58');
 insert into GCAT values('Noun', 'swVowel', 'HUN', '59');
 insert into GCAT values('Noun', 'swConsonant', 'HUN', '60');
 
-insert into FUNCTOR_DEFS values('Noun_1', NULL);
-insert into FUNCTOR_DEFS values('NAMEENGN_1',
+insert into FUNCTOR_DEFS values('Noun_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('NAMEENGN_1', '', '1',
 'contact="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''CON_'')>-1){
@@ -307,7 +307,7 @@ for(i=0;i<parameterList.length;++i){
 	}
 }
 return contact;');
-insert into FUNCTOR_DEFS values('WITHENGPREP_1',
+insert into FUNCTOR_DEFS values('WITHENGPREP_1', '', '1',
 'out="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''_out'')>-1){
@@ -318,8 +318,8 @@ for(i=0;i<parameterList.length;++i){
 	}
 }
 return out;');
-insert into FUNCTOR_DEFS values('CONTACTENGN_1', NULL);
-insert into FUNCTOR_DEFS values('LISTENGV_1',
+insert into FUNCTOR_DEFS values('CONTACTENGN_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('LISTENGV_1', '', '1',
 'contact="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''WITHENGPREP_1'')>-1){
@@ -331,8 +331,8 @@ for(i=0;i<parameterList.length;++i){
 }
 if(contact) Android.fetchContacts(contact);
 else Android.fetchContacts("");');
-insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', NULL);
-insert into FUNCTOR_DEFS values('HIVHUNV_1',
+insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', '', '1', NULL);
+insert into FUNCTOR_DEFS values('HIVHUNV_1', '', '1',
 'contact="";
 for(i=0;i<parameterList.length;++i){
 	if(parameterList[i].indexOf(''CON_'')>-1){
@@ -361,7 +361,7 @@ for(i=0;i<parameterList.length;++i){
 	}
 }
 Android.Call(contact);');
-insert into FUNCTOR_DEFS values('Num_1',
+insert into FUNCTOR_DEFS values('Num_1', '', '1',
 'number='''';
 prevNpref='''';
 isOrdinal=false;
@@ -555,7 +555,7 @@ for(i=0;i<Num_1_MORPHEMES.length;++i){
 }
 if(isOrdinal===true) number+=''.'';
 return number;');
-insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1',
+insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1', '', '1',
 '
 elsoutso='''';
 for(i=0;i<parameterList.length;++i){

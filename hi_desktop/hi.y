@@ -348,15 +348,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 
 };
 ENG_IVP:
-ENG_NV ENG_AP
-{
-const node_info& ENG_NV=sparser->get_node_info($1);
-const node_info& ENG_AP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_AP");
-}
-|ENG_NV ENG_PP
+ENG_NV ENG_PP
 {
 const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
@@ -1157,6 +1149,17 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		catch(invalid_combination& exception){
 			token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+			if(token_paths->is_any_left()==true){
+				delete sparser;
+				sparser=NULL;
+				delete lex;
+				lex=NULL;
+				transgraph=NULL;
+			}
+		}
+		catch(dependency_counter_manner_validation_failed& exception){
+			token_paths->invalidate_path(lex->word_entries(),"semantic error",&exception);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error:"+std::string(exception.what()));
 			if(token_paths->is_any_left()==true){
 				delete sparser;
 				sparser=NULL;

@@ -392,16 +392,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  87
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   121
+#define YYLAST   119
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  68
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  105
+#define YYNRULES  104
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  136
+#define YYNSTATES  135
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -450,14 +450,14 @@ static const yytype_uint16 yyrline[] =
        0,    65,    65,    75,    85,    95,   105,   115,   124,   133,
      143,   153,   162,   171,   179,   187,   196,   206,   216,   226,
      234,   243,   251,   260,   268,   278,   288,   296,   305,   315,
-     324,   332,   341,   351,   359,   367,   375,   384,   393,   402,
-     411,   420,   430,   439,   448,   457,   466,   475,   483,   492,
-     500,   507,   517,   526,   535,   544,   553,   562,   570,   579,
-     588,   597,   606,   615,   625,   635,   645,   654,   664,   674,
-     683,   692,   702,   712,   720,   730,   740,   749,   758,   768,
-     778,   787,   795,   803,   812,   820,   828,   836,   845,   855,
-     864,   874,   884,   893,   901,   910,   919,   927,   936,   946,
-     956,   966,   976,   986,   994,  1003
+     324,   332,   341,   351,   359,   367,   376,   385,   394,   403,
+     412,   422,   431,   440,   449,   458,   467,   475,   484,   492,
+     499,   509,   518,   527,   536,   545,   554,   562,   571,   580,
+     589,   598,   607,   617,   627,   637,   646,   656,   666,   675,
+     684,   694,   704,   712,   722,   732,   741,   750,   760,   770,
+     779,   787,   795,   804,   812,   820,   828,   837,   847,   856,
+     866,   876,   885,   893,   902,   911,   919,   928,   938,   948,
+     958,   968,   978,   986,   995
 };
 #endif
 
@@ -515,20 +515,20 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      48,   -48,   -48,   -48,    12,    18,    64,    63,    63,    12,
-      12,    60,   -48,    44,   -48,    36,    68,     8,    49,    86,
-     -48,    85,   -48,   -48,   -48,   -48,   -48,   -48,   -48,    76,
-     -48,    91,    79,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,    80,   -48,   -48,    98,   -48,    80,   -48,    17,    78,
-     -48,   -48,    78,    19,   -48,   -48,   -48,   -48,   -48,   -48,
-      66,   101,   101,   101,    66,   101,   101,    82,    45,   101,
+      39,   -48,   -48,   -48,    12,    18,    49,    47,    47,    12,
+      12,    60,   -48,    42,   -48,    36,    68,     8,    86,    93,
+     -48,    73,   -48,   -48,   -48,   -48,   -48,   -48,   -48,    71,
+     -48,    87,    75,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
+     -48,    80,   -48,   -48,    91,   -48,    80,   -48,    17,    74,
+     -48,   -48,    74,    19,   -48,   -48,   -48,   -48,   -48,   -48,
+      37,    95,    95,    95,    37,    95,    95,    76,    45,    95,
      -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,     8,
-     -48,    12,    90,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,   -48,   -48,   -48,   -48,   102,   -48,   101,
+     -48,    12,    85,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
+     -48,   -48,   -48,   -48,   -48,   -48,   -48,    94,   -48,    95,
      -48,   -48,   -48,     5,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   101,   101,   101,   101,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,    41,    10,   -48,   -48,     5,     5,   -48,
-     -48,   -48,   -48,   -48,   -48,   -48
+     -48,    95,    95,    95,    95,   -48,   -48,   -48,   -48,   -48,
+     -48,   -48,   -48,    96,    10,   -48,   -48,     5,     5,   -48,
+     -48,   -48,   -48,   -48,   -48
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -536,32 +536,32 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    32,    88,    75,     0,     0,     0,     0,     0,     0,
-       0,     0,   105,    76,    74,    80,    83,     0,     0,     0,
-      96,    76,    98,    37,   100,    99,    38,    39,    63,     0,
-      30,     0,     0,    31,    97,    73,    29,    10,    16,    68,
-       6,    55,     4,    11,     0,     5,     0,     3,     7,     8,
-      17,    95,     0,     9,    42,    43,     2,    24,    92,    40,
-       0,    46,    48,    41,     0,    56,    58,     0,     0,    51,
-      90,    91,    77,    89,    67,    72,    81,    93,    94,     0,
-      82,     0,     0,    84,    85,    86,    87,     1,   101,    61,
-      65,    60,   102,    62,   103,    21,    22,     0,    12,    55,
-      23,    19,    28,     0,    13,    25,    14,    20,    15,    53,
-      54,     0,    47,    49,    50,    57,    59,    64,    52,    44,
-     104,    66,    69,     0,     0,    71,    70,    26,    27,    33,
-      34,    79,    35,    36,    45,    78
+       0,    32,    87,    74,     0,     0,     0,     0,     0,     0,
+       0,     0,   104,    75,    73,    79,    82,     0,     0,     0,
+      95,    75,    97,    36,    99,    98,    37,    38,    62,     0,
+      30,     0,     0,    31,    96,    72,    29,    10,    16,    67,
+       6,    54,     4,    11,     0,     5,     0,     3,     7,     8,
+      17,    94,     0,     9,    41,    42,     2,    24,    91,    39,
+       0,    45,    47,    40,     0,    55,    57,     0,     0,    50,
+      89,    90,    76,    88,    66,    71,    80,    92,    93,     0,
+      81,     0,     0,    83,    84,    85,    86,     1,   100,    60,
+      64,    59,   101,    61,   102,    21,    22,     0,    12,    54,
+      23,    19,    28,     0,    13,    25,    14,    20,    15,    52,
+      53,     0,    46,    48,    49,    56,    58,    63,    51,    43,
+     103,    65,    68,     0,     0,    70,    69,    26,    27,    33,
+      78,    34,    35,    44,    77
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -48,   -33,    62,   -48,   -48,   -48,   -31,   -48,   -47,   -48,
-     -48,    94,   -48,     9,   -48,    43,   -48,    42,   -48,   -38,
-      95,   -48,   -48,   -48,   -48,   -48,    69,    -7,   -48,   -48,
-     -48,    73,    75,   -48,    89,   110,   111,    -3,   -48,   -48,
-     -16,   -48,   -48,   104,   -48,   -48,   -48,   -48,   -48,    -2,
-     -48,   -48,   -48,    59,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,   -48,    58,    61,   -45,   -48
+     -48,   -33,    57,   -48,   -48,   -48,   -21,   -48,   -47,   -48,
+     -48,    89,   -48,     2,   -48,    41,   -48,    38,   -48,   -38,
+      92,   -48,   -48,   -48,   -48,   -48,    65,    -7,   -48,   -48,
+     -48,    72,    77,   -48,    81,   105,   106,    -3,   -48,   -48,
+     -16,   -48,   -48,    99,   -48,   -48,   -48,   -48,   -48,    -2,
+     -48,   -48,   -48,    58,   -48,   -48,   -48,   -48,   -48,   -48,
+     -48,   -48,   -48,   -48,    56,    59,   -45,   -48
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -572,7 +572,7 @@ static const yytype_int16 yydefgoto[] =
        4,     5,   122,     6,     7,     8,    57,    58,   123,    59,
       60,    61,    62,    63,    64,    65,    66,    67,   118,    91,
       78,    79,    68,    80,    81,   126,    82,     9,    10,    11,
-     134,   135,    12,    21,    14,    72,    73,    15,    16,    17,
+     133,   134,    12,    21,    14,    72,    73,    15,    16,    17,
       18,    23,    26,    27,    89,    93,    69,    19
 };
 
@@ -583,34 +583,32 @@ static const yytype_int16 yytable[] =
 {
       83,   101,    20,    94,    31,    31,   107,    34,    77,    37,
       85,    36,    37,    99,    37,    28,   112,   113,   114,    39,
-      74,    37,    40,    37,     2,    40,   131,    40,   111,   111,
+      74,    37,    40,    37,     2,    40,   130,    40,   111,   111,
      111,   120,   115,   116,    40,    99,    40,    22,    97,    36,
-      37,    38,   -18,    28,   102,    37,    74,    39,    36,    37,
-      75,    74,    28,    40,     1,     1,   127,    70,    40,    13,
-       2,    94,    40,    36,    37,    38,     3,    28,    71,    35,
-      28,    39,   121,    94,   120,   120,   120,    40,    74,   124,
-     101,   107,    75,    36,    24,    25,    87,    28,    92,    88,
-     117,    90,   129,   132,   106,   108,    29,    32,    70,    88,
-      90,    92,    37,   102,    36,   125,    98,   130,   133,    76,
-     117,   119,   128,    86,    95,   100,    96,    30,   109,    33,
-      84,   110
+      37,    38,   -18,    28,   102,     1,    74,    39,    36,    37,
+      75,     2,    28,    40,    28,    70,   127,     3,    13,    92,
+      88,    94,    40,    36,    37,    38,    71,    28,    35,    24,
+      25,    39,   121,    94,   120,   120,   120,    40,    74,   124,
+     101,   107,    75,    36,   117,    90,    70,    28,    29,    32,
+     106,   108,     1,    87,    88,    37,    90,    92,    36,   102,
+     125,    98,   117,   131,    76,   128,    74,   129,   132,   119,
+      86,   100,    30,    95,    33,    84,   109,     0,    96,   110
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int16 yycheck[] =
 {
       16,    48,     4,    41,     7,     8,    53,     9,    15,     4,
       17,     3,     4,    46,     4,     7,    61,    62,    63,    11,
       10,     4,    17,     4,    12,    17,    16,    17,    61,    62,
       63,    69,    65,    66,    17,    68,    17,    19,    41,     3,
-       4,     5,    25,     7,    25,     4,    10,    11,     3,     4,
-      14,    10,     7,    17,     6,     6,   103,    13,    17,     0,
-      12,    99,    17,     3,     4,     5,    18,     7,    24,    10,
-       7,    11,    79,   111,   112,   113,   114,    17,    10,    81,
-     127,   128,    14,     3,    20,    21,     0,     7,    22,    23,
-       8,     9,   123,   124,    52,    53,     7,     8,    13,    23,
-       9,    22,     4,    25,     3,    15,    44,   123,   124,    15,
-       8,    68,   103,    18,    41,    46,    41,     7,    60,     8,
-      16,    60
+       4,     5,    25,     7,    25,     6,    10,    11,     3,     4,
+      14,    12,     7,    17,     7,    13,   103,    18,     0,    22,
+      23,    99,    17,     3,     4,     5,    24,     7,    10,    20,
+      21,    11,    79,   111,   112,   113,   114,    17,    10,    81,
+     127,   128,    14,     3,     8,     9,    13,     7,     7,     8,
+      52,    53,     6,     0,    23,     4,     9,    22,     3,    25,
+      15,    44,     8,   124,    15,   103,    10,   123,   124,    68,
+      18,    46,     7,    41,     8,    16,    60,    -1,    41,    60
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -629,8 +627,8 @@ static const yytype_uint8 yystos[] =
        9,    65,    22,    91,    45,    57,    58,    63,    28,    27,
       52,    34,    25,    42,    43,    44,    43,    34,    43,    90,
       91,    27,    92,    92,    92,    27,    27,     8,    64,    41,
-      45,    53,    48,    54,    75,    15,    71,    34,    39,    32,
-      66,    16,    32,    66,    76,    77
+      45,    53,    48,    54,    75,    15,    71,    34,    39,    66,
+      16,    32,    66,    76,    77
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -639,14 +637,14 @@ static const yytype_uint8 yyr1[] =
        0,    26,    27,    28,    29,    30,    31,    32,    32,    32,
       33,    34,    34,    35,    35,    35,    36,    37,    38,    39,
       39,    40,    40,    41,    41,    42,    43,    43,    44,    45,
-      46,    46,    47,    48,    48,    48,    48,    49,    50,    51,
-      52,    52,    53,    53,    53,    54,    55,    55,    55,    55,
-      55,    55,    56,    57,    58,    59,    59,    59,    59,    59,
-      60,    61,    62,    63,    64,    65,    66,    67,    68,    69,
-      70,    71,    72,    73,    73,    74,    75,    75,    76,    77,
-      78,    78,    78,    78,    78,    78,    78,    78,    79,    80,
-      81,    82,    83,    84,    84,    85,    86,    86,    87,    88,
-      89,    90,    91,    92,    92,    93
+      46,    46,    47,    48,    48,    48,    49,    50,    51,    52,
+      52,    53,    53,    53,    54,    55,    55,    55,    55,    55,
+      55,    56,    57,    58,    59,    59,    59,    59,    59,    60,
+      61,    62,    63,    64,    65,    66,    67,    68,    69,    70,
+      71,    72,    73,    73,    74,    75,    75,    76,    77,    78,
+      78,    78,    78,    78,    78,    78,    78,    79,    80,    81,
+      82,    83,    84,    84,    85,    86,    86,    87,    88,    89,
+      90,    91,    92,    92,    93
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -655,14 +653,14 @@ static const yytype_uint8 yyr2[] =
        0,     2,     1,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     2,     2,     2,     2,     1,     1,     1,     2,
        2,     2,     2,     2,     1,     1,     2,     2,     1,     1,
-       2,     2,     1,     2,     2,     2,     2,     2,     2,     2,
-       1,     1,     1,     1,     2,     2,     1,     2,     1,     2,
-       2,     1,     2,     2,     2,     1,     1,     2,     1,     2,
-       2,     2,     2,     1,     1,     1,     2,     1,     1,     2,
-       2,     1,     1,     2,     1,     1,     1,     2,     1,     1,
-       1,     2,     2,     1,     2,     2,     2,     2,     1,     2,
-       1,     1,     2,     2,     2,     2,     2,     2,     1,     1,
-       1,     1,     1,     2,     2,     1
+       2,     2,     1,     2,     2,     2,     2,     2,     2,     1,
+       1,     1,     1,     2,     2,     1,     2,     1,     2,     2,
+       1,     2,     2,     2,     1,     1,     2,     1,     2,     2,
+       2,     2,     1,     1,     1,     2,     1,     1,     2,     2,
+       1,     1,     2,     1,     1,     1,     2,     1,     1,     1,
+       2,     2,     1,     2,     2,     2,     2,     1,     2,     1,
+       1,     2,     2,     2,     2,     2,     2,     1,     1,     1,
+       1,     1,     2,     2,     1
 };
 
 
@@ -1604,7 +1602,7 @@ word.gcat="ENG_1Con";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_1Con->ENG_Con");
 
 }
-#line 1608 "y.tab.c" /* yacc.c:1646  */
+#line 1606 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
@@ -1617,7 +1615,7 @@ word.gcat="ENG_A";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_A->ENG_A_Stem");
 
 }
-#line 1621 "y.tab.c" /* yacc.c:1646  */
+#line 1619 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
@@ -1630,7 +1628,7 @@ word.gcat="ENG_A0NEG";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_A0NEG->ENG_A");
 
 }
-#line 1634 "y.tab.c" /* yacc.c:1646  */
+#line 1632 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
@@ -1643,7 +1641,7 @@ word.gcat="ENG_ANEG";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ANEG->ENG_ANEG_Stem");
 
 }
-#line 1647 "y.tab.c" /* yacc.c:1646  */
+#line 1645 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
@@ -1656,7 +1654,7 @@ word=lex->last_word_scanned(t_ENG_ANEG_Stem);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 1660 "y.tab.c" /* yacc.c:1646  */
+#line 1658 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
@@ -1669,7 +1667,7 @@ word.gcat="ENG_AP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Abar1");
 
 }
-#line 1673 "y.tab.c" /* yacc.c:1646  */
+#line 1671 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
@@ -1682,7 +1680,7 @@ word.gcat="ENG_AP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Abar2");
 
 }
-#line 1686 "y.tab.c" /* yacc.c:1646  */
+#line 1684 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
@@ -1695,7 +1693,7 @@ word.gcat="ENG_AP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Alist");
 
 }
-#line 1699 "y.tab.c" /* yacc.c:1646  */
+#line 1697 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
@@ -1708,7 +1706,7 @@ word=lex->last_word_scanned(t_ENG_A_Stem);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 1712 "y.tab.c" /* yacc.c:1646  */
+#line 1710 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
@@ -1721,7 +1719,7 @@ word.gcat="ENG_Abar1";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar1->ENG_A0NEG");
 
 }
-#line 1725 "y.tab.c" /* yacc.c:1646  */
+#line 1723 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
@@ -1733,7 +1731,7 @@ const node_info& ENG_A=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar1->ENG_ANEG ENG_A");
 
 }
-#line 1737 "y.tab.c" /* yacc.c:1646  */
+#line 1735 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
@@ -1745,7 +1743,7 @@ const node_info& ENG_CONJA=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Abar2 ENG_CONJA");
 
 }
-#line 1749 "y.tab.c" /* yacc.c:1646  */
+#line 1747 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
@@ -1757,7 +1755,7 @@ const node_info& ENG_CONJA=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Ahead ENG_CONJA");
 
 }
-#line 1761 "y.tab.c" /* yacc.c:1646  */
+#line 1759 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
@@ -1769,7 +1767,7 @@ const node_info& ENG_CONJA=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Alist ENG_CONJA");
 
 }
-#line 1773 "y.tab.c" /* yacc.c:1646  */
+#line 1771 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
@@ -1782,7 +1780,7 @@ word=lex->last_word_scanned(t_ENG_ADV);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 1786 "y.tab.c" /* yacc.c:1646  */
+#line 1784 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
@@ -1795,7 +1793,7 @@ word.gcat="ENG_AdvP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AdvP->ENG_Adv");
 
 }
-#line 1799 "y.tab.c" /* yacc.c:1646  */
+#line 1797 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
@@ -1808,7 +1806,7 @@ word.gcat="ENG_Ahead";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Ahead->ENG_Abar1");
 
 }
-#line 1812 "y.tab.c" /* yacc.c:1646  */
+#line 1810 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
@@ -1820,7 +1818,7 @@ const node_info& ENG_Abar12=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Alist->ENG_Abar1 ENG_Abar1");
 
 }
-#line 1824 "y.tab.c" /* yacc.c:1646  */
+#line 1822 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
@@ -1832,7 +1830,7 @@ const node_info& ENG_Abar1=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Alist->ENG_Alist ENG_Abar1");
 
 }
-#line 1836 "y.tab.c" /* yacc.c:1646  */
+#line 1834 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
@@ -1844,7 +1842,7 @@ const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CAP->ENG_1Con ENG_N_Pl_0Con_swC");
 
 }
-#line 1848 "y.tab.c" /* yacc.c:1646  */
+#line 1846 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
@@ -1856,7 +1854,7 @@ const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CAP->ENG_1Con ENG_N_Pl_0Con_swV");
 
 }
-#line 1860 "y.tab.c" /* yacc.c:1646  */
+#line 1858 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
@@ -1868,7 +1866,7 @@ const node_info& ENG_N=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CNP->ENG_AP ENG_N");
 
 }
-#line 1872 "y.tab.c" /* yacc.c:1646  */
+#line 1870 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
@@ -1881,7 +1879,7 @@ word.gcat="ENG_CNP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CNP->ENG_N");
 
 }
-#line 1885 "y.tab.c" /* yacc.c:1646  */
+#line 1883 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
@@ -1894,7 +1892,7 @@ word.gcat="ENG_CONJ";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJ->ENG_CONJ_Stem");
 
 }
-#line 1898 "y.tab.c" /* yacc.c:1646  */
+#line 1896 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
@@ -1906,7 +1904,7 @@ const node_info& ENG_Abar1=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJA->ENG_CONJ ENG_Abar1");
 
 }
-#line 1910 "y.tab.c" /* yacc.c:1646  */
+#line 1908 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
@@ -1918,7 +1916,7 @@ const node_info& ENG_Alist=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJA->ENG_CONJ ENG_Alist");
 
 }
-#line 1922 "y.tab.c" /* yacc.c:1646  */
+#line 1920 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
@@ -1931,7 +1929,7 @@ word=lex->last_word_scanned(t_ENG_CONJ_Stem);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 1935 "y.tab.c" /* yacc.c:1646  */
+#line 1933 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
@@ -1943,7 +1941,7 @@ word=lex->last_word_scanned(t_Con);
 (yyval)=sparser->set_node_info(word,empty_node_info);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Constant:"+word.word);
 }
-#line 1947 "y.tab.c" /* yacc.c:1646  */
+#line 1945 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
@@ -1955,7 +1953,7 @@ const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Indef_Det_a ENG_N_Sg_0Con_swC");
 
 }
-#line 1959 "y.tab.c" /* yacc.c:1646  */
+#line 1957 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
@@ -1967,7 +1965,7 @@ const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Indef_Det_an ENG_N_Sg_0Con_swV");
 
 }
-#line 1971 "y.tab.c" /* yacc.c:1646  */
+#line 1969 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
@@ -1980,23 +1978,11 @@ word=lex->last_word_scanned(t_ENG_DET);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 1984 "y.tab.c" /* yacc.c:1646  */
+#line 1982 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
 #line 352 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
-    {
-const node_info& ENG_NV=sparser->get_node_info((yyvsp[-1]));
-const node_info& ENG_AP=sparser->get_node_info((yyvsp[0]));
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-(yyval)=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_AP");
-}
-#line 1996 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 34:
-#line 360 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_NV=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
@@ -2004,11 +1990,11 @@ sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
 (yyval)=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
 }
-#line 2008 "y.tab.c" /* yacc.c:1646  */
+#line 1994 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 35:
-#line 368 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 34:
+#line 360 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_AP=sparser->get_node_info((yyvsp[0]));
@@ -2016,11 +2002,11 @@ sparser->add_feature_to_leaf(ENG_V,"RCV");
 (yyval)=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");
 }
-#line 2020 "y.tab.c" /* yacc.c:1646  */
+#line 2006 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 36:
-#line 376 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 35:
+#line 368 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
@@ -2028,11 +2014,11 @@ sparser->add_feature_to_leaf(ENG_V,"RCV");
 (yyval)=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
 }
-#line 2032 "y.tab.c" /* yacc.c:1646  */
+#line 2018 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 37:
-#line 385 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 36:
+#line 377 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Det_stem=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_IndefDet=sparser->get_node_info((yyvsp[0]));
@@ -2040,11 +2026,11 @@ const node_info& ENG_lfea_IndefDet=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det->ENG_Det_stem ENG_lfea_IndefDet");
 
 }
-#line 2044 "y.tab.c" /* yacc.c:1646  */
+#line 2030 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 38:
-#line 394 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 37:
+#line 386 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Indef_Det=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_fwConsonant=sparser->get_node_info((yyvsp[0]));
@@ -2052,11 +2038,11 @@ const node_info& ENG_lfea_fwConsonant=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det_a->ENG_Indef_Det ENG_lfea_fwConsonant");
 
 }
-#line 2056 "y.tab.c" /* yacc.c:1646  */
+#line 2042 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 39:
-#line 403 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 38:
+#line 395 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Indef_Det=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_fwVowel=sparser->get_node_info((yyvsp[0]));
@@ -2064,11 +2050,11 @@ const node_info& ENG_lfea_fwVowel=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det_an->ENG_Indef_Det ENG_lfea_fwVowel");
 
 }
-#line 2068 "y.tab.c" /* yacc.c:1646  */
+#line 2054 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 40:
-#line 412 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 39:
+#line 404 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_N_Pl=sparser->get_node_info((yyvsp[0]));
@@ -2077,11 +2063,11 @@ word.gcat="ENG_N";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N->ENG_N_Pl");
 
 }
-#line 2081 "y.tab.c" /* yacc.c:1646  */
+#line 2067 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 41:
-#line 421 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 40:
+#line 413 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_N_Sg=sparser->get_node_info((yyvsp[0]));
@@ -2090,11 +2076,11 @@ word.gcat="ENG_N";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N->ENG_N_Sg");
 
 }
-#line 2094 "y.tab.c" /* yacc.c:1646  */
+#line 2080 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 42:
-#line 431 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 41:
+#line 423 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_CAP=sparser->get_node_info((yyvsp[0]));
@@ -2103,11 +2089,11 @@ word.gcat="ENG_NP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CAP");
 
 }
-#line 2107 "y.tab.c" /* yacc.c:1646  */
+#line 2093 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 43:
-#line 440 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 42:
+#line 432 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
@@ -2116,11 +2102,11 @@ word.gcat="ENG_NP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CNP");
 
 }
-#line 2120 "y.tab.c" /* yacc.c:1646  */
+#line 2106 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 44:
-#line 449 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 43:
+#line 441 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_QPro=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
@@ -2128,11 +2114,11 @@ const node_info& ENG_CNP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_QPro ENG_CNP");
 
 }
-#line 2132 "y.tab.c" /* yacc.c:1646  */
+#line 2118 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 45:
-#line 458 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 44:
+#line 450 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_VNEG=sparser->get_node_info((yyvsp[0]));
@@ -2140,11 +2126,11 @@ const node_info& ENG_VNEG=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NV->ENG_V ENG_VNEG");
 
 }
-#line 2144 "y.tab.c" /* yacc.c:1646  */
+#line 2130 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 46:
-#line 467 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 45:
+#line 459 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info((yyvsp[0]));
@@ -2153,11 +2139,11 @@ word.gcat="ENG_N_Pl";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swC");
 
 }
-#line 2157 "y.tab.c" /* yacc.c:1646  */
+#line 2143 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 47:
-#line 476 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 46:
+#line 468 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
@@ -2165,11 +2151,11 @@ const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swC ENG_nCon");
 
 }
-#line 2169 "y.tab.c" /* yacc.c:1646  */
+#line 2155 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 48:
-#line 484 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 47:
+#line 476 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info((yyvsp[0]));
@@ -2178,11 +2164,11 @@ word.gcat="ENG_N_Pl";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swV");
 
 }
-#line 2182 "y.tab.c" /* yacc.c:1646  */
+#line 2168 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 49:
-#line 493 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 48:
+#line 485 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
@@ -2190,22 +2176,22 @@ const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swV ENG_nCon");
 
 }
-#line 2194 "y.tab.c" /* yacc.c:1646  */
+#line 2180 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 50:
-#line 501 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 49:
+#line 493 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 //Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 //that a singular noun cannot combine with more than one constant like in 'list file abc def'
 //TODO: Any better solution???
 return -1;
 }
-#line 2205 "y.tab.c" /* yacc.c:1646  */
+#line 2191 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 51:
-#line 508 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 50:
+#line 500 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_nCon=sparser->get_node_info((yyvsp[0]));
@@ -2214,11 +2200,11 @@ word.gcat="ENG_N_Pl";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_nCon");
 
 }
-#line 2218 "y.tab.c" /* yacc.c:1646  */
+#line 2204 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 52:
-#line 518 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 51:
+#line 510 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_N_lfea_Pl=sparser->get_node_info((yyvsp[0]));
@@ -2226,11 +2212,11 @@ const node_info& ENG_N_lfea_Pl=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con->ENG_N_Stem ENG_N_lfea_Pl");
 
 }
-#line 2230 "y.tab.c" /* yacc.c:1646  */
+#line 2216 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 53:
-#line 527 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 52:
+#line 519 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_swConsonant=sparser->get_node_info((yyvsp[0]));
@@ -2238,11 +2224,11 @@ const node_info& ENG_lfea_swConsonant=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con_swC->ENG_N_Pl_0Con ENG_lfea_swConsonant");
 
 }
-#line 2242 "y.tab.c" /* yacc.c:1646  */
+#line 2228 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 54:
-#line 536 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 53:
+#line 528 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Pl_0Con=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_swVowel=sparser->get_node_info((yyvsp[0]));
@@ -2250,11 +2236,11 @@ const node_info& ENG_lfea_swVowel=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con_swV->ENG_N_Pl_0Con ENG_lfea_swVowel");
 
 }
-#line 2254 "y.tab.c" /* yacc.c:1646  */
+#line 2240 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 55:
-#line 545 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 54:
+#line 537 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
@@ -2263,11 +2249,11 @@ word.gcat="ENG_N_Sg";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_1Con");
 
 }
-#line 2267 "y.tab.c" /* yacc.c:1646  */
+#line 2253 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 56:
-#line 554 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 55:
+#line 546 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info((yyvsp[0]));
@@ -2276,11 +2262,11 @@ word.gcat="ENG_N_Sg";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swC");
 
 }
-#line 2280 "y.tab.c" /* yacc.c:1646  */
+#line 2266 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 57:
-#line 563 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 56:
+#line 555 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
@@ -2288,11 +2274,11 @@ const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con");
 
 }
-#line 2292 "y.tab.c" /* yacc.c:1646  */
+#line 2278 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 58:
-#line 571 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 57:
+#line 563 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info((yyvsp[0]));
@@ -2301,11 +2287,11 @@ word.gcat="ENG_N_Sg";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swV");
 
 }
-#line 2305 "y.tab.c" /* yacc.c:1646  */
+#line 2291 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 59:
-#line 580 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 58:
+#line 572 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
@@ -2313,11 +2299,11 @@ const node_info& ENG_1Con=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swV ENG_1Con");
 
 }
-#line 2317 "y.tab.c" /* yacc.c:1646  */
+#line 2303 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 60:
-#line 589 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 59:
+#line 581 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Stem=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_N_lfea_Sg=sparser->get_node_info((yyvsp[0]));
@@ -2325,11 +2311,11 @@ const node_info& ENG_N_lfea_Sg=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg");
 
 }
-#line 2329 "y.tab.c" /* yacc.c:1646  */
+#line 2315 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 61:
-#line 598 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 60:
+#line 590 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Sg_0Con=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_swConsonant=sparser->get_node_info((yyvsp[0]));
@@ -2337,11 +2323,11 @@ const node_info& ENG_lfea_swConsonant=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant");
 
 }
-#line 2341 "y.tab.c" /* yacc.c:1646  */
+#line 2327 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 62:
-#line 607 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 61:
+#line 599 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_N_Sg_0Con=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_lfea_swVowel=sparser->get_node_info((yyvsp[0]));
@@ -2349,11 +2335,11 @@ const node_info& ENG_lfea_swVowel=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con_swV->ENG_N_Sg_0Con ENG_lfea_swVowel");
 
 }
-#line 2353 "y.tab.c" /* yacc.c:1646  */
+#line 2339 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 63:
-#line 616 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 62:
+#line 608 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2362,11 +2348,11 @@ word=lex->last_word_scanned(t_ENG_N_Stem);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2366 "y.tab.c" /* yacc.c:1646  */
+#line 2352 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 64:
-#line 626 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 63:
+#line 618 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2375,11 +2361,11 @@ word=lex->last_word_scanned(t_ENG_N_Pl);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2379 "y.tab.c" /* yacc.c:1646  */
+#line 2365 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 65:
-#line 636 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 64:
+#line 628 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2388,11 +2374,11 @@ word=lex->last_word_scanned(t_ENG_N_Sg);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2392 "y.tab.c" /* yacc.c:1646  */
+#line 2378 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 66:
-#line 646 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 65:
+#line 638 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Prep=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
@@ -2400,11 +2386,11 @@ const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PP->ENG_Prep ENG_NP");
 
 }
-#line 2404 "y.tab.c" /* yacc.c:1646  */
+#line 2390 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 67:
-#line 655 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 66:
+#line 647 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2413,11 +2399,11 @@ word=lex->last_word_scanned(t_ENG_PREP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2417 "y.tab.c" /* yacc.c:1646  */
+#line 2403 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 68:
-#line 665 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 67:
+#line 657 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2426,11 +2412,11 @@ word=lex->last_word_scanned(t_ENG_QPRO);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2430 "y.tab.c" /* yacc.c:1646  */
+#line 2416 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 69:
-#line 675 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 68:
+#line 667 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_RPro=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_IVP=sparser->get_node_info((yyvsp[0]));
@@ -2438,11 +2424,11 @@ const node_info& ENG_IVP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RC->ENG_RPro ENG_IVP");
 
 }
-#line 2442 "y.tab.c" /* yacc.c:1646  */
+#line 2428 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 70:
-#line 684 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 69:
+#line 676 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_RPro_stem=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_RPro_lfea_relative=sparser->get_node_info((yyvsp[0]));
@@ -2450,11 +2436,11 @@ const node_info& ENG_RPro_lfea_relative=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RPro->ENG_RPro_stem ENG_RPro_lfea_relative");
 
 }
-#line 2454 "y.tab.c" /* yacc.c:1646  */
+#line 2440 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 71:
-#line 693 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 70:
+#line 685 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2463,11 +2449,11 @@ word=lex->last_word_scanned(t_ENG_RPRO_Relative);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2467 "y.tab.c" /* yacc.c:1646  */
+#line 2453 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 72:
-#line 703 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 71:
+#line 695 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2476,11 +2462,11 @@ word=lex->last_word_scanned(t_ENG_RPRO);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2480 "y.tab.c" /* yacc.c:1646  */
+#line 2466 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 73:
-#line 713 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 72:
+#line 705 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Tense_particle=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_V_Stem=sparser->get_node_info((yyvsp[0]));
@@ -2488,11 +2474,11 @@ const node_info& ENG_V_Stem=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_TP->ENG_Tense_particle ENG_V_Stem");
 
 }
-#line 2492 "y.tab.c" /* yacc.c:1646  */
+#line 2478 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 74:
-#line 721 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 73:
+#line 713 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_V_ger=sparser->get_node_info((yyvsp[0]));
@@ -2501,11 +2487,11 @@ word.gcat="ENG_TP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_TP->ENG_V_ger");
 
 }
-#line 2505 "y.tab.c" /* yacc.c:1646  */
+#line 2491 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 75:
-#line 731 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 74:
+#line 723 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2514,11 +2500,11 @@ word=lex->last_word_scanned(t_ENG_PAR);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2518 "y.tab.c" /* yacc.c:1646  */
+#line 2504 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 76:
-#line 741 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 75:
+#line 733 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_V_Stem=sparser->get_node_info((yyvsp[0]));
@@ -2527,11 +2513,11 @@ word.gcat="ENG_V";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem");
 
 }
-#line 2531 "y.tab.c" /* yacc.c:1646  */
+#line 2517 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 77:
-#line 750 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 76:
+#line 742 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V_Stem=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_V_lfea_aux=sparser->get_node_info((yyvsp[0]));
@@ -2539,11 +2525,11 @@ const node_info& ENG_V_lfea_aux=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem ENG_V_lfea_aux");
 
 }
-#line 2543 "y.tab.c" /* yacc.c:1646  */
+#line 2529 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 78:
-#line 759 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 77:
+#line 751 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_VNEG_Stem=sparser->get_node_info((yyvsp[0]));
@@ -2552,11 +2538,11 @@ word.gcat="ENG_VNEG";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VNEG->ENG_VNEG_Stem");
 
 }
-#line 2556 "y.tab.c" /* yacc.c:1646  */
+#line 2542 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 79:
-#line 769 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 78:
+#line 761 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2565,11 +2551,11 @@ word=lex->last_word_scanned(t_ENG_VNEG_Stem);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2569 "y.tab.c" /* yacc.c:1646  */
+#line 2555 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 80:
-#line 779 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 79:
+#line 771 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[0]));
@@ -2578,11 +2564,11 @@ word.gcat="ENG_VP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1");
 
 }
-#line 2582 "y.tab.c" /* yacc.c:1646  */
+#line 2568 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 81:
-#line 788 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 80:
+#line 780 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
@@ -2590,11 +2576,11 @@ const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 ENG_AdvP");
 
 }
-#line 2594 "y.tab.c" /* yacc.c:1646  */
+#line 2580 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 82:
-#line 796 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 81:
+#line 788 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
@@ -2602,11 +2588,11 @@ const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 ENG_RC");
 
 }
-#line 2606 "y.tab.c" /* yacc.c:1646  */
+#line 2592 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 83:
-#line 804 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 82:
+#line 796 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[0]));
@@ -2615,11 +2601,11 @@ word.gcat="ENG_VP";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2");
 
 }
-#line 2619 "y.tab.c" /* yacc.c:1646  */
+#line 2605 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 84:
-#line 813 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 83:
+#line 805 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
@@ -2627,11 +2613,11 @@ const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 ENG_PP");
 
 }
-#line 2631 "y.tab.c" /* yacc.c:1646  */
+#line 2617 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 85:
-#line 821 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 84:
+#line 813 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar2=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
@@ -2639,11 +2625,11 @@ const node_info& ENG_RC=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 ENG_RC");
 
 }
-#line 2643 "y.tab.c" /* yacc.c:1646  */
+#line 2629 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 86:
-#line 829 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 85:
+#line 821 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar3=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
@@ -2651,11 +2637,11 @@ const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar3 ENG_NP");
 
 }
-#line 2655 "y.tab.c" /* yacc.c:1646  */
+#line 2641 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 87:
-#line 837 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 86:
+#line 829 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar4=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_DP=sparser->get_node_info((yyvsp[0]));
@@ -2663,11 +2649,11 @@ const node_info& ENG_DP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar4 ENG_DP");
 
 }
-#line 2667 "y.tab.c" /* yacc.c:1646  */
+#line 2653 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 88:
-#line 846 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 87:
+#line 838 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2676,11 +2662,11 @@ word=lex->last_word_scanned(t_ENG_V_Stem);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2680 "y.tab.c" /* yacc.c:1646  */
+#line 2666 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 89:
-#line 856 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 88:
+#line 848 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V_Stem=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_V_lfea_ger=sparser->get_node_info((yyvsp[0]));
@@ -2688,11 +2674,11 @@ const node_info& ENG_V_lfea_ger=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V_ger->ENG_V_Stem ENG_V_lfea_ger");
 
 }
-#line 2692 "y.tab.c" /* yacc.c:1646  */
+#line 2678 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 90:
-#line 865 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 89:
+#line 857 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2701,11 +2687,11 @@ word=lex->last_word_scanned(t_ENG_V_Aux);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2705 "y.tab.c" /* yacc.c:1646  */
+#line 2691 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 91:
-#line 875 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 90:
+#line 867 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2714,11 +2700,11 @@ word=lex->last_word_scanned(t_ENG_V_Gerund);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2718 "y.tab.c" /* yacc.c:1646  */
+#line 2704 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 92:
-#line 885 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 91:
+#line 877 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
@@ -2726,11 +2712,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 (yyval)=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");
 }
-#line 2730 "y.tab.c" /* yacc.c:1646  */
+#line 2716 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 93:
-#line 894 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 92:
+#line 886 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
@@ -2738,11 +2724,11 @@ const node_info& ENG_NP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar2->ENG_Vbar1 ENG_NP");
 
 }
-#line 2742 "y.tab.c" /* yacc.c:1646  */
+#line 2728 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 94:
-#line 902 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 93:
+#line 894 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_Vbar1=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
@@ -2750,11 +2736,11 @@ const node_info& ENG_PP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar2->ENG_Vbar1 ENG_PP");
 
 }
-#line 2754 "y.tab.c" /* yacc.c:1646  */
+#line 2740 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 95:
-#line 911 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 94:
+#line 903 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_V=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
@@ -2762,11 +2748,11 @@ const node_info& ENG_AdvP=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar3->ENG_V ENG_AdvP");
 
 }
-#line 2766 "y.tab.c" /* yacc.c:1646  */
+#line 2752 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 96:
-#line 920 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 95:
+#line 912 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_DP=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_V=sparser->get_node_info((yyvsp[0]));
@@ -2774,11 +2760,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 (yyval)=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");
 }
-#line 2778 "y.tab.c" /* yacc.c:1646  */
+#line 2764 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 97:
-#line 928 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 96:
+#line 920 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_TP=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_V=sparser->get_node_info((yyvsp[0]));
@@ -2786,11 +2772,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 (yyval)=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");
 }
-#line 2790 "y.tab.c" /* yacc.c:1646  */
+#line 2776 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 98:
-#line 937 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 97:
+#line 929 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2799,11 +2785,11 @@ word=lex->last_word_scanned(t_ENG_DET_Indef);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2803 "y.tab.c" /* yacc.c:1646  */
+#line 2789 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 99:
-#line 947 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 98:
+#line 939 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2812,11 +2798,11 @@ word=lex->last_word_scanned(t_ENG_DET_fwConsonant);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2816 "y.tab.c" /* yacc.c:1646  */
+#line 2802 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 100:
-#line 957 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 99:
+#line 949 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2825,11 +2811,11 @@ word=lex->last_word_scanned(t_ENG_DET_fwVowel);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2829 "y.tab.c" /* yacc.c:1646  */
+#line 2815 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 101:
-#line 967 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 100:
+#line 959 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2838,11 +2824,11 @@ word=lex->last_word_scanned(t_ENG_N_swConsonant);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2842 "y.tab.c" /* yacc.c:1646  */
+#line 2828 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 102:
-#line 977 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 101:
+#line 969 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& empty_node_info={};
@@ -2851,11 +2837,11 @@ word=lex->last_word_scanned(t_ENG_N_swVowel);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 
 }
-#line 2855 "y.tab.c" /* yacc.c:1646  */
+#line 2841 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 103:
-#line 987 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 102:
+#line 979 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_1Con=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
@@ -2863,11 +2849,11 @@ const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_nCon->ENG_1Con ENG_Con");
 
 }
-#line 2867 "y.tab.c" /* yacc.c:1646  */
+#line 2853 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 104:
-#line 995 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 103:
+#line 987 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 const node_info& ENG_nCon=sparser->get_node_info((yyvsp[-1]));
 const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
@@ -2875,11 +2861,11 @@ const node_info& ENG_Con=sparser->get_node_info((yyvsp[0]));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_nCon->ENG_nCon ENG_Con");
 
 }
-#line 2879 "y.tab.c" /* yacc.c:1646  */
+#line 2865 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 105:
-#line 1004 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
+  case 104:
+#line 996 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1646  */
     {
 lexicon word;
 const node_info& ENG_VP=sparser->get_node_info((yyvsp[0]));
@@ -2888,11 +2874,11 @@ word.gcat="S";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP");
 
 }
-#line 2892 "y.tab.c" /* yacc.c:1646  */
+#line 2878 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2896 "y.tab.c" /* yacc.c:1646  */
+#line 2882 "y.tab.c" /* yacc.c:1646  */
         default: break;
       }
     if (yychar_backup != yychar)
@@ -3132,7 +3118,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1012 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1906  */
+#line 1004 "/home/r0ller/hi/alice/hi_desktop/hi.y" /* yacc.c:1906  */
 
 int yylex(void){
 	int token;
@@ -3281,6 +3267,17 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		catch(invalid_combination& exception){
 			token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+			if(token_paths->is_any_left()==true){
+				delete sparser;
+				sparser=NULL;
+				delete lex;
+				lex=NULL;
+				transgraph=NULL;
+			}
+		}
+		catch(dependency_counter_manner_validation_failed& exception){
+			token_paths->invalidate_path(lex->word_entries(),"semantic error",&exception);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error:"+std::string(exception.what()));
 			if(token_paths->is_any_left()==true){
 				delete sparser;
 				sparser=NULL;

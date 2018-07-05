@@ -153,6 +153,17 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				transgraph=NULL;
 			}
 		}
+		catch(dependency_counter_manner_validation_failed& exception){
+			token_paths->invalidate_path(lex->word_entries(),"semantic error",&exception);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error:"+std::string(exception.what()));
+			if(token_paths->is_any_left()==true){
+				delete sparser;
+				sparser=NULL;
+				delete lex;
+				lex=NULL;
+				transgraph=NULL;
+			}
+		}
 		catch(invalid_token_path& exception){
 			delete sparser;
 			sparser=NULL;

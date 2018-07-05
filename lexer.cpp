@@ -276,15 +276,13 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	}
 	else{
 		for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
 			semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
 			ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
 				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
 			}
 		}
-	}
-	for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
 	}
 	return dependencies;
 }

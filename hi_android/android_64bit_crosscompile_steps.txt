@@ -1,0 +1,115 @@
+HOW TO BUILD HI FOR ANDROID:
+
+NOTE: This is a recipe for a static linked build of prerequisites to build a shared library for foma.
+
+INSTALL: Android SDK, Android NDK
+
+1) CREATE TOOLCHAIN (based on https://developer.android.com/ndk/guides/standalone_toolchain.html):
+
+After unzipping ndk and replacing the system check for Linux in case of NetBSD in the py script, run in the build/tools dir:
+$ ./make_standalone_toolchain.py --arch=arm64 --api=23 --stl=libc++ --install-dir=${HOME}/myandroidtoolchain64
+
+Insert the toolchain directory in the PATH env.variable of the user in the user profile.
+
+2) BUILD NCURSES-5.9 FOR ARM (based on http://how-to-build-for-arm.wikispaces.com/ncurses):
+
+$ export NCURSES_SRC=~/ncurses-6.1
+$ export NCURSES_BUILD=${NCURSES_SRC}/build_arm64
+$ mkdir -pv ~/ncurses
+$ mkdir $NCURSES_SRC && mkdir $NCURSES_BUILD
+$ mkdir ~/ncurses-6.1/final_arm64
+$ cd $NCURSES_SRC
+$ export TARGETMACH=aarch64-linux-android
+$ export CROSS=aarch64-linux-android
+$ export CC=${CROSS}-gcc
+$ export LD=${CROSS}-ld
+$ export AS=${CROSS}-as
+$ export CXX=${CROSS}-g++
+$ cd $NCURSES_BUILD/
+$ $NCURSES_SRC/./configure --prefix=${NCURSES_SRC}/final_arm64 --host=$TARGETMACH --enable-termcap --with-termlib --without-ada --without-debug --without-progs --without-tests
+$ make
+$ make install
+
+3) BUILD READLINE-7.0 FOR ARM:
+
+$ export READLINE_SRC=~/readline-7.0
+$ export READLINE_BUILD=~/readline-7.0/build_arm64
+$ mkdir -pv ~/workbench/readline
+$ mkdir $READLINE_SRC && mkdir $READLINE_BUILD
+$ mkdir ~/readline-7.0/final_arm64
+$ cd $READLINE_SRC
+$ export TARGETMACH=aarch64-linux-android
+$ export CROSS=aarch64-linux-android
+$ export CC=${CROSS}-gcc
+$ export LD=${CROSS}-ld
+$ export AS=${CROSS}-as
+$ export CXX=${CROSS}-g++
+$ export bash_cv_wcwidth_broken=no
+$ export ac_cv_func_malloc_0_nonnull=yes
+$ export ac_cv_func_realloc_0_nonnull=yes
+$ cd $READLINE_BUILD/
+$ $READLINE_SRC/./configure --prefix=${READLINE_SRC}/final_arm64 --host=$TARGETMACH LDFLAGS=-L${NCURSES_SRC}/final_arm64/lib
+$ make
+$ make install
+
+4) BUILD ZLIB-1.2.11 FOR ARM (based on http://how-to-build-for-arm.wikispaces.com/zlib):
+
+$ export ZLIB_SRC=~/zlib-1.2.11
+$ mkdir -pv ~/zlib-1.2.11
+$ mkdir $ZLIB_SRC
+$ mkdir ~/zlib-1.2.11/final_arm64
+$ cd $ZLIB_SRC
+$ export TARGETMACH=aarch64-linux-android
+$ export CROSS=aarch64-linux-android
+$ export CC=${CROSS}-gcc
+$ export LD=${CROSS}-ld
+$ export AS=${CROSS}-as
+$ export CXX=${CROSS}-g++
+$ ./configure --prefix=${ZLIB_SRC}/final_arm64
+$ make
+$ make install
+
+5) BUILD FOMA-0.9.18 FOR ARM:
+
+Copy all STATIC (*.a) libraries created as the output of steps 2-4) into a separate library like ~/hi_arm64libs
+
+$ mkdir ~/foma-0.9.18/final_arm64
+$ cd ~/foma-0.9.18
+
+Modify in the Makefile in the foma source directory the following lines:
+
+prefix = ${HOME}/foma-0.9.18/foma/final_arm64
+exec_prefix = $(prefix)
+libdir = $(exec_prefix)/lib
+bindir = $(exec_prefix)/bin
+includedir = $(prefix)/include
+
+CC = aarch64-linux-android-gcc
+RANLIB = aarch64-linux-android-ranlib
+LDFLAGS = -L${HOME}/hi_arm64libs -lreadline -lz -ltinfo
+CFLAGS = -O3 -Wall -D_GNU_SOURCE -std=c99 -I${HOME}/readline-7.0/final_arm64/include -fvisibility=hidden -fPIC -DSVN_REV=$(SVN_REV)
+
+ifeq ($(UNAME), Darwin)
+	SHAREDLIB = libfoma.dylib
+	SHAREDLIBV = libfoma.$(VERSION).dylib
+	SHAREDLIBM = libfoma.0.dylib
+	AR = libtool
+	ARFLAGS = -static -o
+	DFLAG = -dylib_install_name
+else 
+	SHAREDLIB = libfoma.so
+	SHAREDLIBV = libfoma.so
+	SHAREDLIBM = libfoma.so
+	AR = aarch64-linux-android-ar
+	ARFLAGS = cru
+	DFLAG = -soname
+endif
+
+
+After that: make and then make install
+
+Android project related steps:
+1)hilib needs to be created with createlib64.sh instead of ndk-build and needs a few includes and library paths to be set which should be correctly set in the script and the followings shall be found in the corresponding android project directories:
+includes - fomalib.h, fomalibconf.h
+libs - libfoma.so
+2)in the asset folder of the project, the foma generated fst you want to use and the hi.db must be copied as well

@@ -26,7 +26,7 @@ set_target_properties( # Specifies the target library.
                        PROPERTIES IMPORTED_LOCATION
 
                        # Provides the path to the library you want to import.
-                       ${PROJECT_SOURCE_DIR}/jni/libfoma.so
+                       ${PROJECT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libfoma.so
                        )
 
 add_library( # Sets the name of the library.
@@ -45,7 +45,7 @@ set_target_properties( # Specifies the target library.
                        PROPERTIES IMPORTED_LOCATION
 
                        # Provides the path to the library you want to import.
-                       ${PROJECT_SOURCE_DIR}/jni/libhilib.so
+                       ${PROJECT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libhilib.so
                        )
 
 add_library( # Sets the name of the library.
