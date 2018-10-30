@@ -105,33 +105,35 @@ string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencie
 	return script;
 }
 
-string transcript(Document& jsondoc){
+string transcript(const unsigned int toa,Document& jsondoc){
 	string script;
 	vector<string> arguments;
+	Value morphology,syntax,semantics;
 
 	if(jsondoc.HasMember("analyses")==true){
 		Value& analysesArray = jsondoc["analyses"];
 		if(analysesArray.IsArray()==true&&analysesArray.Size()>0){
 			Value& analysis=analysesArray[0];
-			Value& morphology=analysis["morphology"];
-			Value& syntax=analysis["syntax"];
-			Value& semantics=analysis["semantics"];
-			Value relatedSemantics;
-			if(analysis.HasMember("related semantics")==true){
-				relatedSemantics=analysis["related semantics"];
-			}
-			Value& functors=analysis["functors"];
-			if(analysis.HasMember("errors")==false){
-				if(semantics.Size()>0){
-					script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
+			if(toa&HI_MORPHOLOGY) morphology=analysis["morphology"];
+			if(toa&HI_SYNTAX) syntax=analysis["syntax"];
+			if(toa&HI_SEMANTICS){
+				semantics=analysis["semantics"];
+				Value relatedSemantics;
+				if(analysis.HasMember("related semantics")==true){
+					relatedSemantics=analysis["related semantics"];
+				}
+				Value& functors=analysis["functors"];
+				if(analysis.HasMember("errors")==false){
+					if(semantics.Size()>0){
+						script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
+					}
+					else{
+
+					}
 				}
 				else{
 
 				}
-			}
-			else{
-				Value& errors=analysis["errors"];
-
 			}
 		}
 	}
@@ -144,25 +146,28 @@ int main(int argc,char **argv){
 	string text,script;
 	FILE *fp;
 	char line[256];
+	unsigned char toa=0;
 
 	while(true){
 		getline(cin,text);
 		if(text.empty()==false){
-			analyses=hi(text.c_str(),"ENG",HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS,"","hi_desktop/hi.db");
+			toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+			analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db");
 			if(analyses!=NULL){
 				cout<<analyses<<endl;
 				Document jsondoc;
 				jsondoc.Parse(analyses);
-				script=transcript(jsondoc);
-				if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
-				cout<<script<<endl;
-				fp=popen(script.c_str(),"r");
-				if(fp!=NULL){
-					while(fgets(line,sizeof line,fp))
-					{
-						cout<<line<<endl;
+				script=transcript(toa,jsondoc);
+				if(script.length()>0){
+					if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
+					fp=popen(script.c_str(),"r");
+					if(fp!=NULL){
+						while(fgets(line,sizeof line,fp))
+						{
+							cout<<line<<endl;
+						}
+						pclose(fp);
 					}
-					pclose(fp);
 				}
 			}
 			text.clear();

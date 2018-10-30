@@ -13,7 +13,7 @@ interpreter::~interpreter(){
 	destroy_node_infos();
 }
 
-int interpreter::set_node_info(const lexicon& word, const node_info& node){
+int interpreter::set_node_info(const std::string& symbol, const lexicon& word){
 	node_info nodeinfo;
 	db *sqlite=NULL;
 	unsigned int rule_step_failed=0;
@@ -22,7 +22,26 @@ int interpreter::set_node_info(const lexicon& word, const node_info& node){
 	if(word.gcat.empty()==true){
 		throw std::runtime_error("No way that I set an empty gcat for a node.");
 	}
-	nodeinfo.symbol=word.gcat;
+	nodeinfo.symbol=symbol;
+	if(word.lexeme.empty()==false) nodeinfo.expression=word;
+	nodeinfo.left_child=0;
+	nodeinfo.right_child=0;
+	node_infos.push_back(nodeinfo);
+	return nodeinfo.node_id;
+}
+
+int interpreter::set_node_info(const std::string& symbol, const node_info& node){
+	lexicon word;
+	node_info nodeinfo;
+	db *sqlite=NULL;
+	unsigned int rule_step_failed=0;
+
+	word.gcat=symbol;
+	nodeinfo.node_id=++nr_of_nodes;
+	if(word.gcat.empty()==true){
+		throw std::runtime_error("No way that I set an empty gcat for a node.");
+	}
+	nodeinfo.symbol=symbol;
 	if(word.lexeme.empty()==false) nodeinfo.expression=word;
 	nodeinfo.left_child=0;
 	nodeinfo.right_child=node.node_id;
@@ -299,36 +318,38 @@ void interpreter::find_functors_for_dependency(const std::string& dependency, co
 	std::string lexeme,lexeme_d_key;
 	std::vector<std::pair<unsigned int,std::string> >::const_iterator j;
 
-	depolex_entry=dependencies.first_value_for_field_name_found("semantic_dependency",dependency);
-	if(d_key.empty()==false){
-		while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
-				&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
-			depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
-		}
-	}
-	while(depolex_entry!=NULL){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for functor with dependency "
-		+*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")+" with d_key "
-		+*dependencies.field_value_at_row_position(depolex_entry->first,"d_key"));
-		lexeme=*dependencies.field_value_at_row_position(depolex_entry->first,"lexeme");
-		lexeme_d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"d_key");
-		for(j=dependency_stack.begin();j!=dependency_stack.end();++j){
-			if(j->first==depolex_entry->first&&j->second==depolex_entry->second.field_value) break;
-		}
-		if(j==dependency_stack.end()){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"push to dependency stack the row index:"+std::to_string(depolex_entry->first)+" and semantic dependency:"+depolex_entry->second.field_value);
-			dependency_stack.push_back(std::make_pair(depolex_entry->first,depolex_entry->second.field_value));
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in functors_found an entry with row id "+std::to_string(dependency_stack.begin()->first)+", functor="+lexeme+" d_key="+lexeme_d_key);
-			functors_found.insert(std::make_pair(std::make_pair(lexeme,lexeme_d_key),*dependency_stack.begin()));
-			find_functors_for_dependency(lexeme,lexeme_d_key,dependencies,functors_found,dependency_stack);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"pop from dependency stack the row index:"+std::to_string(depolex_entry->first)+" and semantic dependency:"+depolex_entry->second.field_value);
-			dependency_stack.pop_back();
-		}
-		depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+	if(&dependencies!=NULL){//c++ battlefield: null object reference is possible, check it
+		depolex_entry=dependencies.first_value_for_field_name_found("semantic_dependency",dependency);
 		if(d_key.empty()==false){
 			while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
 					&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
 				depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+			}
+		}
+		while(depolex_entry!=NULL){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for functor with dependency "
+			+*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")+" with d_key "
+			+*dependencies.field_value_at_row_position(depolex_entry->first,"d_key"));
+			lexeme=*dependencies.field_value_at_row_position(depolex_entry->first,"lexeme");
+			lexeme_d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"d_key");
+			for(j=dependency_stack.begin();j!=dependency_stack.end();++j){
+				if(j->first==depolex_entry->first&&j->second==depolex_entry->second.field_value) break;
+			}
+			if(j==dependency_stack.end()){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"push to dependency stack the row index:"+std::to_string(depolex_entry->first)+" and semantic dependency:"+depolex_entry->second.field_value);
+				dependency_stack.push_back(std::make_pair(depolex_entry->first,depolex_entry->second.field_value));
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in functors_found an entry with row id "+std::to_string(dependency_stack.begin()->first)+", functor="+lexeme+" d_key="+lexeme_d_key);
+				functors_found.insert(std::make_pair(std::make_pair(lexeme,lexeme_d_key),*dependency_stack.begin()));
+				find_functors_for_dependency(lexeme,lexeme_d_key,dependencies,functors_found,dependency_stack);
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"pop from dependency stack the row index:"+std::to_string(depolex_entry->first)+" and semantic dependency:"+depolex_entry->second.field_value);
+				dependency_stack.pop_back();
+			}
+			depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+			if(d_key.empty()==false){
+				while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
+						&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
+					depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+				}
 			}
 		}
 	}
@@ -341,8 +362,9 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"get nodes by symbol: "+symbol);
 	if(symbol.empty()==false){
 		if(root_node.symbol==symbol&&lexeme.empty()==true
-			||root_node.symbol!=symbol&&lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->is_mocked()==false&&root_node.expression.morphalytics->has_feature(symbol)==true
-			||root_node.symbol==symbol&&lexeme.empty()==false&&root_node.expression.lexeme==lexeme){
+			||lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->gcat()==symbol
+			||lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->is_mocked()==false&&root_node.expression.morphalytics->has_feature(symbol)==true
+			||lexeme.empty()==false&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->gcat()==symbol&&root_node.expression.lexeme==lexeme){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"node_found_by_symbol '"+symbol+"':"+std::to_string(root_node.node_id));
 			nodes_found.push_back(root_node.node_id);
 		}
@@ -376,7 +398,7 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 		if(node_dependency_traversal_stack.empty()==false){
 			parent_node=node_dependency_traversal_stack.top();
 			auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
-			if(traversal_node!=node_dependency_traversal_stack_tree.end()){
+			if(traversal_node!=node_dependency_traversal_stack_tree.end()&&node.node_links.find(parent_node.first)!=node.node_links.end()){
 				traversal_node->second.push_back(std::make_pair(node_id,std::atoi(d_key.c_str())));
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"push_back to vector of node_id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second)+" the node_id "+std::to_string(node_id)+" with d_key "+d_key);
 			}
@@ -565,19 +587,26 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for functor "+node.expression.lexeme+" d_key "+d_key);
 	if(node.expression.gcat=="CON"){
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme","CON");
+//		Just copied here as a reminder once CON is allowed to have more than one d_key
+//		while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")!=d_key){
+//			depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme","CON");
+//		}
 	}
 	else if(node.expression.lexicon_entry==false){
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.gcat);
+		while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")!=d_key){
+			depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.gcat);
+		}
 	}
 	else{
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
+		while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")!=d_key){
+			depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.lexeme);
+		}
 	}
 	if(depolex_entry==NULL){
 		//throw exception as for each functor there must be one entry with at least NULL dependency
 		throw std::runtime_error("Exiting, no dependency entry found for functor "+node.expression.lexeme+" in DEPOLEX db table.");
-	}
-	while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")!=d_key){
-		depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.lexeme);
 	}
 	while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")==d_key){
 		d_counter=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter");
@@ -992,7 +1021,13 @@ std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_
 			std::get<2>(nr_of_deps)=0;
 			functor_node=i.first.second;
 			map_of_node_ids_to_total_nr_of_deps_and_d_key.clear();
-			nr_of_deps=calculate_longest_matching_dependency_route(node_level,functor_node,map_of_node_ids_to_total_nr_of_deps_and_d_key);
+			calculate_longest_matching_dependency_route(node_level,functor_node,map_of_node_ids_to_total_nr_of_deps_and_d_key);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"dependencies with longest match:");
+			for(auto&& i:map_of_node_ids_to_total_nr_of_deps_and_d_key){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"functor "+get_node_info(i.first).expression.lexeme+" d_key "+std::to_string(i.second.second)+": "+std::to_string(std::get<1>(i.second.first))+" deps found out of the expected "+std::to_string(std::get<2>(i.second.first))+" deps to be found");
+				std::get<1>(nr_of_deps)+=std::get<1>(i.second.first);
+				std::get<2>(nr_of_deps)+=std::get<2>(i.second.first);
+			}
 			longest_traversals.insert(std::make_pair(functor_node,std::make_pair(nr_of_deps,map_of_node_ids_to_total_nr_of_deps_and_d_key)));
 		}
 	}
@@ -1010,7 +1045,7 @@ std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_
 	return functor_found;
 }
 
-t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter interpreter::calculate_longest_matching_dependency_route(const unsigned int node_level, const p_m1_node_id_m2_d_key& functor_node,
+void interpreter::calculate_longest_matching_dependency_route(const unsigned int node_level, const p_m1_node_id_m2_d_key& functor_node,
 		std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >& map_of_node_ids_to_total_nr_of_deps_and_d_key){
 	p_m1_tree_level_m2_p_m1_node_id_m2_d_key tree_level_and_functor_node;
 	std::map<p_m1_tree_level_m2_p_m1_node_id_m2_d_key,std::vector<p_m1_node_id_m2_d_key> >::const_iterator functor_node_found;
@@ -1019,7 +1054,6 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 	t_node_dependency_traversals::const_iterator functor_node_dependencies;
 	t_node_dependency_traversal *node_dependency_traversal=NULL;
 	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
-	t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter nr_of_deps_found,nr_of_deps_found_tmp;
 
 	tree_level_and_functor_node.first=node_level;
 	tree_level_and_functor_node.second=functor_node;
@@ -1036,6 +1070,8 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 	for(t_map_of_node_ids_and_d_keys_to_nr_of_deps::const_iterator i=node_dependency_traversal->map_of_node_ids_and_d_keys_to_nr_of_deps.begin();
 			i!=node_dependency_traversal->map_of_node_ids_and_d_keys_to_nr_of_deps.end();++i){
 		node_id_and_d_key_with_nr_of_deps=new t_pair_of_node_id_and_d_key_with_nr_of_deps(i);
+		//TODO1a: think over if a local, initially empty map_of_node_ids_to_total_nr_of_deps_and_d_key shall be used
+		//in the loop and before returning, the result of it shall be merged with the content of the incoming one.
 		if(map_of_node_ids_to_total_nr_of_deps_and_d_key.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)==map_of_node_ids_to_total_nr_of_deps_and_d_key.end()
 			&&nodes_to_be_validated.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)==nodes_to_be_validated.end()){
 			nodes_to_be_validated.insert(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
@@ -1061,26 +1097,15 @@ t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dc
 	}
 	delete node_dependency_traversal;
 	node_dependency_traversal=NULL;
-	std::get<1>(nr_of_deps_found)=0;
-	std::get<2>(nr_of_deps_found)=0;
-	if(nodes_to_be_validated.empty()==true){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"dependencies with longest match:");
-		for(auto&& i:map_of_node_ids_to_total_nr_of_deps_and_d_key){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"functor "+get_node_info(i.first).expression.lexeme+" d_key "+std::to_string(i.second.second)+": "+std::to_string(std::get<1>(i.second.first))+" deps found out of the expected "+std::to_string(std::get<2>(i.second.first))+" deps to be found");
-			std::get<1>(nr_of_deps_found)+=std::get<1>(i.second.first);
-			std::get<2>(nr_of_deps_found)+=std::get<2>(i.second.first);
-		}
-	}
-	else{
+	if(nodes_to_be_validated.empty()==false){
 		throw std::runtime_error("Sanity check failed for having all nodes to be validated processed.");
 	}
 	//2) loop over functor_node_found.second (vector of children) and call recursively for each the method itself
 	for(auto&& i:functor_node_found->second){
-		nr_of_deps_found_tmp=calculate_longest_matching_dependency_route(node_level+1,i,map_of_node_ids_to_total_nr_of_deps_and_d_key);
-		std::get<1>(nr_of_deps_found)+=std::get<1>(nr_of_deps_found_tmp);
-		std::get<2>(nr_of_deps_found)+=std::get<2>(nr_of_deps_found_tmp);
+		//TODO1b: (corollary of TODO1a) think over if the local or the incoming
+		//map_of_node_ids_to_total_nr_of_deps_and_d_key shall be passed over here
+		calculate_longest_matching_dependency_route(node_level+1,i,map_of_node_ids_to_total_nr_of_deps_and_d_key);
 	}
-	return nr_of_deps_found;
 }
 
 unsigned int interpreter::is_valid_combination(const std::string& symbol, const node_info& new_phrase_head_root, const node_info& new_phrase_non_head_root){
@@ -1090,13 +1115,14 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors_found=NULL;
 	std::multimap<unsigned int,unsigned int>::const_iterator l;
 	std::vector<unsigned int>::const_iterator j,k;
-	std::vector<unsigned int> main_nodes_found_by_symbol,dependent_nodes_found_by_symbol,main_subtree_nodes_found_by_symbol,dependency_subtree_nodes_found_by_symbol;
+	std::vector<unsigned int> main_nodes_found_by_symbol,dependent_nodes_found_by_symbol,main_subtree_nodes_found_by_symbol,dependency_subtree_nodes_found_by_symbol,prev_main_nodes_found_by_symbol,prev_dependent_nodes_found_by_symbol;
 	const std::pair<const unsigned int,field> *rule_entry=NULL,*rule_entry_failure_copy=NULL;
-	unsigned int current_step=0,successor=0,failover=0,main_node_id=0,dep_node_id=0,rule_step_failed=0;
+	unsigned int current_step=0,successor=0,failover=0,main_node_id=0,dep_node_id=0,rule_step_failed=0,main_set_op=0,dependent_set_op=0;
 	std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
 	node_info *main_node=NULL,*dependent_node=NULL;
 	std::multimap<unsigned int,unsigned int> ref_node_ids_to_set;
 	std::set<unsigned int>::const_iterator main_ref_node_id,dep_ref_node_id;
+	std::string main_node_symbol,dependent_node_symbol,prev_main_node_symbol,prev_dependent_node_symbol;
 
 	sqlite=db_factory::get_instance();
 	rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"' ORDER BY STEP;");
@@ -1107,90 +1133,116 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	while(rule_entry!=NULL){
 		valid_combination=false;
 		rule_entry_failure_copy=rule_entry;
+		prev_main_node_symbol=main_node_symbol;
+		prev_dependent_node_symbol=dependent_node_symbol;
+		main_node_symbol=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol");
+		dependent_node_symbol=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol");
 		current_step=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"step")->c_str());
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"step:"+std::to_string(current_step));
 		failover=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"failover")->c_str());
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"failover:"+std::to_string(failover));
 		successor=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"successor")->c_str());
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"successor:"+std::to_string(successor));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"step:"+std::to_string(current_step)+" failover:"+std::to_string(failover)+" successor:"+std::to_string(successor));
+		std::string head_root_symbol=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"head_root_symbol");
+		std::string non_head_root_symbol=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"non_head_root_symbol");
+		std::string main_lookup_root=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root");
+		std::string main_lookup_subtree_symbol=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol");
+		std::string main_node_lexeme=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme");
+		std::string dependency_lookup_root=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root");
+		std::string dependency_lookup_subtree_symbol=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol");
+		std::string dependent_node_lexeme=*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme");
+
+		main_set_op=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_set_op")->c_str());
+		dependent_set_op=std::atoi(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_set_op")->c_str());
+		if(current_step>1&&main_set_op>0&&main_node_symbol.empty()==false&&main_node_symbol==prev_main_node_symbol&&main_nodes_found_by_symbol.empty()==false){
+			prev_main_nodes_found_by_symbol=main_nodes_found_by_symbol;
+		}
+		else prev_main_nodes_found_by_symbol.clear();
 		main_nodes_found_by_symbol.clear();
+		if(current_step>1&&dependent_set_op>0&&dependent_node_symbol.empty()==false&&dependent_node_symbol==prev_dependent_node_symbol&&dependent_nodes_found_by_symbol.empty()==false){
+			prev_dependent_nodes_found_by_symbol=dependent_nodes_found_by_symbol;
+		}
+		else prev_dependent_nodes_found_by_symbol.clear();
 		dependent_nodes_found_by_symbol.clear();
 		main_subtree_nodes_found_by_symbol.clear();
 		dependency_subtree_nodes_found_by_symbol.clear();
-		if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"head_root_symbol")==new_phrase_head_root.symbol
-			&&*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"non_head_root_symbol")==new_phrase_non_head_root.symbol){
-			if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false){
-				if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root")=="H"){
-					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol")->empty()==true)
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+		if(head_root_symbol==new_phrase_head_root.symbol&&non_head_root_symbol==new_phrase_non_head_root.symbol){
+			if(main_node_symbol.empty()==false){
+				if(main_lookup_root=="H"){
+					if(main_lookup_subtree_symbol.empty()==true)
+						get_nodes_by_symbol(new_phrase_head_root,main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
 					else{
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_head_root,main_lookup_subtree_symbol,std::string(),main_subtree_nodes_found_by_symbol);
 						for(auto&& main_subtree_node:main_subtree_nodes_found_by_symbol){
-							get_nodes_by_symbol(get_node_info(main_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+							get_nodes_by_symbol(get_node_info(main_subtree_node),main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
 						}
 					}
 				}
-				else if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_root")=="N"){
-					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol")->empty()==true)
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+				else if(main_lookup_root=="N"){
+					if(main_lookup_subtree_symbol.empty()==true)
+						get_nodes_by_symbol(new_phrase_non_head_root,main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
 					else{
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,main_lookup_subtree_symbol,std::string(),main_subtree_nodes_found_by_symbol);
 						for(auto&& main_subtree_node:main_subtree_nodes_found_by_symbol){
-							get_nodes_by_symbol(get_node_info(main_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+							get_nodes_by_symbol(get_node_info(main_subtree_node),main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
 						}
 					}
 				}
 				else{
-					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol")->empty()==true){
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+					if(main_lookup_subtree_symbol.empty()==true){
+						get_nodes_by_symbol(new_phrase_head_root,main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
 					}
 					else{
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_lookup_subtree_symbol"),std::string(),main_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_head_root,main_lookup_subtree_symbol,std::string(),main_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,main_lookup_subtree_symbol,std::string(),main_subtree_nodes_found_by_symbol);
 						for(auto&& main_subtree_node:main_subtree_nodes_found_by_symbol){
-							get_nodes_by_symbol(get_node_info(main_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_lexeme"),main_nodes_found_by_symbol);
+							get_nodes_by_symbol(get_node_info(main_subtree_node),main_node_symbol,main_node_lexeme,main_nodes_found_by_symbol);
 						}
 					}
 				}
 			}
-			if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false){
-				if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root")=="H"){
-					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol")->empty()==true)
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+			if(dependent_node_symbol.empty()==false){
+				if(dependency_lookup_root=="H"){
+					if(dependency_lookup_subtree_symbol.empty()==true)
+						get_nodes_by_symbol(new_phrase_head_root,dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
 					else{
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_head_root,dependency_lookup_subtree_symbol,std::string(),dependency_subtree_nodes_found_by_symbol);
 						for(auto&& dependency_subtree_node:dependency_subtree_nodes_found_by_symbol){
-							get_nodes_by_symbol(get_node_info(dependency_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+							get_nodes_by_symbol(get_node_info(dependency_subtree_node),dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
 						}
 					}
 				}
-				else if(*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_root")=="N"){
-					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol")->empty()==true)
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+				else if(dependency_lookup_root=="N"){
+					if(dependency_lookup_subtree_symbol.empty()==true)
+						get_nodes_by_symbol(new_phrase_non_head_root,dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
 					else{
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,dependency_lookup_subtree_symbol,std::string(),dependency_subtree_nodes_found_by_symbol);
 						for(auto&& dependency_subtree_node:dependency_subtree_nodes_found_by_symbol){
-							get_nodes_by_symbol(get_node_info(dependency_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+							get_nodes_by_symbol(get_node_info(dependency_subtree_node),dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
 						}
 					}
 				}
 				else{
-					if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol")->empty()==true){
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+					if(dependency_lookup_subtree_symbol.empty()==true){
+						get_nodes_by_symbol(new_phrase_head_root,dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
 					}
 					else{
-						get_nodes_by_symbol(new_phrase_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
-						get_nodes_by_symbol(new_phrase_non_head_root,*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependency_lookup_subtree_symbol"),std::string(),dependency_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_head_root,dependency_lookup_subtree_symbol,std::string(),dependency_subtree_nodes_found_by_symbol);
+						get_nodes_by_symbol(new_phrase_non_head_root,dependency_lookup_subtree_symbol,std::string(),dependency_subtree_nodes_found_by_symbol);
 						for(auto&& dependency_subtree_node:dependency_subtree_nodes_found_by_symbol){
-							get_nodes_by_symbol(get_node_info(dependency_subtree_node),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol"),*rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_lexeme"),dependent_nodes_found_by_symbol);
+							get_nodes_by_symbol(get_node_info(dependency_subtree_node),dependent_node_symbol,dependent_node_lexeme,dependent_nodes_found_by_symbol);
 						}
 					}
 				}
 			}
-			if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
-				&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
+			if(main_set_op>0){
+				combine_sets(main_set_op,prev_main_nodes_found_by_symbol,main_nodes_found_by_symbol);
+			}
+			if(dependent_set_op>0){
+				combine_sets(dependent_set_op,prev_dependent_nodes_found_by_symbol,dependent_nodes_found_by_symbol);
+			}
+			if(main_node_symbol.empty()==false
+				&&dependent_node_symbol.empty()==false
 				&&main_nodes_found_by_symbol.empty()==false
 				&&dependent_nodes_found_by_symbol.empty()==false){
 				for(auto&& i:ref_node_ids_to_set){
@@ -1264,13 +1316,13 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 					}
 				}
 			}
-			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
+			else if(main_node_symbol.empty()==false
 					&&main_nodes_found_by_symbol.empty()==false
-					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==true
+					&&dependent_node_symbol.empty()==true
 					&&dependent_nodes_found_by_symbol.empty()==true
-					||rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==true
+					||main_node_symbol.empty()==true
 					&&main_nodes_found_by_symbol.empty()==true
-					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
+					&&dependent_node_symbol.empty()==false
 					&&dependent_nodes_found_by_symbol.empty()==false){//This branch allows checking just for symbol existence in a subtree
 					if(successor==0||successor<current_step){
 						valid_combination=false;
@@ -1284,13 +1336,13 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 						valid_combination=true;
 					}
 			}
-			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
+			else if(main_node_symbol.empty()==false
 					&&main_nodes_found_by_symbol.empty()==true
-					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==true
+					&&dependent_node_symbol.empty()==true
 					&&dependent_nodes_found_by_symbol.empty()==true
-					||rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==true
+					||main_node_symbol.empty()==true
 					&&main_nodes_found_by_symbol.empty()==true
-					&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
+					&&dependent_node_symbol.empty()==false
 					&&dependent_nodes_found_by_symbol.empty()==true){//This branch allows checking just for symbol absence in a subtree
 					if(failover==0||failover<current_step){
 						valid_combination=false;
@@ -1304,8 +1356,8 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 						valid_combination=false;
 					}
 			}
-			else if(rule_to_rule_map->field_value_at_row_position(rule_entry->first,"main_node_symbol")->empty()==false
-				&&rule_to_rule_map->field_value_at_row_position(rule_entry->first,"dependent_node_symbol")->empty()==false
+			else if(main_node_symbol.empty()==false
+				&&dependent_node_symbol.empty()==false
 				&&(main_nodes_found_by_symbol.empty()==true||dependent_nodes_found_by_symbol.empty()==true)){
 					valid_combination=false;
 			}
@@ -1332,7 +1384,8 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 				}
 				else{
 					rule_entry=NULL;
-					if(failover==current_step&&rule_to_rule_map->nr_of_result_rows()==current_step) valid_combination=true;
+					//if(failover==current_step&&rule_to_rule_map->nr_of_result_rows()==current_step) valid_combination=true;
+					if(failover==current_step) valid_combination=true;
 				}
 			}
 		}
@@ -1352,11 +1405,16 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 				//See comments in lexer::dependencies_read_for_functor().
 				//As there may be more than one functors, it might be the case that execution can continue if
 				//there's at least one, where the dependencies attributes are not null.
+				//this may make sense as a first try instead of throwing an exception:
+				//rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
 			}
-			main_node->dependency_validation_matrix.insert(i.second);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme);
-			if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
-				dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
+			else{//this else branch was not here earlier so this alone may complicate matters even though the
+				// if branch still does not do anything
+				main_node->dependency_validation_matrix.insert(i.second);
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme);
+				if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
+					dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
+				}
 			}
 		}
 	}
@@ -1369,6 +1427,78 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	}
 	delete rule_to_rule_map;
 	return rule_step_failed;
+}
+
+void interpreter::combine_sets(const unsigned int& operation, const std::vector<unsigned int>& prev_set, std::vector<unsigned int>& current_set){
+	if(operation==1){//union
+		std::set<unsigned int> union_set;
+		for(auto&& i:prev_set){
+			union_set.insert(i);
+		}
+		for(auto&& i:current_set){
+			union_set.insert(i);
+		}
+		current_set.clear();
+		for(auto&& i:union_set){
+			current_set.push_back(i);
+		}
+	}
+	else if(operation==2){//intersection
+		std::multiset<unsigned int> union_set;
+		for(auto&& i:prev_set){
+			union_set.insert(i);
+		}
+		for(auto&& i:current_set){
+			union_set.insert(i);
+		}
+		current_set.clear();
+		for(auto&& i:union_set){
+			if(union_set.count(i)==2) current_set.push_back(i);
+		}
+	}
+	else if(operation==3){//Current minus previous -> current minus intersection
+		std::multiset<unsigned int> union_set;
+		std::set<unsigned int> current_set_copy;
+		for(auto&& i:prev_set){
+			union_set.insert(i);
+		}
+		for(auto&& i:current_set){
+			union_set.insert(i);
+			current_set_copy.insert(i);
+		}
+		current_set.clear();
+		for(auto&& i:current_set_copy){
+			if(union_set.count(i)==1) current_set.push_back(i);
+		}
+	}
+	else if(operation==4){//Previous minus current -> previous minus intersection
+		std::multiset<unsigned int> union_set;
+		std::set<unsigned int> prev_set_copy;
+		for(auto&& i:prev_set){
+			union_set.insert(i);
+			prev_set_copy.insert(i);
+		}
+		for(auto&& i:current_set){
+			union_set.insert(i);
+		}
+		current_set.clear();
+		for(auto&& i:prev_set_copy){
+			if(union_set.count(i)==1) current_set.push_back(i);
+		}
+	}
+	else if(operation==5){//disjunct
+		std::multiset<unsigned int> union_set;
+		for(auto&& i:prev_set){
+			union_set.insert(i);
+		}
+		for(auto&& i:current_set){
+			union_set.insert(i);
+		}
+		current_set.clear();
+		for(auto&& i:union_set){
+			if(union_set.count(i)==1) current_set.push_back(i);
+		}
+	}
 }
 
 transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, const std::pair<std::string,unsigned int>& parent,
@@ -1546,6 +1676,28 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 	std::vector<unsigned int> nodes;
 
 	get_nodes_by_symbol(node,leaf_symbol,std::string(),nodes);
+	if(nodes.size()==1){
+		leaf_node_id=*nodes.begin();
+		if(leaf_node_id>0){
+			const node_info& leaf_node=get_node_info(leaf_node_id);
+			leaf_node.expression.morphalytics->add_feature(feature);
+		}
+	}
+	return leaf_node_id;
+}
+
+unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& subnode_symbol, const std::string& leaf_symbol, const std::string& feature){
+	unsigned int leaf_node_id=0;
+	std::vector<unsigned int> nodes,subnodes;
+
+	if(subnode_symbol.empty()==true)
+		get_nodes_by_symbol(node,leaf_symbol,std::string(),nodes);
+	else{
+		get_nodes_by_symbol(node,subnode_symbol,std::string(),subnodes);
+		for(auto&& subnode:subnodes){
+			get_nodes_by_symbol(get_node_info(subnode),leaf_symbol,std::string(),nodes);
+		}
+	}
 	if(nodes.size()==1){
 		leaf_node_id=*nodes.begin();
 		if(leaf_node_id>0){

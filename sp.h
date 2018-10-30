@@ -78,7 +78,7 @@
 			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, const std::string&, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&);
 			const std::pair<const unsigned int,field>* followup_dependency(const unsigned int, const std::string&, const std::string&, const bool, const query_result&);
 			std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> calculate_longest_matching_dependency_route(std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&);
-			t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&, std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
+			void calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&, std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
 			unsigned int nr_of_dependencies_to_be_found();
 			transgraph* build_transgraph(const p_m1_node_id_m2_d_key&, const std::pair<std::string,unsigned int>&,
 					std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&,
@@ -99,15 +99,18 @@
 			std::pair<std::string,unsigned int> find_child_for_parent_bottom_up_via_optional_path(const unsigned int, const std::string&, const unsigned int, const unsigned int,
 					std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,
 					std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
+			void combine_sets(const unsigned int&, const std::vector<unsigned int>&, std::vector<unsigned int>&);
 		public:
 			interpreter(const unsigned char toa);
 			~interpreter();
-			int set_node_info(const lexicon&, const node_info&);
+			int set_node_info(const std::string&, const lexicon&);
+			int set_node_info(const std::string&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
 			transgraph* longest_match_for_semantic_rules_found();
 			unsigned int add_feature_to_leaf(const node_info&,const std::string&);
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&);
+			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&);
 			std::set<unsigned int> validated_terminals();
 			std::vector<node_info> nodes();
 	};

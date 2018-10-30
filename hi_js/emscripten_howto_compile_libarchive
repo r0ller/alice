@@ -1,0 +1,5 @@
+emar r libarchive.a file.o
+
+or
+
+emar r libarchive.a file.bc

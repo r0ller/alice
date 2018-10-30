@@ -89,7 +89,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 				if(trigger_tag.empty()==true||trigger_tag.empty()==false&&morphan!=NULL&&morphan->has_feature(trigger_tag)==true){
 					std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
 					std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
-					if(tag.empty()==false){
+					if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
 						tags+="\""+tag+"\":\""+value+"\",";
 					}
 				}

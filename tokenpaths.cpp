@@ -576,6 +576,7 @@ std::string tokenpaths::traverse_nodes_lr(const node_info& root_node, const std:
 }
 
 void tokenpaths::log_yyerror(const std::string& error){
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"bison:"+error);
 	yyerror=error;
 }
 

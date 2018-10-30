@@ -5,6 +5,11 @@ create table ROOT_TYPE(
 root_type varchar(1) primary key /*h:head root, n:non head root*/
 );
 
+create table PRECEDENCES(
+precedence varchar(12) primary key,
+declaration varchar(12)
+);
+
 create table LANGUAGES(
 lid varchar(5) primary key,
 language varchar(128),
@@ -17,6 +22,8 @@ gcat varchar(12),
 feature varchar(12),
 lid varchar(5) references LANGUAGES(lid),
 token smallint,/*unsigned ints are assigned as tokens to terminal symbols, NULLs being unconvertable by std::atoi() won't get a generated token in the bison source*/
+precedence varchar(12) references PRECEDENCES(precedence),
+precedence_level smallint check(precedence_level>=0),
 PRIMARY KEY(gcat, feature, lid) /*gcat, feature, lid are all keys as once token literals in bison source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
@@ -62,10 +69,12 @@ main_node_symbol varchar(12),
 main_node_lexeme varchar(47),
 main_lookup_root varchar(1) references ROOT_TYPE(root_type),
 main_lookup_subtree_symbol varchar(12),
+main_set_op smallint check(main_set_op>0 and main_set_op<6),
 dependent_node_symbol varchar(12),
 dependent_node_lexeme varchar(47),
 dependency_lookup_root varchar(1) references ROOT_TYPE(root_type),
 dependency_lookup_subtree_symbol varchar(12),
+dependent_set_op smallint check(dependent_set_op>0 and dependent_set_op<6),
 lid varchar(5) references LANGUAGES(lid),
 PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
@@ -149,9 +158,11 @@ lid varchar(5) references LANGUAGES(lid),
 parent_symbol varchar(12) not null check(length(parent_symbol)>0),
 head_symbol varchar(12) not null check(length(head_symbol)>0),
 non_head_symbol varchar(12),
+precedence varchar(12),
 action text,/*if content is in quotes then it is regarded as code, if not then it is regarded as filename*/
 PRIMARY KEY(lid, parent_symbol, head_symbol, non_head_symbol)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid)/*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
 );

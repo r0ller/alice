@@ -1,12 +1,13 @@
 PRAGMA foreign_keys = ON;
 BEGIN;
-/*
-insert into DEFTYPE values('0');
-insert into DEFTYPE values('1');
-*/
 
 insert into ROOT_TYPE values('H');
 insert into ROOT_TYPE values('N');
+
+insert into PRECEDENCES values('L','%left');
+insert into PRECEDENCES values('R','%right');
+insert into PRECEDENCES values('P','%precedence');
+insert into PRECEDENCES values('N','%nonassoc');
 
 insert into LANGUAGES values('HUN', 'Hungarian', '1', 'magyar.fst');
 insert into LANGUAGES values('ENG', 'English', '1', 'english.fst');
@@ -15,8 +16,10 @@ insert into LANGUAGES values('ENG', 'English', '1', 'english.fst');
 insert into SYMBOLS values('A', 'ENG', 'Adjective');
 insert into SYMBOLS values('ADV', 'ENG', 'Adverb');
 insert into SYMBOLS values('CON', 'ENG', 'Constant');
+insert into SYMBOLS values('CONJ', 'ENG', 'Conjunction');
 insert into SYMBOLS values('DET', 'ENG', 'Determiner');
 insert into SYMBOLS values('Indef', 'ENG', 'Indefinite Determiner');
+insert into SYMBOLS values('Def', 'ENG', 'Definite Determiner');
 insert into SYMBOLS values('N', 'ENG', 'Noun');
 insert into SYMBOLS values('ENG_VP', 'ENG', 'Verb Phrase');
 insert into SYMBOLS values('ENG_NP', 'ENG', 'Noun Phrase');
@@ -42,7 +45,8 @@ insert into SYMBOLS values('ENG_TP', 'ENG', 'Tense Phrase');
 insert into SYMBOLS values('ENG_DP', 'ENG', 'Determiner Phrase');
 insert into SYMBOLS values('ENG_RPRO', 'ENG', 'Relative Pronoun');
 insert into SYMBOLS values('ENG_NV', 'ENG', 'Negated Verb');
-insert into SYMBOLS values('NEG', 'ENG', 'Negation');
+insert into SYMBOLS values('VNEG', 'ENG', 'Verb Negation');
+insert into SYMBOLS values('ANEG', 'ENG', 'Adjective Negation');
 insert into SYMBOLS values('RCV', 'ENG', 'Relative Clause Verb');
 insert into SYMBOLS values('PAR', 'ENG', 'Tense particle');
 insert into SYMBOLS values('fwVowel', 'ENG', 'following word starts with vowel');
@@ -51,15 +55,27 @@ insert into SYMBOLS values('swVowel', 'ENG', 'word starts with vowel');
 insert into SYMBOLS values('swConsonant', 'ENG', 'word starts with consonant');
 insert into SYMBOLS values('Gerund', 'ENG', 'Gerund');
 insert into SYMBOLS values('S','ENG',NULL);
-insert into SYMBOLS values('ENG_NEG','ENG',NULL);
+insert into SYMBOLS values('ENG_VNEG','ENG',NULL);
+insert into SYMBOLS values('ENG_VNEG_Stem','ENG',NULL);
+insert into SYMBOLS values('ENG_ANEG','ENG',NULL);
+insert into SYMBOLS values('ENG_A0NEG','ENG',NULL);
+insert into SYMBOLS values('ENG_ANEG_Stem','ENG',NULL);
 insert into SYMBOLS values('ENG_AdvP','ENG',NULL);
 insert into SYMBOLS values('ENG_Prep','ENG',NULL);
-insert into SYMBOLS values('ENG_AP','ENG',NULL);
+insert into SYMBOLS values('ENG_CAP','ENG','Constant Adjective Phrase');
+insert into SYMBOLS values('ENG_AP','ENG','Adjective Phrase');
+insert into SYMBOLS values('ENG_CONJ','ENG',NULL);
+insert into SYMBOLS values('ENG_ACONJ','ENG',NULL);
+insert into SYMBOLS values('ENG_CONJA','ENG',NULL);
+insert into SYMBOLS values('ENG_Abar1','ENG',NULL);
+insert into SYMBOLS values('ENG_Ahead','ENG',NULL);
+insert into SYMBOLS values('ENG_Abar2','ENG',NULL);
+insert into SYMBOLS values('ENG_Alist','ENG',NULL);
 insert into SYMBOLS values('ENG_QPro', 'ENG',NULL);
 insert into SYMBOLS values('ENG_Adv','ENG',NULL);
 insert into SYMBOLS values('ENG_V_Stem','ENG',NULL);
 insert into SYMBOLS values('ENG_V_lfea_aux','ENG',NULL);
-insert into SYMBOLS values('ENG_V_ger','ENG',NULL);
+insert into SYMBOLS values('ENG_V_Ger','ENG',NULL);
 insert into SYMBOLS values('ENG_V_lfea_ger','ENG',NULL);
 insert into SYMBOLS values('ENG_N','ENG',NULL);
 insert into SYMBOLS values('ENG_N_Sg','ENG',NULL);
@@ -79,6 +95,7 @@ insert into SYMBOLS values('ENG_N_Stem','ENG',NULL);
 insert into SYMBOLS values('ENG_N_lfea_Sg','ENG',NULL);
 insert into SYMBOLS values('ENG_N_lfea_Pl','ENG',NULL);
 insert into SYMBOLS values('ENG_A','ENG',NULL);
+insert into SYMBOLS values('ENG_A_Stem','ENG',NULL);
 insert into SYMBOLS values('ENG_RPro','ENG',NULL);
 insert into SYMBOLS values('ENG_RPro_stem','ENG',NULL);
 insert into SYMBOLS values('ENG_RPro_lfea_relative','ENG',NULL);
@@ -104,13 +121,62 @@ insert into SYMBOLS values('t_ENG_ADV','ENG',NULL);
 insert into SYMBOLS values('t_ENG_RPRO','ENG',NULL);
 insert into SYMBOLS values('t_ENG_RPRO_Relative','ENG',NULL);
 insert into SYMBOLS values('t_ENG_PAR','ENG',NULL);
-insert into SYMBOLS values('t_ENG_NEG_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_VNEG_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_ANEG_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET_Indef','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET_fwVowel','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET_fwConsonant','ENG',NULL);
 insert into SYMBOLS values('t_ENG_N_swVowel','ENG',NULL);
 insert into SYMBOLS values('t_ENG_N_swConsonant','ENG',NULL);
+insert into SYMBOLS values('t_ENG_CONJ_Stem','ENG',NULL);
+insert into SYMBOLS values('ENG_CONJ_Stem','ENG',NULL);
+insert into SYMBOLS values('Num','ENG',NULL);
+insert into SYMBOLS values('Ord','ENG',NULL);
+insert into SYMBOLS values('Npref1n','ENG',NULL);
+insert into SYMBOLS values('Npref2n','ENG',NULL);
+insert into SYMBOLS values('Npref3n','ENG',NULL);
+insert into SYMBOLS values('Npref4n','ENG',NULL);
+insert into SYMBOLS values('Npref5n','ENG',NULL);
+insert into SYMBOLS values('Npref6n','ENG',NULL);
+insert into SYMBOLS values('Npref7n','ENG',NULL);
+insert into SYMBOLS values('Npref8n','ENG',NULL);
+insert into SYMBOLS values('Npref9n','ENG',NULL);
+insert into SYMBOLS values('ENG_lfea_DefDet','ENG',NULL);
+insert into SYMBOLS values('ENG_Def_Det','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_Def','ENG',NULL);
+insert into SYMBOLS values('ENG_Num_Ord','ENG',NULL);
+insert into SYMBOLS values('ENG_Num_Pref','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref1n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref2n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref3n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref4n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref5n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref6n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref7n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref8n','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Npref9n','ENG',NULL);
+insert into SYMBOLS values('ENG_Num','ENG',NULL);
+insert into SYMBOLS values('ENG_Num_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Stem','ENG',NULL);
+insert into SYMBOLS values('ENG_Num_lfea_Ord','ENG',NULL);
+insert into SYMBOLS values('t_ENG_Num_Ord','ENG',NULL);
+insert into SYMBOLS values('ENG_IVPlist','ENG',NULL);
+insert into SYMBOLS values('ENG_Vhead','ENG',NULL);
+insert into SYMBOLS values('ENG_Vlisthead','ENG',NULL);
+insert into SYMBOLS values('ENG_ConjV','ENG',NULL);
+insert into SYMBOLS values('ENG_IVPConj','ENG',NULL);
+insert into SYMBOLS values('ENG_NV_Aux','ENG',NULL);
+insert into SYMBOLS values('ENG_V_Aux','ENG',NULL);
+insert into SYMBOLS values('ENG_V_NonAux','ENG',NULL);
+insert into SYMBOLS values('ENG_PVP','ENG','Participle Verb Phrase');
+insert into SYMBOLS values('ENG_PVPlist','ENG',NULL);
+insert into SYMBOLS values('ENG_PVPhead','ENG',NULL);
+insert into SYMBOLS values('ENG_PVPlisthead','ENG',NULL);
+insert into SYMBOLS values('ENG_ConjPVP','ENG',NULL);
+insert into SYMBOLS values('ENG_PVPConj','ENG',NULL);
+insert into SYMBOLS values('ENG_PVPbar','ENG',NULL);
+insert into SYMBOLS values('ENG_PNVPbar','ENG',NULL);
 
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerb','HUN',NULL);
@@ -224,623 +290,974 @@ insert into SYMBOLS values('t_HUN_Num_Npref1nnn','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Num_Par','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Num_Ik','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Num_Acc','HUN',NULL);
+insert into SYMBOLS values('Conj', 'HUN', NULL);
+insert into SYMBOLS values('Neg', 'HUN', NULL);
+insert into SYMBOLS values('Plur', 'HUN', NULL);
+insert into SYMBOLS values('Ine', 'HUN', NULL);
+insert into SYMBOLS values('IndefSg3', 'HUN', NULL);
+insert into SYMBOLS values('ConjIndefSg2', 'HUN', NULL);
+insert into SYMBOLS values('Adj', 'HUN', NULL);
+insert into SYMBOLS values('t_HUN_Conj_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Neg_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Adj_Stem','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_IndefSg3','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_ConjIndefSg2','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Plur','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Ine','HUN',NULL);
+insert into SYMBOLS values('HUN_Verb_lfea_ConjIndefSg2','HUN',NULL);
+insert into SYMBOLS values('HUN_N_Ine','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_lfea_Ine','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_lfea_Plur','HUN',NULL);
+insert into SYMBOLS values('HUN_N_Pl','HUN',NULL);
+insert into SYMBOLS values('HUN_Vbar1','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_lfea_Relative','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Relative','HUN',NULL);
+insert into SYMBOLS values('HUN_RPro','HUN',NULL);
+insert into SYMBOLS values('Relative','HUN',NULL);
+insert into SYMBOLS values('Sub','HUN',NULL);
+insert into SYMBOLS values('Ins','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_Sub','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_Ins','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Verb_IndefPl3','HUN',NULL);
+insert into SYMBOLS values('HUN_Verb_lfea_IndefPl3','HUN',NULL);
+insert into SYMBOLS values('HUN_IVP','HUN',NULL);
+insert into SYMBOLS values('HUN_V','HUN',NULL);
+insert into SYMBOLS values('HUN_RC','HUN',NULL);
+insert into SYMBOLS values('HUN_Vbar2','HUN',NULL);
+insert into SYMBOLS values('HUN_N_Sub','HUN',NULL);
+insert into SYMBOLS values('HUN_N_Ins','HUN',NULL);
+insert into SYMBOLS values('HUN_Con_lfea_Sub','HUN',NULL);
+insert into SYMBOLS values('HUN_Con_lfea_Ins','HUN',NULL);
+insert into SYMBOLS values('IndefPl3','HUN',NULL);
+insert into SYMBOLS values('RCV','HUN','Relative Clause Verb');
+insert into SYMBOLS values('HUN_A0NEG','HUN',NULL);
+insert into SYMBOLS values('HUN_A0NEG_Dat','HUN',NULL);
+insert into SYMBOLS values('HUN_Ahead','HUN',NULL);
+insert into SYMBOLS values('HUN_Adj_Stem','HUN',NULL);
+insert into SYMBOLS values('HUN_Adj','HUN',NULL);
+insert into SYMBOLS values('HUN_Adj_Acc','HUN',NULL);
+insert into SYMBOLS values('HUN_Adj_Dat','HUN',NULL);
+insert into SYMBOLS values('HUN_AP','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar1','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar2','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar3','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar4','HUN',NULL);
+insert into SYMBOLS values('HUN_Alist','HUN',NULL);
+insert into SYMBOLS values('HUN_Neg','HUN',NULL);
+insert into SYMBOLS values('HUN_Neg_Stem','HUN',NULL);
+insert into SYMBOLS values('HUN_INVP','HUN',NULL);
+insert into SYMBOLS values('HUN_INVPbar','HUN',NULL);
+insert into SYMBOLS values('HUN_IVPlist','HUN',NULL);
+insert into SYMBOLS values('HUN_IVPbar','HUN',NULL);
+insert into SYMBOLS values('HUN_INVPbar2','HUN',NULL);
+insert into SYMBOLS values('HUN_Conj_Stem','HUN',NULL);
+insert into SYMBOLS values('HUN_Conj','HUN',NULL);
+insert into SYMBOLS values('HUN_ConjA','HUN',NULL);
+insert into SYMBOLS values('HUN_AN_Acc','HUN',NULL);
+insert into SYMBOLS values('HUN_ANEG','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar1N','HUN',NULL);
+insert into SYMBOLS values('HUN_NAbar1','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar2N','HUN',NULL);
+insert into SYMBOLS values('HUN_Alisthead','HUN',NULL);
+insert into SYMBOLS values('HUN_Vhead','HUN',NULL);
+insert into SYMBOLS values('HUN_Vlisthead','HUN',NULL);
+insert into SYMBOLS values('HUN_ConjV','HUN',NULL);
+insert into SYMBOLS values('HUN_IVPConj','HUN',NULL);
+insert into SYMBOLS values('END','HUN',NULL);
+insert into SYMBOLS values('HUN_ConjAlist','HUN',NULL);
+insert into SYMBOLS values('HUN_ConjA_End','HUN',NULL);
+insert into SYMBOLS values('HUN_Alist_End','HUN',NULL);
+insert into SYMBOLS values('HUN_Abar3_End','HUN',NULL);
 
-/*Constant has hardcoded token value 1 in the yacc source but to avoid collision, the values here are increased
-by 1 during runtime so, the smallest value here must at least be 1*/
+/*Constant has hardcoded token value 1 in the yacc source so to avoid collision, the values here are increased
+by 1 during runtime; Entries with NULL value for token are not to be generated in the yacc source.*/
 /*TODO: Think over if the feature field for all gcats shall at least be 'Stem' or not?
 For exmaple, DET is considered as well to have a stem? How is it analysed by Foma?*/
-insert into GCAT values('CON', NULL, 'ENG', '0');/*Plays role only when checking for terminal symbols*/
-insert into GCAT values('A', 'Stem', 'ENG', '1');
-insert into GCAT values('ADV', NULL, 'ENG', '2');
-insert into GCAT values('DET', NULL, 'ENG', '3');
-insert into GCAT values('N', 'Stem', 'ENG', '4');
-insert into GCAT values('N', 'Pl', 'ENG', '5');
-insert into GCAT values('N', 'Sg', 'ENG', '6');
-insert into GCAT values('PREP', NULL, 'ENG', '7');
-insert into GCAT values('QPRO', NULL, 'ENG', '8');
-insert into GCAT values('V', 'Stem', 'ENG', '9');
-insert into GCAT values('V', 'Aux', 'ENG', '10');
-insert into GCAT values('V', 'RCV', 'ENG', NULL);
-insert into GCAT values('V', 'Pl', 'ENG', NULL);
-insert into GCAT values('RPRO', NULL, 'ENG', '11');
-insert into GCAT values('RPRO', 'Relative', 'ENG', '12');
-insert into GCAT values('NEG', 'Stem', 'ENG', '13');
-insert into GCAT values('CON', 'Stem', 'HUN', '0');
-insert into GCAT values('CON', 'Acc', 'HUN', '14');
-insert into GCAT values('Verb', 'Stem', 'HUN', '15');
-insert into GCAT values('Verb', 'ConjDefSg2', 'HUN', '16');
-insert into GCAT values('Vbpfx', 'Stem', 'HUN', '17');
-insert into GCAT values('PAR', NULL, 'ENG', '18');
-insert into GCAT values('DET', 'Indef', 'ENG', '19');
-insert into GCAT values('DET', 'fwVowel', 'ENG', '20');
-insert into GCAT values('DET', 'fwConsonant', 'ENG', '21');
-insert into GCAT values('N', 'swVowel', 'ENG', '22');
-insert into GCAT values('N', 'swConsonant', 'ENG', '23');
-insert into GCAT values('V', 'Gerund', 'ENG', '24');
-insert into GCAT values('Num', 'Stem', 'HUN', '25');
-insert into GCAT values('Num', 'Ik', 'HUN', '26');
-insert into GCAT values('Num', 'Par', 'HUN', '27');
-insert into GCAT values('Num', 'Npref1', 'HUN', '28');
-insert into GCAT values('Num', 'Npref2', 'HUN', '29');
-insert into GCAT values('Num', 'Npref3', 'HUN', '30');
-insert into GCAT values('Num', 'Npref4', 'HUN', '31');
-insert into GCAT values('Num', 'Npref5', 'HUN', '32');
-insert into GCAT values('Num', 'Npref6', 'HUN', '33');
-insert into GCAT values('Num', 'Npref7', 'HUN', '34');
-insert into GCAT values('Num', 'Npref8', 'HUN', '35');
-insert into GCAT values('Num', 'Npref9', 'HUN', '36');
-insert into GCAT values('Num', 'Npref1nn', 'HUN', '37');
-insert into GCAT values('Num', 'Npref1nnn', 'HUN', '38');
-insert into GCAT values('Det', NULL, 'HUN', '39');
-insert into GCAT values('Det', 'Def', 'HUN', '40');
-insert into GCAT values('Det', 'fwVowel', 'HUN', '41');
-insert into GCAT values('Det', 'fwConsonant', 'HUN', '42');
-insert into GCAT values('CON', 'swVowel', 'HUN', '43');
-insert into GCAT values('CON', 'swConsonant', 'HUN', '44');
-insert into GCAT values('Num', 'Acc', 'HUN', '45');
-insert into GCAT values('Num', 'Npref1n', 'HUN', '46');
-insert into GCAT values('Num', 'Npref2n', 'HUN', '47');
-insert into GCAT values('Num', 'Npref3n', 'HUN', '48');
-insert into GCAT values('Num', 'Npref4n', 'HUN', '49');
-insert into GCAT values('Num', 'Npref5n', 'HUN', '50');
-insert into GCAT values('Num', 'Npref6n', 'HUN', '51');
-insert into GCAT values('Num', 'Npref7n', 'HUN', '52');
-insert into GCAT values('Num', 'Npref8n', 'HUN', '53');
-insert into GCAT values('Num', 'Npref9n', 'HUN', '54');
-insert into GCAT values('Num', 'swVowel', 'HUN', '55');
-insert into GCAT values('Num', 'swConsonant', 'HUN', '56');
-insert into GCAT values('Noun', 'Stem', 'HUN', '57');
-insert into GCAT values('Noun', 'Acc', 'HUN', '58');
-insert into GCAT values('Noun', 'swVowel', 'HUN', '59');
-insert into GCAT values('Noun', 'swConsonant', 'HUN', '60');
+insert into GCAT values('CON', NULL, 'ENG', '0',NULL,NULL);/*Plays role only when checking for terminal symbols*/
+insert into GCAT values('A', 'Stem', 'ENG', '1',NULL,NULL);
+insert into GCAT values('ADV', NULL, 'ENG', '2',NULL,NULL);
+insert into GCAT values('DET', NULL, 'ENG', '3',NULL,NULL);
+insert into GCAT values('N', 'Stem', 'ENG', '4',NULL,NULL);
+insert into GCAT values('N', 'Pl', 'ENG', '5',NULL,NULL);
+insert into GCAT values('N', 'Sg', 'ENG', '6',NULL,NULL);
+insert into GCAT values('PREP', NULL, 'ENG', '7',NULL,NULL);
+insert into GCAT values('QPRO', NULL, 'ENG', '8',NULL,NULL);
+insert into GCAT values('V', 'Stem', 'ENG', '9',NULL,NULL);
+insert into GCAT values('V', 'Aux', 'ENG', '10',NULL,NULL);
+insert into GCAT values('V', 'RCV', 'ENG', NULL,NULL,NULL);
+insert into GCAT values('V', 'Sg', 'ENG', NULL,NULL,NULL);
+insert into GCAT values('V', 'Pl', 'ENG', NULL,NULL,NULL);
+insert into GCAT values('RPRO', NULL, 'ENG', '11',NULL,NULL);
+insert into GCAT values('RPRO', 'Relative', 'ENG', '12',NULL,NULL);
+insert into GCAT values('VNEG', 'Stem', 'ENG', '13',NULL,NULL);
+insert into GCAT values('ANEG', 'Stem', 'ENG', '14',NULL,NULL);
+insert into GCAT values('PAR', NULL, 'ENG', '15',NULL,NULL);
+insert into GCAT values('DET', 'Indef', 'ENG', '16',NULL,NULL);
+insert into GCAT values('DET', 'fwVowel', 'ENG', '17',NULL,NULL);
+insert into GCAT values('DET', 'fwConsonant', 'ENG', '18',NULL,NULL);
+insert into GCAT values('N', 'swVowel', 'ENG', '19',NULL,NULL);
+insert into GCAT values('N', 'swConsonant', 'ENG', '20',NULL,NULL);
+insert into GCAT values('V', 'Gerund', 'ENG', '21',NULL,NULL);
+insert into GCAT values('CONJ', 'Stem', 'ENG', '22',NULL,NULL);
+insert into GCAT values('Num', 'Stem', 'ENG', '23',NULL,NULL);
+insert into GCAT values('Num', 'Ord', 'ENG', '24',NULL,NULL);
+insert into GCAT values('Num', 'Npref1n', 'ENG', '25',NULL,NULL);
+insert into GCAT values('Num', 'Npref2n', 'ENG', '26',NULL,NULL);
+insert into GCAT values('Num', 'Npref3n', 'ENG', '27',NULL,NULL);
+insert into GCAT values('Num', 'Npref4n', 'ENG', '28',NULL,NULL);
+insert into GCAT values('Num', 'Npref5n', 'ENG', '29',NULL,NULL);
+insert into GCAT values('Num', 'Npref6n', 'ENG', '30',NULL,NULL);
+insert into GCAT values('Num', 'Npref7n', 'ENG', '31',NULL,NULL);
+insert into GCAT values('Num', 'Npref8n', 'ENG', '32',NULL,NULL);
+insert into GCAT values('Num', 'Npref9n', 'ENG', '33',NULL,NULL);
+insert into GCAT values('Num', 'swVowel', 'ENG', '34',NULL,NULL);
+insert into GCAT values('Num', 'swConsonant', 'ENG', '35',NULL,NULL);
+insert into GCAT values('DET', 'Def', 'ENG', '36',NULL,NULL);
 
-insert into FUNCTOR_DEFS values('Noun_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('NAMEENGN_1', '', '1',
-'contact="";
-for(i=0;i<parameterList.length;++i){
-	if(parameterList[i].indexOf(''CON_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			con=JSON.parse(arguments[i+2]);
-			contact=con.stem;
-			break;
-		}
-	}
-}
-return contact;');
-insert into FUNCTOR_DEFS values('WITHENGPREP_1', '', '1',
-'out="";
-for(i=0;i<parameterList.length;++i){
-	if(parameterList[i].indexOf(''_out'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			out=arguments[i+2];
-			break;
-		}
-	}
-}
-return out;');
-insert into FUNCTOR_DEFS values('CONTACTENGN_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('LISTENGV_1', '', '1',
-'contact="";
-for(i=0;i<parameterList.length;++i){
-	if(parameterList[i].indexOf(''WITHENGPREP_1'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			contact=arguments[i+2];
-			break;
-		}
-	}
-}
-if(contact) Android.fetchContacts(contact);
-else Android.fetchContacts("");');
-insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('HIVHUNV_1', '', '1',
-'contact="";
-for(i=0;i<parameterList.length;++i){
-	if(parameterList[i].indexOf(''CON_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			con=JSON.parse(arguments[i+2]);
-			if(contact.length>0)contact=contact+" "+con.stem;
-			else contact=con.stem;
-		}
-	}
-	else if(parameterList[i].indexOf(''Noun_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			con=JSON.parse(arguments[i+2]);
-			if(contact.length>0)contact=contact+" "+con.stem;
-			else contact=con.stem;
-		}
-	}
-	else if(parameterList[i].indexOf(''Num_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			contact+=arguments[i+2];
-		}
-	}
-	else if(parameterList[i].indexOf(''ELSOUTSOHUNNOUN_'')>-1){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			contact+=arguments[i+2];
-		}
-	}
-}
-Android.Call(contact);');
-insert into FUNCTOR_DEFS values('Num_1', '', '1',
-'number='''';
-prevNpref='''';
-isOrdinal=false;
-Num_1_MORPHEMES='''';
-for(i=0;i<parameterList.length;++i){
-	if(parameterList[i]===functionName+''_morphology''){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			Num=JSON.parse(arguments[i+2]);
-			Num_1_MORPHEMES=Num.tags;
-			break;
-		}
-	}
-}
-for(i=0;i<Num_1_MORPHEMES.length;++i){
-  if(Num_1_MORPHEMES[i]===''Npref1nnn''){
-    if((prevNpref.length===0||prevNpref.match(/^Npref[1-9]$/)===null)&&prevNpref.match(/^Npref[1-9]n$/)===null) number+=''1'';
-    else if(prevNpref.match(/^Npref[1-9]n$/)!==null) number+=''0'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref1nn''){
-    if(prevNpref.length===0||prevNpref.match(/^Npref[1-9]$/)===null) number+=''1'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref1n''){
-    if(prevNpref===''Npref1nnn'')number+=''01'';
-    else number+=''1'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref2n''){
-    if(prevNpref===''Npref1nnn'')number+=''02'';
-    else number+=''2'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref3n''){
-    if(prevNpref===''Npref1nnn'')number+=''03'';
-    else number+=''3'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref4n''){
-    if(prevNpref===''Npref1nnn'')number+=''04'';
-    else number+=''4'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref5n''){
-    if(prevNpref===''Npref1nnn'')number+=''05'';
-    else number+=''5'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref6n''){
-    if(prevNpref===''Npref1nnn'')number+=''06'';
-    else number+=''6'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref7n''){
-    if(prevNpref===''Npref1nnn'')number+=''07'';
-    else number+=''7'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref8n''){
-    if(prevNpref===''Npref1nnn'')number+=''08'';
-    else number+=''8'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref9n''){
-    if(prevNpref===''Npref1nnn'')number+=''09'';
-    else number+=''9'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref1''){
-    if(prevNpref===''Npref1nn'')number+=''01'';
-    else number+=''1'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref2''){
-    if(prevNpref===''Npref1nn'')number+=''02'';
-    else number+=''2'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref3''){
-    if(prevNpref===''Npref1nn'')number+=''03'';
-    else number+=''3'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref4''){
-    if(prevNpref===''Npref1nn'')number+=''04'';
-    else number+=''4'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref5''){
-    if(prevNpref===''Npref1nn'')number+=''05'';
-    else number+=''5'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref6''){
-    if(prevNpref===''Npref1nn'')number+=''06'';
-    else number+=''6'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref7''){
-    if(prevNpref===''Npref1nn'')number+=''07'';
-    else number+=''7'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref8''){
-    if(prevNpref===''Npref1nn'')number+=''08'';
-    else number+=''8'';
-  }
-  else if(Num_1_MORPHEMES[i]===''Npref9''){
-    if(prevNpref===''Npref1nn'')number+=''09'';
-    else number+=''9'';
-  }
-  else if(Num_1_MORPHEMES[i]===''nulla[stem]''){
-  	number+=''0'';
-  }
-  else if(Num_1_MORPHEMES[i]===''egy[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''001'';
-    else if(prevNpref===''Npref1nn'')number+=''01'';
-    else number+=''1'';
-  }
-  else if(Num_1_MORPHEMES[i]===''kettő[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''002'';
-    else if(prevNpref===''Npref1nn'')number+=''02'';
-    else number+=''2'';
-  }
-  else if(Num_1_MORPHEMES[i]===''három[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''003'';
-    else if(prevNpref===''Npref1nn'')number+=''03'';
-    else number+=''3'';
-  }
-  else if(Num_1_MORPHEMES[i]===''négy[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''004'';
-    else if(prevNpref===''Npref1nn'')number+=''04'';
-    else number+=''4'';
-  }
-  else if(Num_1_MORPHEMES[i]===''öt[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''005'';
-    else if(prevNpref===''Npref1nn'')number+=''05'';
-    else number+=''5'';
-  }
-  else if(Num_1_MORPHEMES[i]===''hat[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''006'';
-    else if(prevNpref===''Npref1nn'')number+=''06'';
-    else number+=''6'';
-  }
-  else if(Num_1_MORPHEMES[i]===''hét[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''007'';
-    else if(prevNpref===''Npref1nn'')number+=''07'';
-    else number+=''7'';
-  }
-  else if(Num_1_MORPHEMES[i]===''nyolc[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''008'';
-    else if(prevNpref===''Npref1nn'')number+=''08'';
-    else number+=''8'';
-  }
-  else if(Num_1_MORPHEMES[i]===''kilenc[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''009'';
-    else if(prevNpref===''Npref1nn'')number+=''09'';
-    else number+=''9'';
-  }
-  else if(Num_1_MORPHEMES[i]===''tíz[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''010'';
-    else number+=''10'';
-  }
-  else if(Num_1_MORPHEMES[i]===''húsz[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''020'';
-    else number+=''20'';
-  }
-  else if(Num_1_MORPHEMES[i]===''harminc[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''030'';
-    else number+=''30'';
-  }
-  else if(Num_1_MORPHEMES[i]===''negyven[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''040'';
-    else number+=''40'';
-  }
-  else if(Num_1_MORPHEMES[i]===''ötven[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''050'';
-    else number+=''50'';
-  }
-  else if(Num_1_MORPHEMES[i]===''hatvan[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''060'';
-    else number+=''60'';
-  }
-  else if(Num_1_MORPHEMES[i]===''hetven[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''070'';
-    else number+=''70'';
-  }
-  else if(Num_1_MORPHEMES[i]===''nyolcvan[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''080'';
-    else number+=''80'';
-  }
-  else if(Num_1_MORPHEMES[i]===''kilencven[stem]''){
-    if(prevNpref===''Npref1nnn'')number+=''090'';
-    else number+=''90'';
-  }
-  else if(Num_1_MORPHEMES[i]===''száz[stem]''){
-    if(prevNpref.length===0||prevNpref===''Npref1nnn'')number+=''100'';
-    else number+=''00'';
-  }
-  else if(Num_1_MORPHEMES[i]===''ezer[stem]''){
-    if(prevNpref.length===0)number+=''1000'';
-    else if(prevNpref===''Npref1nn'') number+=''00000'';
-    else if(prevNpref.match(/^Npref[1-9]n$/)!==null) number+=''0000'';
-    else number+=''000'';
-  }
-  else;
-  if(Num_1_MORPHEMES[i].indexOf(''Npref'')===0) prevNpref=Num_1_MORPHEMES[i];
-  if(Num_1_MORPHEMES[i]===''Ik'') isOrdinal=true;
-}
-if(isOrdinal===true) number+=''.'';
-return number;');
-insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1', '', '1',
-'
-elsoutso='''';
-for(i=0;i<parameterList.length;++i){
-	if(parameterList[i]===functionName+''_morphology''){
-		if(typeof arguments[i+2]!==''undefined''&&arguments[i+2].length>0){
-			elsoutso=JSON.parse(arguments[i+2]);
-			elsoutso=elsoutso.stem;
-			break;
-		}
-	}
-}
-if(elsoutso===''első'') return ''1.'';else if(elsoutso===''utolsó'') return ''0.'';else return "";');
+insert into GCAT values('CON', 'Stem', 'HUN', '0','P','0');
+insert into GCAT values('Num', 'Stem', 'HUN', '125','P','0');
+insert into GCAT values('Num', 'Ik', 'HUN', '126',NULL,NULL);
+insert into GCAT values('Num', 'Par', 'HUN', '127',NULL,NULL);
+insert into GCAT values('Num', 'Npref1', 'HUN', '128',NULL,NULL);
+insert into GCAT values('Num', 'Npref2', 'HUN', '129',NULL,NULL);
+insert into GCAT values('Num', 'Npref3', 'HUN', '130',NULL,NULL);
+insert into GCAT values('Num', 'Npref4', 'HUN', '131',NULL,NULL);
+insert into GCAT values('Num', 'Npref5', 'HUN', '132',NULL,NULL);
+insert into GCAT values('Num', 'Npref6', 'HUN', '133',NULL,NULL);
+insert into GCAT values('Num', 'Npref7', 'HUN', '134',NULL,NULL);
+insert into GCAT values('Num', 'Npref8', 'HUN', '135',NULL,NULL);
+insert into GCAT values('Num', 'Npref9', 'HUN', '136',NULL,NULL);
+insert into GCAT values('Num', 'Npref1nn', 'HUN', '137',NULL,NULL);
+insert into GCAT values('Num', 'Npref1nnn', 'HUN', '138',NULL,NULL);
+insert into GCAT values('Det', NULL, 'HUN', '139',NULL,NULL);
+insert into GCAT values('Det', 'Def', 'HUN', '140',NULL,NULL);
+insert into GCAT values('Det', 'fwVowel', 'HUN', '141',NULL,NULL);
+insert into GCAT values('Det', 'fwConsonant', 'HUN', '142',NULL,NULL);
+insert into GCAT values('CON', 'swVowel', 'HUN', '143','P','0');
+insert into GCAT values('CON', 'swConsonant', 'HUN', '144','P','0');
+insert into GCAT values('Num', 'Acc', 'HUN', '145',NULL,NULL);
+insert into GCAT values('Num', 'Npref1n', 'HUN', '146',NULL,NULL);
+insert into GCAT values('Num', 'Npref2n', 'HUN', '147',NULL,NULL);
+insert into GCAT values('Num', 'Npref3n', 'HUN', '148',NULL,NULL);
+insert into GCAT values('Num', 'Npref4n', 'HUN', '149',NULL,NULL);
+insert into GCAT values('Num', 'Npref5n', 'HUN', '150',NULL,NULL);
+insert into GCAT values('Num', 'Npref6n', 'HUN', '151',NULL,NULL);
+insert into GCAT values('Num', 'Npref7n', 'HUN', '152',NULL,NULL);
+insert into GCAT values('Num', 'Npref8n', 'HUN', '153',NULL,NULL);
+insert into GCAT values('Num', 'Npref9n', 'HUN', '154',NULL,NULL);
+insert into GCAT values('Num', 'swVowel', 'HUN', '155','P','0');
+insert into GCAT values('Num', 'swConsonant', 'HUN', '156','P','0');
+insert into GCAT values('Noun', 'Stem', 'HUN', '157','P','0');
+insert into GCAT values('Noun', 'Acc', 'HUN', '158',NULL,NULL);
+insert into GCAT values('Noun', 'swVowel', 'HUN', '159','P','0');
+insert into GCAT values('Noun', 'swConsonant', 'HUN', '160','P','0');
+insert into GCAT values('CON', 'Acc', 'HUN', '161',NULL,NULL);
+insert into GCAT values('Verb', 'Stem', 'HUN', '162',NULL,NULL);
+insert into GCAT values('Verb', 'ConjDefSg2', 'HUN', '163',NULL,NULL);
+insert into GCAT values('Vbpfx', 'Stem', 'HUN', '164',NULL,NULL);
+insert into GCAT values('Noun', 'Relative', 'HUN', '165',NULL,NULL);
+
+insert into GCAT values('Conj', 'Stem', 'HUN', '166','P','1');
+insert into GCAT values('Neg', 'Stem', 'HUN', '167','P','0');
+insert into GCAT values('Noun', 'Plur', 'HUN', '168',NULL,NULL);
+insert into GCAT values('Noun', 'Ine', 'HUN', '169',NULL,NULL);
+insert into GCAT values('Verb', 'IndefSg3', 'HUN', '170',NULL,NULL);
+insert into GCAT values('Verb', 'ConjIndefSg2', 'HUN', '171',NULL,NULL);
+insert into GCAT values('Adj', 'Stem', 'HUN', '172','P','0');
+insert into GCAT values('CON', 'Sub', 'HUN', '173',NULL,NULL);
+insert into GCAT values('CON', 'Ins', 'HUN', '174',NULL,NULL);
+insert into GCAT values('Verb', 'IndefPl3', 'HUN', '175',NULL,NULL);
+
+insert into FUNCTOR_DEFS values('LISTENGV_1', 'js', '1', 'listengv_1.js');
+insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('Num_2', 'js', '1', 'numeng_1.js');
+insert into FUNCTOR_DEFS values('CALLENGV_1', 'js', '1', 'callengv_1.js');
+insert into FUNCTOR_DEFS values('FIRSTLASTENGN_1', 'js', '1', 'firstlastengn_1.js');
+insert into FUNCTOR_DEFS values('WITHENGPREP_1', 'js', '1', 'withengprep_1.js');
+insert into FUNCTOR_DEFS values('INENGPREP_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('DOENGV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('NOTENGVNEG_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ANDENGCONJ_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ORENGCONJ_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ENGACTPROPERTIES_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ENGPROPERTIES_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('BEGINENGV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ENDENGV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('CONTAINENGV_1', 'js', '1', NULL);
+
+insert into FUNCTOR_DEFS values('HIVHUNV_1', 'js', '1', 'hivhunv_1.js');
+insert into FUNCTOR_DEFS values('FELHUNVBPFX_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1', 'js', '1', 'elsoutsohunnoun_1.js');
+insert into FUNCTOR_DEFS values('Num_1', 'js', '1', 'numhun_1.js');
+insert into FUNCTOR_DEFS values('Noun_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('KERESHUNV_1', 'js', '1', 'kereshunv_1.js');
+insert into FUNCTOR_DEFS values('NEVJEGYHUNN_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('NEVJEGYZEKHUNN_1', 'js', '1', NULL);
+
+insert into FUNCTOR_DEFS values('KEZDODHUNAR_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('VEGZODHUNAR_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('KEZDODHUNV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('VEGZODHUNV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('TARTALMAZHUNV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('TARTALMAZHUNA_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('AMELYHUNN_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('ESHUNCONJ_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('VAGYHUNCONJ_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('NEMHUNNEG_1', 'js', '1', NULL);
 
 insert into FUNCTORS values('CON', '1', NULL);
-insert into FUNCTORS values('WITHENGPREP', '1', 'WITHENGPREP_1');
+insert into FUNCTORS values('CALLENGV', '1', 'CALLENGV_1');
 insert into FUNCTORS values('LISTENGV', '1', 'LISTENGV_1');
-insert into FUNCTORS values('NAMEENGN', '1', 'NAMEENGN_1');
+insert into FUNCTORS values('LISTENGV', '2', 'LISTENGV_1');
 insert into FUNCTORS values('CONTACTENGN', '1', 'CONTACTENGN_1');
+insert into FUNCTORS values('CONTACTENGN', '2', 'CONTACTENGN_1');
+insert into FUNCTORS values('Num', '2', 'Num_2');
+insert into FUNCTORS values('FIRSTLASTENGN', '1', 'FIRSTLASTENGN_1');
+insert into FUNCTORS values('WITHENGPREP', '1', 'WITHENGPREP_1');
+insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
+insert into FUNCTORS values('THATENGRPRO', '1', NULL);
+insert into FUNCTORS values('DOENGV', '1', 'DOENGV_1');
+insert into FUNCTORS values('NOTENGVNEG', '1', 'NOTENGVNEG_1');
+insert into FUNCTORS values('ANDENGCONJ', '1', 'ANDENGCONJ_1');
+insert into FUNCTORS values('ORENGCONJ', '1', 'ORENGCONJ_1');
+insert into FUNCTORS values('ENGACTPROPERTIES', '1', 'ENGACTPROPERTIES_1');
+insert into FUNCTORS values('ENGPROPERTIES', '1', 'ENGPROPERTIES_1');
+insert into FUNCTORS values('BEGINENGV', '1', 'BEGINENGV_1');
+insert into FUNCTORS values('ENDENGV', '1', 'ENDENGV_1');
+insert into FUNCTORS values('CONTAINENGV', '1', 'CONTAINENGV_1');
+
 insert into FUNCTORS values('HIVHUNV', '1', 'HIVHUNV_1');
 insert into FUNCTORS values('FELHUNVBPFX', '1', 'FELHUNVBPFX_1');
 insert into FUNCTORS values('Num', '1', 'Num_1');
 insert into FUNCTORS values('Noun', '1', 'Noun_1');
 insert into FUNCTORS values('ELSOUTSOHUNNOUN', '1', 'ELSOUTSOHUNNOUN_1');
+insert into FUNCTORS values('KERESHUNV', '1', 'KERESHUNV_1');
+insert into FUNCTORS values('NEVJEGYHUNN', '1', 'NEVJEGYHUNN_1');
+insert into FUNCTORS values('KEZDODHUNAR', '1', 'KEZDODHUNAR_1');
+insert into FUNCTORS values('VEGZODHUNAR', '1', 'VEGZODHUNAR_1');
+insert into FUNCTORS values('KEZDODHUNV', '1', 'KEZDODHUNV_1');
+insert into FUNCTORS values('VEGZODHUNV', '1', 'VEGZODHUNV_1');
+insert into FUNCTORS values('TARTALMAZHUNV', '1', 'TARTALMAZHUNV_1');
+insert into FUNCTORS values('TARTALMAZHUNA', '1', 'TARTALMAZHUNA_1');
+insert into FUNCTORS values('AMELYHUNN', '1', 'AMELYHUNN_1');
+insert into FUNCTORS values('ESHUNCONJ', '1', 'ESHUNCONJ_1');
+insert into FUNCTORS values('VAGYHUNCONJ', '1', 'VAGYHUNCONJ_1');
+insert into FUNCTORS values('NEMHUNNEG', '1', 'NEMHUNNEG_1');
+insert into FUNCTORS values('NEVJEGYZEKHUNN', '1', 'NEVJEGYZEKHUNN_1');
+insert into FUNCTORS values('HUNACTPROPERTIES', '1', NULL);
+insert into FUNCTORS values('HUNPROPERTIES', '1', NULL);
 
+insert into FUNCTOR_TAGS values('CALLENGV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('CALLENGV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('LISTENGV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('HIVHUNV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('HIVHUNV', '1', NULL, '2', 'type', 'action');
+
+insert into LEXICON values('call', 'ENG', 'V', 'CALLENGV');
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
 insert into LEXICON values('contact', 'ENG', 'N', 'CONTACTENGN');
-insert into LEXICON values('name', 'ENG', 'N', 'NAMEENGN');
+insert into LEXICON values('first', 'ENG', 'N', 'FIRSTLASTENGN');
+insert into LEXICON values('last', 'ENG', 'N', 'FIRSTLASTENGN');
 insert into LEXICON values('with', 'ENG', 'PREP', 'WITHENGPREP');
+
+/*
+insert into LEXICON values('begin', 'ENG', 'V', 'BEGINENGV');
+insert into LEXICON values('end', 'ENG', 'V', 'ENDENGV');
+insert into LEXICON values('contain', 'ENG', 'V', 'CONTAINENGV');
+insert into LEXICON values('that', 'ENG', 'RPRO', 'THATENGRPRO');
+insert into LEXICON values('in', 'ENG', 'PREP', 'INENGPREP');
+insert into LEXICON values('do', 'ENG', 'V', 'DOENGV');
+insert into LEXICON values('not', 'ENG', 'VNEG', 'NOTENGVNEG');
+insert into LEXICON values('and', 'ENG', 'CONJ', 'ANDENGCONJ');
+insert into LEXICON values('but', 'ENG', 'CONJ', 'ANDENGCONJ');
+insert into LEXICON values('or', 'ENG', 'CONJ', 'ORENGCONJ');
+*/
+
 insert into LEXICON values('hív', 'HUN', 'Verb', 'HIVHUNV');
 insert into LEXICON values('fel', 'HUN', 'Vbpfx', 'FELHUNVBPFX');
 insert into LEXICON values('első', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
 insert into LEXICON values('utolsó', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
+insert into LEXICON values('keres', 'HUN', 'Verb', 'KERESHUNV');
+insert into LEXICON values('névjegy', 'HUN', 'Noun', 'NEVJEGYHUNN');
+insert into LEXICON values('névjegyzék', 'HUN', 'Noun', 'NEVJEGYZEKHUNN');
 
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, 'N', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '5', '5', '6', NULL, NULL, NULL, NULL, 'Sg', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '6', '7', NULL, NULL, NULL, NULL, NULL, 'N', 'NAMEENGN', 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '7', '7', NULL, NULL, NULL, NULL, NULL, 'N', 'CONTACTENGN', 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'A', 'ENG_CNP', '1', NULL, NULL, 'A', NULL, 'H', NULL, 'N', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', '2', '3', 'PREP', NULL, 'H', NULL, 'N', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '3', '3', NULL, 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, 'RPRO', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '3', NULL, NULL, 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_Vbar1', 'RPRO', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, NULL, 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, 'NEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '2', NULL, NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_ImpVerbPfx', 'HUN_ImpVerb', 'Vbpfx', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, 'Vbpfx', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, 'Num', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '3', NULL, NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
+/*
+insert into LEXICON values('kezdőd', 'HUN', 'Adj', 'KEZDODHUNAR');*//*AR:adjective, reflexive; current foma fst does not break it down to this level*/
+/*AR indicates Adj Reflexive as the distinction must be made at stem level unfortunately since
+the morphological setup in the foma file does not handle reflexivity.*//*
+insert into LEXICON values('végződ', 'HUN', 'Adj', 'VEGZODHUNAR');
+insert into LEXICON values('kezdődik', 'HUN', 'Verb', 'KEZDODHUNV');
+insert into LEXICON values('végződik', 'HUN', 'Verb', 'VEGZODHUNV');
+insert into LEXICON values('tartalmaz', 'HUN', 'Verb', 'TARTALMAZHUNV');
+insert into LEXICON values('tartalmazó', 'HUN', 'Adj', 'TARTALMAZHUNA');
+insert into LEXICON values('amely', 'HUN', 'Noun', 'AMELYHUNN');
+insert into LEXICON values('mely', 'HUN', 'Noun', 'AMELYHUNN');
+insert into LEXICON values('és', 'HUN', 'Conj', 'ESHUNCONJ');
+insert into LEXICON values('de', 'HUN', 'Conj', 'ESHUNCONJ');
+insert into LEXICON values('vagy', 'HUN', 'Conj', 'VAGYHUNCONJ');
+insert into LEXICON values('nem', 'HUN', 'Neg', 'NEMHUNNEG');
+*/
+
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '5', '5', '6', NULL, NULL, NULL, NULL, NULL, 'Sg', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '6', '6', '7', NULL, NULL, NULL, NULL, NULL, 'N', 'CONTACTENGN', 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '7', NULL, '7', NULL, NULL, NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '2', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '1', '2', '3', 'N', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '2', '4', '3', 'N', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '4', '5', '5', 'N', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '5', '5', NULL, 'N', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '1', '2', '3', 'PREP', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, NULL, 'RPRO', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '4', '5', '6', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '5', '7', '6', 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '6', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '7', '8', '8', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '8', '8', NULL, 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_Vbar1', NULL, 'RPRO', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '5', '5', 'V', NULL, 'N', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '5', '6', '7', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '6', '8', '7', 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '7', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '8', '9', '9', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '9', '9', NULL, 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_NP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_NP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '1', '2', '3', 'V', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '2', '4', '3', 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '3', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '4', '5', '5', 'V', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '5', '5', NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '2', '3', '4', 'VNEG', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '3', '5', '4', 'VNEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '4', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '5', '6', '6', 'VNEG', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '6', '6', NULL, 'VNEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Abar1', 'ENG_ANEG', 'ENG_A', '1', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar4', 'ENG_DP', '1', '2', NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar4', 'ENG_DP', '2', '3', NULL, 'V', NULL, 'H', NULL, NULL, 'Num', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar4', 'ENG_DP', '3', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PVPbar', 'ENG_V_Ger', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PVPbar', 'ENG_V_Ger', 'ENG_NP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PNVPbar', 'ENG_VNEG', 'ENG_PVPbar', '1', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVP', '1', '2', NULL, 'N', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVP', '2', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPlist', '1', '4', '2', 'N', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPlist', '2', NULL, '3', NULL, NULL, NULL, NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPlist', '3', '3', NULL, 'N', NULL, 'H', NULL, NULL, 'V', NULL, 'N', 'ENG_PNVPbar', '4', 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPlist', '4', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_ConjPVP','ENG_CONJ','ENG_PVP', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_ConjPVP','ENG_CONJ','ENG_PVP', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPConj', '1', '2', '3', 'N', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'N', 'ENG_PVPhead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPConj', '2', '4', '3', 'N', NULL, 'H', NULL, NULL, 'V', NULL, 'N', 'ENG_PVPhead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPConj', '3', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPConj', '4', '5', '6', 'N', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'N', 'ENG_PVPlisthead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPConj', '5', NULL, '6', 'N', NULL, 'H', NULL, NULL, 'V', NULL, 'N', 'ENG_PVPlisthead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_PVPConj', '6', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_NV_Aux', 'ENG_V_Aux', 'ENG_VNEG', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_NV', 'ENG_NV_Aux', 'ENG_V_Stem', '1', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '2', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ImpVerbPfx', 'HUN_ImpVerb', 'HUN_Vbpfx', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Vbpfx', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, NULL, 'Num', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '3', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '1', '5', '2', 'Verb', 'KERESHUNV', 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '2', '5', '3', NULL, NULL, NULL, NULL, NULL, 'Noun', 'NEVJEGYHUNN', 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '3', '5', '4', NULL, NULL, NULL, NULL, NULL, 'Ine', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '4', NULL, '5', NULL, NULL, NULL, NULL, NULL, 'Plur', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '5', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar1', 'HUN_NP', '1', NULL, NULL, 'Noun', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar2', 'HUN_ImpVerb', 'HUN_N_Acc', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '1', NULL, '2', 'Noun', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '3', '4', '5', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Neg', NULL, 'N', 'HUN_Vhead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '4', '6', '5', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Verb', NULL, 'N', 'HUN_Vhead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '5', NULL, NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Conj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '6', '7', '8', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Neg', NULL, 'N', 'HUN_Vlisthead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '7', '11', '10', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Verb', NULL, 'N', 'HUN_Vlisthead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '8', NULL, '9', NULL, NULL, NULL, NULL, NULL, 'Verb', NULL, 'N', 'HUN_Vlisthead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '9', '10', '10', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Verb', NULL, 'N', 'HUN_INVP', '4', 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '10', NULL, NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Conj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '11', '12', '12', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '12', '12', NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Verb', NULL, 'N', 'HUN_IVP', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_IVPbar', 'HUN_N_Ins', 'HUN_V', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_IVPbar', 'HUN_N_Sub', 'HUN_V', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_IVPbar', 'HUN_V', 'HUN_N_Acc', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_N_Ins', '1', NULL, NULL, 'Noun', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Abar1', 'HUN_N_Ins', 'HUN_A0NEG', '1', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Abar1', 'HUN_N_Sub', 'HUN_A0NEG', '1', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Abar1', 'HUN_N_Acc', 'HUN_A0NEG', '1', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Abar1N', 'HUN_N_Ins', 'HUN_ANEG', '1', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Abar1N', 'HUN_N_Sub', 'HUN_ANEG', '1', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Abar1N', 'HUN_N_Acc', 'HUN_ANEG', '1', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar3', 'HUN_N_Acc', '1', '2', NULL, 'Noun', NULL, 'N', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar3', 'HUN_N_Acc', '2', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'Adj', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerb', 'HUN_AP', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Alist', 'HUN_N_Acc', '1', '2', '2', 'Noun', NULL, 'N', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Alist', 'HUN_N_Acc', '2', '2', NULL, 'Noun', NULL, 'N', NULL, NULL, 'Adj', NULL, 'H', 'HUN_Abar2', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ANEG', 'HUN_Neg', 'HUN_Adj', '1', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_NAbar1', 'HUN_Neg', 'HUN_Abar1', '1', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_INVP', 'HUN_Neg', 'HUN_IVPbar', '1', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_INVP', 'HUN_Neg', 'HUN_INVPbar', '1', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_INVP', 'HUN_NP', 'HUN_INVPbar2', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_INVPbar', 'HUN_V', 'HUN_N_Ins', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_INVPbar', 'HUN_V', 'HUN_N_Sub', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_INVPbar2', 'HUN_Neg', 'HUN_V', '1', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'HUN');
+
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjA','HUN_Conj','HUN_ANEG', '1', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjA','HUN_Conj','HUN_A0NEG', '1', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjA','HUN_Conj','HUN_Abar3', '1', '2', NULL, 'Conj', NULL, 'H', NULL, NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjA','HUN_Conj','HUN_Abar3', '2', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Adj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjA','HUN_Conj','HUN_Alist', '1', '2', NULL, 'Conj', NULL, 'H', NULL, NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjA','HUN_Conj','HUN_Alist', '2', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Adj', NULL, 'N', 'HUN_Abar2', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '1', '2', '3', 'Noun', NULL, 'N', NULL, NULL, 'Neg', NULL, 'H', 'HUN_Ahead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '2', '4', '3', 'Noun', NULL, 'N', NULL, NULL, 'Adj', NULL, 'H', 'HUN_Ahead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '3', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '4', '5', '6', 'Noun', NULL, 'N', NULL, NULL, 'Neg', NULL, 'H', 'HUN_Alisthead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '5', NULL, '8', 'Noun', NULL, 'N', NULL, NULL, 'Adj', NULL, 'H', 'HUN_Alisthead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '6', NULL, '7', NULL, NULL, NULL, NULL, NULL, 'Adj', NULL, 'H', 'HUN_Alisthead', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '7', '8', '8', 'Noun', NULL, 'N', NULL, NULL, 'Adj', NULL, 'H', 'HUN_Abar2N', '4', 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_AP', 'HUN_Abar4', 'HUN_AN_Acc', '8', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'HUN');
+
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_INVP', '1', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVP', '1', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVPlist', '1', '2', NULL, 'Conj', NULL, 'H', NULL, NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVPlist', '2', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', 'HUN_IVP', NULL, 'HUN');
 
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, '2', '0', 'CONTACTENGN', '1');
-insert into DEPOLEX values('LISTENGV', '1', '2', NULL, '2', NULL, '0', 'WITHENGPREP', '1');
-insert into DEPOLEX values('WITHENGPREP', '1', '1', NULL, '1', NULL, '0', 'NAMEENGN', '1');
-insert into DEPOLEX values('NAMEENGN', '1', '1', '1', NULL, NULL, '1', 'CON', '1');
-insert into DEPOLEX values('CONTACTENGN', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
+insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'CONTACTENGN', '1');
+insert into DEPOLEX values('LISTENGV', '2', '1', NULL, NULL, NULL, '0', 'CONTACTENGN', '2');
+insert into DEPOLEX values('WITHENGPREP', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('INENGPREP', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('CONTACTENGN', '1', '1', NULL, '1', NULL, '0', 'DOENGV', '1');
+insert into DEPOLEX values('CONTACTENGN', '2', '1', NULL, NULL, NULL, '0', 'WITHENGPREP', '1');
+insert into DEPOLEX values('CALLENGV', '1', '1', NULL, '2', NULL, '0', 'FIRSTLASTENGN', '1');
+insert into DEPOLEX values('CALLENGV', '1', '2', NULL, '3', NULL, '1', 'Num', '2');
+insert into DEPOLEX values('CALLENGV', '1', '3', NULL, NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('Num', '2', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('FIRSTLASTENGN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('DOENGV', '1', '1', '1', '1', NULL, '0', 'ENGPROPERTIES', '1');
+insert into DEPOLEX values('ENGPROPERTIES', '1', '1', '1', '2', '2', '1', 'NOTENGVNEG', '1');
+insert into DEPOLEX values('ENGPROPERTIES', '1', '2', '1', '3', '3', '1', 'ANDENGCONJ', '1');
+insert into DEPOLEX values('ENGPROPERTIES', '1', '3', '1', '4', '4', '1', 'ORENGCONJ', '1');
+insert into DEPOLEX values('ENGPROPERTIES', '1', '4', '1', '4', NULL, '0', 'ENGACTPROPERTIES', '1');
+insert into DEPOLEX values('ENGACTPROPERTIES', '1', '1', '1', '2', '2', '0', 'BEGINENGV', '1');
+insert into DEPOLEX values('ENGACTPROPERTIES', '1', '2', '1', '3', '3', '0', 'ENDENGV', '1');
+insert into DEPOLEX values('ENGACTPROPERTIES', '1', '3', '1', '3', NULL, '0', 'CONTAINENGV', '1');
+insert into DEPOLEX values('BEGINENGV', '1', '1', NULL, NULL, NULL, '0', 'WITHENGPREP', '1');
+insert into DEPOLEX values('ENDENGV', '1', '1', NULL, NULL, NULL, '0', 'INENGPREP', '1');
+insert into DEPOLEX values('CONTAINENGV', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('NOTENGVNEG', '1', '1', NULL, '1', NULL, '0', 'ENGACTPROPERTIES', '1');
+insert into DEPOLEX values('ANDENGCONJ', '1', '1', NULL, '2', '2', '0', 'NOTENGVNEG', '1');
+insert into DEPOLEX values('ANDENGCONJ', '1', '2', NULL, '2', NULL, '0', 'ENGACTPROPERTIES', '1');
+insert into DEPOLEX values('ORENGCONJ', '1', '1', NULL, '2', '2', '0', 'NOTENGVNEG', '1');
+insert into DEPOLEX values('ORENGCONJ', '1', '2', NULL, '2', NULL, '0', 'ENGACTPROPERTIES', '1');
+insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+
 insert into DEPOLEX values('HIVHUNV', '1', '1', NULL, '2', '2', '0', 'FELHUNVBPFX', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '2', '1', '3', NULL, '1', 'Num', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '3', '1', '4', NULL, '0', 'ELSOUTSOHUNNOUN', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '4', '1', '5', NULL, '1', 'Noun', '1');
-insert into DEPOLEX values('HIVHUNV', '1', '5', '1', NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '2', NULL, '3', NULL, '1', 'Num', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '3', NULL, '4', NULL, '0', 'ELSOUTSOHUNNOUN', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '4', NULL, '5', NULL, '1', 'Noun', '1');
+insert into DEPOLEX values('HIVHUNV', '1', '5', NULL, NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('FELHUNVBPFX', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('Num', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('Noun', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('ELSOUTSOHUNNOUN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('KERESHUNV', '1', '1', NULL, '2', NULL, '0', 'NEVJEGYZEKHUNN', '1');
+insert into DEPOLEX values('KERESHUNV', '1', '2', NULL, NULL, NULL, '0', 'NEVJEGYHUNN', '1');
+insert into DEPOLEX values('NEVJEGYZEKHUNN', '1', '1', NULL, NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('NEVJEGYHUNN', '1', '1', NULL, '2', NULL, '0', 'HUNPROPERTIES', '1');
+insert into DEPOLEX values('NEVJEGYHUNN', '1', '2', NULL, '2', NULL, '1', 'CON', '1');
+insert into DEPOLEX values('AMELYHUNN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('HUNACTPROPERTIES', '1', '1', '1', '2', '2', '0', 'KEZDODHUNAR', '1');
+insert into DEPOLEX values('HUNACTPROPERTIES', '1', '2', '1', '3', '3', '0', 'KEZDODHUNV', '1');
+insert into DEPOLEX values('HUNACTPROPERTIES', '1', '3', '1', '4', '4', '0', 'VEGZODHUNAR', '1');
+insert into DEPOLEX values('HUNACTPROPERTIES', '1', '4', '1', '5', '5', '0', 'VEGZODHUNV', '1');
+insert into DEPOLEX values('HUNACTPROPERTIES', '1', '5', '1', '6', '6', '0', 'TARTALMAZHUNA', '1');
+insert into DEPOLEX values('HUNACTPROPERTIES', '1', '6', '1', '6', NULL, '0', 'TARTALMAZHUNV', '1');
+insert into DEPOLEX values('KEZDODHUNV', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('VEGZODHUNV', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('TARTALMAZHUNV', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('KEZDODHUNAR', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('VEGZODHUNAR', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('TARTALMAZHUNA', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('HUNPROPERTIES', '1', '1', '1', '2', '2', '1', 'NEMHUNNEG', '1');
+insert into DEPOLEX values('HUNPROPERTIES', '1', '2', '1', '3', '3', '1', 'ESHUNCONJ', '1');
+insert into DEPOLEX values('HUNPROPERTIES', '1', '3', '1', '4', '4', '1', 'VAGYHUNCONJ', '1');
+insert into DEPOLEX values('HUNPROPERTIES', '1', '4', '1', '4', NULL, '0', 'HUNACTPROPERTIES', '1');
+insert into DEPOLEX values('NEMHUNNEG', '1', '1', NULL, '1', NULL, '0', 'HUNACTPROPERTIES', '1');
+insert into DEPOLEX values('ESHUNCONJ', '1', '1', NULL, '2', '2', '0', 'NEMHUNNEG', '1');
+insert into DEPOLEX values('ESHUNCONJ', '1', '2', NULL, '2', NULL, '0', 'HUNACTPROPERTIES', '1');
+insert into DEPOLEX values('VAGYHUNCONJ', '1', '1', NULL, '2', '2', '0', 'NEMHUNNEG', '1');
+insert into DEPOLEX values('VAGYHUNCONJ', '1', '2', NULL, '2', NULL, '0', 'HUNACTPROPERTIES', '1');
 
-insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL);
-insert into GRAMMAR values('HUN','S','HUN_VP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AdvP',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_PP',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar3','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_RC',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_RC',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar4','ENG_DP',NULL);
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',
+insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AdvP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_PP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar3','ENG_NP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_RC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_RC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar4','ENG_DP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_V', NULL,NULL,
+'"const node_info& ENG_V=sparser->get_node_info($1);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_V");
+$$=sparser->set_node_info("ENG_Vbar4",ENG_V);"');
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_V,"RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
-logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");"');
-/*std::cout<<"ENG_IVP->ENG_V ENG_PP"<<std::endl;"');*/
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',
-'"const node_info& ENG_NV=sparser->get_node_info($1);
-const node_info& ENG_PP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");"');
-/*std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;"');*/
-insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_NEG',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_V','ENG_AdvP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_PP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar1','ENG_V','ENG_NP',
+unsigned int leaf_node_id=sparser->add_feature_to_leaf(ENG_V,"ENG_V_Aux","V","RCV");
+if(leaf_node_id==0) sparser->add_feature_to_leaf(ENG_V,"RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);"');
+insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_V','ENG_AdvP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_PP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_NP',NULL,NULL);/*can't recall why this is allowed*/
+insert into GRAMMAR values('ENG','ENG_Vbar1','ENG_V','ENG_NP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
-logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");"');
-/*std::cout<<"ENG_Vbar1->ENG_V ENG_NP"<<std::endl;"');*/
-insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_DP','ENG_V',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");
+$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);"');
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_DP','ENG_V',NULL,
 '"const node_info& ENG_DP=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
-logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");"');
-/*std::cout<<"ENG_Vbar4->ENG_DP ENG_V"<<std::endl;"');*/
-insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_TP','ENG_V',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);"');
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_TP','ENG_V',NULL,
 '"const node_info& ENG_TP=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
-logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");"');
-/*std::cout<<"ENG_Vbar4->ENG_TP ENG_V"<<std::endl;"');*/
-insert into GRAMMAR values('ENG','ENG_PP','ENG_Prep','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_CNP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_AP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_QPro','ENG_CNP',NULL);
-insert into GRAMMAR values('ENG','ENG_CNP','ENG_A','ENG_CNP',NULL);
-insert into GRAMMAR values('ENG','ENG_CNP','ENG_N',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_AdvP','ENG_Adv',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem','ENG_V_lfea_aux',NULL);
-insert into GRAMMAR values('ENG','ENG_V_ger','ENG_V_Stem','ENG_V_lfea_ger',NULL);
-insert into GRAMMAR values('ENG','ENG_V_Stem','t_ENG_V_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V_lfea_aux','t_ENG_V_Aux',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V_lfea_ger','t_ENG_V_Gerund',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_QPro','t_ENG_QPRO',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N','ENG_N_Sg',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N','ENG_N_Pl',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_a','ENG_N_Sg_0Con_swC',NULL);
-insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_an','ENG_N_Sg_0Con_swV',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg_0Con','ENG_N_Stem','ENG_N_lfea_Sg',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swC','ENG_N_Sg_0Con','ENG_lfea_swConsonant',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swV','ENG_N_Sg_0Con','ENG_lfea_swVowel',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC','ENG_1Con',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV','ENG_1Con',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_1Con',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl_0Con','ENG_N_Stem','ENG_N_lfea_Pl',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swC','ENG_N_Pl_0Con','ENG_lfea_swConsonant',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swV','ENG_N_Pl_0Con','ENG_lfea_swVowel',NULL);
-insert into GRAMMAR values('ENG','ENG_1Con','ENG_Con',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_nCon','ENG_1Con','ENG_Con',NULL);
-insert into GRAMMAR values('ENG','ENG_nCon','ENG_nCon','ENG_Con',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC','ENG_nCon',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV','ENG_nCon',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_nCon',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);"');
+insert into GRAMMAR values('ENG','ENG_PP','ENG_Prep','ENG_NP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_CNP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_CAP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_QPro','ENG_CNP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CNP','ENG_AP','ENG_N',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CNP','ENG_N',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AdvP','ENG_Adv',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_Aux','ENG_V_Stem','ENG_V_lfea_aux',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_Ger','ENG_V_Stem','ENG_V_lfea_ger',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_Stem','t_ENG_V_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_lfea_aux','t_ENG_V_Aux',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_lfea_ger','t_ENG_V_Gerund',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_QPro','t_ENG_QPRO',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N','ENG_N_Sg',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N','ENG_N_Pl',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_a','ENG_N_Sg_0Con_swC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_an','ENG_N_Sg_0Con_swV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg_0Con','ENG_N_Stem','ENG_N_lfea_Sg',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swC','ENG_N_Sg_0Con','ENG_lfea_swConsonant',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swV','ENG_N_Sg_0Con','ENG_lfea_swVowel',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC','ENG_1Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV','ENG_1Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_1Con',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl_0Con','ENG_N_Stem','ENG_N_lfea_Pl',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swC','ENG_N_Pl_0Con','ENG_lfea_swConsonant',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swV','ENG_N_Pl_0Con','ENG_lfea_swVowel',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_1Con','ENG_Con',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_nCon','ENG_1Con','ENG_Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_nCon','ENG_nCon','ENG_Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC','ENG_nCon',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV','ENG_nCon',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_nCon',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',NULL,
 '"//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 //that a singular noun cannot combine with more than one constant like in ''list file abc def''
 //TODO: Any better solution???
 return -1;"');
-insert into GRAMMAR values('ENG','ENG_N_Stem','t_ENG_N_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_lfea_Sg','t_ENG_N_Sg',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_lfea_Pl','t_ENG_N_Pl',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_A','t_ENG_A_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_AP','ENG_1Con','ENG_N_Pl_0Con_swC',NULL);
-insert into GRAMMAR values('ENG','ENG_AP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL);
-insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,
+insert into GRAMMAR values('ENG','ENG_N_Stem','t_ENG_N_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_lfea_Sg','t_ENG_N_Sg',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_lfea_Pl','t_ENG_N_Pl',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_A_Stem','t_ENG_A_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_A','ENG_A_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,NULL,
 '"lexicon word;
-const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_Con);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,"Constant:"+word.word);"');
-/*std::cout<<"Constant:"<<word.word<<std::endl;"');*/
-insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RPro','ENG_RPro_stem','ENG_RPro_lfea_relative',NULL);
-insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RPro_lfea_relative','t_ENG_RPRO_Relative',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_TP','ENG_Tense_particle','ENG_V_Stem',NULL);
-insert into GRAMMAR values('ENG','ENG_TP','ENG_V_ger',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVP',NULL);
-insert into GRAMMAR values('ENG','ENG_NEG','t_ENG_NEG_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Indef_Det_an','ENG_Indef_Det','ENG_lfea_fwVowel',NULL);
-insert into GRAMMAR values('ENG','ENG_Indef_Det_a','ENG_Indef_Det','ENG_lfea_fwConsonant',NULL);
-insert into GRAMMAR values('ENG','ENG_Indef_Det','ENG_Det_stem','ENG_lfea_IndefDet',NULL);
-insert into GRAMMAR values('ENG','ENG_Det_stem','t_ENG_DET',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_IndefDet','t_ENG_DET_Indef',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_fwVowel','t_ENG_DET_fwVowel',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_fwConsonant','t_ENG_DET_fwConsonant',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_swVowel','t_ENG_N_swVowel',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_swConsonant','t_ENG_N_swConsonant',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_NP',NULL);
-insert into GRAMMAR values('HUN','HUN_ImpVerbPfx','HUN_ImpVerb','HUN_Vbpfx',NULL);
-insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_ConjDefSg2',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Constant:"+word.word);
+$$=sparser->set_node_info("ENG_Con",word);"');
+insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro','ENG_RPro_stem','ENG_RPro_lfea_relative',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro_lfea_relative','t_ENG_RPRO_Relative',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_TP','ENG_Tense_particle','ENG_V_Stem',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_TP','ENG_V_Ger',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ANEG_Stem','t_ENG_ANEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ANEG','ENG_ANEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Indef_Det_an','ENG_Indef_Det','ENG_lfea_fwVowel',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Indef_Det_a','ENG_Indef_Det','ENG_lfea_fwConsonant',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Indef_Det','ENG_Det_stem','ENG_lfea_IndefDet',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Det_stem','t_ENG_DET',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_IndefDet','t_ENG_DET_Indef',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_fwVowel','t_ENG_DET_fwVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_fwConsonant','t_ENG_DET_fwConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_swVowel','t_ENG_N_swVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_swConsonant','t_ENG_N_swConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_AP',NULL,
+'"const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_AP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);"');
+insert into GRAMMAR values('ENG','ENG_A0NEG','ENG_A',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar1','ENG_ANEG','ENG_A',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar1','ENG_A0NEG',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Alist','ENG_Abar1','ENG_Abar1',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Alist','ENG_Alist','ENG_Abar1',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Abar1',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Alist',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Abar1','ENG_CONJA',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Alist','ENG_CONJA',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Abar2','ENG_CONJA',NULL,NULL);
+/*insert into GRAMMAR values('ENG','ENG_Ahead','ENG_Abar1',NULL,NULL,NULL);*/
+insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar1',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar2',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AP','ENG_Alist',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJ_Stem','t_ENG_CONJ_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJ','ENG_CONJ_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VNEG_Stem','t_ENG_VNEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VNEG','ENG_VNEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_VNEG',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',NULL,
+'"const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);"');
+insert into GRAMMAR values('ENG','ENG_Def_Det','ENG_Det_stem','ENG_lfea_DefDet',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_DefDet','t_ENG_DET_Def',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_DP','ENG_Def_Det','ENG_Num_Ord',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_DP','ENG_Def_Det','ENG_N',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref1n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref2n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref3n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref4n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref5n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref6n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref7n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref8n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Pref','t_ENG_Num_Npref9n',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num','ENG_Num_Pref','ENG_Num',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Stem','t_ENG_Num_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num','ENG_Num_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_Ord','ENG_Num','ENG_Num_lfea_Ord',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Num_lfea_Ord','t_ENG_Num_Ord',NULL,NULL,NULL);
+
+insert into GRAMMAR values('ENG','ENG_V','ENG_V_Aux',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVPlist','ENG_IVP','ENG_IVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVPlist','ENG_IVPlist','ENG_IVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vhead','ENG_IVP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vlisthead','ENG_IVPlist',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ConjV','ENG_CONJ','ENG_IVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ConjV','ENG_CONJ','ENG_IVPlist',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVPConj','ENG_Vhead','ENG_ConjV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVPConj','ENG_Vlisthead','ENG_ConjV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVPConj','ENG_IVPConj','ENG_ConjV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVPConj',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVPlist',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NV_Aux','ENG_V_Aux','ENG_VNEG',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NV','ENG_NV_Aux','ENG_V_Stem',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_NP',NULL,
+'"const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+unsigned int leaf_node_id=sparser->add_feature_to_leaf(ENG_V,"ENG_V_Aux","V","RCV");
+if(leaf_node_id==0) sparser->add_feature_to_leaf(ENG_V,"RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_NP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_NP);"');
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_NP',NULL,
+'"const node_info& ENG_NV=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_NP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_NP);"');
+insert into GRAMMAR values('ENG','ENG_PVPbar','ENG_V_Ger','ENG_PP',NULL,
+'"const node_info& ENG_V_Ger=sparser->get_node_info($1);
+const node_info& ENG_PP=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPbar->ENG_V_Ger ENG_PP");
+$$=sparser->combine_nodes("ENG_PVPbar",ENG_V_Ger,ENG_PP);"');
+insert into GRAMMAR values('ENG','ENG_PVPbar','ENG_V_Ger','ENG_NP',NULL,
+'"const node_info& ENG_V_Ger=sparser->get_node_info($1);
+const node_info& ENG_NP=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPbar->ENG_V_Ger ENG_NP");
+$$=sparser->combine_nodes("ENG_PVPbar",ENG_V_Ger,ENG_NP);"');
+insert into GRAMMAR values('ENG','ENG_PNVPbar','ENG_VNEG','ENG_PVPbar',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVP','ENG_PNVPbar',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVP','ENG_PVPbar',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPlist','ENG_PVP','ENG_PVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPlist','ENG_PVPlist','ENG_PVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPhead','ENG_PVP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPlisthead','ENG_PVPlist',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ConjPVP','ENG_CONJ','ENG_PVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ConjPVP','ENG_CONJ','ENG_PVPlist',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPConj','ENG_PVPhead','ENG_ConjPVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPConj','ENG_PVPlisthead','ENG_ConjPVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_PVPConj','ENG_PVPConj','ENG_ConjPVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_PVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_PVPConj',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_PVPlist',NULL,NULL);
+
+insert into GRAMMAR values('HUN','S','HUN_VP',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_NP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ImpVerbPfx','HUN_ImpVerb','HUN_Vbpfx',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_ConjDefSg2',NULL,
 '"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");"');
-/*std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;"');*/
-insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_ConjDefSg2',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_Stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Vbpfx','t_HUN_Vbpfx_Stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_NP','HUN_N_Acc',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Noun_Stem','HUN_lfea_swVowel','HUN_Noun_Stem',NULL);
-insert into GRAMMAR values('HUN','HUN_Noun_Stem','HUN_lfea_swConsonant','HUN_Noun_Stem',NULL);
-insert into GRAMMAR values('HUN','HUN_Noun_Stem','t_HUN_Noun_Stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_Noun_Stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_N_Sg','HUN_Con_lfea_Acc',NULL);
-insert into GRAMMAR values('HUN','HUN_1Con','HUN_Con',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_nCon','HUN_1Con','HUN_Con',NULL);
-insert into GRAMMAR values('HUN','HUN_nCon','HUN_nCon','HUN_Con',NULL);
-insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_nCon',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_1Con',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,
+logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
+$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);"');
+insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_ConjDefSg2',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vbpfx','t_HUN_Vbpfx_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_NP','HUN_N_Acc',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_Stem','HUN_lfea_swVowel','HUN_Noun_Stem',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_Stem','HUN_lfea_swConsonant','HUN_Noun_Stem',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_Stem','t_HUN_Noun_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_Noun_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_N_Sg','HUN_Con_lfea_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_1Con','HUN_Con',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_nCon','HUN_1Con','HUN_Con',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_nCon','HUN_nCon','HUN_Con',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_nCon',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_1Con',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,NULL,
 '"lexicon word;
-const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_Con);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,"Konstans:"+word.word);"');
-/*std::cout<<"Konstans:"<<word.word<<std::endl;"');*/
-insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swVowel','HUN_Con',NULL);
-insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swConsonant','HUN_Con',NULL);
-insert into GRAMMAR values('HUN','HUN_Con_lfea_Acc','t_HUN_CON_Acc',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Noun_lfea_Acc','t_HUN_Noun_Acc',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Def_Det_az','HUN_Def_Det','HUN_lfea_fwVowel',NULL);
-insert into GRAMMAR values('HUN','HUN_Def_Det_a','HUN_Def_Det','HUN_lfea_fwConsonant',NULL);
-insert into GRAMMAR values('HUN','HUN_Def_Det','HUN_Det_stem','HUN_lfea_DefDet',NULL);
-insert into GRAMMAR values('HUN','HUN_Det_stem','t_HUN_Det',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_DefDet','t_HUN_Det_Def',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_fwVowel','t_HUN_Det_fwVowel',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_fwConsonant','t_HUN_Det_fwConsonant',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_swVowel','t_HUN_Noun_swVowel',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_swConsonant','t_HUN_Noun_swConsonant',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_swVowel','t_HUN_CON_swVowel',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_swConsonant','t_HUN_CON_swConsonant',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_swVowel','t_HUN_Num_swVowel',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_lfea_swConsonant','t_HUN_Num_swConsonant',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_DP','HUN_DPbar','HUN_N_Acc',NULL);
-insert into GRAMMAR values('HUN','HUN_DPbar','HUN_Def_Det_a','HUN_lfea_swConsonant',NULL);
-insert into GRAMMAR values('HUN','HUN_DPbar','HUN_Def_Det_az','HUN_lfea_swVowel',NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Stem','t_HUN_Num_Stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref2',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref3',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref4',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref5',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref6',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref7',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref8',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref9',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref2n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref3n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref4n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref5n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref6n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref7n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref8n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref9n',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1nn',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1nnn',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num','HUN_Num_Pref','HUN_Num',NULL);
-insert into GRAMMAR values('HUN','HUN_Num','HUN_Num_Stem',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num','HUN_Num','HUN_Num_lfea_Par',NULL);
-insert into GRAMMAR values('HUN','HUN_Num','HUN_Num','HUN_Num_lfea_Ik',NULL);
-insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_Num','HUN_Num_lfea_Acc',NULL);
-insert into GRAMMAR values('HUN','HUN_Num_lfea_Par','t_HUN_Num_Par',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_lfea_Ik','t_HUN_Num_Ik',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_Num_lfea_Acc','t_HUN_Num_Acc',NULL,NULL);
-insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_DP',NULL);
-insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_N_Sg','HUN_Noun_lfea_Acc',NULL);
-insert into GRAMMAR values('HUN','HUN_Num','HUN_lfea_swVowel','HUN_Num',NULL);
-insert into GRAMMAR values('HUN','HUN_Num','HUN_lfea_swConsonant','HUN_Num',NULL);
-insert into GRAMMAR values('HUN','HUN_Nums','HUN_Num','HUN_Num',NULL);
-insert into GRAMMAR values('HUN','HUN_Nums','HUN_Nums','HUN_Num',NULL);
-insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_Nums','HUN_Num_lfea_Acc',NULL);
+logger::singleton()->log(0,"Konstans:"+word.word);
+$$=sparser->set_node_info("HUN_Con",word);"');
+insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swVowel','HUN_Con',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swConsonant','HUN_Con',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con_lfea_Acc','t_HUN_CON_Acc',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_lfea_Acc','t_HUN_Noun_Acc',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Def_Det_az','HUN_Def_Det','HUN_lfea_fwVowel',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Def_Det_a','HUN_Def_Det','HUN_lfea_fwConsonant',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Def_Det','HUN_Det_stem','HUN_lfea_DefDet',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Det_stem','t_HUN_Det',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_DefDet','t_HUN_Det_Def',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_fwVowel','t_HUN_Det_fwVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_fwConsonant','t_HUN_Det_fwConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_swVowel','t_HUN_Noun_swVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_swConsonant','t_HUN_Noun_swConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_swVowel','t_HUN_CON_swVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_swConsonant','t_HUN_CON_swConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_swVowel','t_HUN_Num_swVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_lfea_swConsonant','t_HUN_Num_swConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_DP','HUN_DPbar','HUN_N_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_DPbar','HUN_Def_Det_a','HUN_lfea_swConsonant',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_DPbar','HUN_Def_Det_az','HUN_lfea_swVowel',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Stem','t_HUN_Num_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref2',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref3',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref4',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref5',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref6',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref7',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref8',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref9',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref2n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref3n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref4n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref5n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref6n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref7n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref8n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref9n',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1nn',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_Pref','t_HUN_Num_Npref1nnn',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num','HUN_Num_Pref','HUN_Num',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num','HUN_Num_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num','HUN_Num','HUN_Num_lfea_Par',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num','HUN_Num','HUN_Num_lfea_Ik',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_Num','HUN_Num_lfea_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_lfea_Par','t_HUN_Num_Par',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_lfea_Ik','t_HUN_Num_Ik',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_lfea_Acc','t_HUN_Num_Acc',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_DP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_N_Sg','HUN_Noun_lfea_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num','HUN_lfea_swVowel','HUN_Num',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num','HUN_lfea_swConsonant','HUN_Num',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Nums','HUN_Num','HUN_Num',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Nums','HUN_Nums','HUN_Num',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_Nums','HUN_Num_lfea_Acc',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_ConjIndefSg2',NULL,
+'"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
+const node_info& HUN_Verb_lfea_ConjIndefSg2=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
+logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2");
+$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjIndefSg2);"');
+insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjIndefSg2','t_HUN_Verb_ConjIndefSg2',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vbar1','HUN_ImpVerb','HUN_DP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vbar2','HUN_ImpVerb','HUN_N_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_Vbar1','HUN_NP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_DP','HUN_DPbar','HUN_N_Ine',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_NP','HUN_N_Sg',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_lfea_Ine','t_HUN_Noun_Ine',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_lfea_Plur','t_HUN_Noun_Plur',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Pl','HUN_Noun_Stem','HUN_Noun_lfea_Plur',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Ine','HUN_N_Sg','HUN_Noun_lfea_Ine',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Ine','HUN_N_Pl','HUN_Noun_lfea_Ine',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_N_Pl','HUN_Noun_lfea_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_lfea_Relative','t_HUN_Noun_Relative',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RPro','HUN_Noun_Stem','HUN_Noun_lfea_Relative',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RPro','HUN_RPro','HUN_Noun_lfea_Plur',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con_lfea_Ins','t_HUN_CON_Ins',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con_lfea_Sub','t_HUN_CON_Sub',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Ins','HUN_N_Sg','HUN_Con_lfea_Ins',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Sub','HUN_N_Sg','HUN_Con_lfea_Sub',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_NP','HUN_N_Ins',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_NP','HUN_N_Sub',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_Vbar2','HUN_RC',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVPlist',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_N_Ins','HUN_V',NULL,
+'"const node_info& HUN_N_Ins=sparser->get_node_info($1);
+const node_info& HUN_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Ins HUN_V");
+$$=sparser->combine_nodes("HUN_IVPbar",HUN_N_Ins,HUN_V);"');
+insert into GRAMMAR values('HUN','HUN_INVPbar','HUN_V','HUN_N_Ins',NULL,
+'"const node_info& HUN_V=sparser->get_node_info($1);
+const node_info& HUN_N_Ins=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar->HUN_V HUN_N_Ins");
+$$=sparser->combine_nodes("HUN_INVPbar",HUN_V,HUN_N_Ins);"');
+insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_N_Sub','HUN_V',NULL,
+'"const node_info& HUN_N_Sub=sparser->get_node_info($1);
+const node_info& HUN_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Sub HUN_V");
+$$=sparser->combine_nodes("HUN_IVPbar",HUN_N_Sub,HUN_V);"');
+insert into GRAMMAR values('HUN','HUN_INVPbar','HUN_V','HUN_N_Sub',NULL,
+'"const node_info& HUN_V=sparser->get_node_info($1);
+const node_info& HUN_N_Sub=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar->HUN_V HUN_N_Sub");
+$$=sparser->combine_nodes("HUN_INVPbar",HUN_V,HUN_N_Sub);"');
+insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_N_Acc','HUN_V',NULL,
+'"const node_info& HUN_N_Acc=sparser->get_node_info($1);
+const node_info& HUN_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Acc HUN_V");
+$$=sparser->combine_nodes("HUN_IVPbar",HUN_V,HUN_N_Acc);"');
+insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_V','HUN_N_Acc',NULL,
+'"const node_info& HUN_V=sparser->get_node_info($1);
+const node_info& HUN_N_Acc=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_V HUN_N_Acc");
+$$=sparser->combine_nodes("HUN_IVPbar",HUN_V,HUN_N_Acc);"');
+insert into GRAMMAR values('HUN','HUN_INVPbar2','HUN_Neg','HUN_V',NULL,
+'"const node_info& HUN_Neg=sparser->get_node_info($1);
+const node_info& HUN_V=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar2->HUN_Neg HUN_V");
+$$=sparser->combine_nodes("HUN_INVPbar2",HUN_Neg,HUN_V);"');
+insert into GRAMMAR values('HUN','HUN_V','HUN_Verb_stem','HUN_Verb_lfea_IndefPl3',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Verb_lfea_IndefPl3','t_HUN_Verb_IndefPl3',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_Vbar2','HUN_N_Ins',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Adj_Stem','t_HUN_Adj_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Adj','HUN_Adj_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Neg_Stem','t_HUN_Neg_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Neg','HUN_Neg_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_A0NEG','HUN_Adj',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ANEG','HUN_Neg','HUN_Adj',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar1N','HUN_N_Acc','HUN_ANEG', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar1N','HUN_N_Ins','HUN_ANEG', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar1N','HUN_N_Sub','HUN_ANEG', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar1','HUN_N_Acc','HUN_A0NEG', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar1','HUN_N_Ins','HUN_A0NEG', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar1','HUN_N_Sub','HUN_A0NEG', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_NAbar1','HUN_Neg','HUN_Abar1', NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar2','HUN_Abar1',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar2N','HUN_Abar1N',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar2N','HUN_NAbar1',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar3','HUN_Abar2',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar3','HUN_Abar2N',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Alist','HUN_Abar3','HUN_Abar3',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Alist','HUN_Alist','HUN_Abar3',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_AP','HUN_Abar3','HUN_N_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_AP','HUN_Alist','HUN_N_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_AP','HUN_Abar4','HUN_ConjA_End',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerb','HUN_AP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_INVP','HUN_Neg','HUN_INVPbar',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_INVP','HUN_Neg','HUN_IVPbar',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_INVP','HUN_NP','HUN_INVPbar2',NULL,NULL);/*NP includes N_Sg (CON) too, restrict to N_Acc, N_ins, N_Sub?*/
+insert into GRAMMAR values('HUN','HUN_IVP','HUN_IVPbar',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPlist','HUN_IVP','HUN_IVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPlist','HUN_INVP','HUN_INVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPlist','HUN_IVP','HUN_INVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPlist','HUN_INVP','HUN_IVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPlist','HUN_IVPlist','HUN_INVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPlist','HUN_IVPlist','HUN_IVP',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_Conj_Stem','t_HUN_Conj_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Conj','HUN_Conj_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA','HUN_Conj','HUN_ANEG','t_HUN_Conj_Stem',NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA','HUN_Conj','HUN_A0NEG','t_HUN_Conj_Stem',NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA','HUN_Conj','HUN_Abar3','t_HUN_Conj_Stem',NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA','HUN_Conj','HUN_Alist','t_HUN_Conj_Stem',NULL);
+insert into GRAMMAR values('HUN','HUN_Abar4','HUN_ANEG',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar4','HUN_A0NEG',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar4','HUN_Abar3',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar4','HUN_Alist',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar4','HUN_Abar4','HUN_ConjA',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_AN_Acc','HUN_N_Acc','END',NULL,
+'"const node_info& HUN_N_Acc=sparser->get_node_info($1);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_AN_Acc->HUN_N_Acc END");
+$$=sparser->set_node_info("HUN_AN_Acc",HUN_N_Acc);"');
+insert into GRAMMAR values('HUN','HUN_Alist_End','HUN_Alist','HUN_AN_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar3_End','HUN_Abar3','HUN_AN_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA_End','HUN_ConjA','HUN_Abar3_End',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA_End','HUN_ConjA','HUN_Alist_End',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjA_End','HUN_ConjA','HUN_AN_Acc',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjAlist','HUN_ConjA','HUN_Alist',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjAlist','HUN_ConjA','HUN_Abar3',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Abar4','HUN_Abar4','HUN_ConjAlist',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_Vhead','HUN_IVP',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vhead','HUN_INVP',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vlisthead','HUN_IVPlist',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjV','HUN_Conj','HUN_IVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjV','HUN_Conj','HUN_INVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ConjV','HUN_Conj','HUN_IVPlist',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPConj','HUN_Vhead','HUN_ConjV',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPConj','HUN_Vlisthead','HUN_ConjV',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_IVPConj','HUN_IVPConj','HUN_ConjV',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVPConj',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_INVP',NULL,NULL);
 
 COMMIT;

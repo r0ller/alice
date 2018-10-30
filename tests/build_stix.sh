@@ -1,1 +1,0 @@
-clang++ -fstandalone-debug -g -std=c++11 stix.cpp -o stix -I/home/r0ller/hi/alice -L/usr/pkg/lib -L/usr/lib -lsqlite3 -lfoma;

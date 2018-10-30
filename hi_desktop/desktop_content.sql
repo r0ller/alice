@@ -4,6 +4,11 @@ BEGIN;
 insert into ROOT_TYPE values('H');
 insert into ROOT_TYPE values('N');
 
+insert into PRECEDENCES values('L','%left');
+insert into PRECEDENCES values('R','%right');
+insert into PRECEDENCES values('P','%precedence');
+insert into PRECEDENCES values('N','%nonassoc');
+
 insert into LANGUAGES values('HUN', 'Hungarian', '1', 'magyar.fst');
 insert into LANGUAGES values('ENG', 'English', '1', 'english.fst');
 
@@ -151,617 +156,55 @@ insert into SYMBOLS values('t_HUN_CON_Acc','HUN',NULL);
 by 1 during runtime; Entries with NULL value for token are not to be generated in the yacc source.*/
 /*TODO: Think over if the feature field for all gcats shall at least be 'Stem' or not?
 For exmaple, DET is considered as well to have a stem? How is it analysed by Foma?*/
-insert into GCAT values('CON', NULL, 'ENG', '0');/*Plays role only when checking for terminal symbols*/
-insert into GCAT values('A', 'Stem', 'ENG', '1');
-insert into GCAT values('ADV', NULL, 'ENG', '2');
-insert into GCAT values('DET', NULL, 'ENG', '3');
-insert into GCAT values('N', 'Stem', 'ENG', '4');
-insert into GCAT values('N', 'Pl', 'ENG', '5');
-insert into GCAT values('N', 'Sg', 'ENG', '6');
-insert into GCAT values('PREP', NULL, 'ENG', '7');
-insert into GCAT values('QPRO', NULL, 'ENG', '8');
-insert into GCAT values('V', 'Stem', 'ENG', '9');
-insert into GCAT values('V', 'Aux', 'ENG', '10');
-insert into GCAT values('V', 'RCV', 'ENG', NULL);
-insert into GCAT values('V', 'Sg', 'ENG', NULL);
-insert into GCAT values('V', 'Pl', 'ENG', NULL);
-insert into GCAT values('RPRO', NULL, 'ENG', '11');
-insert into GCAT values('RPRO', 'Relative', 'ENG', '12');
-insert into GCAT values('VNEG', 'Stem', 'ENG', '13');
-insert into GCAT values('ANEG', 'Stem', 'ENG', '14');
-insert into GCAT values('PAR', NULL, 'ENG', '18');
-insert into GCAT values('DET', 'Indef', 'ENG', '19');
-insert into GCAT values('DET', 'fwVowel', 'ENG', '20');
-insert into GCAT values('DET', 'fwConsonant', 'ENG', '21');
-insert into GCAT values('N', 'swVowel', 'ENG', '22');
-insert into GCAT values('N', 'swConsonant', 'ENG', '23');
-insert into GCAT values('V', 'Gerund', 'ENG', '24');
-insert into GCAT values('CONJ', 'Stem', 'ENG', '25');
+insert into GCAT values('CON', NULL, 'ENG', '0', NULL, NULL);/*Plays role only when checking for terminal symbols*/
+insert into GCAT values('A', 'Stem', 'ENG', '1', NULL, NULL);
+insert into GCAT values('ADV', NULL, 'ENG', '2', NULL, NULL);
+insert into GCAT values('DET', NULL, 'ENG', '3', NULL, NULL);
+insert into GCAT values('N', 'Stem', 'ENG', '4', NULL, NULL);
+insert into GCAT values('N', 'Pl', 'ENG', '5', NULL, NULL);
+insert into GCAT values('N', 'Sg', 'ENG', '6', NULL, NULL);
+insert into GCAT values('PREP', NULL, 'ENG', '7', NULL, NULL);
+insert into GCAT values('QPRO', NULL, 'ENG', '8', NULL, NULL);
+insert into GCAT values('V', 'Stem', 'ENG', '9', NULL, NULL);
+insert into GCAT values('V', 'Aux', 'ENG', '10', NULL, NULL);
+insert into GCAT values('V', 'RCV', 'ENG', NULL, NULL, NULL);
+insert into GCAT values('V', 'Sg', 'ENG', NULL, NULL, NULL);
+insert into GCAT values('V', 'Pl', 'ENG', NULL, NULL, NULL);
+insert into GCAT values('RPRO', NULL, 'ENG', '11', NULL, NULL);
+insert into GCAT values('RPRO', 'Relative', 'ENG', '12', NULL, NULL);
+insert into GCAT values('VNEG', 'Stem', 'ENG', '13', NULL, NULL);
+insert into GCAT values('ANEG', 'Stem', 'ENG', '14', NULL, NULL);
+insert into GCAT values('PAR', NULL, 'ENG', '18', NULL, NULL);
+insert into GCAT values('DET', 'Indef', 'ENG', '19', NULL, NULL);
+insert into GCAT values('DET', 'fwVowel', 'ENG', '20', NULL, NULL);
+insert into GCAT values('DET', 'fwConsonant', 'ENG', '21', NULL, NULL);
+insert into GCAT values('N', 'swVowel', 'ENG', '22', NULL, NULL);
+insert into GCAT values('N', 'swConsonant', 'ENG', '23', NULL, NULL);
+insert into GCAT values('V', 'Gerund', 'ENG', '24', NULL, NULL);
+insert into GCAT values('CONJ', 'Stem', 'ENG', '25', NULL, NULL);
 
-insert into FUNCTOR_DEFS values('LISTENGV_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-unset script;
-c=1;
-for i in $2;
-do 
-	echo name;
-	echo $i;
-	echo content;
-	p=$(($c+2));
-	eval v="\$$p";
-	echo "$v";
-	case "$i" in 
-		*_out) op="$(echo "$v"|cut -c1)";
-			if [ "$op" = "\"" ];
-			then dirs="$(echo "$v"|tr "\"\"" "\""|tr "\"" " ")";
-				for j in $dirs;
-				do 
-					script="$script""find $j;";
-				done;
-				echo "$script";
-				eval "$script";
-				exit;
-			elif [ "$op" = "|" ];
-				then OIFS="$IFS";
-				IFS="|";
-				v="$(echo "$v"|cut -c2-)";
-				for j in $v;
-				do 
-					echo "$j";
-					unset path;
-					unset options;
-					unset script;
-					unset linked;
-					IFS="&";
-					for k in $j;
-					do 
-						echo "$k";
-						case "$k" in 
-							*-path*) if [ "$(echo "$k"|cut -c1)" != "!" ];
-								then path="$path ""$(echo "$k"|sed "s/-path//g")";
-								else options="$options ""$(echo "$k"|sed "s/ \"/ \"*\//g")";
-									options="${options%?}""/*\"";
-								fi;
-							 ;;
-							*-L*) if [ "$(echo "$k"|cut -c1)" != "!" ];
-								then linked=true;
-								fi;
-							 ;;
-							*) options="$options ""$k";							
-							 ;;
-						esac;
-					done;
-					if [ -z "$path" ];
-					then path="./";
-					fi;
-					if [ -z "$linked" ];
-						then script="find ""$path ""-type f $options";
-						else script="links=\"\$(find ""$path ""-type l $options)\";for l in \$links;do echo \"\$l\"|xargs readlink -f;done;";
-					fi;
-					echo "$script";
-					eval "$script";
-					IFS="|";
-				done;
-				exit;
-			elif [ -z "$op" ];
-				then script="find ./ -type f";
-				echo "$script";
-				eval "$script";
-			fi;
-		 ;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=$1;');
-insert into FUNCTOR_DEFS values('LISTENGV_2', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-unset script;
-c=1;
-for i in $2;
-do 
-	echo name;
-	echo $i;
-	echo content;
-	p=$(($c+2));
-	eval v="\$$p";
-	echo "$v";
-	case "$i" in 
-		*_out) op="$(echo "$v"|cut -c1)";
-			if [ "$op" = "\"" ];
-			then dirs="$(echo "$v"|tr "\"\"" "\""|tr "\"" " ")";
-				for j in $dirs;
-				do 
-					script="$script""find $j;";
-				done;
-				echo "$script";
-				eval "$script";
-				exit;
-			elif [ "$op" = "|" ];
-				then OIFS="$IFS";
-				IFS="|";
-				v="$(echo "$v"|cut -c2-)";
-				for j in $v;
-				do 
-					echo "$j";
-					unset path;
-					unset options;
-					unset optionhead;
-					unset pipehead;
-					unset pipetail;
-					unset script;
-					IFS="&";
-					for k in $j;
-					do 
-						echo "$k";
-						case "$k" in 
-							*-path*) if [ "$(echo "$k"|cut -c1)" != "!" ];
-								then path="$path ""$(echo "$k"|sed "s/-path//g")";
-								else options="$options ""$(echo "$k"|sed "s/ \"/ \"*\//g")";
-									options="${options%?}""/*\"";
-								fi;
-							 ;;
-							*-L*) if [ "$(echo "$k"|cut -c1)" != "!" ];
-								then optionhead="-L";
-									pipehead="grep \"\$(find ";
-									pipetail=" -type l)\"";
-								else pipehead="grep -v \"\$(find -H ";
-									pipetail=" -type l -ls|cut -f2 -d\">\"|cut -c2-)\"";
-								fi;
-							 ;;
-							*) options="$options ""$k";							
-							 ;;
-						esac;
-					done;
-					if [ -z "$path" ];
-					then path="./";
-					fi;
-					if [ -z "$pipehead" ];
-						then script="find ""$path ""-type d $options";
-						else script="find ""$optionhead ""$path ""-type d $options""|$pipehead ""$path ""$pipetail";
-					fi;
-					echo "$script";
-					eval "$script";
-					IFS="|";
-				done;
-				exit;
-			elif [ -z "$op" ];
-				then script="find ./ -type d";
-				echo "$script";
-				eval "$script";
-			fi;
-		 ;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=$1;');
-insert into FUNCTOR_DEFS values('FILEENGN_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) if [ -n "$(echo "$v"|grep ''"gcat":"CON"'')" ];
-		then out="$out""$(echo "$v"|cut -f3 -d:|cut -f1 -d,)";
-		else out="$v";
-		fi; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('INENGPREP_1', '', '1', 
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) out="$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('BEENGV_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		PROPERTIES_*_out) if [ -n "$out" ];
-		then out="$(echo "$v"|sed "s/|/$out/g")";
-		else out="$v";
-		fi;
-		break; 
-		;;
-		*_out) out="$out""$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) if [ -n "$(echo "$v"|grep ''"gcat":"CON"'')" ];
-		then out="$out""$(echo "$v"|cut -f3 -d:|cut -f1 -d,)";
-		else out="$v";
-		fi; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('NOTENGVNEG_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) eval morph="\$"$1"_morphology";
-		if [ -z "$morph" ];
-		then out="$v";
-		else out="$(echo "$v"|sed "s/-path/! -path/g")";
-		fi;
-		 ;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('NOTENGANEG_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) out="-$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('FROMENGPREP_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('EXECUTABLEENGA_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('EXECUTABLEENGA_2', '', '1', 'eval "$1"_out="executable";');
-insert into FUNCTOR_DEFS values('EMPTYENGA_1', '', '1', 'eval "$1"_out="empty";');
-insert into FUNCTOR_DEFS values('ANAENGDET_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('SYMLINKEDENGA_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('SYMLINKEDENGA_2', '', '1', 'eval "$1"_out="symlinked";');
-insert into FUNCTOR_DEFS values('ANDENGCONJ_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) out="&$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('ORENGCONJ_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) out="|$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('FILEBEPROP_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
-c=1;
-for i in $ordered_args;
-do 
-	eval v="\$$i";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) option="$v";
-		if [ -z "$out" ];
-		then out="$option";
-		else out="$out&$option";
-		fi; 
-		;;
-		*_morphology) option="$v";
-		if [ -z "$out" ];
-		then out="$option";
-		else out="$out<$option";
-		fi; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('DIRBEPROP_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
-c=1;
-for i in $ordered_args;
-do 
-	eval v="\$$i";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) option="$v";
-		if [ -z "$out" ];
-		then out="$option";
-		else out="$out&$option";
-		fi; 
-		;;
-		*_morphology) option="$v";
-		if [ -z "$out" ];
-		then out="$option";
-		else out="$out<$option";
-		fi; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('PROPERTIES_1', '', '1', NULL);
-insert into FUNCTOR_DEFS values('PROPERTIES_2', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-unset head;
-unset head1;
-unset head2;
-head2pos=0;
-unset options;
-unset savepos;
-unset head2passed;
-listsize=0;
-optionlist="optionlist";
-rellistsize=0;
-reloptionlist="reloptionlist";
-ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
-c=1;
-for i in $ordered_args;
-do 
-	eval v="\$$i";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) op="$(echo "$v"|cut -c1)";
-			if [ "$op" != "&" -a "$op" != "\"" -a "$op" != "|" ];
-				then if [ -z "$head1" ];
-					then if [ -n "$(echo "$v"|grep "<")" ];
-						then head1="$(echo "$v"|cut -f1 -d"<"|tr "&" ".")";
-						else head1="$(echo "$v"|tr "&" ".")";
-						fi;
-						head2="$(echo "$v"|cut -f2 -d"<")";
-						if [ -n "$head2" -a "$head2" != "$v"  ];
-							then op="$(echo "$head2"|cut -c1)";
-								if [ "$op" != "&" -a "$op" != "\"" -a "$op" != "|" ];
-								then head2="$(echo "$head2"|tr "&" ".")";
-								else head2="$(echo "$head2"|cut -c2-|tr "&" ".")";
-								fi;
-							head2pos="$(echo "$i"|cut -f3 -d"_")";
-						else unset head2;
-						fi;
-				elif [ -n "$head1" -a -z "$head2" -a -z "$(echo "$v"|grep "<")" ];
-					then head2="$(echo "$v"|tr "&" ".")";
-					head2pos="$(echo "$i"|cut -f3 -d"_")";
-				elif [ -n "$head1" -a -n "$head2" ];
-					then head2="$head2"".""$(echo "$v"|tr "&" ".")";
-				fi;
-			fi; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-options="$(echo "$head1"|tr "&" ".")";
-c=1;
-for i in $ordered_args;
-do 
-	eval v="\$$i";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) op="$(echo "$v"|cut -c1)";
-			pos="$(echo "$i"|cut -f3 -d"_")";
-			if [ "$op" = "&" ];
-				then options="$options""$(echo "$v"|tr "&" ".")";
-				savepos="$pos";
-			elif [ "$op" = "|" -a -z "$head2" ];
-				then eval ${optionlist}${listsize}="\"$options\"";
-				options="$(echo $v|cut -c2-)";
-				listsize=$(($listsize+1));
-				savepos="$pos";
-			elif [ "$op" = "|" -a -n "$head2" -a "$pos" -lt "$head2pos" ];
-				then eval ${optionlist}${listsize}="\"$options\"";
-				options="$(echo $v|cut -c2-)";
-				listsize=$(($listsize+1));
-				savepos="$pos";
-			elif [ "$op" = "|" -a -n "$head2" -a "$pos" -ge "$head2pos" ];
-				then if [ "$savepos" -ge "$head2pos" ];
-					then eval ${reloptionlist}${rellistsize}="\"$options\"";
-						options="$(echo $v|cut -c2-)";
-						rellistsize=$(($rellistsize+1));
-						savepos="$pos";
-					else eval ${optionlist}${listsize}="\"$options\"";
-						options="$(echo $v|cut -c2-)";
-						listsize=$(($listsize+1));
-						savepos="$pos";
-					fi;
-			elif [ "$op" = "\"" ];
-				then options="$options"".""$(echo "$v"|tr "&" ".")";
-				savepos="$pos";
-			elif [ -n "$options" -a -n "$head2" ];
-				then if [ -z "$head2passed" ];
-					then eval ${optionlist}${listsize}="\"$options\"";
-					listsize=$(($listsize+1));
-					fi;
-				options="$(echo "$head2"|tr "&" ".")";
-				head2passed=true;
-				savepos="$pos";
-			elif [ -n "$options" -a -z "$head2" -a "$listsize" -eq 0  ];
-				then options="$options"".""$(echo "$v"|tr -d "<"|tr "&" ".")";
-				savepos="$pos";
-			elif [ -z "$head1" ];
-				then options="$options""$(echo "$v"|tr "&" ".")";
-			fi; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-if [ -n "$options" -a -z "$head2" ];
-	then echo "options:";
-	echo "$options";
-	eval ${optionlist}${listsize}=''"$options"'';
-	listsize=$(($listsize+1));
-elif [ -n "$options" -a "$savepos" -lt "$head2pos" ];
-	then echo "options:";
-	echo "$options";
-	eval ${optionlist}${listsize}=''"$options"'';
-	listsize=$(($listsize+1));
-elif [ -n "$options" -a "$savepos" -ge "$head2pos" ];
-	then echo "options:";
-	echo "$options";
-	eval ${reloptionlist}${rellistsize}=''"$options"'';
-	rellistsize=$(($rellistsize+1));
-fi;
-echo "optionlist:";
-if [ "$listsize" -eq 0 ];
-then eval ${optionlist}${listsize}="";
-listsize=$(($listsize+1));
-fi;
-if [ "$rellistsize" -eq 0 ];
-then eval ${reloptionlist}${rellistsize}="";
-rellistsize=$(($rellistsize+1));
-fi;
-unset paths;
-
-for r in $(seq 0 $(($rellistsize-1)));
-do 
-	echo "reloptionlist item:" "$(eval echo \$$reloptionlist${r})";
-	head=$(eval echo \$$reloptionlist${r});
-	for i in $(seq 0 $(($listsize-1)));
-	do 
-		echo "optionlist item:" "$head"".""$(eval echo \$$optionlist${i})";
-		args=$(echo "$head"".""$(eval echo \$$optionlist${i})");
-		args=$(echo "$args"|sed "s/\"\"/\/\//g"|tr "." "\n"|sort|uniq|xargs);
-		echo "xargs:" "$args";
-		unset options;
-		unset paths;
-		for j in $args;
-		do 
-			echo $j;
-			if [ "$j" = "executable" ];
-			then options="$options""&-perm -111";
-			elif [ "$j" = "-executable" ];
-			then options="$options""&! -perm -111";
-			elif [ "$j" = "empty" ];
-			then options="$options""&-empty";
-			elif [ "$j" = "-empty" ];
-			then options="$options""&! -empty";
-			elif [ "$j" = "symlinked" ];
-			then options="&-L""$options";
-			elif [ "$j" = "-symlinked" ];
-			then options="&! -L""$options";
-			else paths="$paths""&-path ""\""$(echo "$j"|sed "s/\/\//\" -path \"/g")"\"";
-			fi;
-		done;
-		if [ -n "$paths" ];
-		then options="$paths""$options";
-		fi;
-		out="$out""|""$options";
-	done;
-done;
-eval "$1"_out=''"$out"'';');
-insert into FUNCTOR_DEFS values('LOCATED_1', '', '1',
-'echo "printing parameters and their contents for" $1;
-unset out;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		*_out) out="$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out=''"$out"'';');
+insert into FUNCTOR_DEFS values('LISTENGV_1', 'sh', '1', 'listengv_1.sh');
+insert into FUNCTOR_DEFS values('LISTENGV_2', 'sh', '1', 'listengv_2.sh');
+insert into FUNCTOR_DEFS values('FILEENGN_1', 'sh', '1', 'fileengn_1.sh');
+insert into FUNCTOR_DEFS values('INENGPREP_1', 'sh', '1', 'inengprep_1.sh');
+insert into FUNCTOR_DEFS values('BEENGV_1', 'sh', '1', 'beengv_1.sh');
+insert into FUNCTOR_DEFS values('DIRECTORYENGN_1', 'sh', '1', 'directoryengn_1.sh');
+insert into FUNCTOR_DEFS values('NOTENGVNEG_1', 'sh', '1', 'notengvneg_1.sh');
+insert into FUNCTOR_DEFS values('NOTENGANEG_1', 'sh', '1', 'notenganeg_1.sh');
+insert into FUNCTOR_DEFS values('FROMENGPREP_1', 'sh', '1', NULL);
+insert into FUNCTOR_DEFS values('EXECUTABLEENGA_1', 'sh', '1', NULL);
+insert into FUNCTOR_DEFS values('EXECUTABLEENGA_2', 'sh', '1', 'executableenga_2.sh');
+insert into FUNCTOR_DEFS values('EMPTYENGA_1', 'sh', '1', 'emptyenga_1.sh');
+insert into FUNCTOR_DEFS values('ANAENGDET_1', 'sh', '1', NULL);
+insert into FUNCTOR_DEFS values('SYMLINKEDENGA_1', 'sh', '1', NULL);
+insert into FUNCTOR_DEFS values('SYMLINKEDENGA_2', 'sh', '1', 'symlinkedenga_2.sh');
+insert into FUNCTOR_DEFS values('ANDENGCONJ_1', 'sh', '1', 'andengconj_1.sh');
+insert into FUNCTOR_DEFS values('ORENGCONJ_1', 'sh', '1', 'orengconj_1.sh');
+insert into FUNCTOR_DEFS values('FILEBEPROP_1', 'sh', '1', 'filebeprop_1.sh');
+insert into FUNCTOR_DEFS values('DIRBEPROP_1', 'sh', '1', 'dirbeprop_1.sh');
+insert into FUNCTOR_DEFS values('PROPERTIES_1', 'sh', '1', NULL);
+insert into FUNCTOR_DEFS values('PROPERTIES_2', 'sh', '1', 'properties_2.sh');
+insert into FUNCTOR_DEFS values('LOCATED_1', 'sh', '1', 'located_1.sh');
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
@@ -795,57 +238,57 @@ insert into FUNCTORS values('LOCATED', '1', 'LOCATED_1');
 
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, 'N', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '5', '5', '6', NULL, NULL, NULL, NULL, 'Sg', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '6', '7', NULL, NULL, NULL, NULL, NULL, 'N', 'FILEENGN', 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '7', '7', '8', NULL, NULL, NULL, NULL, 'N', 'DIRECTORYENGN', 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '8', NULL, '8', NULL, NULL, NULL, NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '1', NULL, NULL, 'N', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '1', '2', '3', 'N', NULL, 'N', NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '2', '4', '3', 'N', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '3', NULL, NULL, 'N', NULL, 'N', NULL, 'CONJ', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '4', '5', '5', 'N', NULL, 'N', NULL, 'ANEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '5', '5', NULL, 'N', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_A0NEG', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '1', '2', '3', 'PREP', NULL, 'H', NULL, 'N', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'PREP', 'ENG_NP', '3', NULL, NULL, 'N', NULL, 'N', NULL, 'CON', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, 'RPRO', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '4', '5', '6', 'V', NULL, 'N', NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '5', '7', '6', 'V', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '6', NULL, NULL, 'V', NULL, 'N', NULL, 'CONJ', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '7', '8', '8', 'V', NULL, 'N', NULL, 'ANEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '8', '8', NULL, 'V', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_A0NEG', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_Vbar1', 'RPRO', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, 'V', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '5', '5', 'V', NULL, 'N', NULL, 'PREP', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '5', '6', '7', 'V', NULL, 'N', NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '6', '8', '7', 'V', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '7', NULL, NULL, 'V', NULL, 'N', NULL, 'CONJ', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '8', '9', '9', 'V', NULL, 'N', NULL, 'ANEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '9', '9', NULL, 'V', NULL, 'N', NULL, 'A', NULL, 'H', 'ENG_A0NEG', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, 'VNEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'VNEG', NULL, 'H', NULL, 'PREP', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '1', '2', '3', 'V', NULL, 'H', NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '2', '4', '3', 'V', NULL, 'H', NULL, 'A', NULL, 'N', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '3', NULL, NULL, 'V', NULL, 'H', NULL, 'CONJ', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '4', '5', '5', 'V', NULL, 'H', NULL, 'ANEG', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '5', '5', NULL, 'V', NULL, 'H', NULL, 'A', NULL, 'N', 'ENG_A0NEG', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '1', NULL, '2', 'V', NULL, 'H', NULL, 'VNEG', NULL, 'H', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '2', '3', '4', 'VNEG', NULL, 'H', NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '3', '5', '4', 'VNEG', NULL, 'H', NULL, 'A', NULL, 'N', 'ENG_Ahead', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '4', NULL, NULL, 'VNEG', NULL, 'H', NULL, 'CONJ', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '5', '6', '6', 'VNEG', NULL, 'H', NULL, 'ANEG', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '6', '6', NULL, 'VNEG', NULL, 'H', NULL, 'A', NULL, 'N', 'ENG_A0NEG', 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Abar1', 'ENG_ANEG', 'ENG_A', '1', NULL, NULL, 'ANEG', NULL, 'H', NULL, 'A', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, 'ANEG', NULL, 'N', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, 'A', NULL, 'N', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '5', '5', '6', NULL, NULL, NULL, NULL, NULL, 'Sg', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '6', '7', NULL, NULL, NULL, NULL, NULL, NULL, 'N', 'FILEENGN', 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '7', '7', '8', NULL, NULL, NULL, NULL, NULL, 'N', 'DIRECTORYENGN', 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '8', NULL, '8', NULL, NULL, NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '1', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '1', '2', '3', 'N', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '2', '4', '3', 'N', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '4', '5', '5', 'N', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '5', '5', NULL, 'N', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '1', '2', '3', 'PREP', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, NULL, 'RPRO', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '4', '5', '6', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '5', '7', '6', 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '6', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '7', '8', '8', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '8', '8', NULL, 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_Vbar1', NULL, 'RPRO', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '5', '5', 'V', NULL, 'N', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '5', '6', '7', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '6', '8', '7', 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '7', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '8', '9', '9', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '9', '9', NULL, 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '1', '2', '3', 'V', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '2', '4', '3', 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '3', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '4', '5', '5', 'V', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '5', '5', NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '2', '3', '4', 'VNEG', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '3', '5', '4', 'VNEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '4', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '5', '6', '6', 'VNEG', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '6', '6', NULL, 'VNEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Abar1', 'ENG_ANEG', 'ENG_A', '1', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
 
 
 /*insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
@@ -937,156 +380,155 @@ insert into DEPOLEX values('ANAENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, 
 /*insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);*/
 
-insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AdvP',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_PP',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar3','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_RC',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_RC',NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar4','ENG_DP',NULL);
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',
+insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AdvP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_PP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar3','ENG_NP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_RC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2','ENG_RC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar4','ENG_DP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");"');
-insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_V','ENG_AdvP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_PP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_Vbar1','ENG_V','ENG_NP',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);"');
+insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_V','ENG_AdvP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_PP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar2','ENG_Vbar1','ENG_NP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Vbar1','ENG_V','ENG_NP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");"');
-insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_DP','ENG_V',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");
+$$=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);"');
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_DP','ENG_V',NULL,
 '"const node_info& ENG_DP=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");"');
-insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_TP','ENG_V',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);"');
+insert into GRAMMAR values('ENG','ENG_Vbar4','ENG_TP','ENG_V',NULL,
 '"const node_info& ENG_TP=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");"');
-insert into GRAMMAR values('ENG','ENG_PP','ENG_Prep','ENG_NP',NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_CNP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_CAP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_QPro','ENG_CNP',NULL);
-insert into GRAMMAR values('ENG','ENG_CNP','ENG_AP','ENG_N',NULL);
-insert into GRAMMAR values('ENG','ENG_CNP','ENG_N',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_AdvP','ENG_Adv',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem','ENG_V_lfea_aux',NULL);
-insert into GRAMMAR values('ENG','ENG_V_ger','ENG_V_Stem','ENG_V_lfea_ger',NULL);
-insert into GRAMMAR values('ENG','ENG_V_Stem','t_ENG_V_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V_lfea_aux','t_ENG_V_Aux',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_V_lfea_ger','t_ENG_V_Gerund',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_QPro','t_ENG_QPRO',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N','ENG_N_Sg',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N','ENG_N_Pl',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_a','ENG_N_Sg_0Con_swC',NULL);
-insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_an','ENG_N_Sg_0Con_swV',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg_0Con','ENG_N_Stem','ENG_N_lfea_Sg',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swC','ENG_N_Sg_0Con','ENG_lfea_swConsonant',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swV','ENG_N_Sg_0Con','ENG_lfea_swVowel',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC','ENG_1Con',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV','ENG_1Con',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_1Con',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl_0Con','ENG_N_Stem','ENG_N_lfea_Pl',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swC','ENG_N_Pl_0Con','ENG_lfea_swConsonant',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swV','ENG_N_Pl_0Con','ENG_lfea_swVowel',NULL);
-insert into GRAMMAR values('ENG','ENG_1Con','ENG_Con',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_nCon','ENG_1Con','ENG_Con',NULL);
-insert into GRAMMAR values('ENG','ENG_nCon','ENG_nCon','ENG_Con',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC','ENG_nCon',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV','ENG_nCon',NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_nCon',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");
+$$=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);"');
+insert into GRAMMAR values('ENG','ENG_PP','ENG_Prep','ENG_NP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_CNP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_CAP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_QPro','ENG_CNP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CNP','ENG_AP','ENG_N',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CNP','ENG_N',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AdvP','ENG_Adv',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V','ENG_V_Stem','ENG_V_lfea_aux',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_ger','ENG_V_Stem','ENG_V_lfea_ger',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_Stem','t_ENG_V_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_lfea_aux','t_ENG_V_Aux',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_V_lfea_ger','t_ENG_V_Gerund',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_QPro','t_ENG_QPRO',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N','ENG_N_Sg',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N','ENG_N_Pl',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_a','ENG_N_Sg_0Con_swC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_an','ENG_N_Sg_0Con_swV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg_0Con','ENG_N_Stem','ENG_N_lfea_Sg',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swC','ENG_N_Sg_0Con','ENG_lfea_swConsonant',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg_0Con_swV','ENG_N_Sg_0Con','ENG_lfea_swVowel',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC','ENG_1Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV','ENG_1Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_1Con',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swC',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Sg','ENG_N_Sg_0Con_swV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl_0Con','ENG_N_Stem','ENG_N_lfea_Pl',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swC','ENG_N_Pl_0Con','ENG_lfea_swConsonant',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl_0Con_swV','ENG_N_Pl_0Con','ENG_lfea_swVowel',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_1Con','ENG_Con',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_nCon','ENG_1Con','ENG_Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_nCon','ENG_nCon','ENG_Con',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swC','ENG_nCon',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Pl_0Con_swV','ENG_nCon',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_nCon',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',NULL,
 '"//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 //that a singular noun cannot combine with more than one constant like in ''list file abc def''
 //TODO: Any better solution???
 return -1;"');
-insert into GRAMMAR values('ENG','ENG_N_Stem','t_ENG_N_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_lfea_Sg','t_ENG_N_Sg',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_N_lfea_Pl','t_ENG_N_Pl',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_A_Stem','t_ENG_A_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_A','ENG_A_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swC',NULL);
-insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL);
-insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,
+insert into GRAMMAR values('ENG','ENG_N_Stem','t_ENG_N_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_lfea_Sg','t_ENG_N_Sg',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_N_lfea_Pl','t_ENG_N_Pl',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_A_Stem','t_ENG_A_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_A','ENG_A_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swC',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,NULL,
 '"lexicon word;
-const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_Con);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Constant:"+word.word);"');
-insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RPro','ENG_RPro_stem','ENG_RPro_lfea_relative',NULL);
-insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RPro_lfea_relative','t_ENG_RPRO_Relative',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_TP','ENG_Tense_particle','ENG_V_Stem',NULL);
-insert into GRAMMAR values('ENG','ENG_TP','ENG_V_ger',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVP',NULL);
-insert into GRAMMAR values('ENG','ENG_ANEG_Stem','t_ENG_ANEG_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_ANEG','ENG_ANEG_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Indef_Det_an','ENG_Indef_Det','ENG_lfea_fwVowel',NULL);
-insert into GRAMMAR values('ENG','ENG_Indef_Det_a','ENG_Indef_Det','ENG_lfea_fwConsonant',NULL);
-insert into GRAMMAR values('ENG','ENG_Indef_Det','ENG_Det_stem','ENG_lfea_IndefDet',NULL);
-insert into GRAMMAR values('ENG','ENG_Det_stem','t_ENG_DET',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_IndefDet','t_ENG_DET_Indef',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_fwVowel','t_ENG_DET_fwVowel',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_fwConsonant','t_ENG_DET_fwConsonant',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_swVowel','t_ENG_N_swVowel',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_lfea_swConsonant','t_ENG_N_swConsonant',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_AP',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Constant:"+word.word);
+$$=sparser->set_node_info("ENG_Con",word);"');
+insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro','ENG_RPro_stem','ENG_RPro_lfea_relative',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro_lfea_relative','t_ENG_RPRO_Relative',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_TP','ENG_Tense_particle','ENG_V_Stem',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_TP','ENG_V_ger',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ANEG_Stem','t_ENG_ANEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_ANEG','ENG_ANEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Indef_Det_an','ENG_Indef_Det','ENG_lfea_fwVowel',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Indef_Det_a','ENG_Indef_Det','ENG_lfea_fwConsonant',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Indef_Det','ENG_Det_stem','ENG_lfea_IndefDet',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Det_stem','t_ENG_DET',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_IndefDet','t_ENG_DET_Indef',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_fwVowel','t_ENG_DET_fwVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_fwConsonant','t_ENG_DET_fwConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_swVowel','t_ENG_N_swVowel',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_lfea_swConsonant','t_ENG_N_swConsonant',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_AP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_AP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");"');
-insert into GRAMMAR values('ENG','ENG_A0NEG','ENG_A',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Abar1','ENG_ANEG','ENG_A',NULL);
-insert into GRAMMAR values('ENG','ENG_Abar1','ENG_A0NEG',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Alist','ENG_Abar1','ENG_Abar1',NULL);
-insert into GRAMMAR values('ENG','ENG_Alist','ENG_Alist','ENG_Abar1',NULL);
-insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Abar1',NULL);
-insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Alist',NULL);
-insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Ahead','ENG_CONJA',NULL);
-insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Alist','ENG_CONJA',NULL);
-insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Abar2','ENG_CONJA',NULL);
-insert into GRAMMAR values('ENG','ENG_Ahead','ENG_Abar1',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar1',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar2',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_AP','ENG_Alist',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_CONJ_Stem','t_ENG_CONJ_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_CONJ','ENG_CONJ_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VNEG_Stem','t_ENG_VNEG_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VNEG','ENG_VNEG_Stem',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_VNEG',NULL);
-insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);"');
+insert into GRAMMAR values('ENG','ENG_A0NEG','ENG_A',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar1','ENG_ANEG','ENG_A',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar1','ENG_A0NEG',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Alist','ENG_Abar1','ENG_Abar1',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Alist','ENG_Alist','ENG_Abar1',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Abar1',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJA','ENG_CONJ','ENG_Alist',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Ahead','ENG_CONJA',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Alist','ENG_CONJA',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Abar2','ENG_Abar2','ENG_CONJA',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Ahead','ENG_Abar1',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar1',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AP','ENG_Abar2',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_AP','ENG_Alist',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJ_Stem','t_ENG_CONJ_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_CONJ','ENG_CONJ_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VNEG_Stem','t_ENG_VNEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VNEG','ENG_VNEG_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_VNEG',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',NULL,
 '"const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");"');
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);"');
 
 /*start: taking out rules for negating adejctive phrase in relative clause*/
 /*insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_AP',
-'"const node_info& ENG_NV=sparser->get_node_info($1);
+NULL,'"const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_AP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
-$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_AP");"');*/
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_AP");
+$$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_AP);"');*/
 /*end: taking out rules for negating relative clause*/
 
 
@@ -1097,8 +539,8 @@ insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_Co
 '"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");"');*/
+logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
+$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);"');*/
 /*std::cout<<"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2"<<std::endl;"');*/
 /*insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_ConjDefSg2',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_Stem',NULL,NULL);
@@ -1116,10 +558,9 @@ insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_nCon',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_1Con',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,
 '"lexicon word;
-const node_info& empty_node_info={};
 word=lex->last_word_scanned(t_Con);
-$$=sparser->set_node_info(word,empty_node_info);
-logger::singleton()->log(0,"Konstans:"+word.word);"');*/
+logger::singleton()->log(0,"Konstans:"+word.word);
+$$=sparser->set_node_info("HUN_Con",word);"');*/
 /*std::cout<<"Konstans:"<<word.word<<std::endl;"');*/
 /*insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swVowel','HUN_Con',NULL);
 insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swConsonant','HUN_Con',NULL);

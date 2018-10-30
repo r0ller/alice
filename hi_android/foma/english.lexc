@@ -1,7 +1,8 @@
 !!!english.lexc!!!
 
 Multichar_Symbols [stem] +N +V +Sg +Pl +PREP +ADV +A +Aux +RPRO
-+Relative +NEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET +PAR
++Relative +VNEG +ANEG [Guess] +CON +fwConsonant +fwVowel +Indef +Def +DET +PAR
++CONJ +Gerund
 
 LEXICON Root
 
@@ -11,17 +12,28 @@ Adverb ;
 Adjective ;
 Pronoun ;
 Negation ;
+Conjuction ;
+Determiner ;
 
 LEXICON Verb
 
-list   Vinf;
-be	Vinf;
-be[stem]+V+Sg:is #;
-be[stem]+V+Pl:are #;
+call Vinf;
+list Vinf;
+do[stem]+V+Aux:do #;
+do[stem]+V+Aux+Sg:does #;
+do[stem]+V+Aux+Gerund:doing #;
+be[stem]+V+Aux:be #;
+be[stem]+V+Aux+Gerund:being #;
+be[stem]+V+Aux+Sg:is #;
+be[stem]+V+Aux+Pl:are #;
+end Vinf;
+begin Vinf;
+contain Vinf;
 
 LEXICON Vinf
 
 [stem]+V:0 #;
+[stem]+V+Gerund:^ing #;
 
 LEXICON Vaux
 
@@ -30,6 +42,7 @@ LEXICON Vaux
 LEXICON Preposition
 
 with Pinf;
+in Pinf;
 
 LEXICON Pinf
 
@@ -37,16 +50,11 @@ LEXICON Pinf
 
 LEXICON Adverb
 
-down Advinf;
-
 LEXICON Advinf
 
 [stem]+ADV:0 #;
 
 LEXICON Adjective
-
-first Adjinf;
-last Adjinf;
 
 LEXICON Adjinf
 
@@ -62,8 +70,29 @@ LEXICON RPro
 
 LEXICON Negation
 
-not Neg;
+not VNeg;
+not ANeg;
 
-LEXICON Neg
+LEXICON VNeg
 
-[stem]+NEG:0 #;
+[stem]+VNEG:0 #;
+
+LEXICON ANeg
+
+[stem]+ANEG:0 #;
+
+LEXICON Conjuction
+
+and Conj;
+but Conj;
+or Conj;
+
+LEXICON Conj
+
+[stem]+CONJ:0 #;
+
+LEXICON Determiner
+
+a[stem]+DET+Indef+fwConsonant:a #;
+an[stem]+DET+Indef+fwVowel:an #;
+the[stem]+DET+Def:the #;
