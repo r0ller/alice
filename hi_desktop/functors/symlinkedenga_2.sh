@@ -1,0 +1,1 @@
+eval "$1"_out="symlinked";

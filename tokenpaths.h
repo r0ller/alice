@@ -15,6 +15,8 @@
 			//Using vector for words instead of set to preserve word order esp. as one word
 			//can appear more than once in a sentence.
 			std::vector<lexicon> words;
+			std::vector<std::vector<node_info> > valid_parse_trees;
+			std::vector<std::vector<node_info> > invalid_parse_trees;
 			std::vector<std::vector<lexicon> > valid_paths;
 			std::vector<std::vector<lexicon> > invalid_paths;
 			std::vector<std::vector<lexicon> > internal_invalid_paths;
@@ -25,12 +27,14 @@
 			void find_lhs_down(const std::string&, const unsigned int, const std::string&, std::multimap<p_m1_token_symbol_m2_counter,token_symbol>&, std::set<t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol>&);
 			void add_internal_invalid_path(const std::vector<lexicon>&);
 			void reset();
-			std::string semantics(std::vector<lexicon>&, std::map<std::string,std::string>&,unsigned int&);
+			std::string semantics(std::vector<lexicon>&, std::map<std::string,std::string>&,unsigned int&,const std::string&);
 			std::string morphology(std::vector<lexicon>&);
 			bool is_path_already_evaluated(const std::vector<lexicon>&, std::vector<std::vector<lexicon> >&);
 			std::string yyerror;
 			std::string functors(const std::map<std::string,std::map<std::string,std::string> >&,const std::map<std::string,std::vector<lexicon> >&,const unsigned int&,std::string&);
 			std::string dependencies(query_result&,std::map<std::pair<std::string,std::string>,std::string>&);
+			std::string syntax(const std::vector<node_info>&);
+			std::string traverse_nodes_lr(const node_info&, const std::vector<node_info>&);
 		public:
 			tokenpaths();
 			~tokenpaths();
@@ -39,8 +43,10 @@
 			void validate_path(const std::vector<lexicon>&, const transgraph *);
 			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
-			std::string create_analysis(const unsigned char&);
+			std::string create_analysis(const unsigned char&,const std::string&);
 			void log_yyerror(const std::string&);
+			void validate_parse_tree(const std::vector<node_info>&);
+			void invalidate_parse_tree(const std::vector<node_info>&);
 	};
 
 	class invalid_token_path:public std::exception{

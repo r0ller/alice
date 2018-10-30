@@ -1,7 +1,8 @@
 !!!english.lexc!!!
 
 Multichar_Symbols [stem] +N +V +Sg +Pl +PREP +ADV +A +Aux +RPRO
-+Relative +NEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET +PAR
++Relative +VNEG +ANEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET +PAR
++CONJ
 
 LEXICON Root
 
@@ -13,6 +14,7 @@ Pronoun ;
 Negation ;
 Determiner ;
 Particle ;
+Conjuction ;
 
 LEXICON Verb
 
@@ -51,6 +53,8 @@ LEXICON Advinf
 LEXICON Adjective
 
 executable Adjinf;
+empty Adjinf;
+symlinked Adjinf;
 
 LEXICON Adjinf
 
@@ -66,11 +70,16 @@ LEXICON RPro
 
 LEXICON Negation
 
-not Neg;
+not VNeg;
+not ANeg;
 
-LEXICON Neg
+LEXICON VNeg
 
-[stem]+NEG:0 #;
+[stem]+VNEG:0 #;
+
+LEXICON ANeg
+
+[stem]+ANEG:0 #;
 
 LEXICON Determiner
 
@@ -84,3 +93,13 @@ to Par;
 LEXICON Par
 
 [stem]+PAR:0 #;
+
+LEXICON Conjuction
+
+and Conj;
+but Conj;
+or Conj;
+
+LEXICON Conj
+
+[stem]+CONJ:0 #;

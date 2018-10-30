@@ -30,5 +30,6 @@
 				return morphan::singleton_instance;
 			};
 			std::vector<morphan_result> *analyze(const std::string&);
+			std::string generate(const std::string&);
 	};
 #endif

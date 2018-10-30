@@ -9,16 +9,17 @@ android {
         applicationId "com.bitroller.hi"
         minSdkVersion 23
         targetSdkVersion 24
-        versionCode 3
+        versionCode 4
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your APK.
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
         externalNativeBuild {
             cmake {
+                arguments "-DANDROID_STL=c++_shared", "-DANDROID_TOOLCHAIN=clang"
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
         }
@@ -45,8 +46,7 @@ android {
     sourceSets {
         main {
             assets.srcDirs = ['assets']
-//            jni.srcDirs = ['jni']
-//            jniLibs.srcDirs = ['jni']
+//            jniLibs.srcDirs = 'jni' //don't use for now, put prebuilts in the default app/src/main/jniLibs
         }
     }
 }

@@ -1,22 +1,66 @@
 <html>
-<body>
-    <input type="text" id="userInput"</input>
-    <button onclick="test()">Submit</button>
-	<script type="text/javascript">
-	  var Module = {
-		onRuntimeInitialized: function() {
-			window.alert('Runtime initialized!');
-		}
-	  };
-		function test()
-		{
-			var userInput = document.getElementById("userInput").value;
-			userInput=userInput+'\n';
-			var analysis=Module.ccall('hi','string',['string','string','number','string','string'],[userInput,'ENG',5,'','hi.db']);
-			console.log(analysis);
-			window.alert(analysis);
-		}
-	</script>
-	<script type="text/javascript" src="hi_js/hi.js"></script>
-</body>
+	<body>
+		<div id="page">
+			<div id="titleFrame" style="position: relative">
+				<h2 style="text-align:center;">I'm Alice, let me say: hi!</h2>
+				<div id="introFrame" style="float:top;position: relative">
+					<p style="text-align:left;">This is the Alice project webpage of the <a href="https://github.com/r0ller/alice/wiki">human interface library</a> (simply called hi) demonstrating a simple language model example, how searching for a location on a map could be interpreted -currently without taking any action. Here you can play around online with a precompiled js lib of hi (not the most recent version though) embedded in a website but it'd work as well via Node.js.</p>
+					<p style="text-align:left;"> The language model contains only a handful of words (show, restaurant, location, of, in), grammar and semantics required to process the input. Here are some examples you can copy & paste in the input field where words like 'abc', 'def', 'erding', 'budapest', 'hungary' and 'thai' are not part of the dictionary, just so called constants so you can use whatever you like there. After hitting the Enter key or the Submit button, you'll get json structured analyses along with the emerging errors in the text area below where you can check out the result and the tags used. If you're interested, you may open up your browser's console to see what's logged there during the analysis.
+						<ul>
+							<li>show abc</li>
+							<li>show restaurant abc</li>
+							<li>show thai restaurants</li>
+							<li>show budapest in hungary</li>
+							<li>show location of thai restaurants</li>
+							<li>show location of thai restaurants in erding</li>
+							<li>show location of restaurant abc</li>
+							<li>show location of abc</li>
+							<li>show location of abc in erding</li>
+							<li>show location of restaurant abc in erding</li>
+							<li>show thai restaurants in erding</li>
+							<li>show restaurant abc in erding</li>
+							<li>show restaurants in erding</li>
+							<li>show location of restaurants</li>
+							<li>show location of restaurants in erding</li>
+							<li>show restaurants</li>
+						</ul>
+					</p>
+					<div id="submit-form" style="float: top;position: relative;">
+						<input disabled type="text" id="userInput" size=50 value="Runtime being initialized..."</input>
+						<button onclick="test()">Submit</button>
+						<div id="json-analysis" style="float: top;position: relative;">
+							<textarea disabled id="jsonAnalysis" cols=100 rows=25></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var Module = {
+				onRuntimeInitialized: function() {
+				document.getElementById("userInput").value="";
+				document.getElementById("userInput").disabled=false;
+				}
+			};
+			const node = document.getElementById("userInput");
+			node.addEventListener("keyup", function(event) {
+			if (event.key === "Enter") {
+				test();
+				}
+			});
+			function test()
+			{
+				var userInput = document.getElementById("userInput").value;
+				if(userInput!=""){
+					userInput=userInput+'\n';
+					var analysis=Module.ccall('hi','string',['string','string','number','string','string'],[userInput,'ENG',7,'js','hi.db']);
+					console.log(analysis);
+					json = JSON.parse(analysis)
+					var prettyStr = JSON.stringify(json, undefined, 4);
+					document.getElementById('jsonAnalysis').innerHTML = prettyStr;
+				}
+			}
+		</script>
+		<script type="text/javascript" src="hi_js/hi.js"></script>
+	</body>
 </html>

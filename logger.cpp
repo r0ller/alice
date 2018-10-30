@@ -4,7 +4,6 @@ logger *logger::singleton_instance=NULL;
 
 logger::logger(const std::string& log_mode, const unsigned char& error_level, const std::string& error_level_filter){
 	this->log_mode=log_mode;
-	this->log_mode="console";//console log mode is supported only for the time being
 	this->error_level=error_level;
 	if(error_level_filter=="LT"||error_level_filter=="LE"||error_level_filter=="EQ"||error_level_filter=="GE"||error_level_filter=="GT"){
 		this->error_level_filter=error_level_filter;
@@ -13,7 +12,7 @@ logger::logger(const std::string& log_mode, const unsigned char& error_level, co
 }
 
 logger::~logger(){
-
+	logger::singleton_instance=NULL;
 }
 
 void logger::log(const unsigned char& error_level, const std::string& message){

@@ -42,7 +42,8 @@ define C [ b | c | d | f | g | h | j | k | l | m | n | p | q | r | s | t | v | w
 #                z -> Z || .#. _ ;
 
 # Consonant doubling: 1-letter consonant doubled before -ing/-ed (beg/begging)
-#define ConsonantDoubling g -> g g || _ "^" [i n g | e d ];
+define ConsonantDoubling g -> g g || C V _ "^" [i n g | e d ] ,,
+						n -> n n || C V _ "^" [i n g | e d ] ;
 
 # E deletion: silent e dropped before -ing and -ed (make/making)
 #define EDeletion e -> 0 || _ "^" [ i n g | e d ] ;
@@ -54,6 +55,7 @@ define EInsertion [..] -> e || s | z | x | c h | s h _ "^" s ;
 define YReplacement y -> i e || _ "^" s ; 
 #define YReplacement y -> i e || _ "^" s    ,, 
 #                    y -> i   || _ "^" e d  ;
+define YthReplacement y -> i e || _ "^" t h ;
 
 # K insertion: verbs ending with vowel + -c add -k (panic/panicked)
 #define KInsertion [..] -> k || V c _ "^" [e d | i n g];
@@ -63,6 +65,12 @@ define Cleanup "^" -> 0;
 
 def AddTag [..] -> "+swVowel" || .#. V ?* _ .#. .o. 
            [..] -> "+swConsonant" || .#. C ?* _ .#. ;
+
+read lexc numbers.lexc
+define	LexiconNum;
+define	GrammarNum LexiconNum .o.
+		YthReplacement .o.
+		Cleanup;
 
 read lexc engnoun.lexc
 define LexiconN
@@ -79,7 +87,7 @@ read lexc english.lexc
 define Lexicon
 
 define Grammar Lexicon           .o. 
-#               ConsonantDoubling .o. 
+               ConsonantDoubling .o. 
 #               EDeletion         .o. 
                EInsertion        .o. 
                YReplacement      .o. 
@@ -97,4 +105,4 @@ define Grammar Lexicon           .o.
 
 #regex Grammar | Grammarup;
 
-regex [GrammarN.i .o. AddTag].i | Grammar;
+regex [GrammarN.i .o. AddTag].i | GrammarNum | Grammar;

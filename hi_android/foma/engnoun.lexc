@@ -12,6 +12,9 @@ LEXICON Noun
 [Guess] Constant;
 contact Ninf;
 name Ninf;
+first Ninf;
+last Ninf;
+a Constant;
 
 LEXICON Constant
 [stem]+CON:0	#;

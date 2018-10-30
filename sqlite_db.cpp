@@ -29,7 +29,7 @@ const std::string sqlite_db::error_message(){
 query_result *sqlite_db::exec_sql(const std::string& sql){
 	query_result *result_set=NULL;
 
-//	std::cout<<sql<<std::endl;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"sql query: "+sql);
 	result_set=new query_result();
 	if(sqlite3_exec(sqlite, sql.c_str(), sqlite_db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
 		throw sql_execution_error();
@@ -47,7 +47,7 @@ int sqlite_db::store_row_data(void *p_result, int nr_of_columns, char **field_va
 	query_result *result=NULL;
 	field field;
 
-//	std::cout<<nr_of_columns<<std::endl;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"nr of columns in row: "+std::to_string(nr_of_columns));
 	result=(query_result*)(p_result);
 	if(nr_of_columns!=0&&field_values!=NULL&&fields!=NULL){
 		result->set_metadata(nr_of_columns,(const char**) &(*fields));
@@ -55,7 +55,7 @@ int sqlite_db::store_row_data(void *p_result, int nr_of_columns, char **field_va
 			field.field_name=fields[i];
 			if(field_values[i]!=NULL) field.field_value=field_values[i];
 			else field.field_value.clear();
-//			std::cout<<field.field_name<<":"<<field.field_value<<std::endl;
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"field name: "+field.field_name+", field value: "+field.field_value);
 			row_index=result->result_set().size()/nr_of_columns;
 			result->insert(std::make_pair(row_index,field));
 		}
