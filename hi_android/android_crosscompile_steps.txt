@@ -1,4 +1,4 @@
-HOW TO BUILD HI FOR ANDROID (examples with cygwin):
+HOW TO BUILD HI FOR ANDROID:
 
 NOTE: This is a recipe for a static linked build of prerequisites to build a shared library for foma.
 

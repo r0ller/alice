@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class jsi {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
@@ -68,13 +70,58 @@ public class jsi {
        		public OneShotTask(String str) { mContactName = str; }
 			@Override
 			public void run(){
-       		    if(mContactName.isEmpty()==true) mContactName="%";
-				Map<String, List<String>> Contacts=findContact(mContactName);
+                String contactName = "";
+                String contactName2 = "";
+                String contactName3 = "";
                 String message="";
-				if(Contacts.isEmpty()==false){
+                Map<String, List<String>> Contacts=null;
+       		    if(mContactName.isEmpty()==false){
+                    if (LanguageChecker.getInstance().getDefaultLanguage()=="HUN") {
+                        if (mContactName.endsWith("á") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "a";
+                        else if (mContactName.endsWith("é") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "e";
+                        else if (mContactName.endsWith("í") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "i";
+                        else if (mContactName.endsWith("ó") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "o";
+                        else if (mContactName.endsWith("ő") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "ö";
+                        else if (mContactName.endsWith("ú") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "u";
+                        else if (mContactName.endsWith("ű") == true)
+                            contactName2 = mContactName.substring(0, mContactName.length() - 1) + "ü";
+                        else if (mContactName.endsWith("a") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                        else if (mContactName.endsWith("e") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                        else if (mContactName.endsWith("i") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                        else if (mContactName.endsWith("o") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                        else if (mContactName.endsWith("ö") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                        else if (mContactName.endsWith("u") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                        else if (mContactName.endsWith("ü") == true)
+                            contactName3 = mContactName.substring(0, mContactName.length() - 1);
+                    }
+                    Contacts=findContact(mContactName);
+                    if (Contacts.isEmpty() == false) contactName = mContactName;
+                    if (Contacts.isEmpty() == true && contactName2.isEmpty() == false) {
+                        Contacts = findContact(contactName2);
+                        contactName = contactName2;
+                    }
+                    if (Contacts.isEmpty() == true && contactName3.isEmpty() == false) {
+                        Contacts = findContact(contactName3);
+                        contactName = contactName3;
+                    }
+                }
+				if(Contacts!=null&&Contacts.isEmpty()==false){
                     Iterator<Map.Entry<String, List<String>>> contactList = Contacts.entrySet().iterator();
                     List<String> contactNumbers = null;
                     int numberCounter = 0;
+                    callContext.clear();
                     while (contactList.hasNext()) {
                         Entry<String, List<String>> contactListItem = contactList.next();
                         message += contactListItem.getKey() + "\n";
@@ -84,11 +131,15 @@ public class jsi {
                             ++numberCounter;
                             String phoneNumber=contactNumber.next();
                             message += String.valueOf(numberCounter) + ")" + phoneNumber + "\n";
+                            callContext.add(phoneNumber);
                         }
                     }
                 }
                 else{
-                    message="Nothing found.\n";
+                    if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN")
+                        message="Nem találtam senkit. Mondd újra a nevet akár egyenként, betűvel.";
+                    else
+                        message="Sorry, no contact found. Please, repeat the name.";
                 }
                 Intent setText = new Intent("hiBroadcast");
                 setText.putExtra("setText", message);
@@ -152,14 +203,44 @@ public class jsi {
        		public OneShotTask(String str) { mContact = str; }
 			@Override
 			public void run() {
-                //legösszetettebb magyar pl:"Hívd fel Minta Lacit [a magyar számán [a magyar szám[om]ról]]!"
-                if (mContact.matches("^[0-9]+$") == true) {
+       		    int nrOfDigits=0;
+       		    for(int i=0;i<mContact.length();++i) if(Character.isDigit(mContact.charAt(i))==true) ++nrOfDigits;
+                if (LanguageChecker.getInstance().getDefaultLanguage()=="ENG") {
+                    if(mContact.matches(".*\\d.*")==true){
+                        if(mContact.matches("\\d*st(?=\\s|$)")==true){
+                            mContact=mContact.replace("st",".");
+                        }
+                        else if(mContact.matches("\\d*nd(?=\\s|$)")==true){
+                            mContact=mContact.replace("nd",".");
+                        }
+                        else if(mContact.matches("\\d*rd(?=\\s|$)")==true){
+                            mContact=mContact.replace("rd",".");
+                        }
+                        else if(mContact.matches("\\d*th(?=\\s|$)")==true){
+                            mContact=mContact.replace("th",".");
+                        }
+                        else if(mContact.matches("\\d*\\..+")==true){
+                            mContact=mContact.substring(0,mContact.indexOf('.')+1);
+                        }
+                    }
+                    else{
+                        if(mContact.contentEquals("i")) mContact="1.";
+                        else if(mContact.contentEquals("ii")) mContact="2.";
+                        else if(mContact.contentEquals("iii")) mContact="3.";
+                        else if(mContact.contentEquals("iv")) mContact="4.";
+                        else if(mContact.contentEquals("v")) mContact="5.";
+                        else if(mContact.contentEquals("vi")) mContact="6.";
+                    }
+                }
+                if (mContact.matches("^[0-9 ]+$") == true && nrOfDigits>2) {
                     Intent callIntent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     callIntent.setData(Uri.parse("tel:" + mContact));
                     mContext.startActivity(callIntent);
                 }
-                else if(mContact.matches("^[0-9]+[.]$") == true){
-                    int index=Integer.valueOf(mContact.substring(0,mContact.length()-1));
+                else if(mContact.matches("^[0-9]+[.]$") == true||mContact.matches("^[0-9]+$") == true && nrOfDigits<3){
+                    int index=0;
+                    if(mContact.endsWith(".")==true) index=Integer.valueOf(mContact.substring(0,mContact.length()-1));
+                    else index=Integer.valueOf(mContact);
                     if(index==0){
                         index=callContext.size();
                     }
@@ -315,6 +396,12 @@ public class jsi {
                         else
                             setText.putExtra("setText", "Sorry, no contact found. Please, repeat the name.");
                         mContext.sendBroadcast(setText);
+                        Intent callingIntent = new Intent(MainActivity.getContext(), MainActivity.class);
+                        callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        callingIntent.putExtra("tryagain", "true");
+                        callingIntent.putExtra("nextAnalysis", "true");
+                        MainActivity.getContext().startActivity(callingIntent);
                     }
                 }
 			}

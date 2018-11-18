@@ -383,7 +383,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	std::set<std::string> functor_ids_of_words,functor_ids_of_dependencies;
 	std::map<std::pair<std::string,std::string>,std::string> functor_dkey_id_of_dependencies;
 	std::string functors;
-	std::vector<std::pair<std::pair<std::string,std::string>,std::string> >functor_dkey_ids;
+	std::vector<std::pair<std::pair<std::string,std::string>,std::string> > functor_dkey_ids;
 
 	for(auto&& word_functors:functors_of_words){
 		std::set<query_result *> functor_dependencies;
@@ -417,7 +417,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	unsigned int id=id_index;
 	db *sqlite=db_factory::get_instance();
 	for(unsigned int i=0;i<functor_dkey_ids.size();++i){
-		auto&& functor=functor_dkey_ids[i];
+		auto functor=functor_dkey_ids[i];//keep this variable as copy, as reference it'd get invalidated due to the functor_dkey_ids.push_back() within the loop
 		if(functor_ids_of_words.find(functor.second)==functor_ids_of_words.end()
 			&&functor_ids_of_dependencies.find(functor.second)==functor_ids_of_dependencies.end()){
 			functor_ids_of_dependencies.insert(functor.second);

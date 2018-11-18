@@ -6,7 +6,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,9 +20,11 @@ public class AnalysisParser {
     static private JSONArray prevMorphology;
     static private JSONArray prevSemantics;
     static private JSONArray prevFunctors;
+    private Set<Integer> analysesExecuted;
 
     public AnalysisParser(JSONObject analyses) {
         analysesObj=analyses;
+        analysesExecuted=new HashSet<Integer>();
     }
 
     private String transcribeDependencies(JSONArray morphology, JSONArray syntax, JSONArray dependencies, JSONArray functors, Vector<String> argList) throws org.json.JSONException {
@@ -90,12 +97,16 @@ public class AnalysisParser {
         JSONObject dependency=null;
         for(int i=0;i<dependencies.length();++i) {
             dependency = dependencies.optJSONObject(i);
-            if(dependency.has("functor id")==true){
-                String morphemeID=dependency.getString("morpheme id");
-                JSONObject morphologyObj=getMorpheme(morphology,morphemeID);
-                if(morphologyObj.getString("gcat").contentEquals("Verb")||morphologyObj.getString("gcat").contentEquals("V")){
-                    break;
+            if(dependency.has("functor id")==true&&dependency.has("tags")==true){
+                JSONObject tags=dependency.getJSONObject("tags");
+                if(tags.has("type")==true){
+                    if(tags.getString("type").contentEquals("action")) break;
                 }
+//                String morphemeID=dependency.getString("morpheme id");
+//                JSONObject morphologyObj=getMorpheme(morphology,morphemeID);
+//                if(morphologyObj.getString("gcat").contentEquals("Verb")||morphologyObj.getString("gcat").contentEquals("V")){
+//                    break;
+//                }
             }
             dependency=null;
         }
@@ -124,12 +135,17 @@ public class AnalysisParser {
         String relatedDependenciesToMerge=relatedDependencies.toString();
         relatedDependenciesToMerge=relatedDependenciesToMerge.substring(1);
         JSONArray dependenciesFound=new JSONArray(dependenciesToMerge+relatedDependenciesToMerge);
-        boolean failed=findFunctorDependenciesForSemanticOnes(dependencies,functorDependencies,relatedDependencies,dependency,dependenciesFound);
+        boolean failed=findFunctorDependenciesForSemanticOnes(dependencies,functorDependencies,relatedDependencies,dependency,dependenciesFound,false);
         if(failed==true) dependenciesFound=null;
         else{
             List<String> idsToDelete=new ArrayList<String>();
             for(int i=0;i<dependenciesFound.length();++i){
-                String idToDelete=dependenciesFound.getJSONObject(i).getString("id");
+                if(dependenciesFound.isNull(i)==true){
+                    dependenciesFound.remove(i);
+                }
+            }
+            for(int i=0;i<dependenciesFound.length();++i){
+                String idToDelete = dependenciesFound.getJSONObject(i).getString("id");
                 if(idToDelete.contentEquals(id)==false){
                     idsToDelete.add(idToDelete);
                 }
@@ -152,13 +168,18 @@ public class AnalysisParser {
         jsonArr.put(pos, jsonObj);
     }
 
-    private boolean findFunctorDependenciesForSemanticOnes(JSONArray dependencies,JSONArray functorDependencies, JSONArray relatedDependencies,JSONObject functorDependency,JSONArray dependenciesFound) throws org.json.JSONException{
+    private boolean findFunctorDependenciesForSemanticOnes(JSONArray dependencies,JSONArray functorDependencies, JSONArray relatedDependencies,JSONObject functorDependency,JSONArray dependenciesFound, boolean optional) throws org.json.JSONException{
         AtomicInteger dependencyIndex=new AtomicInteger(0);
         JSONObject dependencyToUpdate = getSemanticDependencyWithIndex(dependenciesFound, functorDependency.getString("functor"), functorDependency.getString("d_key"), dependencyIndex);
         JSONArray dependenciesArray = new JSONArray();
         functorDependency=nextFunctorDependency(functorDependencies,functorDependency,true);
         while(functorDependency!=null){
+            boolean previousDependencyFound = false;
             JSONArray semanticDependencies=getSemanticDependencies(dependencies,functorDependency.getString("semantic_dependency"),functorDependency.getString("ref_d_key"));
+            int optional_parent_allowed = 0;
+            if (functorDependency.getString("optional_parent_allowed").isEmpty() == false) {
+                optional_parent_allowed = Integer.parseInt(functorDependency.getString("optional_parent_allowed"));
+            }
             int manner=0;
             if(functorDependency.getString("manner").isEmpty()==false){
                 manner=Integer.parseInt(functorDependency.getString("manner"));
@@ -175,65 +196,54 @@ public class AnalysisParser {
             if(functorDependency.getString("d_counter").isEmpty()==false){
                 d_counter=Integer.parseInt(functorDependency.getString("d_counter"));
             }
-            if(semanticDependencies.length()>0
-                &&(manner==0&&semanticDependencies.length()==1
-                ||manner==1&&semanticDependencies.length()>=1
-                ||manner==2&&semanticDependencies.length()>1)){
-                for(int i=0;i<semanticDependencies.length();++i) {
-                    JSONObject semanticDependency=semanticDependencies.getJSONObject(i);
-                    int insertIndex=0;
-                    for(;insertIndex<dependenciesArray.length();++insertIndex) {
-                        String dependencyMorphemeId=dependenciesArray.getJSONObject(insertIndex).optString("morpheme id");
-                        if(dependencyMorphemeId.isEmpty()==false&&Integer.parseInt(dependencyMorphemeId)>Integer.parseInt(semanticDependency.getString("morpheme id"))){
-                            break;
+            if(optional == false || optional == true && optional_parent_allowed !=0) {
+                if (semanticDependencies.length() > 0
+                        && (manner == 0 && semanticDependencies.length() == 1
+                        || manner == 1 && semanticDependencies.length() >= 1
+                        || manner == 2 && semanticDependencies.length() > 1)) {
+                    for (int i = 0; i < semanticDependencies.length(); ++i) {
+                        JSONObject semanticDependency = semanticDependencies.getJSONObject(i);
+                        int insertIndex = 0;
+                        for (; insertIndex < dependenciesArray.length(); ++insertIndex) {
+                            String dependencyMorphemeId = dependenciesArray.getJSONObject(insertIndex).optString("morpheme id");
+                            if (dependencyMorphemeId.isEmpty() == false && Integer.parseInt(dependencyMorphemeId) > Integer.parseInt(semanticDependency.getString("morpheme id"))) {
+                                break;
+                            }
                         }
+                        if (semanticDependency.has("functor id") == true) {
+                            boolean failed = findFunctorDependenciesForSemanticOnes(dependencies, functorDependencies, relatedDependencies, semanticDependency, dependenciesFound, false);
+                        }
+                        semanticDependency = getSemanticDependencyById(dependenciesFound, semanticDependency.getString("id"));
+                        addToPos(insertIndex, semanticDependency, dependenciesArray);
                     }
-                    if(semanticDependency.has("functor id")==true){
-                        boolean failed=findFunctorDependenciesForSemanticOnes(dependencies,functorDependencies,relatedDependencies,semanticDependency,dependenciesFound);
+                    if (d_successor > d_counter) {
+                        previousDependencyFound = true;
+                    } else if (d_successor == 0) {
+                        break;
+                    } else {
+                        return true;
                     }
-                    semanticDependency=getSemanticDependencyById(dependenciesFound,semanticDependency.getString("id"));
-                    addToPos(insertIndex,semanticDependency,dependenciesArray);
-                }
-                if(d_successor>d_counter) {
-                    //read d_successor
-                    functorDependency = nextFunctorDependency(functorDependencies, functorDependency, true);
-                }
-                else if(d_successor==0){
-                    break;
-                }
-                else{
-                    return true;
+                } else {
+                    if (d_failover >= d_counter) {
+                        String semanticDependency = functorDependency.getString("semantic_dependency");
+                        String refDKey = functorDependency.getString("ref_d_key");
+//                        boolean previousDependencyFound = false;
+                        if (semanticDependency.isEmpty() == false && refDKey.isEmpty() == false) {
+                            JSONObject optionalDependency = getSemanticDependency(relatedDependencies, semanticDependency, refDKey);
+                            if (optionalDependency != null) {
+                                boolean failed = findFunctorDependenciesForSemanticOnes(dependencies, functorDependencies, relatedDependencies, optionalDependency, dependenciesFound, true);
+                                if (failed == true) previousDependencyFound = false;
+                                else previousDependencyFound = true;
+                                optionalDependency = getSemanticDependencyById(dependenciesFound, optionalDependency.getString("id"));
+                                addToPos(dependenciesArray.length(), optionalDependency, dependenciesArray);
+                            } else previousDependencyFound = false;
+                        }
+                    } else {
+                        return true;
+                    }
                 }
             }
-            else{
-                if(d_failover>=d_counter){
-                    String semanticDependency=functorDependency.getString("semantic_dependency");
-                    String refDKey=functorDependency.getString("ref_d_key");
-                    boolean previousDependencyFound=false;
-                    if(semanticDependency.isEmpty()==false&&refDKey.isEmpty()==false) {
-                        JSONObject optionalDependency=getSemanticDependency(relatedDependencies,semanticDependency,refDKey);
-                        if(optionalDependency!=null) {
-                            boolean failed = findFunctorDependenciesForSemanticOnes(dependencies, functorDependencies, relatedDependencies, optionalDependency, dependenciesFound);
-                            if(failed==true) previousDependencyFound=false;
-                            else previousDependencyFound=true;
-                            optionalDependency=getSemanticDependencyById(dependenciesFound,optionalDependency.getString("id"));
-                            addToPos(dependenciesArray.length(),optionalDependency,dependenciesArray);
-                        }
-                        else previousDependencyFound=false;
-                    }
-                    functorDependency = nextFunctorDependency(functorDependencies, functorDependency, previousDependencyFound);
-                    if(functorDependency!=null) {
-                        int optional_parent_allowed = 0;
-                        if (functorDependency.getString("optional_parent_allowed").isEmpty() == false) {
-                            optional_parent_allowed = Integer.parseInt(functorDependency.getString("optional_parent_allowed"));
-                        }
-                        if (optional_parent_allowed == 0) return true;
-                    }
-                }
-                else{
-                    return true;
-                }
-            }
+            functorDependency = nextFunctorDependency(functorDependencies, functorDependency, previousDependencyFound);
         }
         boolean failed=false;
         if(dependenciesArray.length()==0) failed=true;
@@ -247,6 +257,9 @@ public class AnalysisParser {
                 }
             }
             dependencyToUpdate.put("dependencies",dependenciesArray );
+            //the returned semantic dependency is not interesting, this call is only to update the dependencyIndex
+            //as the dependencyToUpdate position may have changed due to deletions in dependenciesFound
+            getSemanticDependencyWithIndex(dependenciesFound, dependencyToUpdate.getString("functor"), dependencyToUpdate.getString("d_key"), dependencyIndex);
             dependenciesFound.put(dependencyIndex.get(),dependencyToUpdate);
             for(int i=0;i<dependenciesArray.length();++i){
                 JSONObject dependencyToDelete=getSemanticDependencyWithIndex(dependenciesFound,dependenciesArray.getJSONObject(i).getString("functor"),dependenciesArray.getJSONObject(i).getString("d_key"),dependencyIndex);
@@ -333,30 +346,32 @@ public class AnalysisParser {
         JSONObject dependency=null;
         String functor=currentDependency.getString("functor");
         String d_key=currentDependency.getString("d_key");
-        String d_counter="";
+        int d_counter=0;
+        String next_d_counter="";
         if(currentDependency.has("d_counter")==true){
+            d_counter=Integer.parseInt(currentDependency.getString("d_counter"));
             if(previousDependencyFound==true) {
                 String d_successor=currentDependency.getString("d_successor");
                 if(d_successor.isEmpty()==false) {
-                    d_counter = String.valueOf(Integer.parseInt(d_successor));
+                    next_d_counter = String.valueOf(Integer.parseInt(d_successor));
                 }
             }
             else{
                 String d_failover=currentDependency.getString("d_failover");
                 if(d_failover.isEmpty()==false) {
-                    d_counter = String.valueOf(Integer.parseInt(d_failover));
+                    next_d_counter = String.valueOf(Integer.parseInt(d_failover));
                 }
             }
         }
         else{
-            d_counter="1";
+            next_d_counter="1";
         }
-        if(d_counter.isEmpty()==false) {
+        if(next_d_counter.isEmpty()==false&&Integer.parseInt(next_d_counter)>d_counter) {
             for (int i = 0; i < dependencies.length(); ++i) {
                 dependency = dependencies.optJSONObject(i);
                 if (dependency.getString("functor").contentEquals(functor)
                         && dependency.getString("d_key").contentEquals(d_key)
-                        && dependency.getString("d_counter").contentEquals(d_counter)) {
+                        && dependency.getString("d_counter").contentEquals(next_d_counter)) {
                     break;
                 }
             }
@@ -371,14 +386,34 @@ public class AnalysisParser {
 
         try{
             analysesArray=analysesObj.getJSONArray("analyses");
-            if(analysesArray.length()>0){
-                JSONObject analysis=analysesArray.getJSONObject(0);
+            if(analysesArray.length()>0&&analysesExecuted.size()<analysesArray.length()){
+                int minNumOfCons=1000;
+                int minNumOfConsAnalysisIndex=0;
+                for(int i=0;i<analysesArray.length();++i){
+                    if(analysesExecuted.contains(i)==false) {
+                        JSONObject analysis = analysesArray.getJSONObject(i);
+                        //TODO: consider adding a condition checking for the errors in the
+                        //analysis being null and rank analyses together with that.
+                        JSONArray morphologyArray = analysis.optJSONArray("morphology");
+                        int numOfCons = 0;
+                        for (int j = 0; j < morphologyArray.length(); ++j) {
+                            JSONObject morpheme = morphologyArray.getJSONObject(j);
+                            if (morpheme.getString("gcat").contentEquals("CON")) ++numOfCons;
+                        }
+                        if (numOfCons < minNumOfCons) {
+                            minNumOfCons = numOfCons;
+                            minNumOfConsAnalysisIndex = i;
+                        }
+                    }
+                }
+                JSONObject analysis=analysesArray.getJSONObject(minNumOfConsAnalysisIndex);
                 JSONArray morphology=analysis.optJSONArray("morphology");
                 JSONArray syntax=analysis.optJSONArray("syntax");
                 JSONArray semantics=analysis.optJSONArray("semantics");
                 JSONArray relatedSemantics=analysis.optJSONArray("related semantics");
                 JSONArray functors=analysis.optJSONArray("functors");
                 JSONArray errors=analysis.optJSONArray("errors");
+                analysesExecuted.add(minNumOfConsAnalysisIndex);
                 if(errors==null){
                     if(semantics.length()>0){
                         script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
@@ -390,6 +425,50 @@ public class AnalysisParser {
                     }
                 }
                 else{
+                    SortedSet<Integer> indexesToDelete=new TreeSet<Integer>();
+                    Set<Integer> indexesProcessed=new HashSet<Integer>();
+                    //remove morphemes having CON gcat if multiple morpheme analyses are available for the same word form with different gcat
+                    //or if multiple morpheme analyses are available but only with CON gcat, leave the one having the most tags
+                    for(int i=0;i<morphology.length();++i){
+                        JSONObject morpheme_i=morphology.getJSONObject(i);
+                        if(indexesProcessed.contains(i)==false&&morpheme_i.getString("gcat").contentEquals("CON")){
+                            String wordForm=morpheme_i.getString("word");
+                            JSONArray tags_i=morpheme_i.optJSONArray("tags");
+                            int nrOfTags=0;
+                            if(tags_i!=null) nrOfTags=tags_i.length();
+                            int morphemeIndex=i;
+                            for(int j=0;j<morphology.length();++j){
+                                JSONObject morpheme_j=morphology.getJSONObject(j);
+                                if(i!=j&&morpheme_j.getString("gcat").contentEquals("CON")
+                                        &&morpheme_j.getString("word").contentEquals(wordForm)){
+                                    JSONArray tags_j=morpheme_j.optJSONArray("tags");
+                                    if(tags_j!=null&&tags_j.length()>nrOfTags) {
+                                        nrOfTags = tags_j.length();
+                                        indexesToDelete.add(morphemeIndex);
+                                        morphemeIndex=j;
+                                    }
+                                    else{
+                                        indexesToDelete.add(j);
+                                    }
+                                    indexesProcessed.add(j);
+                                }
+                                else if(i!=j&&morpheme_j.getString("gcat").contentEquals("CON")==false
+                                        &&morpheme_j.getString("word").contentEquals(wordForm)){
+                                    indexesToDelete.add(i);
+                                    indexesProcessed.add(j);
+                                }
+                            }
+                            indexesProcessed.add(i);
+                        }
+                    }
+                    if(indexesToDelete.isEmpty()==false){
+                        Integer last=indexesToDelete.last();
+                        while(indexesToDelete.first()!=last){
+                            morphology.remove(last);
+                            last=indexesToDelete.headSet(last).last();
+                        }
+                        morphology.remove(last);
+                    }
                     JSONArray updatedSemantics=mapFunctorDependenciesToSemantics(morphology,syntax,semantics,relatedSemantics,functors);
                     if(updatedSemantics!=null) {
                         script = transcribeDependencies(morphology, syntax, updatedSemantics, functors, arguments);
@@ -402,19 +481,27 @@ public class AnalysisParser {
                         //and prepend their words as well. However, this requires getting functor
                         //dependencies in case of successful interpretation as well.
                         JSONObject dependency=findMainFunctor(prevMorphology,prevSemantics,prevFunctors);
-                        JSONObject morpheme=getMorpheme(prevMorphology,dependency.getString("morpheme id"));
-                        if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN"){
-                            message.append("Megpróbálom az előző kontextusban értelmezni.");
+                        if(dependency!=null) {
+                            JSONObject morpheme = getMorpheme(prevMorphology, dependency.getString("morpheme id"));
+                            if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN") {
+                                message.append("Megpróbálom az előző kontextusban értelmezni.");
+                            } else {
+                                message.append("Trying to interpret it in the previous context.");
+                            }
+                            Intent callingIntent = new Intent(MainActivity.getContext(), MainActivity.class);
+                            callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            callingIntent.putExtra("tryagain", "true");
+                            callingIntent.putExtra("prependWord", morpheme.getString("word"));
+                            MainActivity.getContext().startActivity(callingIntent);
                         }
                         else{
-                            message.append("Trying to interpret it in the previous context.");
+                            if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN") {
+                                message.append("Nem találtam a korábbi kontextusban funktort amivel együtt ezt értelmezni tudnám.");
+                            } else {
+                                message.append("Didn't find functor in the previous context with which I could interpret this.");
+                            }
                         }
-                        Intent callingIntent = new Intent(MainActivity.getContext(), MainActivity.class);
-                        callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        callingIntent.putExtra("tryagain", "true");
-                        callingIntent.putExtra("prependWord", morpheme.getString("word"));
-                        MainActivity.getContext().startActivity(callingIntent);
                     }
                 }
             }

@@ -22,7 +22,7 @@ extern "C" {
     	JavaVM* javaVM=NULL;
     	env->GetJavaVM(&javaVM);
     	jobject activity = env->NewGlobalRef(obj);
-    	analysis=hi(text_,language_,HI_MORPHOLOGY|HI_SEMANTICS,"",db_uri_,javaVM,activity);
+    	analysis=hi(text_,language_,HI_MORPHOLOGY|HI_SEMANTICS,"js",db_uri_,javaVM,activity);
 		__android_log_print(ANDROID_LOG_INFO, "hi", "jtranslation: %s", analysis);
     	env->ReleaseStringUTFChars(text, text_);
     	env->ReleaseStringUTFChars(language, language_);

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -58,6 +61,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private ArrayList<String> recognisedTexts;
     private static Context context;
     private String dataDir="";
+    private AnalysisParser analysisParser=null;
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver(){
 		@Override
 		public void onReceive(Context context, Intent intent){
@@ -149,7 +153,13 @@ public class MainActivity extends Activity implements OnClickListener {
     	super.onCreate(savedInstanceState);
     	context=this;
         setContentView(R.layout.activity_main);
+        TextView texter=(TextView)findViewById(R.id.texter);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		Point size = new Point();
+		getWindowManager().getDefaultDisplay().getSize(size);
+		//((TextView)findViewById(R.id.texter)).setHeight(size.y); ->automatic scrolling to bottom does not work with this
+		int minLines=size.y/(texter.getLineHeight()*(int)texter.getLineSpacingMultiplier()+(int)texter.getLineSpacingExtra());
+		((TextView)findViewById(R.id.texter)).setMinLines(minLines);
 		((TextView)findViewById(R.id.texter)).setMovementMethod(new ScrollingMovementMethod());
         findViewById(R.id.texter).setOnClickListener(this);
         mWebView = (WebView) findViewById(R.id.webview);
@@ -248,6 +258,33 @@ public class MainActivity extends Activity implements OnClickListener {
 					if(recognisedText.contentEquals(prependedFailure)==true) recognisedText="";
 					else recognisedText=intent.getStringExtra("prependWord")+" "+recognisedText;
 				}
+				else if(intent.hasExtra("nextAnalysis")==true&&analysisParser!=null){
+					StringBuilder message=new StringBuilder();
+					commandScript=analysisParser.getCommandScript(message);
+					if(commandScript.isEmpty()==false) {
+						if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN"){
+							setText("Várj, egy másik elemzést még megpróbálok.");
+						}
+						else{
+							setText("Wait, I'll try yet another analysis.");
+						}
+						mWebView.loadData("<html><head></head><body><script type=\"text/javascript\">" + commandScript + "</script></body></html>", "text/html; charset=UTF-8", "UTF-8");
+						super.onNewIntent(intent);
+						return;
+					}
+					else{
+						//lastFailure=oText;
+						analysisParser=null;
+						recognisedText="";
+						if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN"){
+							setText("Bocs, ezt nem tudtam értelmezni.");
+						}
+						else{
+							setText("Sorry, couldn't interpret it.");
+						}
+						if(message.length()>0) setText(message.toString());
+					}
+				}
 				else if(recognisedText.isEmpty()==false&&recognisedText.contentEquals(lastFailure)==true){
 					recognisedText="";
 					if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN"){
@@ -275,13 +312,13 @@ public class MainActivity extends Activity implements OnClickListener {
 						}
 						//((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 					}
-					String trimmedInput = recognisedText;
-					trimmedInput = trimmedInput.replace("  ", " ");
-					String spelledLetters=trimmedInput.replaceAll(" ","");
-					if(spelledLetters.length()==trimmedInput.length()-spelledLetters.length()+1){
-						recognisedText=spelledLetters;
-						oText=recognisedText;
-					}
+				}
+				String trimmedInput = recognisedText;
+				trimmedInput = trimmedInput.replace("  ", " ");
+				String spelledLetters=trimmedInput.replaceAll(" ","");
+				if(spelledLetters.length()==trimmedInput.length()-spelledLetters.length()+1){
+					recognisedText=spelledLetters;
+					oText=recognisedText;
 				}
 				if(recognisedText.isEmpty()==false){
 					if(recognisedText.contentEquals(oText)==false) setText(recognisedText);
@@ -294,7 +331,7 @@ public class MainActivity extends Activity implements OnClickListener {
 						//Just for debugging, show the script to be executed
 						//((TextView)findViewById(R.id.texter)).append(commandScript+"\n\n");
 						JSONObject analyses=new JSONObject(commandScript);
-						AnalysisParser analysisParser=new AnalysisParser(analyses);
+						analysisParser=new AnalysisParser(analyses);
 						StringBuilder message=new StringBuilder();
 						commandScript=analysisParser.getCommandScript(message);
 						if(commandScript.isEmpty()==false) {
@@ -338,7 +375,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
-//		if(recognisedText.isEmpty()==true) recognisedText="hívd az orvost";
+//		if(recognisedText.isEmpty()==true) recognisedText="call p e t e r";
 //		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 //        Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);//Get default (primary) language set for voice input
 //        LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();

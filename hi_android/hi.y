@@ -1667,7 +1667,7 @@ $$=sparser->combine_nodes("HUN_Con",HUN_lfea_swVowel,HUN_Con);
 {
 lexicon word;
 word=lex->last_word_scanned(t_Con);
-logger::singleton()->log(0,"Konstans:"+word.word);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Konstans:"+word.word);
 $$=sparser->set_node_info("HUN_Con",word);
 };
 HUN_Con_lfea_Acc:
@@ -2056,7 +2056,7 @@ HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
 const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
 $$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 }
 |HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2
@@ -2064,7 +2064,7 @@ $$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 const node_info& HUN_Verb_lfea_ConjIndefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2");
 $$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjIndefSg2);
 };
 HUN_ImpVerbPfx:
@@ -2898,7 +2898,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	char *analysischr=NULL;
 	std::locale locale;
 
-	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+	//logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths;
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){

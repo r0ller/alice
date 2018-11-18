@@ -469,7 +469,7 @@ insert into GCAT values('CON', 'Ins', 'HUN', '174',NULL,NULL);
 insert into GCAT values('Verb', 'IndefPl3', 'HUN', '175',NULL,NULL);
 
 insert into FUNCTOR_DEFS values('LISTENGV_1', 'js', '1', 'listengv_1.js');
-insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', 'contactengn_1.js');
 insert into FUNCTOR_DEFS values('Num_2', 'js', '1', 'numeng_1.js');
 insert into FUNCTOR_DEFS values('CALLENGV_1', 'js', '1', 'callengv_1.js');
 insert into FUNCTOR_DEFS values('FIRSTLASTENGN_1', 'js', '1', 'firstlastengn_1.js');
@@ -491,8 +491,8 @@ insert into FUNCTOR_DEFS values('ELSOUTSOHUNNOUN_1', 'js', '1', 'elsoutsohunnoun
 insert into FUNCTOR_DEFS values('Num_1', 'js', '1', 'numhun_1.js');
 insert into FUNCTOR_DEFS values('Noun_1', 'js', '1', NULL);
 insert into FUNCTOR_DEFS values('KERESHUNV_1', 'js', '1', 'kereshunv_1.js');
-insert into FUNCTOR_DEFS values('NEVJEGYHUNN_1', 'js', '1', NULL);
-insert into FUNCTOR_DEFS values('NEVJEGYZEKHUNN_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('NEVJEGYHUNN_1', 'js', '1', 'nevjegyhunn_1.js');
+insert into FUNCTOR_DEFS values('NEVJEGYZEKHUNN_1', 'js', '1', 'nevjegyhunn_1.js');
 
 insert into FUNCTOR_DEFS values('KEZDODHUNAR_1', 'js', '1', NULL);
 insert into FUNCTOR_DEFS values('VEGZODHUNAR_1', 'js', '1', NULL);
@@ -551,8 +551,12 @@ insert into FUNCTOR_TAGS values('CALLENGV', '1', 'main_verb', '1', 'type', 'acti
 insert into FUNCTOR_TAGS values('CALLENGV', '1', NULL, '2', 'type', 'action');
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('LISTENGV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('LISTENGV', '2', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('LISTENGV', '2', NULL, '2', 'type', 'action');
 insert into FUNCTOR_TAGS values('HIVHUNV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('HIVHUNV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('KERESHUNV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('KERESHUNV', '1', NULL, '2', 'type', 'action');
 
 insert into LEXICON values('call', 'ENG', 'V', 'CALLENGV');
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -1036,7 +1040,7 @@ insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_Co
 '"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 const node_info& HUN_Verb_lfea_ConjDefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
 $$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);"');
 insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjDefSg2','t_HUN_Verb_ConjDefSg2',NULL,NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Verb_stem','t_HUN_Verb_Stem',NULL,NULL,NULL);
@@ -1055,7 +1059,7 @@ insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_1Con',NULL,NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,NULL,
 '"lexicon word;
 word=lex->last_word_scanned(t_Con);
-logger::singleton()->log(0,"Konstans:"+word.word);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Konstans:"+word.word);
 $$=sparser->set_node_info("HUN_Con",word);"');
 insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swVowel','HUN_Con',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Con','HUN_lfea_swConsonant','HUN_Con',NULL,NULL);
@@ -1118,7 +1122,7 @@ insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_Co
 '"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
 const node_info& HUN_Verb_lfea_ConjIndefSg2=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
-logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2");
 $$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjIndefSg2);"');
 insert into GRAMMAR values('HUN','HUN_Verb_lfea_ConjIndefSg2','t_HUN_Verb_ConjIndefSg2',NULL,NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Vbar1','HUN_ImpVerb','HUN_DP',NULL,NULL);

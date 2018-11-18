@@ -15,15 +15,13 @@
         android:layout_height="match_parent"
         android:scrollbars="none" >
 
-    <TextView
-        android:id="@+id/texter"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:clickable="true"
-        android:textSize="32dp"
-        android:text="" />
+        <TextView
+            android:id="@+id/texter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:text=""
+            android:textSize="32sp" />
     </ScrollView>
 
     <WebView 

@@ -8,8 +8,8 @@ android {
     defaultConfig {
         applicationId "com.bitroller.hi"
         minSdkVersion 23
-        targetSdkVersion 24
-        versionCode 4
+        targetSdkVersion 26
+        versionCode 5
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
