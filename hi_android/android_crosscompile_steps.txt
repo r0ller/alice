@@ -6,10 +6,9 @@ INSTALL: Android SDK, Android NDK, cygwin (32bit for now)
 
 1) CREATE TOOLCHAIN in cygwin (based on http://www.ikravets.com/computer-life/programming/2014/01/18/an-android-cross-compiling-environment-on-windowsunix-like-systems-using-ndk):
 
-I033768@MUCN30121896A /cygdrive/c/Users/i033768/AppData/Local/Android/android-nd
-k-r10e/build/tools:
+I033768@MUCN30121896A /cygdrive/c/Users/i033768/AppData/Local/Android/android-ndk-r10e/build/tools:
 $ ./make-standalone-toolchain.sh --arch=arm --system=windows-x86_64 --platform=
-android-17 --install-dir=/cygdrive/c/Users/i033768/AppData/Local/Android/myandr
+android-21 --install-dir=/cygdrive/c/Users/i033768/AppData/Local/Android/myandr
 oidtoolchain --ndk-dir=/cygdrive/c/Users/i033768/AppData/Local/Android/android-
 ndk-r10e/ --llvm-version=3.6 --stl=libc++
 

@@ -24,6 +24,8 @@ int main(int argc, char* argv[]){
 
 	try{
 		logger::singleton("console",0,"LE");
+		//TODO: as 3-4 are optional it may happen that in case of having only 3 args, the 3rd is either the output file path or the funtcor path
+		//In such a case check if the 3rd arg is an existing path, if yes then it's meant to be functor path, otherwise take it as output file path
 		if(argc<3){
 			std::cerr<<"Usage: gensrc /path/to/dbfile.db /path/to/bison/files/and/grammar/action/snippets [/path/with/output/file/name] [/path/to/functor/definitions]"<<std::endl;
 			exit(EXIT_FAILURE);
@@ -211,7 +213,7 @@ int main(int argc, char* argv[]){
 					}
 					else{//terminal
 						action="lexicon word;\n"
-						"word=lex->last_word_scanned("+head_symbol+");\n"
+						"word=lex->last_word_scanned(token::"+head_symbol+");\n"
 						"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+\"->\"+word.lexeme);\n"
 						"$$=sparser->set_node_info(\""+parent_symbol+"\",word);\n";
 					}

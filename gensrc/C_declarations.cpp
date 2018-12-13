@@ -1,11 +1,5 @@
-%{
-	extern "C"{
-		int yyparse(void);
-		int yylex(void);
-		void yyerror(char const *yymsgp);
-		int yywrap(void);
-	}
-
+%code{
+	int yylex(yy::parser::semantic_type* yylval);
 	#include <iostream>
 	#include <locale>
 	#ifdef __ANDROID__
@@ -33,4 +27,4 @@
 	#include "lexer.cpp"
 	#include "sp.cpp"
 	#include "transgraph.cpp"
-%}
+}

@@ -1,4 +1,4 @@
-int yylex(void){
+int yylex(yy::parser::semantic_type* yylval){
 	int token;
 	lexicon word={};
 
@@ -10,8 +10,8 @@ int yylex(void){
 	else return 0;//historic indicator of YACC about end of input stream
 }
 
-void yyerror(char const *yymsgp){
-	token_paths->log_yyerror(std::string(yymsgp));
+void yy::parser::error(const std::string& msg){
+	token_paths->log_yyerror(msg);
 	return;
 }
 
@@ -30,8 +30,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
 	std::locale locale;
+	yy::parser parser;
 
-	//logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths;
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
@@ -65,7 +66,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
 			if(toa&HI_SYNTAX||toa&HI_SEMANTICS){
-				int parse_error=yyparse();
+				int parse_error=parser.parse();
 				if(parse_error==0){
 					if(toa&HI_SEMANTICS){
 						transgraph=sparser->longest_match_for_semantic_rules_found();

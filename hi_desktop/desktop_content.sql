@@ -468,7 +468,7 @@ insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL,N
 insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,NULL,
 '"lexicon word;
-word=lex->last_word_scanned(t_Con);
+word=lex->last_word_scanned(token::t_Con);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Constant:"+word.word);
 $$=sparser->set_node_info("ENG_Con",word);"');
 insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL,NULL);
@@ -558,7 +558,7 @@ insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_nCon',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_1Con',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,
 '"lexicon word;
-word=lex->last_word_scanned(t_Con);
+word=lex->last_word_scanned(token::t_Con);
 logger::singleton()->log(0,"Konstans:"+word.word);
 $$=sparser->set_node_info("HUN_Con",word);"');*/
 /*std::cout<<"Konstans:"<<word.word<<std::endl;"');*/

@@ -313,7 +313,7 @@ insert into GRAMMAR values('ENG','ENG_AP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL,NU
 insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,NULL,
 '"lexicon word;
-word=lex->last_word_scanned(t_Con);
+word=lex->last_word_scanned(token::t_Con);
 std::cout<<"Constant:"<<word.word<<std::endl;
 $$=sparser->set_node_info("ENG_Con",word);"');
 insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL,NULL);
@@ -356,7 +356,7 @@ insert into GRAMMAR values('HUN','HUN_AccCon','HUN_1Con','HUN_Con_lfea_Acc',NULL
 insert into GRAMMAR values('HUN','HUN_AccCon','HUN_nCon','HUN_Con_lfea_Acc',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Con','t_Con',NULL,NULL,
 '"lexicon word;
-word=lex->last_word_scanned(t_Con);
+word=lex->last_word_scanned(token::t_Con);
 std::cout<<"Konstans:"<<word.word<<std::endl;
 $$=sparser->set_node_info("HUN_Con",word);"');
 insert into GRAMMAR values('HUN','HUN_Con_lfea_Acc','t_HUN_Con_lfea_Acc',NULL,NULL,NULL);

@@ -152,7 +152,7 @@ int main(int argc,char **argv){
 		getline(cin,text);
 		if(text.empty()==false){
 			toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-			analyses=hi(text.c_str(),"HUN",toa,"js","hi_android/hi.db");
+			analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db");
 			if(analyses!=NULL){
 				cout<<analyses<<endl;
 				Document jsondoc;
