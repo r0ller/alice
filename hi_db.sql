@@ -18,18 +18,17 @@ fst varchar(256)
 );
 
 create table GCAT(/*Eventually, table for terminal symbols, i.e. to which bison tokens can be assigned*/
-gcat varchar(12),
-feature varchar(12),
+gcat varchar(12) not null,
+feature varchar(12) not null,
 lid varchar(5) references LANGUAGES(lid),
-token smallint,/*unsigned ints are assigned as tokens to terminal symbols, NULLs being unconvertable by std::atoi() won't get a generated token in the bison source*/
+token smallint,/*NULL or '0': don't generate token in bison source, non-NULL: generate token in bison source*/
 precedence varchar(12) references PRECEDENCES(precedence),
 precedence_level smallint check(precedence_level>=0),
 PRIMARY KEY(gcat, feature, lid) /*gcat, feature, lid are all keys as once token literals in bison source will be generated (by concatenating gcat, feature and lid), uniqueness will be granted*/
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 );
-create index i_token on GCAT(token);/*TODO: should this be unique? Currently, it fails e.g. if two CONs are defined in the GCAT for two different languages with token 0*/
-create unique index i_gcat_lid on GCAT(gcat,lid) where feature is NULL or feature='stem' collate nocase;
+create unique index i_gcat_lid on GCAT(gcat,lid) where feature='stem' collate nocase;
 
 create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/

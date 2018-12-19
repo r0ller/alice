@@ -13,12 +13,12 @@ int main(int argc, char* argv[]){
 	std::string C_declarations, bison_declarations, grammar, C_code, parent_symbol, head_symbol, non_head_symbol,
 	action, definition, functor_id, tlid, imp_counter, terminal;
 	std::string gcat, feature, lid, token, prev_parent_symbol, combine_nodes, set_node, bison_source, db_file,
-	path, base, lid_list, snippetsdir, output, functor_defs_dir, precedence_level, precedence;
+	path, base, lid_list, snippetsdir, output, functor_defs_dir, precedence_level, precedence, tokenmapcode, symbolmapcode;
 	std::stringstream *stringstream=NULL;
 	std::ifstream *filestream=NULL;
 	std::ofstream *bison_file=NULL;
 	db *sqlite=NULL;
-	query_result *grammar_rules=NULL, *tokens=NULL, *symbols=NULL, *functor_defs=NULL, *precedences=NULL;
+	query_result *grammar_rules=NULL, *tokens=NULL, *functor_defs=NULL, *precedences=NULL;
 	std::set<std::string> lids,terminals;
 	std::multimap<std::pair<std::string,unsigned int>,std::string> precedence_order;
 
@@ -106,6 +106,8 @@ int main(int argc, char* argv[]){
 		sqlite->open(db_file);
 		tokens=sqlite->exec_sql("SELECT * FROM GCAT ORDER BY LID, TOKEN;");
 		precedences=sqlite->exec_sql("SELECT * FROM PRECEDENCES;");
+		tokenmapcode="%code{\n#include <map>\n#include <string>\nstd::map<std::string, unsigned int> symbol_token_map={";
+		symbolmapcode="\nstd::map<unsigned int,std::string> token_symbol_map={";
 		for(unsigned int i=0;i<tokens->nr_of_result_rows();++i){
 			gcat=*tokens->field_value_at_row_position(i,"gcat");
 			feature=*tokens->field_value_at_row_position(i,"feature");
@@ -121,25 +123,25 @@ int main(int argc, char* argv[]){
 			else precedence.clear();
 			unsigned int itoken=std::atoi(token.c_str());
 			if(itoken>0){
-				//TODO: figure out what to do with "CON", with the current solution not t_Con but e.g. t_ENG_CON would be generated
-				//Currently, "%token t_Con 1" is declared directly in bison_declarations.cpp
-				token=std::to_string(itoken+1);
 				if(feature.empty()==true){
 					terminal="t_"+lid+"_"+gcat;
-					bison_declarations+="%token\tt_"+lid+"_"+gcat+" "+token+"\n";
+					bison_declarations+="%token\tt_"+lid+"_"+gcat+"\n";
 					terminals.insert(terminal);
 				}
 				else{
 					terminal="t_"+lid+"_"+gcat+"_"+feature;
-					bison_declarations+="%token\tt_"+lid+"_"+gcat+"_"+feature+" "+token+"\n";
+					bison_declarations+="%token\tt_"+lid+"_"+gcat+"_"+feature+"\n";
 					terminals.insert(terminal);
 				}
 				if(precedence.empty()==false) precedence_order.insert(std::make_pair(std::make_pair(precedence,std::atoi(precedence_level.c_str())),terminal));
-			}
-			else{
-				if(precedence.empty()==false) precedence_order.insert(std::make_pair(std::make_pair(precedence,std::atoi(precedence_level.c_str())),"t_Con"));
+				tokenmapcode+="\n{\""+terminal+"\",yy::parser::token::"+terminal+"},";
+				symbolmapcode+="\n{yy::parser::token::"+terminal+",\""+terminal+"\"},";
 			}
 		}
+		if(tokenmapcode.back()==',') tokenmapcode.pop_back();
+		tokenmapcode+="\n};\n";
+		if(symbolmapcode.back()==',') symbolmapcode.pop_back();
+		symbolmapcode+="\n};\n}\n";
 		precedence.clear();
 		precedence_level.clear();
 		std::set<std::string> precedences_declared;
@@ -197,16 +199,7 @@ int main(int argc, char* argv[]){
 					"$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol_var+","+non_head_symbol_var+");\n";
 				}
 				else if(head_symbol.empty()==false&&non_head_symbol.empty()==true){
-					//symbols=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE SYMBOL = '"+head_symbol+"';");
 					if(terminals.find(head_symbol)==terminals.end()){//non-terminal
-						//TODO: figure out what shall be generated in case of the last rule leading to S
-						//as currently it seems I always combine everything into a single VP node
-						//and that VP leads to S but nothing happens in that rule.
-						//Hopefully, I don't rely on that anywhere. Let's give it a try and check
-						//if the interpeter is written well enough so that a properly generated code
-						//won't blow it up:D
-						//If yes, then the framework needs to be fixed, not the source generator here!
-						//delete symbols;
 						action="const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
 						"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+"\");\n"
 						"$$=sparser->set_node_info(\""+parent_symbol+"\","+head_symbol+");\n";
@@ -307,7 +300,7 @@ int main(int argc, char* argv[]){
 		sqlite->close();
 		db_factory::delete_instance();
 		sqlite=NULL;
-		bison_source=C_declarations+bison_declarations+grammar+C_code;
+		bison_source=tokenmapcode+symbolmapcode+C_declarations+bison_declarations+grammar+C_code;
 		if(output.empty()==false){
 			bison_file=new std::ofstream(output);
 		}

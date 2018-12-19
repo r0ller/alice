@@ -72,20 +72,19 @@ lexicon lexer::last_word_scanned(){
 
 lexicon lexer::last_word_scanned(const unsigned int token){
 	lexicon word;
-	unsigned int nr_of_words,internal_token=0;
+	unsigned int nr_of_words;
 	bool token_found=false;
 	db *sqlite=NULL;
 	query_result *gcats_and_lingfeas=NULL;
 
-	internal_token=token-1;
 	nr_of_words=words.size();
-	if(internal_token==words[nr_of_words-1].token){
+	if(token==words[nr_of_words-1].token){
 		word=last_word_scanned();
 	}
 	else{
-		for(auto&& i:words[nr_of_words-1].tokens) if(i==internal_token) token_found=true;
+		for(auto&& i:words[nr_of_words-1].tokens) if(i==token) token_found=true;
 		if(token_found==true){
-			word.token=internal_token;
+			word.token=token;
 			//word.word=words[nr_of_words-1].word;//Leave empty
 			word.lid=words[nr_of_words-1].lid;
 			//word.lexeme=words[nr_of_words-1].lexeme;//Leave empty
@@ -93,12 +92,7 @@ lexicon lexer::last_word_scanned(const unsigned int token){
 			word.morphalytics=words[nr_of_words-1].morphalytics;
 			word.tokens=words[nr_of_words-1].tokens;
 			word.lexicon_entry=words[nr_of_words-1].lexicon_entry;
-			sqlite=db_factory::get_instance();
-			gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+words[nr_of_words-1].gcat+"' AND LID = '"+language()+"' AND TOKEN = '"+std::to_string(internal_token)+"';");
-			if(gcats_and_lingfeas==NULL||gcats_and_lingfeas!=NULL&&gcats_and_lingfeas->nr_of_result_rows()>1){
-				throw std::runtime_error("No entry found in GCAT db table for token "+std::to_string(internal_token)+", gcat "+words[nr_of_words-1].gcat+", language "+language());
-			}
-			word.gcat=*gcats_and_lingfeas->field_value_at_row_position(0,"feature");
+			word.gcat=token_symbol_map.find(token)->second;
 		}
 		else{
 			throw std::runtime_error("Token "+std::to_string(token)+" not found for the last word scanned.");
@@ -123,7 +117,7 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 				word.dependencies=words[i].dependencies;
 				word.morphalytics=words[i].morphalytics;
 				word.lexicon_entry=words[i].lexicon_entry;
-				word.tokens=words[i].tokens;//Why was this not returned?
+				word.tokens=words[i].tokens;
 			}
 		}
 	}
@@ -138,7 +132,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 	db *sqlite=NULL;
 	std::multimap<unsigned int,field>::const_iterator field_position, gcat_position;
 	query_result *lexeme=NULL, *gcats_and_lingfeas=NULL;
-	std::string lingfea;
+	std::string lingfea,symbol;
 	const std::pair<const unsigned int,field> *field;
 	std::vector<std::string> morphemes;
 
@@ -170,12 +164,13 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 						if(field==NULL||field->second.field_value.empty()==true){
 //							Don't do anything, just skip lfeas that are not registered
-//							This will skip gcat as well for good reason -otherwise we would need to add gcats as feature as well for themselves
 						}
 						else{
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
-							token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-							if(token>0){
+							symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
+							auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+							if(symbol_token_map_entry!=symbol_token_map.end()){
+								token=symbol_token_map_entry->second;
+								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 								new_word.tokens.push_back(token);
 							}
 						}
@@ -183,15 +178,19 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 					else{
 						field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
 						if(field==NULL){
-							field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
-								if(field==NULL){
-									throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
-								}
+							throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
 						}
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
-						token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-						new_word.tokens.push_back(token);
-						new_word.token=token;
+						symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
+						auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+						if(symbol_token_map_entry!=symbol_token_map.end()){
+							token=symbol_token_map_entry->second;
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+							new_word.tokens.push_back(token);
+							new_word.token=token;
+						}
+						else{
+							throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
+						}
 					}
 				}
 			}
@@ -232,12 +231,13 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 				field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
 				if(field==NULL||field->second.field_value.empty()==true){
 //					Don't do anything, just skip lfeas that are not registered
-//					This will skip gcat as well for good reason -otherwise we would need to add gcats as feature as well for themselves
 				}
 				else{
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
-					token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-					if(token>0){
+					symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
+					auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+					if(symbol_token_map_entry!=symbol_token_map.end()){
+						token=symbol_token_map_entry->second;
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 						new_word.tokens.push_back(token);
 					}
 				}
@@ -245,15 +245,19 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 			else{
 				field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
 				if(field==NULL){
-					field=gcats_and_lingfeas->first_value_for_field_name_found("feature","");//Will SQLite3 find the empty string as value???
-						if(field==NULL){
-							throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
-						}
+					throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
 				}
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+*gcats_and_lingfeas->field_value_at_row_position(field->first,"token"));
-				token=std::atoi(gcats_and_lingfeas->field_value_at_row_position(field->first,"token")->c_str());
-				new_word.tokens.push_back(token);
-				new_word.token=token;
+				symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
+				auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+				if(symbol_token_map_entry!=symbol_token_map.end()){
+					token=symbol_token_map_entry->second;
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+					new_word.tokens.push_back(token);
+					new_word.token=token;
+				}
+				else{
+					throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
+				}
 			}
 		}
 		delete gcats_and_lingfeas;
@@ -399,14 +403,19 @@ std::vector<std::string>::iterator lexer::analyze_and_cache(std::string& human_i
 				morphalytics=stemmer->analyze(last_word);
 				if(morphalytics!=NULL&&morphalytics->empty()==false){
 					if(morphalytics->size()==1&&morphalytics->front().is_mocked()==true){//The word could not be analysed -> treat it as constant
-						new_word.token=0;
+						std::string symbol="t_"+language()+"_CON_Stem";
+						auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+						if(symbol_token_map_entry==symbol_token_map.end()){
+							throw std::runtime_error("No token found for symbol "+symbol);
+						}
+						new_word.token=symbol_token_map_entry->second;
 						new_word.word=last_word;
 						new_word.gcat="CON";
 						new_word.lexeme=last_word;
 						new_word.dependencies=dependencies_read_for_functor("CON");
 						new_word.morphalytics=&morphalytics->front();
 						new_word.tokens.clear();
-						new_word.tokens.push_back(0);
+						new_word.tokens.push_back(new_word.token);
 						new_word.lexicon_entry=false;
 						new_word_form=last_word;
 						new_words.push_back(new_word);
@@ -414,7 +423,7 @@ std::vector<std::string>::iterator lexer::analyze_and_cache(std::string& human_i
 					else{
 						for(auto&& i:*morphalytics){
 							new_word=tokenize_word(i);
-							if(new_word.tokens.empty()==true){//TODO: throw exception
+							if(new_word.tokens.empty()==true){
 								throw std::runtime_error("No tokens found for word:"+last_word);
 							}
 							new_words.push_back(new_word);

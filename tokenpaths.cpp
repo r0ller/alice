@@ -150,18 +150,15 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 	std::set<t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol> lhs_rules_processed, rhs_rules_processed;
 
 	sqlite=db_factory::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM GCAT WHERE LID = '"+lex->language()+"' AND TOKEN = '"+std::to_string(token)+"';");
-	if(result!=NULL&&result->nr_of_result_rows()==1){
-		gcat=*result->field_value_at_row_position(0,"gcat");
-		feature=*result->field_value_at_row_position(0,"feature");
-		lid=*result->field_value_at_row_position(0,"lid");
+	auto&& token_symbol_map_entry=token_symbol_map.find(token);
+	if(token_symbol_map_entry!=token_symbol_map.end()){
 		if(gcat=="CON")	symbol="t_Con";
-		else symbol="t_"+lid+"_"+gcat+"_"+feature;
+		else symbol=token_symbol_map_entry->second;
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token symbol:"+symbol);
 		delete result;
 	}
 	else{
-		throw std::runtime_error("Either there's no entry for token "+std::to_string(token)+" or there are more than one in the GCAT db table.");
+		throw std::runtime_error("No symbol found for token: "+std::to_string(token));
 	}
 	result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE LID = '"+lex->language()+"' AND ( HEAD_SYMBOL = '"+symbol+"' OR NON_HEAD_SYMBOL = '"+symbol+"' );");
 	if(result!=NULL){

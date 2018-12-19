@@ -109,20 +109,20 @@ insert into SYMBOLS values('ENG_lfea_swConsonant','ENG',NULL);
 insert into SYMBOLS values('t_ENG_V_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_V_Aux','ENG',NULL);
 insert into SYMBOLS values('t_ENG_V_Gerund','ENG',NULL);
-insert into SYMBOLS values('t_ENG_QPRO','ENG',NULL);
+insert into SYMBOLS values('t_ENG_QPRO_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_N_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_N_Pl','ENG',NULL);
 insert into SYMBOLS values('t_ENG_N_Sg','ENG',NULL);
 insert into SYMBOLS values('t_ENG_A_Stem','ENG',NULL);
-insert into SYMBOLS values('t_ENG_PREP','ENG',NULL);
-insert into SYMBOLS values('t_Con','ENG',NULL);
-insert into SYMBOLS values('t_ENG_ADV','ENG',NULL);
-insert into SYMBOLS values('t_ENG_RPRO','ENG',NULL);
+insert into SYMBOLS values('t_ENG_PREP_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_CON_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_ADV_Stem','ENG',NULL);
+insert into SYMBOLS values('t_ENG_RPRO_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_RPRO_Relative','ENG',NULL);
-insert into SYMBOLS values('t_ENG_PAR','ENG',NULL);
+insert into SYMBOLS values('t_ENG_PAR_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_VNEG_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_ANEG_Stem','ENG',NULL);
-insert into SYMBOLS values('t_ENG_DET','ENG',NULL);
+insert into SYMBOLS values('t_ENG_DET_Stem','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET_Indef','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET_fwVowel','ENG',NULL);
 insert into SYMBOLS values('t_ENG_DET_fwConsonant','ENG',NULL);
@@ -152,29 +152,26 @@ insert into SYMBOLS values('t_HUN_Vbpfx_Stem','HUN',NULL);
 insert into SYMBOLS values('t_Con','HUN',NULL);
 insert into SYMBOLS values('t_HUN_CON_Acc','HUN',NULL);
 
-/*Constant has hardcoded token value 1 in the yacc source so to avoid collision, the values here are increased
-by 1 during runtime; Entries with NULL value for token are not to be generated in the yacc source.*/
-/*TODO: Think over if the feature field for all gcats shall at least be 'Stem' or not?
-For exmaple, DET is considered as well to have a stem? How is it analysed by Foma?*/
-insert into GCAT values('CON', NULL, 'ENG', '0', NULL, NULL);/*Plays role only when checking for terminal symbols*/
+/*Entries with NULL or '0' value for token are not to be generated in the bison source.*/
+insert into GCAT values('CON', 'Stem', 'ENG', '1', NULL, NULL);
 insert into GCAT values('A', 'Stem', 'ENG', '1', NULL, NULL);
-insert into GCAT values('ADV', NULL, 'ENG', '2', NULL, NULL);
-insert into GCAT values('DET', NULL, 'ENG', '3', NULL, NULL);
+insert into GCAT values('ADV', 'Stem', 'ENG', '2', NULL, NULL);
+insert into GCAT values('DET', 'Stem', 'ENG', '3', NULL, NULL);
 insert into GCAT values('N', 'Stem', 'ENG', '4', NULL, NULL);
 insert into GCAT values('N', 'Pl', 'ENG', '5', NULL, NULL);
 insert into GCAT values('N', 'Sg', 'ENG', '6', NULL, NULL);
-insert into GCAT values('PREP', NULL, 'ENG', '7', NULL, NULL);
-insert into GCAT values('QPRO', NULL, 'ENG', '8', NULL, NULL);
+insert into GCAT values('PREP', 'Stem', 'ENG', '7', NULL, NULL);
+insert into GCAT values('QPRO', 'Stem', 'ENG', '8', NULL, NULL);
 insert into GCAT values('V', 'Stem', 'ENG', '9', NULL, NULL);
 insert into GCAT values('V', 'Aux', 'ENG', '10', NULL, NULL);
 insert into GCAT values('V', 'RCV', 'ENG', NULL, NULL, NULL);
 insert into GCAT values('V', 'Sg', 'ENG', NULL, NULL, NULL);
 insert into GCAT values('V', 'Pl', 'ENG', NULL, NULL, NULL);
-insert into GCAT values('RPRO', NULL, 'ENG', '11', NULL, NULL);
+insert into GCAT values('RPRO', 'Stem', 'ENG', '11', NULL, NULL);
 insert into GCAT values('RPRO', 'Relative', 'ENG', '12', NULL, NULL);
 insert into GCAT values('VNEG', 'Stem', 'ENG', '13', NULL, NULL);
 insert into GCAT values('ANEG', 'Stem', 'ENG', '14', NULL, NULL);
-insert into GCAT values('PAR', NULL, 'ENG', '18', NULL, NULL);
+insert into GCAT values('PAR', 'Stem', 'ENG', '18', NULL, NULL);
 insert into GCAT values('DET', 'Indef', 'ENG', '19', NULL, NULL);
 insert into GCAT values('DET', 'fwVowel', 'ENG', '20', NULL, NULL);
 insert into GCAT values('DET', 'fwConsonant', 'ENG', '21', NULL, NULL);
@@ -429,7 +426,7 @@ insert into GRAMMAR values('ENG','ENG_V_ger','ENG_V_Stem','ENG_V_lfea_ger',NULL,
 insert into GRAMMAR values('ENG','ENG_V_Stem','t_ENG_V_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_V_lfea_aux','t_ENG_V_Aux',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_V_lfea_ger','t_ENG_V_Gerund',NULL,NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_QPro','t_ENG_QPRO',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_QPro','t_ENG_QPRO_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N','ENG_N_Sg',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N','ENG_N_Pl',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_DP','ENG_Indef_Det_a','ENG_N_Sg_0Con_swC',NULL,NULL);
@@ -457,7 +454,7 @@ insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_N_Sg','ENG_nCon',NULL,
 '"//Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 //that a singular noun cannot combine with more than one constant like in ''list file abc def''
 //TODO: Any better solution???
-return -1;"');
+YYERROR;"');
 insert into GRAMMAR values('ENG','ENG_N_Stem','t_ENG_N_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N_lfea_Sg','t_ENG_N_Sg',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_N_lfea_Pl','t_ENG_N_Pl',NULL,NULL,NULL);
@@ -465,17 +462,13 @@ insert into GRAMMAR values('ENG','ENG_A_Stem','t_ENG_A_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_A','ENG_A_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swC',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_CAP','ENG_1Con','ENG_N_Pl_0Con_swV',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP',NULL,NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Con','t_Con',NULL,NULL,
-'"lexicon word;
-word=lex->last_word_scanned(token::t_Con);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Constant:"+word.word);
-$$=sparser->set_node_info("ENG_Con",word);"');
-insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Prep','t_ENG_PREP_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Con','t_ENG_CON_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Adv','t_ENG_ADV_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_RPro','ENG_RPro_stem','ENG_RPro_lfea_relative',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_RPro_stem','t_ENG_RPRO_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_RPro_lfea_relative','t_ENG_RPRO_Relative',NULL,NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Tense_particle','t_ENG_PAR_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_TP','ENG_Tense_particle','ENG_V_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_TP','ENG_V_ger',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_RC','ENG_RPro','ENG_IVP',NULL,NULL);
@@ -484,7 +477,7 @@ insert into GRAMMAR values('ENG','ENG_ANEG','ENG_ANEG_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Indef_Det_an','ENG_Indef_Det','ENG_lfea_fwVowel',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Indef_Det_a','ENG_Indef_Det','ENG_lfea_fwConsonant',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Indef_Det','ENG_Det_stem','ENG_lfea_IndefDet',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_Det_stem','t_ENG_DET',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Det_stem','t_ENG_DET_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_lfea_IndefDet','t_ENG_DET_Indef',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_lfea_fwVowel','t_ENG_DET_fwVowel',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_lfea_fwConsonant','t_ENG_DET_fwConsonant',NULL,NULL,NULL);
