@@ -6,12 +6,13 @@ std::vector<std::string> lexer::word_forms_;
 std::map<std::string,std::vector<lexicon> > lexer::cache;
 
 /*PUBLIC*/
-lexer::lexer(const char *input_string,const char *language, std::locale& locale){
+lexer::lexer(const char *input_string,const char *language,std::locale& locale,const bool generate_tokens){
 		lid=std::string(language);
 		human_input=std::string(input_string);
 		stemmer=morphan::get_instance(lid);
 		token=0;
 		this->locale=locale;
+		generate_tokens_=generate_tokens;
 		word_form_iterator=analyze_and_cache(human_input);
 }
 
@@ -173,6 +174,19 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 								new_word.tokens.push_back(token);
 							}
+							else{
+								if(generate_tokens_==true){
+									if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+									token=symbol_token_map.size()+1;
+									symbol_token_map.insert(std::make_pair(symbol,token));
+									token_symbol_map.insert(std::make_pair(token,symbol));
+									logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+									new_word.tokens.push_back(token);
+								}
+								else{
+									throw std::runtime_error("No token found for symbol "+symbol);
+								}
+							}
 						}
 					}
 					else{
@@ -189,7 +203,18 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 							new_word.token=token;
 						}
 						else{
-							throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
+							if(generate_tokens_==true){
+								if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+								token=symbol_token_map.size()+1;
+								symbol_token_map.insert(std::make_pair(symbol,token));
+								token_symbol_map.insert(std::make_pair(token,symbol));
+								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+								new_word.tokens.push_back(token);
+								new_word.token=token;
+							}
+							else{
+								throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
+							}
 						}
 					}
 				}
@@ -240,6 +265,19 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 						new_word.tokens.push_back(token);
 					}
+					else{
+						if(generate_tokens_==true){
+							if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+							token=symbol_token_map.size()+1;
+							symbol_token_map.insert(std::make_pair(symbol,token));
+							token_symbol_map.insert(std::make_pair(token,symbol));
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+							new_word.tokens.push_back(token);
+						}
+						else{
+							throw std::runtime_error("No token found for symbol "+symbol);
+						}
+					}
 				}
 			}
 			else{
@@ -256,7 +294,18 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 					new_word.token=token;
 				}
 				else{
-					throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
+					if(generate_tokens_==true){
+						if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+						token=symbol_token_map.size()+1;
+						symbol_token_map.insert(std::make_pair(symbol,token));
+						token_symbol_map.insert(std::make_pair(token,symbol));
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+						new_word.tokens.push_back(token);
+						new_word.token=token;
+					}
+					else{
+						throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
+					}
 				}
 			}
 		}
@@ -360,10 +409,12 @@ std::string lexer::validated_words(){
 	}
 	for(auto&& i:words){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"word in lexicon:"+i.word);
-		if(i.morphalytics!=NULL&&i.morphalytics->is_mocked()==false&&i.word.empty()==false&&i.gcat!="CON")
+		if(i.morphalytics!=NULL&&i.morphalytics->is_mocked()==false&&i.word.empty()==false&&i.gcat!="CON"){
 			if(validated_words.find(i.morphalytics->word())!=validated_words.end()) words_found+=i.morphalytics->word()+" ";
-		else if(i.word.empty()==false&&i.gcat!="CON")
+		}
+		else if(i.word.empty()==false&&i.gcat!="CON"){
 			if(validated_words.find(i.word)!=validated_words.end()) words_found+=i.word+" ";
+		}
 	}
 	if(words_found.empty()==false) words_found.pop_back();
 	return words_found;
@@ -406,9 +457,20 @@ std::vector<std::string>::iterator lexer::analyze_and_cache(std::string& human_i
 						std::string symbol="t_"+language()+"_CON_Stem";
 						auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
 						if(symbol_token_map_entry==symbol_token_map.end()){
-							throw std::runtime_error("No token found for symbol "+symbol);
+							if(generate_tokens_==true){
+								if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+								token=symbol_token_map.size()+1;
+								symbol_token_map.insert(std::make_pair(symbol,token));
+								token_symbol_map.insert(std::make_pair(token,symbol));
+								new_word.token=token;
+							}
+							else{
+								throw std::runtime_error("No token found for symbol "+symbol);
+							}
 						}
-						new_word.token=symbol_token_map_entry->second;
+						else{
+							new_word.token=symbol_token_map_entry->second;
+						}
 						new_word.word=last_word;
 						new_word.gcat="CON";
 						new_word.lexeme=last_word;

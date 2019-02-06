@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
 	path, base, lid_list, snippetsdir, output, functor_defs_dir, precedence_level, precedence, tokenmapcode, symbolmapcode;
 	std::stringstream *stringstream=NULL;
 	std::ifstream *filestream=NULL;
-	std::ofstream *bison_file=NULL;
+	std::ofstream *bison_file=NULL,*tokensymbol_file=NULL;
 	db *sqlite=NULL;
 	query_result *grammar_rules=NULL, *tokens=NULL, *functor_defs=NULL, *precedences=NULL;
 	std::set<std::string> lids,terminals;
@@ -38,14 +38,14 @@ int main(int argc, char* argv[]){
 				output=argv[3];
 				if(db_file.empty()==true||output.empty()==true||snippetsdir.empty()==true) return 1;
 			}
-			else{
+//			else{
 				std::size_t base_end=db_file.find_last_of("/");
 				if(base_end==std::string::npos) return 1;
 				path=db_file.substr(0,base_end);
 				std::size_t base_start=path.find_last_of("/");
 				base=path.substr(base_start+1);
 				if(db_file.empty()==true||path.empty()==true||base.empty()==true||snippetsdir.empty()==true) return 1;
-			}
+//			}
 			if(argc>4){
 				functor_defs_dir=argv[4];
 				if(functor_defs_dir.back()!='/') functor_defs_dir+='/';
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 		sqlite->open(db_file);
 		tokens=sqlite->exec_sql("SELECT * FROM GCAT ORDER BY LID, TOKEN;");
 		precedences=sqlite->exec_sql("SELECT * FROM PRECEDENCES;");
-		tokenmapcode="%code{\n#include <map>\n#include <string>\nstd::map<std::string, unsigned int> symbol_token_map={";
+		tokenmapcode="#include <map>\n#include <string>\nstd::map<std::string, unsigned int> symbol_token_map={";
 		symbolmapcode="\nstd::map<unsigned int,std::string> token_symbol_map={";
 		for(unsigned int i=0;i<tokens->nr_of_result_rows();++i){
 			gcat=*tokens->field_value_at_row_position(i,"gcat");
@@ -141,7 +141,7 @@ int main(int argc, char* argv[]){
 		if(tokenmapcode.back()==',') tokenmapcode.pop_back();
 		tokenmapcode+="\n};\n";
 		if(symbolmapcode.back()==',') symbolmapcode.pop_back();
-		symbolmapcode+="\n};\n}\n";
+		symbolmapcode+="\n};\n";
 		precedence.clear();
 		precedence_level.clear();
 		std::set<std::string> precedences_declared;
@@ -300,7 +300,13 @@ int main(int argc, char* argv[]){
 		sqlite->close();
 		db_factory::delete_instance();
 		sqlite=NULL;
-		bison_source=tokenmapcode+symbolmapcode+C_declarations+bison_declarations+grammar+C_code;
+		if(tokenmapcode.empty()==false&&symbolmapcode.empty()==false){
+			tokensymbol_file=new std::ofstream(path+"/tokensymbols.h");
+			*tokensymbol_file << tokenmapcode << symbolmapcode;
+			tokensymbol_file->close();
+			delete tokensymbol_file;
+		}
+		bison_source="%code{\n#include \"tokensymbols.h\"\n}\n"+C_declarations+bison_declarations+grammar+C_code;
 		if(output.empty()==false){
 			bison_file=new std::ofstream(output);
 		}

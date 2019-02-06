@@ -1,9 +1,0 @@
-# abl_cluster    :: execution time   :: Mon Jul  9 15:04:28 2018
-# abl_cluster    :: command call     :: abl_cluster -i test.aligned -o test.clustered 
-# abl_cluster    :: unique NTs in    :: 2
-# abl_cluster    :: unique NTs out   :: 2
-# abl_align      :: execution time   :: Mon Jul  9 15:02:53 2018
-# abl_align      :: command call     :: abl_align -a wm -p u -i test -o test.aligned 
-# abl_align      :: hyps generated   :: 4
-she is smart @@@ (0,3,[0])(2,3,[1])
-she is tired @@@ (2,3,[1])(0,3,[0])

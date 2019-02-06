@@ -24,8 +24,9 @@
 			static std::map<std::string,std::vector<lexicon> > cache;
 			std::vector<std::string>::iterator analyze_and_cache(std::string&);
 			std::string next_word();
+			bool generate_tokens_;
 		public:
-			lexer(const char *,const char *,std::locale&);
+			lexer(const char *,const char *,std::locale&,const bool);
 			~lexer();
 			unsigned int next_token();
 			lexicon last_word_scanned();

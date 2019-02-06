@@ -61,7 +61,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				#endif
 			}
 			locale=std::locale();
-			lex=new lexer(human_input,language,locale);
+			lex=new lexer(human_input,language,locale,false);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
 			sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");

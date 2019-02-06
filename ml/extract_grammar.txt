@@ -1,0 +1,36 @@
+abl_align -a a -p b -e -i ize -o ize.aligned
+abl_cluster -i ize.aligned -o ize.clustered
+abl_select -s b -i ize.clustered -o ize.selected
+
+a zárójeleket az (A,B,[C])-re vonatkozóan az A és a B pozíció ELÉ kell tenni
+
+hívd fel pétert:
+(0,6,[0])(3,6,[1])(2,3,[2])(2,6,[3]):
+(0 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 (3 (2 t_HUN_Vbpfx_Stem)2 (1 t_HUN_CON_swConsonant t_HUN_CON_Stem t_HUN_CON_Acc)1 )3 )0
+
+hívd fel az orvost:
+(0,9,[0])(8,9,[5])(2,3,[7])(2,9,[9])(5,9,[8])
+(0 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 (9 (7 t_HUN_Vbpfx_Stem)7 t_HUN_Det_Stem t_HUN_Det_Def (8 t_HUN_Det_fwVowel t_HUN_Noun_swVowel t_HUN_Noun_Stem (5 t_HUN_Noun_Acc)5 )8 )9 )0
+
+with both equal and unequal parts
+(0,9,[0])(0,2,[3])(7,8,[7])(8,9,[2])(2,3,[9])(3,5,[10])(0,3,[1])
+manual
+(0 (1 (3 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 )3 (9 t_HUN_Vbpfx_Stem )9 )1 (10 t_HUN_Det_Stem t_HUN_Det_Def )10 t_HUN_Det_fwVowel t_HUN_Noun_swVowel (7 t_HUN_Noun_Stem )7 (2 t_HUN_Noun_Acc )2 )0
+generated
+(0 (1 (3 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 )3 (9 t_HUN_Vbpfx_Stem )9 )1 (10 t_HUN_Det_Stem t_HUN_Det_Def )10                                      (7 t_HUN_Noun_Stem )7 (2 t_HUN_Noun_Acc )2 )0
+generated with bracketing
+(0 (1 (3 (3_0 t_HUN_Verb_Stem )3_0 (3_1 t_HUN_Verb_ConjDefSg2 )3_1 )3 (9 t_HUN_Vbpfx_Stem )9 )1 (10 (10_3 t_HUN_Det_Stem )10_3 (10_4 t_HUN_Det_Def )10_4 )10 (0_5 t_HUN_Det_fwVowel )0_5 (0_6 t_HUN_Noun_swVowel )0_6 (7 t_HUN_Noun_Stem )7 (2 t_HUN_Noun_Acc )2 )0 
+generated with creating node pairs
+(0 (1 (3 (3_0 t_HUN_Verb_Stem )3_0 (3_1 t_HUN_Verb_ConjDefSg2 )3_1 )3 (9 t_HUN_Vbpfx_Stem )9 )1 (10:0_5:0_6:7:2 (10 (10_3 t_HUN_Det_Stem )10_3 (10_4 t_HUN_Det_Def )10_4 )10 (0_5:0_6:7:2 (0_5 t_HUN_Det_fwVowel )0_5 (0_6:7:2 (0_6 t_HUN_Noun_swVowel )0_6 (7:2 (7 t_HUN_Noun_Stem )7 (2 t_HUN_Noun_Acc )2 )7:2 )0_6:7:2 )0_5:0_6:7:2 )10:0_5:0_6:7:2 )0
+
+hívd katona csabát:
+(2,4,[2])(2,3,[4])(4,7,[5])(0,7,[0])(2,7,[3])
+(0 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 (3 (2 (4 t_HUN_Noun_swConsonant )4 t_HUN_Noun_Stem)2 (5 t_HUN_CON_swConsonant t_HUN_CON_Stem t_HUN_CON_Acc)5 )3 )0
+
+hívd fel katona csabát:
+(3,4,[6])(5,8,[5])(2,3,[11])(0,8,[0])(2,8,[3])(2,5,[12])(3,5,[10])
+(0 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 (3 (12 (11 t_HUN_Vbpfx_Stem)11 (10 (6 t_HUN_Noun_swConsonant)6 t_HUN_Noun_Stem)10 )12 (5 t_HUN_CON_swConsonant t_HUN_CON_Stem t_HUN_CON_Acc)5 )3 )0
+
+hívd az orvost:
+(2,8,[3])(7,8,[5])(0,8,[0])(4,8,[8])
+(0 t_HUN_Verb_Stem t_HUN_Verb_ConjDefSg2 (3 t_HUN_Det_Stem t_HUN_Det_Def (8 t_HUN_Det_fwVowel t_HUN_Noun_swVowel t_HUN_Noun_Stem (5 t_HUN_Noun_Acc)5 )8 )3 )0
