@@ -108,8 +108,7 @@ int main(int argc, char* argv[]){
 			terminal_symbols+="'"+terminal+"',";
 		}
 	}
-	terminal_symbols+="'t_Con'";//TODO: introduce a switch to let the user control if this is needed or not
-
+	if(terminal_symbols.back()==',') terminal_symbols.pop_back();
 	grammar_rules=sqlite->exec_sql("SELECT PARENT_SYMBOL, HEAD_SYMBOL, NON_HEAD_SYMBOL FROM GRAMMAR WHERE LID = '"+lid
 			+"' AND  ( HEAD_SYMBOL NOT LIKE 't_%' OR HEAD_SYMBOL LIKE 't_%' AND HEAD_SYMBOL IN ("+terminal_symbols+") )"
 			+" AND ( NON_HEAD_SYMBOL IS NULL OR NON_HEAD_SYMBOL NOT LIKE 't_%' OR NON_HEAD_SYMBOL LIKE 't_%' AND NON_HEAD_SYMBOL IN ("+terminal_symbols+") )"

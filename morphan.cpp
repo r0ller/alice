@@ -127,15 +127,18 @@ std::string morphan::lid(){
 	return lid_;
 }
 
-std::string morphan::generate(const std::string& analysis){
+std::vector<std::string> morphan::generate(const std::string& analysis){
 	char *result=NULL;
 	std::vector<char> c_analysis;
-	std::string word;
+	std::vector<std::string> words;
 
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"generating word form for "+analysis);
 	c_analysis.assign(analysis.begin(),analysis.end());
 	c_analysis.push_back('\0');
 	result=apply_down(morphan::morphan_handle, &c_analysis[0]);
-	if(result!=NULL) word=std::string((const char *)result);
-	return word;
+	while(result!=NULL){
+		words.push_back(std::string((const char *)result));
+		result=apply_down(morphan::morphan_handle, NULL);
+	}
+	return words;
 }

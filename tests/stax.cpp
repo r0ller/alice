@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
 		unsigned int line_counter=0;
 		std::ifstream filestream(stex_file);
 		if(filestream.is_open()==false){
-			std::cerr<<"Error opening file "<<argv[2]<<std::endl;
+			std::cerr<<"Error opening file "<<argv[1]<<std::endl;
 			exit(EXIT_FAILURE);
 		}
 		while(std::getline(filestream,stexline)){
@@ -84,12 +84,13 @@ int main(int argc, char* argv[]){
 	logger::singleton("console",0,"LE");
 	sqlite=db_factory::get_instance();
 	sqlite->open(db_file);
-	lexicon=sqlite->exec_sql("SELECT WORD, GCAT FROM LEXICON WHERE LID = '"+lid+"' AND WORD IN ('"+words+"');");
-	if(lexicon==NULL){
-		std::cerr<<"Words not found in lexicon db table."<<std::endl;
-		exit(EXIT_FAILURE);
-	}
-	result_size=lexicon->nr_of_result_rows();
+//	This commented part makes only sense if the words are expected to be stems
+//	lexicon=sqlite->exec_sql("SELECT WORD, GCAT FROM LEXICON WHERE LID = '"+lid+"' AND WORD IN ('"+words+"');");
+//	if(lexicon==NULL){
+//		std::cerr<<"Words not found in lexicon db table."<<std::endl;
+//		exit(EXIT_FAILURE);
+//	}
+//	result_size=lexicon->nr_of_result_rows();
 	stemmer=morphan::get_instance(lid);
 	for(auto&& i:word_set){
 		std::vector<morphan_result> *word_analysis=stemmer->analyze(i);
@@ -110,17 +111,17 @@ int main(int argc, char* argv[]){
 	for(unsigned int i=0;i<result_size;++i){
 		gcat=*gcats_features->field_value_at_row_position(i,"gcat");
 		feature=*gcats_features->field_value_at_row_position(i,"feature");
-		if(gcat=="CON"){
-			terminal="t_Con";
-		}
-		else{
+//		if(gcat=="CON"){
+//			terminal="t_"+lid+"_CON_Stem";
+//		}
+//		else{
 			if(feature.empty()==false){
 				terminal="t_"+lid+"_"+gcat+"_"+feature;
 			}
 			else{
 				terminal="t_"+lid+"_"+gcat;
 			}
-		}
+//		}
 //		std::cout<<"generating terminal symbol:"<<terminal<<std::endl;
 		terminals_gcat_feature.insert(std::make_pair(terminal,std::make_pair(gcat,feature)));
 	}
@@ -138,28 +139,40 @@ int main(int argc, char* argv[]){
 		std::stringstream splitstream(stexline);
 		std::vector<std::pair<std::string,std::vector<std::string> > > gcat_feature_queries;
 		std::vector<std::string> features;
+		gcat.clear();
 		while(std::getline(splitstream,terminal,' ')){
 			auto&& terminal_gcat_feature=terminals_gcat_feature.find(terminal);
 			if(terminal_gcat_feature!=terminals_gcat_feature.end()){
-//				std::cout<<"terminal:"<<terminal<<std::endl;
+				std::cout<<"terminal:"<<terminal<<std::endl;
 				std::string feature_tolower=terminal_gcat_feature->second.second;
-//				std::cout<<"feature:"<<feature_lcase<<std::endl;
+				std::cout<<"feature:"<<feature_tolower<<std::endl;
 				if(feature_tolower.empty()==false){
 					std::transform(feature_tolower.begin(),feature_tolower.end(),feature_tolower.begin(),[](unsigned char c) -> unsigned char { return std::tolower(c); });
 				}
-				if(feature_tolower.empty()==true||feature_tolower=="stem"){
+				if(gcat!=terminal_gcat_feature->second.first){//(feature_tolower.empty()==true||feature_tolower=="stem"){
 					if(features.empty()==false){
 						gcat_feature_queries.push_back(std::make_pair(gcat,features));
 					}
 					gcat=terminal_gcat_feature->second.first;
 					features.clear();
-					features.push_back("[stem]");
+					if(feature_tolower=="stem"){
+						features.push_back("[stem]");
+					}
+					else{
+						features.push_back(terminal_gcat_feature->second.second);
+					}
 				}
 				else{
-					features.push_back(terminal_gcat_feature->second.second);
+					if(feature_tolower=="stem"){
+						features.push_back("[stem]");
+					}
+					else{
+						features.push_back(terminal_gcat_feature->second.second);
+					}
 				}
 			}
 			else{
+				std::cout<<"terminal "<<terminal<<" not found"<<std::endl;
 				gcat_feature_queries.clear();
 				features.clear();
 				break;
@@ -189,17 +202,58 @@ int main(int argc, char* argv[]){
 							}
 							else{
 								std::string analysis;
+								bool stem_added=false;
 								for(auto&& feature_requested:i.second){
-									if(analysis.empty()==true){
-										analysis=k.stem()+feature_requested+"+"+k.gcat()+"+";
+									if(feature_requested=="[stem]"){
+										if(stem_added==false){
+											if(analysis.empty()==true){
+												analysis=k.stem()+feature_requested+"+"+k.gcat()+"+";
+											}
+											else{
+												analysis+=k.stem()+feature_requested+"+"+k.gcat()+"+";
+											}
+											stem_added=true;
+										}
+										else{
+											std::cerr<<"Internal error occured in stem determination for word generation."<<std::endl;
+											exit(EXIT_FAILURE);
+										}
 									}
-									else analysis+=feature_requested+"+";
+									else{
+										if(stem_added==true){
+											if(analysis.empty()==false){
+												analysis+=feature_requested+"+";
+											}
+											else{
+												std::cerr<<"Internal error occured in stem determination for word generation."<<std::endl;
+												exit(EXIT_FAILURE);
+											}
+										}
+										else{
+											if(analysis.empty()==false){
+												analysis+=feature_requested+"+";
+											}
+											else{
+												analysis="+"+feature_requested+"+";
+											}
+										}
+									}
 								}
 								analysis.pop_back();
-								word=stemmer->generate(analysis);
-								std::cout<<analysis<<":"<<word<<std::endl;
-								if(word.empty()==false){
-									generated_words.push_back(word);
+								if(stem_added==true&&analysis.empty()==false){
+									std::vector<std::string> words=stemmer->generate(analysis);
+									if(words.empty()==false){
+										for(auto&& word:words){
+											generated_words.push_back(word);
+											std::cout<<analysis<<":"<<word<<std::endl;
+										}
+									}
+									else{
+										std::cout<<analysis<<": No word form could be generated"<<std::endl;
+									}
+								}
+								else{
+									std::cout<<analysis<<": No word form can be generated"<<std::endl;
 								}
 //								Attempting to generate wordform in cases where not all morphemes of the morphological
 //								analysis of a word were used in the syntax as tokens. The commented part below is not
@@ -244,6 +298,7 @@ int main(int argc, char* argv[]){
 					generated_sentences.push_back(generated_words);
 				}
 				else{//no word form could be generated for this word position->stop: no sentence can be generated either
+					std::cout<<"No words could be generated for gcat "+i.first+" and therefore no sentence either"<<std::endl;
 					generated_sentences.clear();
 					break;
 				}
@@ -278,6 +333,9 @@ int main(int argc, char* argv[]){
 					std::cout<<sentence<<std::endl;
 				}
 				if(word_position_covered>0) std::cout<<std::endl;
+			}
+			else{
+				std::cout<<"No sentence could be generated for this structure"<<std::endl;
 			}
 		}
 	}
