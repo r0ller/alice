@@ -207,6 +207,8 @@ int main(int argc, char* argv[]){
 	std::cout<<lid<<std::endl;
 	std::cout<<words<<std::endl;
 	std::cout<<"stex output:"<<std::endl;
+	//printing grammar only so that it can be redirected into a file
+	//stax must make sure that the generated structures are unique
 	PyRun_SimpleString(nltk_generate_sentence.c_str());
 	Py_Finalize();
 	delete stemmer;

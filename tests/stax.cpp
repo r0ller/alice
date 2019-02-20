@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <set>
+#include <map>
 #include "logger.cpp"
 #include "db.h"
 #include "query_result.cpp"
@@ -11,25 +13,27 @@ int main(int argc, char* argv[]){
 
 	db *sqlite=NULL;
 	query_result *lexicon=NULL,*gcats_features=NULL;
-	std::string db_file, path, base, lid, stex_file, words, gcats, terminal, feature, gcat, stexline, word, combine="any";
+	std::string db_file, path, base, lid, stex_file, words, gcats, terminal, feature, gcat, stexline, word, combine="any", prep_abl_file;
 	std::map<std::string,std::pair<std::string,std::string> > terminals_gcat_feature;
 	std::multimap<std::string,std::string> gcats_words;
 	std::set<std::string> gcat_set,word_set;
-	unsigned int result_size;
+	unsigned int result_size,prep_abl_matches=0,prep_abl_lines=0,unique_prep_abl_matches=0,nr_of_sentences_not_generated=0;
 	morphan *stemmer=NULL;
 	std::map<std::string,std::vector<morphan_result> > word_analyses;
+	std::set<unsigned int> lines_found;
 
 	if(argc<2){
 		//TODO:add new option to filter combinations of terminal symbols: ANY or ALL (extra: ANY only once, ALL only once)
-		std::cerr<<"Usage: stax /path/to/stex_output_file"<<std::endl;
+		std::cerr<<"Usage: stax /path/to/stex_output_file [/path/to/prep_abl/output/file]"<<std::endl;
 		exit(EXIT_FAILURE);
 	}
 	else{
 		stex_file=argv[1];
+		if(argc==3) prep_abl_file=argv[2];
 		unsigned int line_counter=0;
 		std::ifstream filestream(stex_file);
 		if(filestream.is_open()==false){
-			std::cerr<<"Error opening file "<<argv[1]<<std::endl;
+			std::cerr<<"Error opening file "<<stex_file<<std::endl;
 			exit(EXIT_FAILURE);
 		}
 		while(std::getline(filestream,stexline)){
@@ -111,31 +115,28 @@ int main(int argc, char* argv[]){
 	for(unsigned int i=0;i<result_size;++i){
 		gcat=*gcats_features->field_value_at_row_position(i,"gcat");
 		feature=*gcats_features->field_value_at_row_position(i,"feature");
-//		if(gcat=="CON"){
-//			terminal="t_"+lid+"_CON_Stem";
-//		}
-//		else{
-			if(feature.empty()==false){
-				terminal="t_"+lid+"_"+gcat+"_"+feature;
-			}
-			else{
-				terminal="t_"+lid+"_"+gcat;
-			}
-//		}
+		if(feature.empty()==false){
+			terminal="t_"+lid+"_"+gcat+"_"+feature;
+		}
+		else{
+			terminal="t_"+lid+"_"+gcat;
+		}
 //		std::cout<<"generating terminal symbol:"<<terminal<<std::endl;
 		terminals_gcat_feature.insert(std::make_pair(terminal,std::make_pair(gcat,feature)));
 	}
 	std::ifstream filestream(stex_file);
 	if(filestream.is_open()==false){
-		std::cerr<<"Error opening file "<<argv[2]<<std::endl;
+		std::cerr<<"Error opening file "<<stex_file<<std::endl;
 		exit(EXIT_FAILURE);
 	}
 	bool header_read=false;
+	unsigned int stexline_nr=0;
 	while(std::getline(filestream,stexline)){
 		if(header_read==false){
 			if(stexline=="stex output:") header_read=true;
 			continue;
 		}
+		++stexline_nr;
 		std::stringstream splitstream(stexline);
 		std::vector<std::pair<std::string,std::vector<std::string> > > gcat_feature_queries;
 		std::vector<std::string> features;
@@ -149,7 +150,7 @@ int main(int argc, char* argv[]){
 				if(feature_tolower.empty()==false){
 					std::transform(feature_tolower.begin(),feature_tolower.end(),feature_tolower.begin(),[](unsigned char c) -> unsigned char { return std::tolower(c); });
 				}
-				if(gcat!=terminal_gcat_feature->second.first){//(feature_tolower.empty()==true||feature_tolower=="stem"){
+				if(gcat!=terminal_gcat_feature->second.first){
 					if(features.empty()==false){
 						gcat_feature_queries.push_back(std::make_pair(gcat,features));
 					}
@@ -163,11 +164,37 @@ int main(int argc, char* argv[]){
 					}
 				}
 				else{
-					if(feature_tolower=="stem"){
-						features.push_back("[stem]");
+					bool feature_added_already=false;
+					for(auto&& i:features){
+						if(i==terminal_gcat_feature->second.second||i=="[stem]"&&feature_tolower=="stem"){
+							feature_added_already=true;
+							break;
+						}
+					}
+					if(feature_added_already==false){
+						if(feature_tolower=="stem"){
+							features.push_back("[stem]");
+						}
+						else{
+							features.push_back(terminal_gcat_feature->second.second);
+						}
 					}
 					else{
-						features.push_back(terminal_gcat_feature->second.second);
+						//If gcat is the same and a feature appears twice, it must belong to a new word with the same gcat.
+						//The problem is that in some cases this is too late as the new word may have begun earlier with a
+						//morpheme that does not belong to the previous word but as it appeared the first time, it got assigned to that.
+						//TODO: Figure out if there's any better way to tell where a new word may begin having the same gcat.
+						if(features.empty()==false){
+							gcat_feature_queries.push_back(std::make_pair(gcat,features));
+						}
+						gcat=terminal_gcat_feature->second.first;
+						features.clear();
+						if(feature_tolower=="stem"){
+							features.push_back("[stem]");
+						}
+						else{
+							features.push_back(terminal_gcat_feature->second.second);
+						}
 					}
 				}
 			}
@@ -303,7 +330,28 @@ int main(int argc, char* argv[]){
 					break;
 				}
 			}
-			std::cout<<stexline<<":"<<std::endl;
+			std::cout<<stexline<<std::endl;
+			if(prep_abl_file.empty()==false){
+				unsigned int line_counter=0;
+				std::ifstream filestream(prep_abl_file);
+				if(filestream.is_open()==false){
+					std::cerr<<"Error opening file "<<prep_abl_file<<std::endl;
+					exit(EXIT_FAILURE);
+				}
+				std::cout<<"Matching lines in prep_abl file:";
+				std::string prep_abl_line;
+				while(std::getline(filestream,prep_abl_line)){
+					++line_counter;
+					if(prep_abl_line==stexline){
+						std::cout<<" "<<line_counter;
+						++prep_abl_matches;
+						lines_found.insert(line_counter);
+					}
+				}
+				if(prep_abl_lines==0) prep_abl_lines=line_counter;
+				filestream.close();
+				std::cout<<std::endl;
+			}
 			if(generated_sentences.empty()==false){
 				//printing generated sentences
 				std::vector<unsigned int> word_dimensions;
@@ -335,9 +383,15 @@ int main(int argc, char* argv[]){
 				if(word_position_covered>0) std::cout<<std::endl;
 			}
 			else{
+				++nr_of_sentences_not_generated;
 				std::cout<<"No sentence could be generated for this structure"<<std::endl;
 			}
 		}
+	}
+	if(prep_abl_file.empty()==false){
+		unique_prep_abl_matches=lines_found.size();
+		std::cout<<"There are "<<prep_abl_matches<<" matches (of which "<<unique_prep_abl_matches<<" is unique) in "<<prep_abl_lines<<" lines of the prep_abl file."<<std::endl;
+		std::cout<<"There are "<<stexline_nr<<" lines in the stex output file for which "<<stexline_nr-nr_of_sentences_not_generated<<" sentences could be generated by stax."<<std::endl;
 	}
 	filestream.close();
 	delete stemmer;

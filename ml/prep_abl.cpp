@@ -62,6 +62,7 @@ int main(int argc, char* argv[]){
 					symbols+=token_symbol_map.find(token)->second;
 					symbols+=" ";
 				}
+				if(symbols.back()==' ') symbols.pop_back();
 				//std::cout<<symbols<<std::endl;
 				words=lex->word_entries();
 				unsigned int nr_of_cons=0;

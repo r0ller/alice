@@ -3,6 +3,9 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "logger.cpp"
+#include "db.h"
+#include "query_result.cpp"
 
 class tree_node{
 	private:
@@ -146,17 +149,17 @@ tree_node* create_node(const std::map<std::string,std::pair<unsigned int,unsigne
 					std::vector<tree_node*> child_nodes;
 					child_nodes.push_back(left);
 					child_nodes.push_back(right);
-					tree_node* parent=new tree_node(left->symbol_id()+":"+right->symbol_id(),left->symbol()+":"+right->symbol(),child_nodes);
+					tree_node* parent=new tree_node(left->symbol_id()+"-"+right->symbol_id(),left->symbol()+"-"+right->symbol(),child_nodes);
 					nodes.push_back(parent);
 				}
 			}
-			node=new tree_node(symbol_id,nodes.at(0)->symbol()+":"+nodes.at(1)->symbol(),nodes);
+			node=new tree_node(symbol_id,nodes.at(0)->symbol()+"-"+nodes.at(1)->symbol(),nodes);
 		}
 	}
 	return node;
 }
 
-void bracket_each_symbol(const std::map<unsigned int,std::string>& positions_symbols,const unsigned int outmost_opening_pos,const unsigned int outmost_closing_pos,std::map<std::string,std::pair<unsigned int,unsigned int> >& symbol_ids_brackets){
+void bracket_each_symbol(const std::map<unsigned int,std::string>& positions_symbols,const unsigned int outmost_opening_pos,const unsigned int outmost_closing_pos,std::map<std::string,std::pair<unsigned int,unsigned int> >& symbol_ids_brackets,const unsigned int line_nr){
 	std::map<unsigned int,std::string> positions_symbol_ids_of_enclosing_brackets;
 	std::map<std::string,std::pair<unsigned int,unsigned int> >::iterator symbol_id_with_brackets;
 
@@ -186,25 +189,128 @@ void bracket_each_symbol(const std::map<unsigned int,std::string>& positions_sym
 		else{
 			//TODO: find out if the newly generated symbols are the same for the same rule in
 			//different sentences. If not, a different way must be found to generate the same symbols.
-			std::string symbol_id=i.second+"_"+std::to_string(i.first);
+			std::string symbol_id=std::to_string(line_nr)+"_"+i.second+"_"+std::to_string(i.first);
 			symbol_ids_brackets.insert(std::make_pair(symbol_id,std::make_pair(i.first,i.first+1)));
 			std::cout<<"bracketing position "<<i.first<<" with symbol id "<<symbol_id<<std::endl;
 		}
 	}
 }
 
+void merge_rules(std::multimap<std::string,std::pair<std::string,std::string> >& rules,std::multimap<std::string,std::pair<std::string,std::string> >& merging_rules,const std::pair<std::string,std::pair<std::string,std::string> >& ref_rule){
+	std::pair<std::string,std::pair<std::string,std::string> > next_ref_rule;
+	bool next_ref_rule_found=false;
+
+	for(auto&& i:rules){
+		bool merging_rule_found=false;
+		for(auto&& j=merging_rules.lower_bound(i.first);j!=merging_rules.upper_bound(i.first);++j){
+			if(j->second.first==i.second.first&&j->second.second==i.second.second){
+				merging_rule_found=true;
+			}
+		}
+		if(merging_rule_found==false){
+			if(i.first!=ref_rule.first&&i.second.first==ref_rule.second.first&&i.second.second==ref_rule.second.second){
+				merging_rules.insert(i);
+				for(auto&& j:rules){
+					if(j.second.first==i.first||j.second.second==i.first){
+						if(j.second.first==i.first){
+							j.second.first=ref_rule.first;
+						}
+						if(j.second.second==i.first){
+							j.second.second=ref_rule.first;
+						}
+						if(next_ref_rule_found==false){
+							next_ref_rule=j;
+							next_ref_rule_found=true;
+						}
+					}
+				}
+			}
+		}
+	}
+	if(next_ref_rule_found==true){
+		merge_rules(rules,merging_rules,next_ref_rule);
+	}
+}
+
+void merge_rules(std::multimap<std::string,std::pair<std::string,std::string> >& rules,std::multimap<std::string,std::pair<std::string,std::string> >& merging_rules){
+
+	for(auto&& i:rules){
+		bool merging_rule_found=false;
+		for(auto&& j=merging_rules.lower_bound(i.first);j!=merging_rules.upper_bound(i.first);++j){
+			if(j->second.first==i.second.first&&j->second.second==i.second.second){
+				merging_rule_found=true;
+			}
+		}
+		if(merging_rule_found==false){
+			if(i.first.empty()==false){
+				if(i.second.first.empty()==false){
+					if(i.second.second.empty()==true){
+						bool symbol_found_as_parent=false;
+						for(auto&& j:rules){
+							if(j.first==i.second.first){
+								symbol_found_as_parent=true;
+								break;
+							}
+						}
+						if(symbol_found_as_parent==false){
+							merge_rules(rules,merging_rules,i);
+						}
+					}
+				}
+				else{
+					std::cerr<<"Rule head field cannot be empty.Stop."<<std::endl;
+					exit(EXIT_FAILURE);
+				}
+			}
+			else{
+				std::cerr<<"Rule parent field cannot be empty.Stop."<<std::endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+}
+
+void add_start_symbol(std::multimap<std::string,std::pair<std::string,std::string> >& rules){
+	std::set<std::string> top_node_symbols;
+
+	for(auto&& i:rules){
+		if(top_node_symbols.find(i.first)==top_node_symbols.end()){
+			bool symbol_found_on_rhs=false;
+			for(auto&& j:rules){
+				if(j.first!=i.first&&(j.second.first==i.first||j.second.second==i.first)){
+					//j.first!=i.first is meant to handle recursive rules as well
+					//in a way that their lhs does not count as top node
+					symbol_found_on_rhs=true;
+					break;
+				}
+			}
+			if(symbol_found_on_rhs==false){
+				top_node_symbols.insert(i.first);
+			}
+		}
+	}
+	for(auto&& i:top_node_symbols){
+		std::cout<<"adding start rule:"<<"S->"<<i<<std::endl;
+		rules.insert(std::make_pair("S",std::make_pair(i,"")));
+	}
+}
+
 int main(int argc, char* argv[]){
-	std::string abl_output,output,abl_row;
+	std::string abl_output,abl_row,db_file,lid;
 	std::ifstream *filestream=NULL;
 	std::ofstream *output_file=NULL;
-	std::multimap<std::string,std::pair<std::string,std::string> > rules,symbolic_rules;
+	std::multimap<std::string,std::pair<std::string,std::string> > rules,symbolic_rules,merging_rules;
+	db *sqlite=NULL;
+	query_result *grammar_rules=NULL;
+	unsigned int line_nr=0;
 
-	if(argc<2){
-		std::cerr<<"Usage: proc_abl /path/to/abl_select/output/file [/path/to/output/file/name]"<<std::endl;
+	if(argc<3){
+		std::cerr<<"Usage: proc_abl /path/to/abl_select/output/file <language id> [/path/to/dbfile.db]"<<std::endl;
 		exit(EXIT_FAILURE);
 	}
 	abl_output=argv[1];
-	//output=argv[2];
+	lid=argv[2];
+	if(argc==4) db_file=argv[3];
 	std::locale locale=std::locale();
 	filestream=new std::ifstream(abl_output);
 	if(filestream==NULL){
@@ -213,7 +319,7 @@ int main(int argc, char* argv[]){
 	while(std::getline(*filestream,abl_row)){
 		std::string::size_type hypos=abl_row.find("@@@");
 		if(abl_row.front()!='#'&&hypos!=std::string::npos){
-			//std::map<unsigned int,std::pair<std::vector<unsigned int>,std::vector<unsigned int> > > symbol_bracket_positions;
+			++line_nr;
 			std::map<unsigned int,std::string> positions_symbols;
 			std::map<std::string,std::pair<unsigned int,unsigned int> > symbol_ids_brackets;
 			std::string hypotheses=abl_row.substr(hypos+3);
@@ -248,7 +354,7 @@ int main(int argc, char* argv[]){
 					else if(closing_bracket_pos==-1) closing_bracket_pos=std::stoi(number);
 					else if(opening_bracket_pos==-1) opening_bracket_pos=std::stoi(number);
 					if(symbol_id>=0&&opening_bracket_pos>=0&&closing_bracket_pos>=0){
-						symbol_ids_brackets.insert(std::make_pair(std::to_string(symbol_id),std::make_pair(opening_bracket_pos,closing_bracket_pos)));
+						symbol_ids_brackets.insert(std::make_pair(std::to_string(line_nr)+"_"+std::to_string(symbol_id),std::make_pair(opening_bracket_pos,closing_bracket_pos)));
 						std::cout<<"symbol id:"<<symbol_id<<" opening bracket pos:"<<opening_bracket_pos<<" closing bracket pos:"<<closing_bracket_pos<<std::endl;
 						if(outmost_symbol_id==-1||outmost_symbol_id>=0&&opening_bracket_pos<=outmost_opening_bracket_pos&&closing_bracket_pos>=outmost_closing_bracket_pos){
 							outmost_symbol_id=symbol_id;
@@ -264,36 +370,72 @@ int main(int argc, char* argv[]){
 				hypotheses.pop_back();
 			}
 			std::cout<<"outmost symbol id:"<<outmost_symbol_id<<std::endl;
-			bracket_each_symbol(positions_symbols,outmost_opening_bracket_pos,outmost_closing_bracket_pos,symbol_ids_brackets);
+			bracket_each_symbol(positions_symbols,outmost_opening_bracket_pos,outmost_closing_bracket_pos,symbol_ids_brackets,line_nr);
 			//TODO: verify if each symbol got bracketed and that the newly generated symbols
 			//are the same for the same rule in each sentence
-			tree_node* root=create_node(symbol_ids_brackets,positions_symbols,std::to_string(outmost_symbol_id),outmost_opening_bracket_pos,outmost_closing_bracket_pos);
+			tree_node* root=create_node(symbol_ids_brackets,positions_symbols,std::to_string(line_nr)+"_"+std::to_string(outmost_symbol_id),outmost_opening_bracket_pos,outmost_closing_bracket_pos);
 			root->traverse_rules_pre_order(rules,symbolic_rules);
 			std::cout<<std::endl;
 			delete root;
 		}
 	}
+	add_start_symbol(rules);
+	merge_rules(rules,merging_rules);
+	if(db_file.empty()==false){
+		sqlite=db_factory::get_instance();
+		sqlite->open(db_file);
+	}
 	std::cout<<"Rules:"<<std::endl;
 	for(auto&& i:rules){
-		if(i.second.second.empty()==false){
-			std::cout<<i.first<<"->"<<i.second.first<<" "<<i.second.second<<std::endl;
+		bool merging_rule_found=false;
+		for(auto&& j=merging_rules.lower_bound(i.first);j!=merging_rules.upper_bound(i.first);++j){
+			if(j->second.first==i.second.first&&j->second.second==i.second.second){
+				merging_rule_found=true;
+			}
 		}
-		else{
-			std::cout<<i.first<<"->"<<i.second.first<<std::endl;
+		unsigned int rule_counter=0;
+		//making rules unique, though this may need to be done earlier
+		for(auto&& j=rules.lower_bound(i.first);j!=rules.upper_bound(i.first);++j){
+			if(j->second.first==i.second.first&&j->second.second==i.second.second){
+				++rule_counter;
+				if(rule_counter>1) break;
+			}
+		}
+		if(merging_rule_found==false&&rule_counter==1){
+			if(i.second.second.empty()==false){
+				std::cout<<i.first<<"->"<<i.second.first<<" "<<i.second.second<<std::endl;
+				if(sqlite!=NULL){
+					sqlite->exec_sql("INSERT OR IGNORE INTO SYMBOLS (SYMBOL,LID) VALUES ('"+i.first+"','"+lid+"');");
+					sqlite->exec_sql("INSERT OR IGNORE INTO SYMBOLS (SYMBOL,LID) VALUES ('"+i.second.first+"','"+lid+"');");
+					sqlite->exec_sql("INSERT OR IGNORE INTO SYMBOLS (SYMBOL,LID) VALUES ('"+i.second.second+"','"+lid+"');");
+					sqlite->exec_sql("INSERT INTO GRAMMAR (LID,PARENT_SYMBOL,HEAD_SYMBOL,NON_HEAD_SYMBOL) VALUES ('"+lid+"','"+i.first+"','"+i.second.first+"','"+i.second.second+"');");
+				}
+			}
+			else{
+				std::cout<<i.first<<"->"<<i.second.first<<std::endl;
+				if(sqlite!=NULL){
+					sqlite->exec_sql("INSERT OR IGNORE INTO SYMBOLS (SYMBOL,LID) VALUES ('"+i.first+"','"+lid+"');");
+					sqlite->exec_sql("INSERT OR IGNORE INTO SYMBOLS (SYMBOL,LID) VALUES ('"+i.second.first+"','"+lid+"');");
+					sqlite->exec_sql("INSERT INTO GRAMMAR (LID,PARENT_SYMBOL,HEAD_SYMBOL) VALUES ('"+lid+"','"+i.first+"','"+i.second.first+"');");
+				}
+			}
 		}
 	}
-	std::cout<<"Symbolic rules:"<<std::endl;
-	for(auto&& i:symbolic_rules){
-		if(i.second.second.empty()==false){
-			std::cout<<i.first<<"->"<<i.second.first<<" "<<i.second.second<<std::endl;
-		}
-		else{
-			std::cout<<i.first<<"->"<<i.second.first<<std::endl;
-		}
+//	std::cout<<"Symbolic rules:"<<std::endl;
+//	for(auto&& i:symbolic_rules){
+//		if(i.second.second.empty()==false){
+//			std::cout<<i.first<<"->"<<i.second.first<<" "<<i.second.second<<std::endl;
+//		}
+//		else{
+//			std::cout<<i.first<<"->"<<i.second.first<<std::endl;
+//		}
+//	}
+	if(sqlite!=NULL){
+		sqlite->close();
+		db_factory::delete_instance();
+		sqlite=NULL;
 	}
 	filestream->close();
 	delete filestream;
-//	output_file->close();
-//	delete output_file;
 	return 0;
 }
