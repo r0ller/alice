@@ -249,6 +249,13 @@ test_tools:
 	${CXX} $$projectdir/tests/stax.cpp -o ${BUILDDIR}/stax ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
 	${CXX} $$projectdir/tests/stex.cpp -o ${BUILDDIR}/stex ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lpython3.6 -lfoma;\
 
+ml_tools:
+	mkdir -p ${BUILDDIR};\
+	projectdir=${PROJECTSRCDIR};\
+	includedirs="${INCLUDEDIRS}";\
+	${CXX} $$projectdir/ml/prep_abl.cpp -o ${BUILDDIR}/prep_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
+	${CXX} $$projectdir/ml/proc_abl.cpp -o ${BUILDDIR}/proc_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3;\
+
 clean:
 	rm -rf ${BUILDDIR}
 
@@ -279,3 +286,4 @@ help:
 	@echo arm32_lib, arm64_lib: Android NDK r16b
 	@echo embedded_js_lib, node_js_lib: emscripten-1.36.0
 	@echo test_tools: sqlite3-3.8.11, foma-0.9.17, python-3.6, nltk-3.3
+	@echo "ml_tools: ABL-1.2 (Alignment-Based Learning framework)"
