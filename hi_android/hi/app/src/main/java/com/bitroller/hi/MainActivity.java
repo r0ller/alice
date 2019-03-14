@@ -3,10 +3,12 @@ package com.bitroller.hi;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.graphics.Point;
 import android.net.Uri;
@@ -42,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -375,11 +378,22 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
-//		if(recognisedText.isEmpty()==true) recognisedText="call p e t e r";
+//		if(recognisedText.isEmpty()==true) recognisedText="keress névjegyeket robival";
 //		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 //        Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);//Get default (primary) language set for voice input
-//        LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();
-//        sendOrderedBroadcast(intent, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
+//		PackageManager pm=getPackageManager();
+//		List<ResolveInfo> matches=pm.queryBroadcastReceivers(intent, 0);
+//		if(matches!=null&&matches.isEmpty()==false) {
+//			ResolveInfo intentResolver = matches.get(0);//matches is sorted from best to worst, so take the best
+//			ComponentName cn=new ComponentName(intentResolver.activityInfo.applicationInfo.packageName,intentResolver.activityInfo.name);
+//			intent.setComponent(cn);
+//			intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, true);
+//			LanguageChecker langCheckerBroadcastReceiver = LanguageChecker.getInstance();
+//			sendOrderedBroadcast(intent, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
+//		}
+//		else{
+//			Toast.makeText(this, "Error: the intent ACTION_GET_LANGUAGE_DETAILS could not be resolved.", Toast.LENGTH_LONG).show();
+//		}
 //endSilentDebug
 
 //beginNormalDebug
@@ -389,8 +403,8 @@ public class MainActivity extends Activity implements OnClickListener {
     	try {
     		startActivityForResult(i, REQUEST_OK);
         } catch (Exception e) {
-        	Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
-        }
+			Toast.makeText(this, "Error initializing speech to text engine.", Toast.LENGTH_LONG).show();
+		}
 //endNormalDebug
     }
 
@@ -402,8 +416,23 @@ public class MainActivity extends Activity implements OnClickListener {
 			recognisedText=recognisedTexts.get(0);
 			((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 			Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);//Get default (primary) language set for voice input
-			LanguageChecker langCheckerBroadcastReceiver=LanguageChecker.getInstance();
-			sendOrderedBroadcast(intent, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
+			//This is a workaround needed for Android Oreo and above to set the component name for the intent
+			//otherwise the intent won't be correctly resolved and the broadcastreceiver will get as a result only null.
+			//Fortunately, this does not seem to break backward compatibility for <8.0 systems.
+			//https://stackoverflow.com/questions/48653654/sendorderedbroadcast-setpackage-requirement-in-oreo
+			PackageManager pm=getPackageManager();
+			List<ResolveInfo> matches=pm.queryBroadcastReceivers(intent, 0);
+			if(matches!=null&&matches.isEmpty()==false) {
+				ResolveInfo intentResolver = matches.get(0);//matches is sorted from best to worst, so take the best
+				ComponentName cn = new ComponentName(intentResolver.activityInfo.applicationInfo.packageName, intentResolver.activityInfo.name);
+				intent.setComponent(cn);
+				intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, true);
+				LanguageChecker langCheckerBroadcastReceiver = LanguageChecker.getInstance();
+				sendOrderedBroadcast(intent, null, langCheckerBroadcastReceiver, null, Activity.RESULT_OK, null, null);
+			}
+			else{
+				Toast.makeText(this, "Error: the intent ACTION_GET_LANGUAGE_DETAILS could not be resolved.", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 

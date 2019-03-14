@@ -66,7 +66,7 @@ JSFOMAPATH=${PROJECTSRCDIR}/hi_js/foma/english.foma
 JSFSTNAME=english.fst
 JSLEXCFILES=${PROJECTSRCDIR}/hi_js/foma
 
-all: desktop_fst desktop_parser_db desktop_parser shared_native_lib desktop_client android_fst android_parser_db android_parser arm32_lib arm64_lib js_fst js_parser_db js_parser embedded_js_lib node_js_lib test_tools
+all: desktop_fst desktop_parser_db desktop_parser shared_native_lib desktop_client android_fst android_parser_db android_parser arm32_lib arm64_lib js_fst js_parser_db js_parser embedded_js_lib node_js_lib test_tools ml_tools
 
 desktop_client:
 	mkdir -p ${BUILDDIR};\
