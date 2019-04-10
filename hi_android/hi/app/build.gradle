@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        sign_config {
+            keyAlias 'Hi_key'
+            keyPassword 'H1_k3y'
+            storePassword 'H1_k3y'
+            storeFile file('C:/Users/i033768/.android/.keystore/hi_key.jks')
+        }
+    }
     compileSdkVersion 24
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.1'
@@ -9,7 +17,7 @@ android {
         applicationId "com.bitroller.hi"
         minSdkVersion 23
         targetSdkVersion 26
-        versionCode 6
+        versionCode 7
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {

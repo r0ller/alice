@@ -38,14 +38,11 @@ unsigned int query_result::nr_of_result_rows() const{
 }
 
 void query_result::insert(const std::pair<unsigned int, field>& row){
-	//insert() ensures that the field values for each field with the same row id are unqiue in the table
+	//insert() ensures that the field values for each field of the same row id are unqiue in the table
 	unsigned int nr_of_inserted_columns=0;
 	std::set<std::string> fields_inserted;
-	const std::pair<const unsigned int,field> *field_found=NULL;
-	std::multimap<unsigned int,field> fields_found;
-	std::set<unsigned int> keys_found;
-	bool entry_already_exists=false;
-	std::multimap<unsigned int,field>::iterator upper_bound,erase_invalidation_iterator_copy;
+	std::multimap<unsigned int,field>::iterator upper_bound;
+	std::set<std::pair<std::string,std::string> > field_set;
 
 	if(raw_result_set.empty()==false){
 		//check to avoid inserting a value for an existing field with the same name with the same row id
@@ -65,28 +62,13 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 				i!=upper_bound;++i){
 			if(fields.find(i->second.field_name)!=fields.end()){
 				fields_inserted.insert(i->second.field_name);
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up "+i->second.field_name+"="+i->second.field_value+" from row buffer in result set");
-				field_found=first_value_for_field_name_found(i->second.field_name,i->second.field_value);
-				while(field_found!=NULL){
-					fields_found.insert(*field_found);
-					keys_found.insert(field_found->first);
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,i->second.field_name+"="+i->second.field_value+" found in result set in row "+std::to_string(field_found->first));
-					field_found=value_for_field_name_found_after_row_position(field_found->first,i->second.field_name,i->second.field_value);
-				}
+				field_set.insert(std::make_pair(i->second.field_name,i->second.field_value));
 			}
 		}
 		if(fields_inserted!=fields){
 			throw std::runtime_error("Field names to be inserted and that of the table structure do not match.");
 		}
-		for(std::set<unsigned int>::const_iterator i=keys_found.begin();i!=keys_found.end();++i){
-			if(fields_found.count(*i)==nr_of_columns){
-				entry_already_exists=true;
-				row_buffer.erase(row.first);
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"entry already exists in result set with row id "+std::to_string(*i));
-				break;
-			}
-		}
-		if(entry_already_exists==false){
+		if(row_set.insert(field_set).second==true){
 			for(std::multimap<unsigned int,field>::const_iterator i=row_buffer.lower_bound(row.first),
  				upper_bound=row_buffer.upper_bound(row.first);
 				i!=upper_bound;++i){
@@ -94,6 +76,10 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting with rowid "+std::to_string(i->first)+":"+i->second.field_name+"="+i->second.field_value+" from row buffer into result set");
 			}
 			row_buffer.erase(row.first);
+		}
+		else{
+			row_buffer.erase(row.first);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Another entry with the same content already exists in result set for row id "+std::to_string(row.first));
 		}
 		if(row_buffer.find(row.first)!=row_buffer.end()){
 			throw std::runtime_error("Exiting, row_buffer not cleared up.");
@@ -105,7 +91,12 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 }
 
 void query_result::append(const std::pair<unsigned int, field>& field){
-	insert(std::make_pair(nr_of_result_rows(),field.second));
+	if(row_set.empty()==true){
+		insert(std::make_pair(0,field.second));
+	}
+	else{
+		insert(std::make_pair(raw_result_set.rbegin()->first+1,field.second));
+	}
 }
 
 const std::pair<const unsigned int,field>* query_result::first_value_for_field_name_found(const std::string& field_name, const std::string& field_value) const{
@@ -143,10 +134,19 @@ const std::pair<const unsigned int,field>* query_result::value_for_field_name_fo
 }
 
 void query_result::keep(const std::set<unsigned int>& rowids){
-	std::multimap<unsigned int,field>::const_iterator position;
+	std::multimap<unsigned int,field>::const_iterator position,upper_bound;
+	std::set<std::pair<std::string,std::string> > field_set;
 
 	for(position=raw_result_set.begin();position!=raw_result_set.end();++position){
-		if(rowids.find(position->first)==rowids.end()) raw_result_set.erase(position->first);
+		if(rowids.find(position->first)==rowids.end()){
+			for(auto i=raw_result_set.lower_bound(position->first),
+				upper_bound=raw_result_set.upper_bound(position->first);
+				i!=upper_bound;++i){
+				field_set.insert(std::make_pair(i->second.field_name,i->second.field_value));
+			}
+			raw_result_set.erase(position->first);
+			row_set.erase(field_set);
+		}
 	}
 }
 

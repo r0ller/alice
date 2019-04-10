@@ -95,8 +95,15 @@ int main(int argc, char* argv[]){
 				min_cons_entry!=token_paths_ranked_by_cons.upper_bound(token_paths_ranked_by_cons.begin()->first);
 				++min_cons_entry){
 			if(std::get<0>(min_cons_entry->second)==nr_of_words){
-				//TODO: if there are CONs, print which words could not be analyzed
 				std::cout<<"nr_of_symbols:"<<nr_of_words<<" nr_of_cons:"<<min_cons_entry->first<<std::endl;
+				if(min_cons_entry->first>0){
+					std::cout<<"Constant/concealed words:"<<std::endl;
+					for(auto&& word:std::get<1>(min_cons_entry->second)){
+						if(word.gcat=="CON") std::cout<<word.word<<" ";
+					}
+					std::cout<<std::endl;
+				}
+				std::cout<<"Symbols:"<<std::endl;
 				std::cout<<std::get<2>(min_cons_entry->second)<<std::endl;
 				*output_file<<std::get<2>(min_cons_entry->second)<<std::endl;
 			}

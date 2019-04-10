@@ -184,7 +184,13 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 									new_word.tokens.push_back(token);
 								}
 								else{
-									throw std::runtime_error("No token found for symbol "+symbol);
+									//TODO: figure out if it's necessary to harden modelling this way:
+									//Throwing this exception here means that each and every gcat+feature
+									//combination (morpheme symbol) must have a token generated.
+									//As a corollary, it must be present in the grammar as well.
+									//For the ML scenarios this is ok but in case of manual modelling
+									//one may not want to process each and every morpheme.
+									//throw std::runtime_error("No token found for symbol "+symbol);
 								}
 							}
 						}
@@ -275,7 +281,13 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 							new_word.tokens.push_back(token);
 						}
 						else{
-							throw std::runtime_error("No token found for symbol "+symbol);
+							//TODO: figure out if it's necessary to harden modelling this way:
+							//Throwing this exception here means that each and every gcat+feature
+							//combination (morpheme symbol) must have a token generated.
+							//As a corollary, it must be present in the grammar as well.
+							//For the ML scenarios this is ok but in case of manual modelling
+							//one may not want to process each and every morpheme.
+							//throw std::runtime_error("No token found for symbol "+symbol);
 						}
 					}
 				}
