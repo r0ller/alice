@@ -246,6 +246,7 @@ test_tools:
 	mkdir -p ${BUILDDIR};\
 	projectdir=${PROJECTSRCDIR};\
 	includedirs="${TESTSINCLUDEDIRS}";\
+	cp $$projectdir/tests/remove_stex_output_duplicates.sh ${BUILDDIR};\
 	${CXX} $$projectdir/tests/stax.cpp -o ${BUILDDIR}/stax ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
 	${CXX} $$projectdir/tests/stex.cpp -o ${BUILDDIR}/stex ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lpython3.6 -lfoma;\
 

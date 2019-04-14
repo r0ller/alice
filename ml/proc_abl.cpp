@@ -6,6 +6,7 @@
 #include "logger.cpp"
 #include "db.h"
 #include "query_result.cpp"
+#include <tuple>
 
 class tree_node{
 	private:
@@ -196,68 +197,65 @@ void bracket_each_symbol(const std::map<unsigned int,std::string>& positions_sym
 	}
 }
 
-void merge_rules(std::multimap<std::string,std::pair<std::string,std::string> >& rules,std::multimap<std::string,std::pair<std::string,std::string> >& merging_rules,const std::pair<std::string,std::pair<std::string,std::string> >& ref_rule){
-	std::pair<std::string,std::pair<std::string,std::string> > next_ref_rule;
-	bool next_ref_rule_found=false;
-
-	for(auto&& i:rules){
-		bool merging_rule_found=false;
-		for(auto&& j=merging_rules.lower_bound(i.first);j!=merging_rules.upper_bound(i.first);++j){
-			if(j->second.first==i.second.first&&j->second.second==i.second.second){
-				merging_rule_found=true;
-			}
+bool find_rule(const std::multimap<std::string,std::pair<std::string,std::string> >& rules, const std::pair<std::string,std::pair<std::string,std::string>>& rule){
+	bool rule_found=false;
+	for(auto&& i=rules.lower_bound(rule.first);i!=rules.upper_bound(rule.first);++i){
+		if(i->second.first==rule.second.first&&i->second.second==rule.second.second){
+			rule_found=true;
+			break;
 		}
-		if(merging_rule_found==false){
+	}
+	return rule_found;
+}
+
+void merge_rules(std::multimap<std::string,std::pair<std::string,std::string> >& rules,std::multimap<std::string,std::pair<std::string,std::string> >& merging_rules,const std::pair<std::string,std::pair<std::string,std::string> >& ref_rule){
+	std::cout<<"ref_rule:"<<ref_rule.first<<"->"<<ref_rule.second.first<<" "<<ref_rule.second.second<<std::endl;
+	for(auto&& i:rules){
+		if(find_rule(merging_rules,i)==false){
 			if(i.first!=ref_rule.first&&i.second.first==ref_rule.second.first&&i.second.second==ref_rule.second.second){
 				merging_rules.insert(i);
+				std::cout<<"insert rule in merging_rules:"<<i.first<<"->"<<i.second.first<<" "<<i.second.second<<std::endl;
 				for(auto&& j:rules){
-					if(j.second.first==i.first||j.second.second==i.first){
+					if(j.first!=ref_rule.first
+							&&j.second.first!=ref_rule.second.first
+							&&j.second.second!=ref_rule.second.second
+							&&find_rule(merging_rules,j)==false
+							&&(j.second.first==i.first||j.second.second==i.first)){
 						if(j.second.first==i.first){
+							std::cout<<"changing "<<j.first<<"->"<<j.second.first<<" "<<j.second.second<<" to ";
 							j.second.first=ref_rule.first;
+							std::cout<<j.first<<"->"<<j.second.first<<" "<<j.second.second<<std::endl;
 						}
 						if(j.second.second==i.first){
+							std::cout<<"changing "<<j.first<<"->"<<j.second.first<<" "<<j.second.second<<" to ";
 							j.second.second=ref_rule.first;
-						}
-						if(next_ref_rule_found==false){
-							next_ref_rule=j;
-							next_ref_rule_found=true;
+							std::cout<<j.first<<"->"<<j.second.first<<" "<<j.second.second<<std::endl;
 						}
 					}
 				}
 			}
 		}
-	}
-	if(next_ref_rule_found==true){
-		merge_rules(rules,merging_rules,next_ref_rule);
 	}
 }
 
 void merge_rules(std::multimap<std::string,std::pair<std::string,std::string> >& rules,std::multimap<std::string,std::pair<std::string,std::string> >& merging_rules){
 
-	for(auto&& i:rules){
-		bool merging_rule_found=false;
-		for(auto&& j=merging_rules.lower_bound(i.first);j!=merging_rules.upper_bound(i.first);++j){
-			if(j->second.first==i.second.first&&j->second.second==i.second.second){
-				merging_rule_found=true;
-			}
-		}
-		if(merging_rule_found==false){
+	for(auto&& i:rules){//1st turn: unify rules having the same leaf
+		if(find_rule(merging_rules,i)==false){
 			if(i.first.empty()==false){
-				if(i.second.first.empty()==false){
-					if(i.second.second.empty()==true){
-						bool symbol_found_as_parent=false;
-						for(auto&& j:rules){
-							if(j.first==i.second.first){
-								symbol_found_as_parent=true;
-								break;
-							}
-						}
-						if(symbol_found_as_parent==false){
-							merge_rules(rules,merging_rules,i);
+				if(i.second.first.empty()==false&&i.second.second.empty()==true){
+					bool symbol_found_as_parent=false;
+					for(auto&& j:rules){
+						if(find_rule(merging_rules,j)==false&&j.first==i.second.first){
+							symbol_found_as_parent=true;
+							break;
 						}
 					}
+					if(symbol_found_as_parent==false){
+						merge_rules(rules,merging_rules,i);
+					}
 				}
-				else{
+				else if(i.second.first.empty()==true){
 					std::cerr<<"Rule head field cannot be empty.Stop."<<std::endl;
 					exit(EXIT_FAILURE);
 				}
@@ -268,13 +266,22 @@ void merge_rules(std::multimap<std::string,std::pair<std::string,std::string> >&
 			}
 		}
 	}
+	int premerge_size=-1;
+	while(merging_rules.size()!=premerge_size){//2nd turn: unify rules having equal rhs
+		premerge_size=merging_rules.size();
+		for(auto&& i:rules){
+			if(find_rule(merging_rules,i)==false){
+				merge_rules(rules,merging_rules,i);
+			}
+		}
+	}
 }
 
 void add_start_symbol(std::multimap<std::string,std::pair<std::string,std::string> >& rules){
 	std::set<std::string> top_node_symbols;
 
 	for(auto&& i:rules){
-		if(top_node_symbols.find(i.first)==top_node_symbols.end()){
+		if(i.first!="S"&&top_node_symbols.find(i.first)==top_node_symbols.end()){
 			bool symbol_found_on_rhs=false;
 			for(auto&& j:rules){
 				if(j.first!=i.first&&(j.second.first==i.first||j.second.second==i.first)){
@@ -298,10 +305,8 @@ void add_start_symbol(std::multimap<std::string,std::pair<std::string,std::strin
 int main(int argc, char* argv[]){
 	std::string abl_output,abl_row,db_file,lid;
 	std::ifstream *filestream=NULL;
-	std::ofstream *output_file=NULL;
 	std::multimap<std::string,std::pair<std::string,std::string> > rules,symbolic_rules,merging_rules;
 	db *sqlite=NULL;
-	query_result *grammar_rules=NULL;
 	unsigned int line_nr=0;
 
 	if(argc<3){
@@ -386,22 +391,13 @@ int main(int argc, char* argv[]){
 		sqlite->open(db_file);
 	}
 	std::cout<<"Rules:"<<std::endl;
+	//Top symbols i.e. Start symbols (S) that don't get replaced won't show up
+	//in merging_rules so an additional filter must be set up for them.
+	//TODO: it may be a good idea to make it strict and throw an exception if
+	//a non-start rule gets inserted in rules_inserted.
+	std::set<std::tuple<std::string,std::string,std::string>> rules_inserted;
 	for(auto&& i:rules){
-		bool merging_rule_found=false;
-		for(auto&& j=merging_rules.lower_bound(i.first);j!=merging_rules.upper_bound(i.first);++j){
-			if(j->second.first==i.second.first&&j->second.second==i.second.second){
-				merging_rule_found=true;
-			}
-		}
-		unsigned int rule_counter=0;
-		//making rules unique, though this may need to be done earlier
-		for(auto&& j=rules.lower_bound(i.first);j!=rules.upper_bound(i.first);++j){
-			if(j->second.first==i.second.first&&j->second.second==i.second.second){
-				++rule_counter;
-				if(rule_counter>1) break;
-			}
-		}
-		if(merging_rule_found==false&&rule_counter==1){
+		if(find_rule(merging_rules,i)==false&&rules_inserted.find(std::make_tuple(i.first,i.second.first,i.second.second))==rules_inserted.end()){
 			if(i.second.second.empty()==false){
 				std::cout<<i.first<<"->"<<i.second.first<<" "<<i.second.second<<std::endl;
 				if(sqlite!=NULL){
@@ -419,6 +415,7 @@ int main(int argc, char* argv[]){
 					sqlite->exec_sql("INSERT INTO GRAMMAR (LID,PARENT_SYMBOL,HEAD_SYMBOL) VALUES ('"+lid+"','"+i.first+"','"+i.second.first+"');");
 				}
 			}
+			rules_inserted.insert(std::make_tuple(i.first,i.second.first,i.second.second));
 		}
 	}
 //	std::cout<<"Symbolic rules:"<<std::endl;

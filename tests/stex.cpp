@@ -29,14 +29,14 @@ int main(int argc, char* argv[]){
 	else{
 		db_file=argv[1];
 		if(db_file.empty()==true) exit(EXIT_FAILURE);
-		else{
-			std::size_t base_end=db_file.find_last_of("/");
-			if(base_end==std::string::npos) exit(EXIT_FAILURE);
-			path=db_file.substr(0,base_end);
-			std::size_t base_start=path.find_last_of("/");
-			base=path.substr(base_start+1);
-			if(path.empty()==true||base.empty()==true) exit(EXIT_FAILURE);
-		}
+//		else{
+//			std::size_t base_end=db_file.find_last_of("/");
+//			if(base_end==std::string::npos) exit(EXIT_FAILURE);
+//			path=db_file.substr(0,base_end);
+//			std::size_t base_start=path.find_last_of("/");
+//			base=path.substr(base_start+1);
+//			if(path.empty()==true||base.empty()==true) exit(EXIT_FAILURE);
+//		}
 		lid=argv[2];
 		arglimit=argv[3];
 		if(arglimit.back()!='n'&&arglimit.back()!='d') exit(EXIT_FAILURE);

@@ -98,27 +98,26 @@ FOREIGN KEY(gcat, lid) REFERENCES GCAT(gcat, lid)
 );
 
 
-/*create table TAGCONTEXT(/*Extracted tags, just for fast tag search to find the right fcontext*/
+/*create table TAGCONTEXT(*//*Extracted tags, just for fast tag search to find the right fcontext*/
 /*model_id text,*//*id for the model in which the context was interpreted*/
-/*context_source text,/*user or other source of context*/
-/*session_id text,
-/*timestamp text,
-/*tag_counter smallint,
-/*tag text,
-/*value text,
-/*PRIMARY KEY(model_id,context_source,session_id,timestamp,tag_counter)
-/*);
-*/
+/*context_source text,*//*user or other source of context*/
+/*session_id text,*/
+/*timestamp text,*/
+/*tag_counter smallint,*/
+/*tag text,*/
+/*value text,*/
+/*PRIMARY KEY(model_id,context_source,session_id,timestamp,tag_counter)*/
+/*);*/
 
-/*create table FCONTEXT(
-/*model_id text,/*id for the model in which the context was interpreted*/
-/*context_source text,/*user or other source of context*/
-/*session_id text,
-/*timestamp text,
-/*fcontext text,/*already compiled, interpreted result*/
-/*PRIMARY KEY(model_id,context_source,session_id,timestamp)
-/*);
-*/
+
+/*create table FCONTEXT(*/
+/*model_id text,*//*id for the model in which the context was interpreted*/
+/*context_source text,*//*user or other source of context*/
+/*session_id text,*/
+/*timestamp text,*/
+/*fcontext text,*//*already compiled, interpreted result*/
+/*PRIMARY KEY(model_id,context_source,session_id,timestamp)*/
+/*);*/
 
 create table FUNCTOR_DEFS(
 functor_id varchar(51),

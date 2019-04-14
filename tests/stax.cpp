@@ -53,14 +53,14 @@ int main(int argc, char* argv[]){
 		filestream.close();
 		if(db_file.empty()==true||lid.empty()==true||words.empty()==true) exit(EXIT_FAILURE);
 		if(db_file.empty()==true) exit(EXIT_FAILURE);
-		else{
-			std::size_t base_end=db_file.find_last_of("/");
-			if(base_end==std::string::npos) exit(EXIT_FAILURE);
-			path=db_file.substr(0,base_end);
-			std::size_t base_start=path.find_last_of("/");
-			base=path.substr(base_start+1);
-			if(path.empty()==true||base.empty()==true) exit(EXIT_FAILURE);
-		}
+//		else{
+//			std::size_t base_end=db_file.find_last_of("/");
+//			if(base_end==std::string::npos) exit(EXIT_FAILURE);
+//			path=db_file.substr(0,base_end);
+//			std::size_t base_start=path.find_last_of("/");
+//			base=path.substr(base_start+1);
+//			if(path.empty()==true||base.empty()==true) exit(EXIT_FAILURE);
+//		}
 		if(words.empty()==false){
 			std::string::size_type comma_pos=words.find(',',0);
 			if(comma_pos!=std::string::npos){
@@ -355,32 +355,33 @@ int main(int argc, char* argv[]){
 			if(generated_sentences.empty()==false){
 				//printing generated sentences
 				std::vector<unsigned int> word_dimensions;
+				unsigned int total=1;
 				for(unsigned int i=0;i<generated_sentences.size();++i){
 					word_dimensions.push_back(generated_sentences.at(i).size());
+					total=total*generated_sentences.at(i).size();
 //					std::cout<<"word position "<<i<<" has "<<generated_sentences.at(i).size()<<" word forms"<<std::endl;
 				}
 //				std::cout<<"word_dimensions size:"<<word_dimensions.size()<<std::endl;
-				unsigned int word_position_covered=0;
-				while(word_position_covered<word_dimensions.size()){
-//					std::cout<<"word_position_covered:"<<word_position_covered<<std::endl;
+				bool all_variations_generated=false;
+				while(all_variations_generated==false){
 					std::string sentence;
 					for(unsigned int i=0;i<word_dimensions.size();++i){
 //						std::cout<<"reading word position "<<i<<" with word form at place "<<word_dimensions.at(i)-1<<std::endl;
 						sentence+=generated_sentences.at(i).at(word_dimensions.at(i)-1)+" ";
-						if(word_position_covered==i){
-							if(word_dimensions.at(i)>1){
-								word_dimensions.at(i)=word_dimensions.at(i)-1;
-							}
-							else{
-								word_dimensions.at(i)=generated_sentences.at(i).size();
-								++word_position_covered;
-							}
-						}
 					}
 					sentence.pop_back();
 					std::cout<<sentence<<std::endl;
+					for(unsigned int j=0;j<word_dimensions.size();++j){
+						if(word_dimensions.at(j)>1){
+							word_dimensions.at(j)=word_dimensions.at(j)-1;
+							break;
+						}
+						else{
+							word_dimensions.at(j)=generated_sentences.at(j).size();
+							if(j==word_dimensions.size()-1) all_variations_generated=true;
+						}
+					}
 				}
-				if(word_position_covered>0) std::cout<<std::endl;
 			}
 			else{
 				++nr_of_sentences_not_generated;
