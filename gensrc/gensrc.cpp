@@ -295,7 +295,6 @@ int main(int argc, char* argv[]){
 					}
 				}
 			}
-
 		}
 		sqlite->close();
 		db_factory::delete_instance();

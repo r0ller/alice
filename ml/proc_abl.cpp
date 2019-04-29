@@ -150,11 +150,11 @@ tree_node* create_node(const std::map<std::string,std::pair<unsigned int,unsigne
 					std::vector<tree_node*> child_nodes;
 					child_nodes.push_back(left);
 					child_nodes.push_back(right);
-					tree_node* parent=new tree_node(left->symbol_id()+"-"+right->symbol_id(),left->symbol()+"-"+right->symbol(),child_nodes);
+					tree_node* parent=new tree_node(left->symbol_id()+"__"+right->symbol_id(),left->symbol()+"__"+right->symbol(),child_nodes);
 					nodes.push_back(parent);
 				}
 			}
-			node=new tree_node(symbol_id,nodes.at(0)->symbol()+"-"+nodes.at(1)->symbol(),nodes);
+			node=new tree_node(symbol_id,nodes.at(0)->symbol()+"__"+nodes.at(1)->symbol(),nodes);
 		}
 	}
 	return node;
@@ -190,7 +190,7 @@ void bracket_each_symbol(const std::map<unsigned int,std::string>& positions_sym
 		else{
 			//TODO: find out if the newly generated symbols are the same for the same rule in
 			//different sentences. If not, a different way must be found to generate the same symbols.
-			std::string symbol_id=std::to_string(line_nr)+"_"+i.second+"_"+std::to_string(i.first);
+			std::string symbol_id="_"+std::to_string(line_nr)+"_"+i.second+"_"+std::to_string(i.first);
 			symbol_ids_brackets.insert(std::make_pair(symbol_id,std::make_pair(i.first,i.first+1)));
 			std::cout<<"bracketing position "<<i.first<<" with symbol id "<<symbol_id<<std::endl;
 		}
@@ -359,7 +359,7 @@ int main(int argc, char* argv[]){
 					else if(closing_bracket_pos==-1) closing_bracket_pos=std::stoi(number);
 					else if(opening_bracket_pos==-1) opening_bracket_pos=std::stoi(number);
 					if(symbol_id>=0&&opening_bracket_pos>=0&&closing_bracket_pos>=0){
-						symbol_ids_brackets.insert(std::make_pair(std::to_string(line_nr)+"_"+std::to_string(symbol_id),std::make_pair(opening_bracket_pos,closing_bracket_pos)));
+						symbol_ids_brackets.insert(std::make_pair("_"+std::to_string(line_nr)+"_"+std::to_string(symbol_id),std::make_pair(opening_bracket_pos,closing_bracket_pos)));
 						std::cout<<"symbol id:"<<symbol_id<<" opening bracket pos:"<<opening_bracket_pos<<" closing bracket pos:"<<closing_bracket_pos<<std::endl;
 						if(outmost_symbol_id==-1||outmost_symbol_id>=0&&opening_bracket_pos<=outmost_opening_bracket_pos&&closing_bracket_pos>=outmost_closing_bracket_pos){
 							outmost_symbol_id=symbol_id;
@@ -378,7 +378,7 @@ int main(int argc, char* argv[]){
 			bracket_each_symbol(positions_symbols,outmost_opening_bracket_pos,outmost_closing_bracket_pos,symbol_ids_brackets,line_nr);
 			//TODO: verify if each symbol got bracketed and that the newly generated symbols
 			//are the same for the same rule in each sentence
-			tree_node* root=create_node(symbol_ids_brackets,positions_symbols,std::to_string(line_nr)+"_"+std::to_string(outmost_symbol_id),outmost_opening_bracket_pos,outmost_closing_bracket_pos);
+			tree_node* root=create_node(symbol_ids_brackets,positions_symbols,"_"+std::to_string(line_nr)+"_"+std::to_string(outmost_symbol_id),outmost_opening_bracket_pos,outmost_closing_bracket_pos);
 			root->traverse_rules_pre_order(rules,symbolic_rules);
 			std::cout<<std::endl;
 			delete root;

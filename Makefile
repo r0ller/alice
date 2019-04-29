@@ -66,7 +66,7 @@ JSFOMAPATH=${PROJECTSRCDIR}/hi_js/foma/english.foma
 JSFSTNAME=english.fst
 JSLEXCFILES=${PROJECTSRCDIR}/hi_js/foma
 
-all: desktop_fst desktop_parser_db desktop_parser shared_native_lib desktop_client android_fst android_parser_db android_parser arm32_lib arm64_lib js_fst js_parser_db js_parser embedded_js_lib node_js_lib test_tools ml_tools
+all: desktop_fst desktop_parser_db desktop_bison_parser desktop_parser shared_native_lib desktop_client android_fst android_parser_db android_bison_parser android_parser arm32_lib arm64_lib js_fst js_parser_db js_bison_parser js_parser embedded_js_lib node_js_lib test_tools ml_tools
 
 desktop_client:
 	mkdir -p ${BUILDDIR};\
@@ -86,15 +86,18 @@ desktop_fst:
 	cd ${BUILDDIR}/hi_desktop;\
 	echo save stack ${DESKTOPFSTNAME}|foma -l $$fomabasename;
 
-desktop_parser_db: parser_generator
+desktop_parser_db:
 	mkdir -p ${BUILDDIR}/hi_desktop;\
 	if [ -f ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME} ]; then rm ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME}; fi;\
 	dbschema=${DBSCHEMA};\
 	dbcontent=${NATIVEPARSERDBCONTENT};\
+	cat $$dbschema|sqlite3 ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME};\
+	cat $$dbcontent|sqlite3 ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME};
+
+desktop_bison_parser: parser_generator
+	mkdir -p ${BUILDDIR}/hi_desktop;\
 	desktopactionsnippets=${DESKTOPACTIONSNIPPETS};\
 	desktopfunctorpath=${DESKTOPFUNCTORPATH};\
-	cat $$dbschema|sqlite3 ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME};\
-	cat $$dbcontent|sqlite3 ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME};\
 	${BUILDDIR}/gensrc ${BUILDDIR}/hi_desktop/${NATIVEPARSERDBNAME} $$desktopactionsnippets ${NATIVEPARSERFILEPATH} $$desktopfunctorpath;
 
 desktop_parser:
@@ -123,15 +126,18 @@ android_fst:
 	cd ${BUILDDIR}/hi_android;\
 	echo save stack ${ANDROIDFSTNAME}|foma -l $$fomabasename;
 
-android_parser_db: parser_generator
+android_parser_db:
 	mkdir -p ${BUILDDIR}/hi_android;\
 	if [ -f ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME} ]; then rm ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME}; fi;\
 	dbschema=${DBSCHEMA};\
 	dbcontent=${ANDROIDPARSERDBCONTENT};\
+	cat $$dbschema|sqlite3 ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME};\
+	cat $$dbcontent|sqlite3 ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME};
+
+android_bison_parser: parser_generator
+	mkdir -p ${BUILDDIR}/hi_android;\
 	androidactionsnippets=${ANDROIDACTIONSNIPPETS};\
 	androidfunctorpath=${ANDROIDFUNCTORPATH};\
-	cat $$dbschema|sqlite3 ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME};\
-	cat $$dbcontent|sqlite3 ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME};\
 	${BUILDDIR}/gensrc ${BUILDDIR}/hi_android/${ANDROIDPARSERDBNAME} $$androidactionsnippets ${ANDROIDPARSERFILEPATH} $$androidfunctorpath;
 
 android_parser:
@@ -184,15 +190,18 @@ js_fst:
 	cd ${BUILDDIR}/hi_js;\
 	echo save stack ${JSFSTNAME}|foma -l $$fomabasename;
 
-js_parser_db: parser_generator
+js_parser_db:
 	mkdir -p ${BUILDDIR}/hi_js;\
 	if [ -f ${BUILDDIR}/hi_js/${JSPARSERDBNAME} ]; then rm ${BUILDDIR}/hi_js/${JSPARSERDBNAME}; fi;\
 	dbschema=${DBSCHEMA};\
 	dbcontent=${JSPARSERDBCONTENT};\
+	cat $$dbschema|sqlite3 ${BUILDDIR}/hi_js/${JSPARSERDBNAME};\
+	cat $$dbcontent|sqlite3 ${BUILDDIR}/hi_js/${JSPARSERDBNAME};
+
+js_bison_parser: parser_generator
+	mkdir -p ${BUILDDIR}/hi_js;\
 	jsactionsnippets=${JSACTIONSNIPPETS};\
 	jsfunctorpath=${JSFUNCTORPATH};\
-	cat $$dbschema|sqlite3 ${BUILDDIR}/hi_js/${JSPARSERDBNAME};\
-	cat $$dbcontent|sqlite3 ${BUILDDIR}/hi_js/${JSPARSERDBNAME};\
 	${BUILDDIR}/gensrc ${BUILDDIR}/hi_js/${JSPARSERDBNAME} $$jsactionsnippets ${JSPARSERFILEPATH} $$jsfunctorpath;
 
 js_parser:
