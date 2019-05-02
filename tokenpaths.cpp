@@ -458,7 +458,12 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
 
 	unsigned int nr_of_analyses=valid_paths.size();
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
+	if(nr_of_analyses==0&&toa==HI_MORPHOLOGY){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There is 1 analysis.");
+	}
+	else{
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
+	}
 	std::string analysis="{\"analyses\":[";
 	if(nr_of_analyses==0){
 		analysis+="{";

@@ -61,6 +61,16 @@ int main(int argc, char* argv[]){
 			delete filestream;
 			delete stringstream;
 		}
+		filestream=new std::ifstream(snippetsdir+"C_code.cpp");
+		if(filestream!=NULL){
+			stringstream=new std::stringstream();
+			*stringstream<<filestream->rdbuf();
+			C_code=stringstream->str();
+			//std::cout<<C_code<<std::endl;
+			filestream->close();
+			delete filestream;
+			delete stringstream;
+		}
 		filestream=new std::ifstream(snippetsdir+"bison_declarations.cpp");
 		if(filestream!=NULL){
 			stringstream=new std::stringstream();
@@ -68,16 +78,6 @@ int main(int argc, char* argv[]){
 			bison_declarations=stringstream->str();
 			if(bison_declarations.back()!='\n') bison_declarations+="\n";
 			//std::cout<<bison_declarations<<std::endl;
-			filestream->close();
-			delete filestream;
-			delete stringstream;
-		}
-		filestream=new std::ifstream(snippetsdir+"C_code.cpp");
-		if(filestream!=NULL){
-			stringstream=new std::stringstream();
-			*stringstream<<filestream->rdbuf();
-			C_code=stringstream->str();
-			//std::cout<<C_code<<std::endl;
 			filestream->close();
 			delete filestream;
 			delete stringstream;
@@ -174,127 +174,132 @@ int main(int argc, char* argv[]){
 		lid_list.pop_back();//remove last ','
 		lid_list+=")";
 		grammar_rules=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE LID IN "+lid_list+" ORDER BY PARENT_SYMBOL;");
-		grammar="%%";
-		for(unsigned int i=0;i<grammar_rules->nr_of_result_rows();++i){
-			parent_symbol=*grammar_rules->field_value_at_row_position(i,"parent_symbol");
-			head_symbol=*grammar_rules->field_value_at_row_position(i,"head_symbol");
-			non_head_symbol=*grammar_rules->field_value_at_row_position(i,"non_head_symbol");
-			precedence=*grammar_rules->field_value_at_row_position(i,"precedence");
-			action=*grammar_rules->field_value_at_row_position(i,"action");
-			if(action.empty()==true){
-				if(head_symbol.empty()==false&&non_head_symbol.empty()==false){
-					std::string head_symbol_var;
-					std::string non_head_symbol_var;
-					if(head_symbol==non_head_symbol){
-						head_symbol_var=head_symbol+"1";
-						non_head_symbol_var=non_head_symbol+"2";
+		if(grammar_rules!=NULL&&grammar_rules->nr_of_result_rows()>0){
+			grammar="%%";
+			for(unsigned int i=0;i<grammar_rules->nr_of_result_rows();++i){
+				parent_symbol=*grammar_rules->field_value_at_row_position(i,"parent_symbol");
+				head_symbol=*grammar_rules->field_value_at_row_position(i,"head_symbol");
+				non_head_symbol=*grammar_rules->field_value_at_row_position(i,"non_head_symbol");
+				precedence=*grammar_rules->field_value_at_row_position(i,"precedence");
+				action=*grammar_rules->field_value_at_row_position(i,"action");
+				if(action.empty()==true){
+					if(head_symbol.empty()==false&&non_head_symbol.empty()==false){
+						std::string head_symbol_var;
+						std::string non_head_symbol_var;
+						if(head_symbol==non_head_symbol){
+							head_symbol_var=head_symbol+"1";
+							non_head_symbol_var=non_head_symbol+"2";
+						}
+						else{
+							head_symbol_var=head_symbol;
+							non_head_symbol_var=non_head_symbol;
+						}
+						action="const node_info& "+head_symbol_var+"=sparser->get_node_info($1);\n"
+						"const node_info& "+non_head_symbol_var+"=sparser->get_node_info($2);\n"
+						"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\");\n"
+						"$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol_var+","+non_head_symbol_var+");\n";
 					}
-					else{
-						head_symbol_var=head_symbol;
-						non_head_symbol_var=non_head_symbol;
-					}
-					action="const node_info& "+head_symbol_var+"=sparser->get_node_info($1);\n"
-					"const node_info& "+non_head_symbol_var+"=sparser->get_node_info($2);\n"
-					"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+" "+non_head_symbol+"\");\n"
-					"$$=sparser->combine_nodes(\""+parent_symbol+"\","+head_symbol_var+","+non_head_symbol_var+");\n";
-				}
-				else if(head_symbol.empty()==false&&non_head_symbol.empty()==true){
-					if(terminals.find(head_symbol)==terminals.end()){//non-terminal
-						action="const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
-						"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+"\");\n"
-						"$$=sparser->set_node_info(\""+parent_symbol+"\","+head_symbol+");\n";
-					}
-					else{//terminal
-						action="lexicon word;\n"
-						"word=lex->last_word_scanned(token::"+head_symbol+");\n"
-						"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+\"->\"+word.lexeme);\n"
-						"$$=sparser->set_node_info(\""+parent_symbol+"\",word);\n";
-					}
-				}
-				else{
-					exit(EXIT_FAILURE);
-				}
-			}
-			else{
-				if(action.front()=='\"'){
-					action.erase(action.begin());
-					if(action.back()=='\"') action.pop_back();
-				}
-				else{
-					filestream=new std::ifstream(snippetsdir+action);
-					if(filestream!=NULL){
-						stringstream=new std::stringstream();
-						*stringstream<<filestream->rdbuf();
-						action=stringstream->str();
-						filestream->close();
-						delete filestream;
-						delete stringstream;
-						std::string::size_type pos=action.find('\'');
-						while(pos!=std::string::npos){
-							action.insert(pos,1,'\'');
-							pos=pos+2;
-							pos=action.find('\'',pos);
+					else if(head_symbol.empty()==false&&non_head_symbol.empty()==true){
+						if(terminals.find(head_symbol)==terminals.end()){//non-terminal
+							action="const node_info& "+head_symbol+"=sparser->get_node_info($1);\n"
+							"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,\""+parent_symbol+"->"+head_symbol+"\");\n"
+							"$$=sparser->set_node_info(\""+parent_symbol+"\","+head_symbol+");\n";
+						}
+						else{//terminal
+							action="lexicon word;\n"
+							"word=lex->last_word_scanned(token::"+head_symbol+");\n"
+							"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+\"->\"+word.lexeme);\n"
+							"$$=sparser->set_node_info(\""+parent_symbol+"\",word);\n";
 						}
 					}
 					else{
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Could not read file "+action);
+						exit(EXIT_FAILURE);
 					}
 				}
-			}
-			if(prev_parent_symbol!=parent_symbol){
-				if(prev_parent_symbol.empty()==true){
-					if(precedence.empty()==true) grammar+="\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
-					else grammar+="\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+" %prec "+precedence+"\n{\n"+action+"\n}";
+				else{
+					if(action.front()=='\"'){
+						action.erase(action.begin());
+						if(action.back()=='\"') action.pop_back();
+					}
+					else{
+						filestream=new std::ifstream(snippetsdir+action);
+						if(filestream!=NULL){
+							stringstream=new std::stringstream();
+							*stringstream<<filestream->rdbuf();
+							action=stringstream->str();
+							filestream->close();
+							delete filestream;
+							delete stringstream;
+							std::string::size_type pos=action.find('\'');
+							while(pos!=std::string::npos){
+								action.insert(pos,1,'\'');
+								pos=pos+2;
+								pos=action.find('\'',pos);
+							}
+						}
+						else{
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Could not read file "+action);
+						}
+					}
+				}
+				if(prev_parent_symbol!=parent_symbol){
+					if(prev_parent_symbol.empty()==true){
+						if(precedence.empty()==true) grammar+="\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
+						else grammar+="\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+" %prec "+precedence+"\n{\n"+action+"\n}";
+					}
+					else{
+						if(precedence.empty()==true) grammar+=";\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
+						else grammar+=";\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+" %prec "+precedence+"\n{\n"+action+"\n}";
+					}
+					prev_parent_symbol=parent_symbol;
 				}
 				else{
-					if(precedence.empty()==true) grammar+=";\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
-					else grammar+=";\n"+parent_symbol+":\n"+head_symbol+" "+non_head_symbol+" %prec "+precedence+"\n{\n"+action+"\n}";
+					if(precedence.empty()==true) grammar+="\n|"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
+					else grammar+="\n|"+head_symbol+" "+non_head_symbol+" %prec "+precedence+"\n{\n"+action+"\n}";
 				}
-				prev_parent_symbol=parent_symbol;
 			}
-			else{
-				if(precedence.empty()==true) grammar+="\n|"+head_symbol+" "+non_head_symbol+"\n{\n"+action+"\n}";
-				else grammar+="\n|"+head_symbol+" "+non_head_symbol+" %prec "+precedence+"\n{\n"+action+"\n}";
-			}
-		}
-		grammar+=";\n%%\n";
-		delete tokens;
-		delete grammar_rules;
-		if(functor_defs_dir.empty()==false){
-			functor_defs=sqlite->exec_sql("SELECT * FROM FUNCTOR_DEFS;");
-			for(unsigned int i=0;i<functor_defs->nr_of_result_rows();++i){
-				functor_id=*functor_defs->field_value_at_row_position(i,"functor_id");
-				tlid=*functor_defs->field_value_at_row_position(i,"tlid");
-				imp_counter=*functor_defs->field_value_at_row_position(i,"imp_counter");
-				definition=*functor_defs->field_value_at_row_position(i,"definition");
-				if(definition.empty()==false&&definition.front()=='\"'){
-					definition.erase(definition.begin());
-					if(definition.back()=='\"') definition.pop_back();
-					sqlite->exec_sql("UPDATE FUNCTOR_DEFS SET DEFINITION = '"+definition+"' WHERE FUNCTOR_ID = '"+functor_id+"' AND TLID = '"+tlid+"' AND IMP_COUNTER = '"+imp_counter+"';");
-				}
-				else if(definition.empty()==false&&definition.front()!='\"'){
-					filestream=new std::ifstream(functor_defs_dir+definition);
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"reading file "+functor_defs_dir+definition);
-					if(filestream!=NULL){
-						stringstream=new std::stringstream();
-						*stringstream<<filestream->rdbuf();
-						definition=stringstream->str();
-						filestream->close();
-						delete filestream;
-						delete stringstream;
-						std::string::size_type pos=definition.find('\'');
-						while(pos!=std::string::npos){
-							definition.insert(pos,1,'\'');
-							pos=pos+2;
-							pos=definition.find('\'',pos);
-						}
+			grammar+=";\n%%\n";
+			delete tokens;
+			delete grammar_rules;
+			if(functor_defs_dir.empty()==false){
+				functor_defs=sqlite->exec_sql("SELECT * FROM FUNCTOR_DEFS;");
+				for(unsigned int i=0;i<functor_defs->nr_of_result_rows();++i){
+					functor_id=*functor_defs->field_value_at_row_position(i,"functor_id");
+					tlid=*functor_defs->field_value_at_row_position(i,"tlid");
+					imp_counter=*functor_defs->field_value_at_row_position(i,"imp_counter");
+					definition=*functor_defs->field_value_at_row_position(i,"definition");
+					if(definition.empty()==false&&definition.front()=='\"'){
+						definition.erase(definition.begin());
+						if(definition.back()=='\"') definition.pop_back();
 						sqlite->exec_sql("UPDATE FUNCTOR_DEFS SET DEFINITION = '"+definition+"' WHERE FUNCTOR_ID = '"+functor_id+"' AND TLID = '"+tlid+"' AND IMP_COUNTER = '"+imp_counter+"';");
 					}
-					else{
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Could not read file "+functor_defs_dir+definition);
+					else if(definition.empty()==false&&definition.front()!='\"'){
+						filestream=new std::ifstream(functor_defs_dir+definition);
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"reading file "+functor_defs_dir+definition);
+						if(filestream!=NULL){
+							stringstream=new std::stringstream();
+							*stringstream<<filestream->rdbuf();
+							definition=stringstream->str();
+							filestream->close();
+							delete filestream;
+							delete stringstream;
+							std::string::size_type pos=definition.find('\'');
+							while(pos!=std::string::npos){
+								definition.insert(pos,1,'\'');
+								pos=pos+2;
+								pos=definition.find('\'',pos);
+							}
+							sqlite->exec_sql("UPDATE FUNCTOR_DEFS SET DEFINITION = '"+definition+"' WHERE FUNCTOR_ID = '"+functor_id+"' AND TLID = '"+tlid+"' AND IMP_COUNTER = '"+imp_counter+"';");
+						}
+						else{
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Could not read file "+functor_defs_dir+definition);
+						}
 					}
 				}
 			}
+		}
+		else{
+			grammar="%%\nS: %empty;\n%%\n";
 		}
 		sqlite->close();
 		db_factory::delete_instance();
@@ -305,7 +310,7 @@ int main(int argc, char* argv[]){
 			tokensymbol_file->close();
 			delete tokensymbol_file;
 		}
-		bison_source="%code{\n#include \"tokensymbols.h\"\n}\n"+C_declarations+bison_declarations+grammar+C_code;
+		bison_source="%code{\n#include \"tokensymbols.h\"\n}\n%code{\n"+C_declarations+"\n}\n"+bison_declarations+grammar+C_code;
 		if(output.empty()==false){
 			bison_file=new std::ofstream(output);
 		}
