@@ -1,8 +1,11 @@
 #ifndef LEXER_H
 	#define LEXER_H
 
-	#include "db.h"
+	#include <locale>
+	#include "logger.h"
+	#include "db_factory.h"
 	#include "morphan.h"
+	#include "tokenpaths.h"
 	#include <vector>
 	#include <deque>
 	#include <map>

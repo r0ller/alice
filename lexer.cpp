@@ -1,5 +1,8 @@
 #include "lexer.h"
-#include "db.h"
+extern interpreter *sparser;
+extern tokenpaths *token_paths;
+extern std::map<std::string, unsigned int> symbol_token_map;
+extern std::map<unsigned int,std::string> token_symbol_map;
 
 morphan* lexer::stemmer=NULL;
 std::vector<std::string> lexer::word_forms_;

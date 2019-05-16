@@ -9,19 +9,18 @@ int yylex(yy::parser::semantic_type* yylval);
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
 #endif
-#include "logger.cpp"
+#include "logger.h"
 #include "hilib.h"
-#include "db.h"
+#include "db_factory.h"
 #include "lexer.h"
 #include "sp.h"
+#include "tokenpaths.h"
+#include "query_result.h"
+#include "morphan_result.h"
+#include "morphan.h"
+#include "transgraph.h"
 morphan *stemmer=NULL;
 lexer *lex=NULL;
 interpreter *sparser=NULL;
-#include "tokenpaths.cpp"
 tokenpaths *token_paths=NULL;
-#include "query_result.cpp"
-#include "morphan_result.cpp"
-#include "morphan.cpp"
-#include "lexer.cpp"
-#include "sp.cpp"
-#include "transgraph.cpp"
+db *db_factory::singleton_instance=NULL;

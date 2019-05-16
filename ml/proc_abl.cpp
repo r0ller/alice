@@ -3,10 +3,11 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "logger.cpp"
-#include "db.h"
-#include "query_result.cpp"
+#include "logger.h"
+#include "db_factory.h"
+#include "query_result.h"
 #include <tuple>
+db *db_factory::singleton_instance=NULL;
 
 class tree_node{
 	private:

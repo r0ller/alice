@@ -1,6 +1,10 @@
+#include "logger.h"
 #include "tokenpaths.h"
-#include "transgraph.h"
-#include "sp.h"
+#include "hilib.h"
+extern lexer *lex;
+extern interpreter *sparser;
+extern std::map<std::string, unsigned int> symbol_token_map;
+extern std::map<unsigned int,std::string> token_symbol_map;
 
 tokenpaths::tokenpaths(){
 	is_any_path_left=true;
@@ -525,6 +529,16 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+="],";
 			}
 			if(toa&HI_SYNTAX){
+				//TODO: features added at syntactic level (like main_verb) do not appear in the analyses.
+				//Features added at syntactic level should be recorded in the corresponding node which
+				//requires turning the nodeinfo struct into a class finally. (That should be done to
+				//the lexicon struct along with that as well.) Once that's done, a corresponding
+				//method shall be added and the method interpreter::add_feature_to_leaf() shall
+				//be changed to call that newly added method to add a feature to the leaf node instead of calling
+				//morphan_result::add_feature(). However, the way how interpreter::get_nodes_by_symbol() looks for
+				//nodes needs to be considered carefully before changing anything.
+				//After all those changes, the features added at syntactic level shall be extracted
+				//in tokenpaths::syntax().
 				analysis+="\"syntax\":[";
 				analysis+=syntax(valid_parse_trees.at(i));
 				analysis+="],";

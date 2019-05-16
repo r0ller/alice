@@ -1,4 +1,7 @@
+#include "logger.h"
 #include "jni_db.h"
+#include "db_factory.h"
+extern JavaVM *jvm;
 
 jni_db::jni_db(){
 	env=jnienv();

@@ -5,6 +5,7 @@
 	#include <string>
 	#include "sqlite3.h"
 	#include <utility>
+	#include "db.h"
 	#include "query_result.h"
 
 	class sqlite_db:public db{

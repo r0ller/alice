@@ -4,9 +4,10 @@
 #include <set>
 #include <map>
 #include <utility>
-#include "logger.cpp"
-#include "db.h"
-#include "query_result.cpp"
+#include "logger.h"
+#include "db_factory.h"
+#include "query_result.h"
+db *db_factory::singleton_instance=NULL;
 
 int main(int argc, char* argv[]){
 

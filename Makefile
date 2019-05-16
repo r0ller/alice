@@ -14,14 +14,14 @@ PARSERGENLDFLAGS=-lsqlite3
 NDK32BITTOOLCHAINDIR=
 NDK64BITTOOLCHAINDIR=
 ARM32CXX=arm-linux-androideabi-clang++
-ARM32INCLUDEDIRS=-I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include/android
+ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include/android
 ARM32LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/src/main/jniLibs/armeabi-v7a
 ARM32LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
 ARM64CXX=aarch64-linux-android-clang++
-ARM64INCLUDEDIRS=-I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include/android
+ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include/android
 ARM64LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/src/main/jniLibs/arm64-v8a
 ARM64LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
-JSINCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include
+JSINCLUDEDIRS=-I${BUILDDIR}/hi_js -I${PROJECTSRCDIR} -I/usr/pkg/include
 JSLIBDIR=-L${PROJECTSRCDIR}/hi_js
 JSDB=${ABSBUILDDIR}/hi_js/hi.db
 JSFST=${ABSBUILDDIR}/hi_js/english.fst
@@ -113,8 +113,7 @@ shared_native_lib:
 	parserfilename=$$(basename ${NATIVEPARSERFILEPATH});\
 	nativesrcfilepath=${BUILDDIR}/hi_desktop/$$parserfilename.cpp;\
 	nativeobjfilepath=${BUILDDIR}/hi_desktop/$$parserfilename.o;\
-	${CXX} -c $$nativesrcfilepath -U__ANDROID__ -U__EMSCRIPTEN ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs -o $$nativeobjfilepath;\
-	${CXX} -shared -o ${BUILDDIR}/hi_desktop/libhilib.so $$nativeobjfilepath;
+	${CXX} $$nativesrcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -U__ANDROID__ -U__EMSCRIPTEN ${CXXFLAGS} ${CXXFLAGS_DEBUG} -I${BUILDDIR}/hi_desktop $$includedirs -shared -o ${BUILDDIR}/hi_desktop/libhilib.so;
 
 android_fst:
 	mkdir -p ${BUILDDIR}/hi_android;\
@@ -165,8 +164,7 @@ arm32_lib:
 	cat $$arm32libfilepath > ${BUILDDIR}/hi_android/arm32/libhilib.so &\
 	;;\
 	esac;\
-	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} -c $$androidsrcfilepath -D__ANDROID__ ${CXXFLAGS} $$includedirs -o $$androidobjfilepath;\
-	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} -shared -o $$arm32libfilepath $$androidobjfilepath ${ARM32LIBDIR} ${ARM32LDFLAGS};
+	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm32libfilepath ${ARM32LIBDIR} ${ARM32LDFLAGS};
 
 arm64_lib:
 	ndk64toolchaindir=${NDK64BITTOOLCHAINDIR};\
@@ -177,8 +175,7 @@ arm64_lib:
 	parserfilename=$$(basename ${ANDROIDPARSERFILEPATH});\
 	androidsrcfilepath=${BUILDDIR}/hi_android/$$parserfilename.cpp;\
 	androidobjfilepath=${BUILDDIR}/hi_android/arm64/$$parserfilename.o;\
-	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} -c $$androidsrcfilepath -D__ANDROID__ ${CXXFLAGS} $$includedirs -o $$androidobjfilepath;\
-	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} -shared -o ${BUILDDIR}/hi_android/arm64/libhilib.so $$androidobjfilepath ${ARM64LIBDIR} ${ARM64LDFLAGS};
+	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o ${BUILDDIR}/hi_android/arm64/libhilib.so ${ARM64LIBDIR} ${ARM64LDFLAGS};
 
 js_fst:
 	mkdir -p ${BUILDDIR}/hi_js;\
@@ -225,8 +222,7 @@ embedded_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	em++ ${CXXFLAGS} $$includedirs $$srcfilepath -o $$jsobjfilepath;\
-	emcc -s EXPORTED_FUNCTIONS=$$exportedfunction $$jsobjfilepath $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
+	em++ ${CXXFLAGS} $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
 #POSIX breaks here: ${USERSHELL} is necessary as some shells like the default NetBSD sh does not support pushd and popd used in emsdk_env.sh
 
 node_js_lib:
@@ -242,29 +238,28 @@ node_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	em++ ${CXXFLAGS} -DFS=NODEJS $$includedirs $$srcfilepath -o $$jsobjfilepath;\
-	emcc -s EXPORTED_FUNCTIONS=$$exportedfunction $$jsobjfilepath $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/nodejs/hi.js;"
+	em++ ${CXXFLAGS} -DFS=NODEJS $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/nodejs/hi.js;"
 
 parser_generator:
 	mkdir -p ${BUILDDIR};\
 	projectdir=${PROJECTSRCDIR};\
 	includedirs="${INCLUDEDIRS}";\
-	${CXX} $$projectdir/gensrc/gensrc.cpp -o ${BUILDDIR}/gensrc ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} ${PARSERGENLDFLAGS}
+	${CXX} $$projectdir/gensrc/gensrc.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp -o ${BUILDDIR}/gensrc ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} ${PARSERGENLDFLAGS}
 
 test_tools:
 	mkdir -p ${BUILDDIR};\
 	projectdir=${PROJECTSRCDIR};\
 	includedirs="${TESTSINCLUDEDIRS}";\
 	cp $$projectdir/tests/remove_stex_output_duplicates.sh ${BUILDDIR};\
-	${CXX} $$projectdir/tests/stax.cpp -o ${BUILDDIR}/stax ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
-	${CXX} $$projectdir/tests/stex.cpp -o ${BUILDDIR}/stex ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lpython3.6 -lfoma;\
+	${CXX} $$projectdir/tests/stax.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp -o ${BUILDDIR}/stax ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
+	${CXX} $$projectdir/tests/stex.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp -o ${BUILDDIR}/stex ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lpython3.6 -lfoma;\
 
 ml_tools:
 	mkdir -p ${BUILDDIR};\
 	projectdir=${PROJECTSRCDIR};\
 	includedirs="${INCLUDEDIRS}";\
-	${CXX} $$projectdir/ml/prep_abl.cpp -o ${BUILDDIR}/prep_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
-	${CXX} $$projectdir/ml/proc_abl.cpp -o ${BUILDDIR}/proc_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3;\
+	${CXX} $$projectdir/ml/prep_abl.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -o ${BUILDDIR}/prep_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
+	${CXX} $$projectdir/ml/proc_abl.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp -o ${BUILDDIR}/proc_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3;\
 
 clean:
 	rm -rf ${BUILDDIR}

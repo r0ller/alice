@@ -1,4 +1,8 @@
+#include "logger.h"
 #include "transgraph.h"
+#include "db_factory.h"
+#include "query_result.h"
+
 unsigned int transgraph::global_id=0;
 
 transgraph::transgraph(const std::string& id,const std::pair<std::string,unsigned int>& functor,const morphan_result *morphan){

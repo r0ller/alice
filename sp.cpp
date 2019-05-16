@@ -1,4 +1,6 @@
+#include "logger.h"
 #include "sp.h"
+#include "hilib.h"
 #include <iterator>
 #include <algorithm>
 #include <functional>

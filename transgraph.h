@@ -4,7 +4,7 @@
 	#include <utility>
 	#include <map>
 	#include <string>
-	#include "query_result.h"
+	#include "morphan_result.h"
 
 	typedef unsigned int d_counter;
 

@@ -1,3 +1,4 @@
+#include "logger.h"
 #include "query_result.h"
 
 /*PUBLIC*/

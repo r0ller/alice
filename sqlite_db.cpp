@@ -1,4 +1,6 @@
+#include "logger.h"
 #include "sqlite_db.h"
+#include "db_factory.h"
 
 int (*sqlite_db::fptr_store_row_data)(void *, int, char **, char **)=NULL;
 

@@ -1,23 +1,22 @@
 #include <iostream>
 #include <fstream>
-#include "logger.cpp"
+#include "logger.h"
 #include "hilib.h"
-#include "db.h"
+#include "db_factory.h"
 #include "lexer.h"
 #include "sp.h"
-std::map<std::string,unsigned int> symbol_token_map;
-std::map<unsigned int,std::string> token_symbol_map;
+#include "tokenpaths.h"
+#include "query_result.h"
+#include "morphan_result.h"
+#include "morphan.h"
+#include "transgraph.h"
 morphan *stemmer=NULL;
 lexer *lex=NULL;
 interpreter *sparser=NULL;
-#include "tokenpaths.cpp"
 tokenpaths *token_paths=NULL;
-#include "query_result.cpp"
-#include "morphan_result.cpp"
-#include "morphan.cpp"
-#include "lexer.cpp"
-#include "sp.cpp"
-#include "transgraph.cpp"
+db *db_factory::singleton_instance=NULL;
+std::map<std::string,unsigned int> symbol_token_map;
+std::map<unsigned int,std::string> token_symbol_map;
 
 int main(int argc, char* argv[]){
 

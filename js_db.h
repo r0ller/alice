@@ -7,6 +7,7 @@
 	#include <emscripten.h>
 //	#include <emscripten/val.h>
 //	#include <emscripten/bind.h>
+	#include "db.h"
 	#include "query_result.h"
 
 	class js_db:public db{

@@ -4,6 +4,8 @@
 	#include <vector>
 	#include <string>
 	#include <map>
+	#include "lexer.h"
+	#include "sp.h"
 	#include "transgraph.h"
 
 	typedef std::string token_symbol;

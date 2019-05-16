@@ -4,6 +4,7 @@
 	#ifdef __ANDROID__
 		#include "log.h"
 	#endif
+	#include <iostream>
 	#include <string>
 
 	class logger{

@@ -3,11 +3,12 @@
 #include <sstream>
 #include <set>
 #include <map>
-#include "logger.cpp"
-#include "db.h"
-#include "query_result.cpp"
-#include "morphan_result.cpp"
-#include "morphan.cpp"
+#include "logger.h"
+#include "db_factory.h"
+#include "query_result.h"
+#include "morphan_result.h"
+#include "morphan.h"
+db *db_factory::singleton_instance=NULL;
 
 int main(int argc, char* argv[]){
 

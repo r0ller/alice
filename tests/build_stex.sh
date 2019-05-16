@@ -1,1 +1,0 @@
-clang++ -fstandalone-debug -g -std=c++11 stex.cpp -o stex -I/home/r0ller/hi/alice -I/usr/pkg/include -I/usr/pkg/include/python3.6 -L/usr/pkg/lib -L/usr/lib -lsqlite3 -lpython3.6 -lfoma;

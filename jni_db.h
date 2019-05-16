@@ -5,6 +5,7 @@
 	#include <string>
 	#include <utility>
 	#include <exception>
+	#include "db.h"
 	#include "query_result.h"
 
 	class jni_db:public db{

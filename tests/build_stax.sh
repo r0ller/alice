@@ -1,1 +1,0 @@
-clang++ -fstandalone-debug -g -std=c++11 stax.cpp -o stax -I/home/r0ller/hi/alice -I/usr/pkg/include -L/usr/pkg/lib -L/usr/lib -lsqlite3 -lfoma;

@@ -8,6 +8,7 @@
 	#include <utility>
 	#include <tuple>
 	#include <set>
+	#include "db_factory.h"
 	#include "transgraph.h"
 
 	typedef struct functor_data{
@@ -127,7 +128,10 @@
 			std::string left_node;
 			std::string right_node;
 		public:
-			object_node_missing(std::string, std::string);
+			object_node_missing(std::string left, std::string right){
+				left_node=left;
+				right_node=right;
+			}
 			~object_node_missing() throw() {};
 			virtual const char *what() const throw(){
 				std::string message;
@@ -137,17 +141,15 @@
 			}
 	};
 
-	object_node_missing::object_node_missing(std::string left, std::string right){
-		left_node=left;
-		right_node=right;
-	}
-
 	class head_node_missing:public semper_error{
 		private:
 			std::string left_node;
 			std::string right_node;
 		public:
-			head_node_missing(std::string, std::string);
+			head_node_missing(std::string left, std::string right){
+				left_node=left;
+				right_node=right;
+			}
 			~head_node_missing() throw() {};
 			virtual const char *what() const throw(){
 				std::string message;
@@ -157,20 +159,22 @@
 			}
 	};
 
-	head_node_missing::head_node_missing(std::string left, std::string right){
-		left_node=left;
-		right_node=right;
-	}
-
 	class invalid_combination:public semper_error{
 		private:
 			std::string left_node;
 			std::string right_node;
 		public:
-			invalid_combination(std::string, std::string);
+			invalid_combination(std::string left, std::string right){
+				left_node=left;
+				right_node=right;
+			}
 			~invalid_combination() throw() {};
-			std::string get_left();
-			std::string get_right();
+			std::string get_left(){
+				return left_node;
+			}
+			std::string get_right(){
+				return right_node;
+			}
 			virtual const char *what() const throw(){
 				std::string message;
 
@@ -179,25 +183,15 @@
 			}
 	};
 
-	invalid_combination::invalid_combination(std::string left, std::string right){
-		left_node=left;
-		right_node=right;
-	}
-
-	std::string invalid_combination::get_left(){
-		return left_node;
-	}
-
-	std::string invalid_combination::get_right(){
-		return right_node;
-	}
-
 	class missing_prerequisite_symbol:public semper_error{
 		private:
 			std::string parent_symbol;
 			std::string child_symbol;
 		public:
-			missing_prerequisite_symbol(std::string,std::string);
+			missing_prerequisite_symbol(std::string parent,std::string child){
+				parent_symbol=parent;
+				child_symbol=child;
+			}
 			~missing_prerequisite_symbol() throw() {};
 			virtual const char *what() const throw(){
 				std::string message;
@@ -207,16 +201,13 @@
 			}
 	};
 
-	missing_prerequisite_symbol::missing_prerequisite_symbol(std::string parent, std::string child){
-		parent_symbol=parent;
-		child_symbol=child;
-	}
-
 	class dependency_counter_manner_validation_failed:public semper_error{
 		private:
 			std::string functor;
 		public:
-			dependency_counter_manner_validation_failed(std::string);
+			dependency_counter_manner_validation_failed(std::string functor){
+				this->functor=functor;
+			}
 			~dependency_counter_manner_validation_failed() throw() {};
 			virtual const char *what() const throw(){
 				std::string message;
@@ -225,9 +216,5 @@
 				return message.c_str();
 			}
 	};
-
-	dependency_counter_manner_validation_failed::dependency_counter_manner_validation_failed(std::string functor){
-		this->functor=functor;
-	}
 
 #endif

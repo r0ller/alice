@@ -1,4 +1,8 @@
+#include "logger.h"
 #include "morphan_result.h"
+#include "query_result.h"
+#include "db_factory.h"
+
 unsigned int morphan_result::global_id=0;
 
 /*PUBLIC*/

@@ -1,5 +1,8 @@
+#include "logger.h"
 #include "morphan.h"
 #include "morphan_result.h"
+#include "query_result.h"
+#include "db_factory.h"
 
 morphan *morphan::singleton_instance=NULL;
 
