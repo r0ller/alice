@@ -27,6 +27,15 @@
 			virtual const std::string error_message()=0;
 			virtual query_result *exec_sql(const std::string&)=0;
 			virtual std::string db_uri()=0;
+			virtual std::string escape(const std::string& to_escape){
+				std::string escaped=to_escape;
+				size_t pos=escaped.find("\'");
+				while(pos!=std::string::npos){
+					escaped.replace(pos,1,"\'\'");
+					pos=escaped.find("\'",pos+2);
+				}
+				return escaped;
+			}
 	};
 
 #endif

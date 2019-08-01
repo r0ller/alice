@@ -98,7 +98,7 @@ int main(int argc, char* argv[]){
 //	result_size=lexicon->nr_of_result_rows();
 	stemmer=morphan::get_instance(lid);
 	for(auto&& i:word_set){
-		std::vector<morphan_result> *word_analysis=stemmer->analyze(i);
+		std::vector<morphan_result> *word_analysis=stemmer->analyze(i,false);
 		word_analyses.insert(std::make_pair(i,*word_analysis));
 		for(auto&& j:*word_analysis){
 			gcat_set.insert(j.gcat());

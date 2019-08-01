@@ -10,6 +10,8 @@
 	#include <deque>
 	#include <map>
 
+	class tokenpaths;
+
 	class lexer{
 		private:
 			std::string lid;
@@ -18,18 +20,20 @@
 			std::vector<std::string>::iterator word_form_iterator;
 			static morphan *stemmer;
 			std::deque<unsigned int> token_deque;
-			static std::vector<std::string> word_forms_;
+			static std::map<std::string,std::vector<std::string>> sentences_word_forms;
+			std::vector<std::string> word_forms_;
 			lexicon tokenize_word(morphan_result&);
 			void destroy_words();
 			static void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 			unsigned int token;
 			std::locale locale;
 			static std::map<std::string,std::vector<lexicon> > cache;
-			std::vector<std::string>::iterator analyze_and_cache(std::string&);
+			std::vector<std::string> analyze_and_cache(std::string&);
 			std::string next_word();
 			bool generate_tokens_;
+			tokenpaths *token_paths;
 		public:
-			lexer(const char *,const char *,std::locale&,const bool);
+			lexer(const char *,const char *,std::locale&,const bool,tokenpaths *);
 			~lexer();
 			unsigned int next_token();
 			lexicon last_word_scanned();
@@ -42,20 +46,42 @@
 			std::vector<lexicon> word_entries();
 			unsigned int last_token_returned();
 			static query_result* dependencies_read_for_functor(const std::string&);
-			static std::vector<std::string>& word_forms(){
-				return word_forms_;
+			std::vector<std::string> word_forms();
+			std::string work_string();
+			static std::vector<std::string> word_forms(const std::string& sentence){
+				std::vector<std::string> word_forms_found;
+
+				auto iterator=sentences_word_forms.find(sentence);
+				if(iterator!=sentences_word_forms.end()) word_forms_found=iterator->second;
+				return word_forms_found;
 			}
 			static std::map<std::string,std::vector<lexicon> >& words_analyses(){
 				return cache;
 			}
 			static void delete_cache(){
 				cache.clear();
+				sentences_word_forms.clear();
 				//TODO: consider providing a release() function for the library.
 				//Not freeing the stemmer is a huge performance gain as fst load
 				//can take seconds depending on file size.
 				//For the time being, trust the OS to delete all objects when the calling program exits.
 				//delete stemmer;
 				return;
+			}
+			static unsigned int nr_of_paths(const std::string& sentence){
+				unsigned int paths=0;
+
+				auto sentence_hit=sentences_word_forms.find(sentence);
+				if(sentence_hit!=sentences_word_forms.end()){
+					for(auto word_form:sentence_hit->second){
+						auto cache_hit=cache.find(word_form);
+						if(cache_hit!=cache.end()){
+							if(paths==0) paths=cache_hit->second.size();
+							else paths*=cache_hit->second.size();
+						}
+					}
+				}
+				return paths;
 			}
 	};
 

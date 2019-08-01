@@ -61,7 +61,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 		transcript+="\"d_key\":\""+std::to_string(functor.second)+"\",";
 	}
 	if(dependencies!=NULL&&(morphan==NULL||morphan!=NULL&&morphan->gcat()!="CON")){
-		functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"';");
+		functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+sqlite->escape(functor.first)+"' AND D_KEY = '"+std::to_string(functor.second)+"';");
 		if(functor_id_entry==NULL){
 			throw std::runtime_error("No entries found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}

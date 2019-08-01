@@ -61,7 +61,8 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				#endif
 			}
 			locale=std::locale();
-			lex=new lexer(human_input,language,locale,false);
+			lex=new lexer(human_input,language,locale,false,token_paths);
+			token_paths->assign_lexer(lex);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
 			sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
@@ -72,7 +73,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						transgraph=sparser->longest_match_for_semantic_rules_found();
 						if(transgraph!=NULL){
 							token_paths->validate_parse_tree(sparser->nodes());
-							token_paths->validate_path(lex->word_entries(),transgraph);
+							token_paths->validate_path(lex->word_entries(),transgraph,true);
 							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
 						}
 						else{
@@ -83,7 +84,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 					}
 					else if(toa&HI_SYNTAX){
 						token_paths->validate_parse_tree(sparser->nodes());
-						token_paths->validate_path(lex->word_entries(),NULL);
+						token_paths->validate_path(lex->word_entries(),NULL,true);
 					}
 					else{
 						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of semantic error");
@@ -185,7 +186,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-	analysis=token_paths->create_analysis(toa,target_language);
+	analysis=token_paths->create_analysis(toa,target_language,std::string(human_input));
 	if(analysis.empty()==false){
 		analysischr=new char[analysis.length()+1];
 		analysis.copy(analysischr,analysis.length(),0);

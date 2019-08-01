@@ -73,7 +73,7 @@ int main(int argc, char* argv[]){
 
 	stemmer=morphan::get_instance(lid);
 	for(auto&& i:word_set){
-		std::vector<morphan_result> *word_analysis=stemmer->analyze(i);
+		std::vector<morphan_result> *word_analysis=stemmer->analyze(i,false);
 		//word_analyses.insert(std::make_pair(word,*word_analysis));
 		for(auto&& j:*word_analysis){
 			gcat_lfeas.insert(std::make_pair(j.gcat(),"Stem"));

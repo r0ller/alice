@@ -18,7 +18,6 @@
 			std::set<std::string> fields;
 			std::multimap<unsigned int,field> row_buffer;
 			std::set<std::set<std::pair<std::string,std::string> > > row_set;
-//			std::multimap<std::pair<std::string,std::string>,unsigned int> field_index;
 		public:
 			query_result();
 			~query_result();

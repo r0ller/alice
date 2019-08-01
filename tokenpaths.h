@@ -12,6 +12,8 @@
 	typedef std::pair<token_symbol,unsigned int> p_m1_token_symbol_m2_counter;
 	typedef std::tuple<std::string,std::string,std::string> t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol;
 
+	class lexer;
+
 	class tokenpaths{
 		private:
 			//Using vector for words instead of set to preserve word order esp. as one word
@@ -21,7 +23,6 @@
 			std::vector<std::vector<node_info> > invalid_parse_trees;
 			std::vector<std::vector<lexicon> > valid_paths;
 			std::vector<std::vector<lexicon> > invalid_paths;
-			std::vector<std::vector<lexicon> > internal_invalid_paths;
 			std::vector<const transgraph *> valid_graphs;
 			std::vector<std::string> invalid_path_errors;
 			bool is_any_path_left;
@@ -31,24 +32,31 @@
 			void reset();
 			std::string semantics(std::vector<lexicon>&, std::map<std::string,std::string>&,unsigned int&,const std::string&);
 			std::string morphology(std::vector<lexicon>&);
-			bool is_path_already_evaluated(const std::vector<lexicon>&, std::vector<std::vector<lexicon> >&);
 			std::string yyerror;
 			std::string functors(const std::map<std::string,std::map<std::string,std::string> >&,const std::map<std::string,std::vector<lexicon> >&,const unsigned int&,std::string&);
 			std::string dependencies(query_result&,std::map<std::pair<std::string,std::string>,std::string>&);
 			std::string syntax(const std::vector<node_info>&);
 			std::string traverse_nodes_lr(const node_info&, const std::vector<node_info>&);
+			lexer *lex;
+			unsigned int path_nr_to_start_at;
+			unsigned int path_nr_to_stop_at;
+			unsigned int current_path_nr;
+			std::vector<unsigned short int> path_indices;
+			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
 		public:
 			tokenpaths();
+			tokenpaths(const unsigned int,const unsigned int);
 			~tokenpaths();
 			bool is_any_left();
 			lexicon next_word(const std::vector<lexicon>&);
-			void validate_path(const std::vector<lexicon>&, const transgraph *);
+			void validate_path(const std::vector<lexicon>&, const transgraph *, const bool store);
 			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
-			std::string create_analysis(const unsigned char&,const std::string&);
+			std::string create_analysis(const unsigned char&,const std::string&,const std::string&);
 			void log_yyerror(const std::string&);
 			void validate_parse_tree(const std::vector<node_info>&);
 			void invalidate_parse_tree(const std::vector<node_info>&);
+			void assign_lexer(lexer *);
 	};
 
 	class invalid_token_path:public std::exception{

@@ -29,7 +29,7 @@
 				}
 				return morphan::singleton_instance;
 			};
-			std::vector<morphan_result> *analyze(const std::string&);
+			std::vector<morphan_result> *analyze(const std::string&, const bool);
 			std::vector<std::string> generate(const std::string&);
 	};
 #endif

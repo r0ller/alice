@@ -54,7 +54,7 @@ morphan::~morphan(){
 	if(pfstname!=NULL) delete []pfstname;
 }
 
-std::vector<morphan_result> *morphan::analyze(const std::string& word){
+std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool all_cons){
 	char *result=NULL;
 	std::vector<char> c_word;
 	std::vector<std::string> morphemes_vector;
@@ -88,16 +88,14 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morpheme:"+morphemes_vector.back());
 			analysis=new morphan_result(word,morphemes_vector,lid_);
 			if(analysis->is_erroneous()==false){
-//				if(analysis->gcat()=="CON"){
-//					//quick fix for having >1 meaningful interpretation by putting analysis for a constant at the end
-//					//DONE: implement evaluation of multiple interpretations in hi() which would make the sequence irrelevant
-//					con_morphan=analysis;
-//					con_morphemes=morphemes;
-//				}
-//				else{
+				if(analysis->gcat()=="CON"){
+					con_morphan=analysis;
+					con_morphemes=morphemes;
+				}
+				else{
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+morphemes);
 					analyses->push_back(*analysis);
-//				}
+				}
 			}
 			else{
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dropping this morphan");
@@ -107,10 +105,18 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word){
 			start_position=0;
 			result=apply_up(morphan::morphan_handle, NULL);
 		}
-//		if(con_morphan!=NULL){
-//			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+con_morphemes);
-//			analyses->push_back(*con_morphan);
-//		}
+		if(all_cons==true){
+			if(con_morphan!=NULL){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+con_morphemes);
+				analyses->push_back(*con_morphan);
+			}
+		}
+		else{
+			if(con_morphan!=NULL&&analyses->empty()==true){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+con_morphemes);
+				analyses->push_back(*con_morphan);
+			}
+		}
 	}
 	else{
 		analysis=new morphan_result(word,lid_);

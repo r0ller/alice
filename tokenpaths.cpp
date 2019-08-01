@@ -1,149 +1,166 @@
 #include "logger.h"
 #include "tokenpaths.h"
 #include "hilib.h"
-extern lexer *lex;
+
 extern interpreter *sparser;
 extern std::map<std::string, unsigned int> symbol_token_map;
 extern std::map<unsigned int,std::string> token_symbol_map;
 
 tokenpaths::tokenpaths(){
+	lex=NULL;
 	is_any_path_left=true;
+	path_nr_to_start_at=0;
+	current_path_nr=0;
+	path_nr_to_stop_at=0;
+}
+
+tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
+	lex=NULL;
+	is_any_path_left=true;
+	path_nr_to_start_at=start;
+	current_path_nr=start;
+	path_nr_to_stop_at=stop;
 }
 
 tokenpaths::~tokenpaths(){
+}
+
+std::vector<unsigned short int> tokenpaths::path_nr_to_indices(const unsigned int path_nr){
+	std::vector<unsigned short int> indices;
+
+	unsigned int rem_path_nr=path_nr;
+	std::vector<std::string> word_forms=lex->word_forms();
+	for(int i=0;i<word_forms.size();++i){
+		indices.push_back(0);
+	}
+	//base of nth position is the size of the nth array
+	//[1,2] [3,4,5] [6,7] -> bases: 2, 3, 2
+	//value = 5 -> indices = [0, 2, 1] -> evaluates to: 157
+	//136 137 146 147 156 >157< 5th position
+	//236 237 246 247 256 257
+	for(int i=word_forms.size()-1;i>=0;--i){
+		auto words_at_index=lexer::words_analyses().find(word_forms[i])->second;
+		indices[i]=rem_path_nr%words_at_index.size();
+		rem_path_nr/=words_at_index.size();
+		if(rem_path_nr==0){
+			break;
+		}
+	}
+	return indices;
 }
 
 bool tokenpaths::is_any_left(){
 	return is_any_path_left;
 }
 
-bool tokenpaths::is_path_already_evaluated(const std::vector<lexicon>& path_to_find, std::vector<std::vector<lexicon> >& paths){
-
-	for(auto&& path:paths){
-		if(path.size()==path_to_find.size()){
-			unsigned int nr_of_matching_words=0;
-			for(auto&& word_in_path_to_find:path_to_find){
-				if(word_in_path_to_find.word!=path.at(nr_of_matching_words).word||word_in_path_to_find.tokens!=path.at(nr_of_matching_words).tokens){
-					break;
-				}
-				++nr_of_matching_words;
-			}
-			if(nr_of_matching_words==path_to_find.size()){
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
 lexicon tokenpaths::next_word(const std::vector<lexicon>& words){
-	std::vector<lexicon> new_path;
 
-	for(auto&& word:words){
-		new_path.clear();
-		new_path=this->words;
-		new_path.push_back(word);
-		if(is_path_already_evaluated(new_path,valid_paths)==false&&is_path_already_evaluated(new_path,invalid_paths)==false&&is_path_already_evaluated(new_path,internal_invalid_paths)==false){
-			this->words.push_back(word);
-			return word;
-		}
-	}
-	if(this->words.empty()==false){
-		add_internal_invalid_path(this->words);
+	if(is_any_path_left==true){
+		lexicon word=words[path_indices[this->words.size()]];
+		this->words.push_back(word);
+		return word;
 	}
 	else{
-		//That's all folks, every possibility has been checked.
-		is_any_path_left=false;
+		throw invalid_token_path();
 	}
-	reset();
-	throw invalid_token_path();
 }
 
 void tokenpaths::reset(){
 	words.clear();
 }
 
-void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgraph* transgraph){
-	valid_paths.push_back(words);
-	valid_graphs.push_back(transgraph);
-	reset();
+void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgraph* transgraph, const bool store){
+	//TODO:check why words are accepted from outside when the instance anyway has its own words attribute
+	if(is_any_path_left==true&&words.size()==path_indices.size()){
+		if(current_path_nr<path_nr_to_stop_at){
+			++current_path_nr;
+			if(current_path_nr==path_nr_to_stop_at) is_any_path_left=false;
+			if(store==true){
+				valid_paths.push_back(words);
+				valid_graphs.push_back(transgraph);
+			}
+			reset();
+		}
+	}
 }
 
 void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::string& reason,std::exception *exception){
 	std::string last_word,validated_words,error;
 
-	invalid_paths.push_back(words);
-//	std::cout<<"yychar="<<yychar<<std::endl;
-//	std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
-//	std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
-	std::set<unsigned int> validated_terminals;
-	validated_terminals=sparser->validated_terminals();
-//	if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)!=validated_terminals.end()){
-//		std::cout<<"yychar found in validated terminals!"<<std::endl;
-//	}
-//	else if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)==validated_terminals.end()){
-//		std::cout<<"yychar NOT found in validated terminals!"<<std::endl;
-//	}
-//	else std::cout<<"yychar is empty or 0"<<std::endl;
+	if(is_any_path_left==true&&words.size()==path_indices.size()){
+		if(current_path_nr<path_nr_to_stop_at){
+			++current_path_nr;
+			if(current_path_nr==path_nr_to_stop_at) is_any_path_left=false;
+			invalid_paths.push_back(words);
+		//	std::cout<<"yychar="<<yychar<<std::endl;
+		//	std::cout<<"last_word_scanned().token="<<lex->last_word_scanned().token<<std::endl;
+		//	std::cout<<"last_token_returned()="<<lex->last_token_returned()<<std::endl;
+			std::set<unsigned int> validated_terminals;
+			validated_terminals=sparser->validated_terminals();
+		//	if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)!=validated_terminals.end()){
+		//		std::cout<<"yychar found in validated terminals!"<<std::endl;
+		//	}
+		//	else if(yychar!=YYEMPTY&&yychar!=YYEOF&&validated_terminals.find(yychar)==validated_terminals.end()){
+		//		std::cout<<"yychar NOT found in validated terminals!"<<std::endl;
+		//	}
+		//	else std::cout<<"yychar is empty or 0"<<std::endl;
 
-//	if(validated_terminals.find(lex->last_token_returned())!=validated_terminals.end()){
-//		std::cout<<"last token found in validated terminals!"<<std::endl;
-//	}
-//	else{
-//		std::cout<<"last token NOT found in validated terminals!"<<std::endl;
-//	}
-//	if(lex->nr_of_words()==1&&lex->last_word_scanned().token==lex->last_token_returned()){
-//	}
-//	TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token
-//	followup_token(lex->last_token_returned());
+		//	if(validated_terminals.find(lex->last_token_returned())!=validated_terminals.end()){
+		//		std::cout<<"last token found in validated terminals!"<<std::endl;
+		//	}
+		//	else{
+		//		std::cout<<"last token NOT found in validated terminals!"<<std::endl;
+		//	}
+		//	if(lex->nr_of_words()==1&&lex->last_word_scanned().token==lex->last_token_returned()){
+		//	}
+		//	TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token
+		//	followup_token(lex->last_token_returned());
 
-	if(reason=="syntax error"||reason=="semantic error"){
-		validated_words=lex->validated_words();
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
-		if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
-			last_word=lex->last_word_scanned().morphalytics->word();
-		else last_word=lex->last_word_scanned().word;
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
-		error="{\"source\":\"hi\",";
-		error+="\"type\":\""+reason+"\",";
-		if(validated_words.empty()==false){
-			error+="\"processed\":\""+validated_words+"\","+"\"last word\":\""+last_word+"\"";
+			if(reason=="syntax error"||reason=="semantic error"){
+				validated_words=lex->validated_words();
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
+				if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
+					last_word=lex->last_word_scanned().morphalytics->word();
+				else last_word=lex->last_word_scanned().word;
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
+				error="{\"source\":\"hi\",";
+				error+="\"type\":\""+reason+"\",";
+				if(validated_words.empty()==false){
+					error+="\"processed\":\""+validated_words+"\","+"\"last word\":\""+last_word+"\"";
+				}
+				else{
+					error+="\"last word\":\""+last_word+"\"";
+				}
+				if(exception!=NULL){
+					error+=",\"message\":\""+std::string(exception->what())+"\"";
+				}
+				error+="}";
+			}
+			else if(reason=="invalid combination"){
+				error="{\"source\":\"hi\",";
+				error+="\"type\":\""+reason+"\",";
+				if(validated_words.empty()==false){
+					error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+				}
+				else{
+					error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+				}
+				error+="}";
+			}
+			else{
+
+			}
+
+			if(yyerror.empty()==false){
+				error+=",{\"source\":\"bison\",";
+				error+="\"type\":\"syntax error\",";
+				error+="\"message\":\""+yyerror+"\"}";
+				yyerror.clear();
+			}
+			invalid_path_errors.push_back(error);
+			reset();
 		}
-		else{
-			error+="\"last word\":\""+last_word+"\"";
-		}
-		if(exception!=NULL){
-			error+=",\"message\":\""+std::string(exception->what())+"\"";
-		}
-		error+="}";
 	}
-	else if(reason=="invalid combination"){
-		error="{\"source\":\"hi\",";
-		error+="\"type\":\""+reason+"\",";
-		if(validated_words.empty()==false){
-			error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
-		}
-		else{
-			error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
-		}
-		error+="}";
-	}
-	else{
-
-	}
-
-	if(yyerror.empty()==false){
-		error+=",{\"source\":\"bison\",";
-		error+="\"type\":\"syntax error\",";
-		error+="\"message\":\""+yyerror+"\"}";
-		yyerror.clear();
-	}
-	invalid_path_errors.push_back(error);
-	reset();
-}
-
-void tokenpaths::add_internal_invalid_path(const std::vector<lexicon>& words){
-	invalid_paths.push_back(words);
 }
 
 std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_token(const unsigned int token){
@@ -368,7 +385,7 @@ std::string tokenpaths::dependencies(query_result& dependency,std::map<std::pair
 		dependencies+="\"manner\":\""+*dependency.field_value_at_row_position(i,"manner")+"\",";
 		dependencies+="\"semantic_dependency\":\""+*dependency.field_value_at_row_position(i,"semantic_dependency")+"\",";
 		dependencies+="\"ref_d_key\":\""+*dependency.field_value_at_row_position(i,"ref_d_key")+"\"},";
-		query_result *functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+lexeme+"' AND D_KEY ='"+d_key+"';");
+		query_result *functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+sqlite->escape(lexeme)+"' AND D_KEY ='"+d_key+"';");
 		if(functor_id_entry==NULL){
 			throw std::runtime_error("No entries found for functor "+lexeme+" and d_key "+d_key+" in FUNCTORS db table.");
 		}
@@ -457,7 +474,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	return functors;
 }
 
-std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& target_language){
+std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& target_language,const std::string& sentence){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
 
@@ -486,7 +503,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(toa&HI_SEMANTICS){
 			std::string semantic_analysis="\"semantics\":[";
-			std::vector<std::string> word_forms=lexer::word_forms();
+			std::vector<std::string> word_forms=lexer::word_forms(sentence);
 			unsigned int id_index=0;
 			for(auto&& word_form:word_forms){
 				auto&& word_analyses=words_analyses.find(word_form);
@@ -602,4 +619,10 @@ void tokenpaths::validate_parse_tree(const std::vector<node_info>& nodes){
 
 void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
 	invalid_parse_trees.push_back(nodes);
+}
+
+void tokenpaths::assign_lexer(lexer *lex){
+	this->lex=lex;
+	if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
+	path_indices=path_nr_to_indices(current_path_nr);
 }
