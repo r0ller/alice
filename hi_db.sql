@@ -17,6 +17,12 @@ head_position smallint, /*0: undefined, 1: head first, 2: head last*/
 fst varchar(256)
 );
 
+create table GCAT_LID(
+gcat varchar(12) not null,
+lid varchar(5) references LANGUAGES(lid),
+PRIMARY KEY(gcat, lid)
+);
+
 create table GCAT(/*Eventually, table for terminal symbols, i.e. to which bison tokens can be assigned*/
 gcat varchar(12) not null,
 feature varchar(12) not null,
@@ -28,7 +34,14 @@ PRIMARY KEY(gcat, feature, lid) /*gcat, feature, lid are all keys as once token 
 FOREIGN KEY(gcat, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(feature, lid) REFERENCES SYMBOLS(symbol, lid)
 );
-create unique index i_gcat_lid on GCAT(gcat,lid) where feature='stem' collate nocase;
+/*create unique index i_gcat_lid on GCAT(gcat,lid) where feature='stem' collate nocase;*/
+
+CREATE TRIGGER GCAT_TRIGGER
+AFTER INSERT ON GCAT
+FOR EACH ROW
+BEGIN
+INSERT OR IGNORE INTO GCAT_LID(gcat,lid) select gcat,lid from gcat where rowid=last_insert_rowid();
+END;
 
 create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat features) and non-terminals*/
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
@@ -51,7 +64,7 @@ semantic_dependency varchar(47), /*dependencies must be stored explicitly (which
 must be stored with full key entry with NULL semantic_dependecy value), otherwise noone can tell if a functor (word) can stand on its own or only together with other words*/
 ref_d_key smallint,/*belongs to the field semantic_dependency in this table*/
 PRIMARY KEY(lexeme, d_key, d_counter)
-FOREIGN KEY(lexeme, d_key) REFERENCES FUNCTORS(functor, d_key)
+FOREIGN KEY(lexeme, d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
 FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 
@@ -80,21 +93,21 @@ FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(main_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(main_node_lexeme) REFERENCES FUNCTORS(functor)
+FOREIGN KEY(main_node_lexeme) REFERENCES FUNCTOR_DECL(functor) DEFERRABLE INITIALLY DEFERRED
 FOREIGN KEY(main_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(dependent_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(dependent_node_lexeme) REFERENCES FUNCTORS(functor)
+FOREIGN KEY(dependent_node_lexeme) REFERENCES FUNCTOR_DECL(functor) DEFERRABLE INITIALLY DEFERRED
 FOREIGN KEY(dependency_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 );
 
 create table LEXICON(
 word varchar(256),
-lid varchar(5) references LANGUAGES(lid),
+lid varchar(5) references LANGUAGES(lid) DEFERRABLE INITIALLY DEFERRED,
 gcat varchar(12),
 lexeme varchar(47),
 PRIMARY KEY(word, lid, gcat)
-FOREIGN KEY(lexeme) REFERENCES FUNCTORS(functor)
-FOREIGN KEY(gcat, lid) REFERENCES GCAT(gcat, lid)
+FOREIGN KEY(lexeme) REFERENCES FUNCTOR_DECL(functor) DEFERRABLE INITIALLY DEFERRED
+FOREIGN KEY(gcat, lid) REFERENCES GCAT_LID(gcat, lid) DEFERRABLE INITIALLY DEFERRED
 );
 
 
@@ -119,6 +132,16 @@ FOREIGN KEY(gcat, lid) REFERENCES GCAT(gcat, lid)
 /*PRIMARY KEY(model_id,context_source,session_id,timestamp)*/
 /*);*/
 
+create table FUNCTOR_DECL(
+functor varchar(47),
+PRIMARY KEY(functor)
+);
+
+create table FUNCTOR_IDS(
+functor_id varchar(51),
+PRIMARY KEY(functor_id)
+);
+
 create table FUNCTOR_DEFS(
 functor_id varchar(51),
 tlid varchar(5),
@@ -126,7 +149,13 @@ imp_counter smallint not null check(imp_counter>0),/*start value: 1*/
 definition text,
 PRIMARY KEY(functor_id, tlid)
 );
-create unique index i_functor_ids on FUNCTOR_DEFS(functor_id) where imp_counter=1;
+
+CREATE TRIGGER FUNCTOR_DEFS_TRIGGER
+AFTER INSERT ON FUNCTOR_DEFS
+FOR EACH ROW
+BEGIN
+INSERT OR IGNORE INTO FUNCTOR_IDS(functor_id) select functor_id from functor_defs where rowid=last_insert_rowid();
+END;
 
 create table FUNCTOR_TAGS(
 functor varchar(47),
@@ -139,7 +168,7 @@ counter smallint not null check(counter>0),/*start value: 1*/
 tag text,/*if the trigger_tag is empty, tag-value pairs are added unconditionally*/
 value text,
 PRIMARY KEY(functor, d_key, trigger_tag, counter)
-FOREIGN KEY(functor, d_key) REFERENCES FUNCTORS(functor, d_key)
+FOREIGN KEY(functor, d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 
 create table FUNCTORS(
@@ -147,12 +176,18 @@ functor varchar(47),
 d_key smallint not null check(d_key>0),/*start value: 1*/
 functor_id varchar(51),
 PRIMARY KEY(functor, d_key)
-FOREIGN KEY(functor_id) REFERENCES FUNCTOR_DEFS(functor_id)
+FOREIGN KEY(functor_id) REFERENCES FUNCTOR_IDS(functor_id) DEFERRABLE INITIALLY DEFERRED
 );
-create unique index i_functors on FUNCTORS(functor) where d_key=1;
+
+CREATE TRIGGER FUNCTORS_TRIGGER
+AFTER INSERT ON FUNCTORS
+FOR EACH ROW
+BEGIN
+INSERT OR IGNORE INTO FUNCTOR_DECL(functor) select functor from functors where rowid=last_insert_rowid();
+END;
 
 create table GRAMMAR(
-lid varchar(5) references LANGUAGES(lid),
+lid varchar(5) references LANGUAGES(lid) DEFERRABLE INITIALLY DEFERRED,
 parent_symbol varchar(12) not null check(length(parent_symbol)>0),
 head_symbol varchar(12) not null check(length(head_symbol)>0),
 non_head_symbol varchar(12),
@@ -162,5 +197,5 @@ PRIMARY KEY(lid, parent_symbol, head_symbol, non_head_symbol)
 FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid)/*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
+FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid) /*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
 );

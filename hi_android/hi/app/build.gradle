@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        sign_config {
-            keyAlias 'Hi_key'
-            keyPassword 'H1_k3y'
-            storePassword 'H1_k3y'
-            storeFile file('C:/Users/i033768/.android/.keystore/hi_key.jks')
-        }
-    }
     compileSdkVersion 24
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-annotations:24.2.1'
@@ -23,8 +15,8 @@ android {
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your APK.
-            abiFilters 'armeabi-v7a', 'arm64-v8a'
-            //abiFilters 'armeabi-v7a'
+            //abiFilters 'armeabi-v7a', 'arm64-v8a'
+            abiFilters 'arm64-v8a'
         }
         externalNativeBuild {
             cmake {

@@ -1,0 +1,3 @@
+C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/arm64-v8a/CMakeFiles/jhi.dir
+C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/arm64-v8a/CMakeFiles/rebuild_cache.dir

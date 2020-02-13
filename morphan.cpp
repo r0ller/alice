@@ -88,7 +88,11 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morpheme:"+morphemes_vector.back());
 			analysis=new morphan_result(word,morphemes_vector,lid_);
 			if(analysis->is_erroneous()==false){
-				if(analysis->gcat()=="CON"){
+				if(analysis->gcat()=="CON"&&all_cons==false){
+					//TODO: figure out a logic according to which it can be influenced
+					//what kind of constant analyses/analysis are/is taken into account.
+					//This logic here stores the latest analysis which gets pushed later
+					//below resulting in adding the last analysis stored.
 					con_morphan=analysis;
 					con_morphemes=morphemes;
 				}
@@ -106,10 +110,7 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			result=apply_up(morphan::morphan_handle, NULL);
 		}
 		if(all_cons==true){
-			if(con_morphan!=NULL){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+con_morphemes);
-				analyses->push_back(*con_morphan);
-			}
+			//All constants already added above in the while loop -> do nothing.
 		}
 		else{
 			if(con_morphan!=NULL&&analyses->empty()==true){

@@ -41,7 +41,9 @@ std::vector<unsigned short int> tokenpaths::path_nr_to_indices(const unsigned in
 	for(int i=word_forms.size()-1;i>=0;--i){
 		auto words_at_index=lexer::words_analyses().find(word_forms[i])->second;
 		indices[i]=rem_path_nr%words_at_index.size();
+		//std::cout<<"word form:"<<word_forms[i]<<",rem_path_nr:"<<rem_path_nr<<",words_at_index:"<<words_at_index.size()<<",indices[i]:"<<indices[i]<<std::endl;
 		rem_path_nr/=words_at_index.size();
+		//std::cout<<"new rem_path_nr:"<<rem_path_nr<<std::endl;
 		if(rem_path_nr==0){
 			break;
 		}
@@ -56,6 +58,8 @@ bool tokenpaths::is_any_left(){
 lexicon tokenpaths::next_word(const std::vector<lexicon>& words){
 
 	if(is_any_path_left==true){
+		//std::cout<<"this->words.size:"<<this->words.size()<<",path_indices.size:"<<path_indices.size()<<",words.size:"<<words.size()<<std::endl;
+		//std::cout<<"path_indices[this->words.size()]:"<<path_indices[this->words.size()]<<std::endl;
 		lexicon word=words[path_indices[this->words.size()]];
 		this->words.push_back(word);
 		return word;
@@ -87,7 +91,7 @@ void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgra
 void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::string& reason,std::exception *exception){
 	std::string last_word,validated_words,error;
 
-	if(is_any_path_left==true&&words.size()==path_indices.size()){
+//	if(is_any_path_left==true&&words.size()==path_indices.size()){ //<--This condition did NOT work out, figure out something else to prevent unnecessary calls from having an effect
 		if(current_path_nr<path_nr_to_stop_at){
 			++current_path_nr;
 			if(current_path_nr==path_nr_to_stop_at) is_any_path_left=false;
@@ -160,7 +164,10 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 			invalid_path_errors.push_back(error);
 			reset();
 		}
-	}
+		else{
+		//TODO: figure out what to do here: throw exception like runtime error or logic error? if exception at all...
+		}
+//	}
 }
 
 std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_token(const unsigned int token){
@@ -624,5 +631,6 @@ void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
 void tokenpaths::assign_lexer(lexer *lex){
 	this->lex=lex;
 	if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);
 }

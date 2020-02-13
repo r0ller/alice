@@ -53,6 +53,7 @@ import java.util.zip.ZipFile;
 public class MainActivity extends Activity implements OnClickListener {
 	private static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 	private static final int PERMISSION_REQUEST_CALL_PHONE = 2;
+	private static final int PERMISSION_REQUEST_RECORD_AUDIO = 3;
 
 	private native byte[] jhi(String text, String language, String dbUri);
     private WebView mWebView;
@@ -229,6 +230,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onStart();
 		registerReceiver(mBroadcastReceiver,new IntentFilter("hiBroadcast"));
 		jsi.registerLocalBroadcastReceiver();
+		if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_RECORD_AUDIO);
+		}
 		triggerSpeechRecoginzer();
 	}
 
@@ -378,7 +382,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
-//		if(recognisedText.isEmpty()==true) recognisedText="keress névjegyeket robival";
+//		if(recognisedText.isEmpty()==true) recognisedText="keress névjegyeket péterrel";
 //		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 //        Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);//Get default (primary) language set for voice input
 //		PackageManager pm=getPackageManager();
@@ -399,7 +403,10 @@ public class MainActivity extends Activity implements OnClickListener {
 //beginNormalDebug
 		Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		i.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+		//Turn off offline voice recognition due to returning a misleading network error
+		//on certain devices even when there's network access:
+		//https://support.google.com/assistant/thread/2438314?hl=en
+//		i.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
     	try {
     		startActivityForResult(i, REQUEST_OK);
         } catch (Exception e) {
@@ -438,14 +445,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//	TODO: add RECORD_AUDIO permission handling
 		switch (requestCode) {
 			case PERMISSION_REQUEST_READ_CONTACTS: {
 				// If request is cancelled, the result arrays are empty.
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					if(ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){
+					if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 						ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_REQUEST_CALL_PHONE);
-					}
-					else {
+					} else {
 						Intent intent = new Intent("jsi_permission");
 						intent.putExtra("granted", "read_contacts");
 						LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
@@ -460,10 +467,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 			case PERMISSION_REQUEST_CALL_PHONE: {
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED){
+					if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
 						ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
-					}
-					else {
+					} else {
 						Intent intent = new Intent("jsi_permission");
 						intent.putExtra("granted", "call_phone");
 						LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
@@ -474,6 +480,9 @@ public class MainActivity extends Activity implements OnClickListener {
 					// permission denied, boo! Disable the
 					// functionality that depends on this permission.
 				}
+				return;
+			}
+			case PERMISSION_REQUEST_RECORD_AUDIO: {
 				return;
 			}
 		}

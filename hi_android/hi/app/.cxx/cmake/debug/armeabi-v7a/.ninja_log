@@ -1,0 +1,5 @@
+# ninja log v5
+2	1258	0	CMakeFiles/jhi.dir/jni/jhi.cpp.o	2c741b0efc4d01e
+1261	1745	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libjhi.so	ec8550d38e765b6
+4	726	0	CMakeFiles/jhi.dir/jni/jhi.cpp.o	2c741b0efc4d01e
+726	982	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libjhi.so	ec8550d38e765b6

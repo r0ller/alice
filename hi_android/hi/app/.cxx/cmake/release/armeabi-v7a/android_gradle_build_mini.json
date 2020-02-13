@@ -1,0 +1,26 @@
+{
+  "buildFiles": [
+    "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\armeabi-v7a --target clean"
+  ],
+  "libraries": {
+    "foma-Release-armeabi-v7a": {
+      "artifactName": "foma",
+      "abi": "armeabi-v7a",
+      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\src\\main\\jniLibs\\armeabi-v7a\\libfoma.so"
+    },
+    "jhi-Release-armeabi-v7a": {
+      "artifactName": "jhi",
+      "buildCommand": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\armeabi-v7a --target jhi",
+      "abi": "armeabi-v7a",
+      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates\\cmake\\release\\obj\\armeabi-v7a\\libjhi.so"
+    },
+    "hilib-Release-armeabi-v7a": {
+      "artifactName": "hilib",
+      "abi": "armeabi-v7a",
+      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\src\\main\\jniLibs\\armeabi-v7a\\libhilib.so"
+    }
+  }
+}

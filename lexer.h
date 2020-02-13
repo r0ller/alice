@@ -74,12 +74,15 @@
 				auto sentence_hit=sentences_word_forms.find(sentence);
 				if(sentence_hit!=sentences_word_forms.end()){
 					for(auto word_form:sentence_hit->second){
+						//std::cout<<"looking for word form:"<<word_form<<std::endl;
 						auto cache_hit=cache.find(word_form);
 						if(cache_hit!=cache.end()){
+							//std::cout<<"nr of words found for word form:"<<cache_hit->second.size()<<std::endl;
 							if(paths==0) paths=cache_hit->second.size();
 							else paths*=cache_hit->second.size();
 						}
 					}
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of paths:"+std::to_string(paths));
 				}
 				return paths;
 			}

@@ -1,0 +1,54 @@
+
+{
+	"buildFiles" : [ "C:/Users/llencses/AndroidStudioProjects/hi/app/CMakeLists.txt" ],
+	"cleanCommands" : 
+	[
+		"C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\armeabi-v7a --target clean"
+	],
+	"cppFileExtensions" : [ "cpp" ],
+	"libraries" : 
+	{
+		"foma-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "foma",
+			"buildType" : "release",
+			"output" : "C:/Users/llencses/AndroidStudioProjects/hi/app/src/main/jniLibs/armeabi-v7a/libfoma.so",
+			"toolchain" : "2402615091"
+		},
+		"hilib-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "hilib",
+			"buildType" : "release",
+			"output" : "C:/Users/llencses/AndroidStudioProjects/hi/app/src/main/jniLibs/armeabi-v7a/libhilib.so",
+			"toolchain" : "2402615091"
+		},
+		"jhi-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "jhi",
+			"buildCommand" : "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\armeabi-v7a --target jhi",
+			"buildType" : "release",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=armv7-none-linux-androideabi23 --gcc-toolchain=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Djhi_EXPORTS -I..\\..\\..\\..\\jni  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -Oz -DNDEBUG  -fPIC    -c ",
+					"src" : "C:/Users/llencses/AndroidStudioProjects/hi/app/jni/jhi.cpp",
+					"workingDirectory" : "C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/armeabi-v7a"
+				}
+			],
+			"output" : "C:/Users/llencses/AndroidStudioProjects/hi/app/build/intermediates/cmake/release/obj/armeabi-v7a/libjhi.so",
+			"toolchain" : "2402615091"
+		}
+	},
+	"toolchains" : 
+	{
+		"2402615091" : 
+		{
+			"cCompilerExecutable" : "C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+		}
+	}
+}

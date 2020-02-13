@@ -1252,5 +1252,4 @@ insert into GRAMMAR values('HUN','HUN_IVPConj','HUN_IVPConj','HUN_ConjV',NULL,NU
 insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVPConj',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVP',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_INVP',NULL,NULL);
-
 COMMIT;
