@@ -240,6 +240,7 @@ int main(int argc, char* argv[]){
 				std::string lexicon_entry;
 				while(std::getline(*lexicon_file,lexicon_entry)){
 					size_t start_pos=0;
+					if(lexicon_entry[start_pos]==',') ++start_pos;//in case the comma itself is to be handled
 					size_t end_pos=lexicon_entry.find(',',start_pos);
 					std::string stem=sqlite->escape(lexicon_entry.substr(start_pos,end_pos));
 					start_pos=end_pos+1;

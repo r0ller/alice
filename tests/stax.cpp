@@ -67,7 +67,12 @@ int main(int argc, char* argv[]){
 			if(comma_pos!=std::string::npos){
 				std::string::size_type start_pos=0;
 				while(comma_pos!=std::string::npos){
+					if(start_pos==comma_pos){//e.g. in case the comma itself is to be handled the two may be equal
+						++comma_pos;
+						comma_pos=words.find(',',comma_pos);
+					}
 					std::string word_cut=words.substr(start_pos,comma_pos-start_pos);
+					std::cout<<"word_cut:"<<word_cut<<std::endl;
 					if(word_cut.empty()==false) word_set.insert(word_cut);
 					words.replace(comma_pos,1,"','");
 					start_pos=comma_pos+3;
