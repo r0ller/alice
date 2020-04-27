@@ -5,7 +5,7 @@ PROJECTSRCDIR=$$(pwd)#${PROJECTDIR} is reserved by make
 BUILDDIR=build
 ABSBUILDDIR=$$(readlink -f ${BUILDDIR})
 CXX=clang++
-CXXFLAGS=-std=c++11 -fPIC -pedantic -Wall
+CXXFLAGS=-std=c++17 -fPIC -pedantic -Wall
 INCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include
 COMMONLIBDIRS=-L/usr/pkg/lib
 NATIVELIBDIR=-L${BUILDDIR}/hi_desktop
@@ -222,7 +222,7 @@ embedded_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	em++ ${CXXFLAGS} $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
+	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
 #POSIX breaks here: ${USERSHELL} is necessary as some shells like the default NetBSD sh does not support pushd and popd used in emsdk_env.sh
 
 node_js_lib:
@@ -238,7 +238,7 @@ node_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	em++ ${CXXFLAGS} -DFS=NODEJS $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/nodejs/hi.js;"
+	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} -DFS=NODEJS $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/nodejs/hi.js;"
 
 parser_generator:
 	mkdir -p ${BUILDDIR};\
