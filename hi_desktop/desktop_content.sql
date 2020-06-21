@@ -202,8 +202,9 @@ insert into FUNCTOR_DEFS values('DIRBEPROP_1', 'sh', '1', 'dirbeprop_1.sh');
 insert into FUNCTOR_DEFS values('PROPERTIES_1', 'sh', '1', NULL);
 insert into FUNCTOR_DEFS values('PROPERTIES_2', 'sh', '1', 'properties_2.sh');
 insert into FUNCTOR_DEFS values('LOCATED_1', 'sh', '1', 'located_1.sh');
+insert into FUNCTOR_DEFS values('BEPROPS_1', 'sh', '1', NULL);
 
-insert into FUNCTORS values('CON', '1', NULL);
+/*insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('INENGPREP', '1', 'INENGPREP_1');
 insert into FUNCTORS values('FROMENGPREP', '1', 'FROMENGPREP_1');
 insert into FUNCTORS values('LISTENGV', '1', 'LISTENGV_1');
@@ -212,11 +213,8 @@ insert into FUNCTORS values('THATENGRPRO', '1', NULL);
 insert into FUNCTORS values('FILEENGN', '1', 'FILEENGN_1');
 insert into FUNCTORS values('DIRECTORYENGN', '1', 'DIRECTORYENGN_1');
 insert into FUNCTORS values('BEENGV', '1', 'BEENGV_1');
-insert into FUNCTORS values('BEENGV', '2', 'BEENGV_1');
 insert into FUNCTORS values('NOTENGVNEG', '1', 'NOTENGVNEG_1');
-insert into FUNCTORS values('NOTENGVNEG', '2', 'NOTENGVNEG_1');
 insert into FUNCTORS values('NOTENGANEG', '1', 'NOTENGANEG_1');
-insert into FUNCTORS values('NOTENGANEG', '2', 'NOTENGANEG_1');
 insert into FUNCTORS values('EXECUTABLEENGA', '1', 'EXECUTABLEENGA_2');
 insert into FUNCTORS values('EXECUTABLEENGA', '2', 'EXECUTABLEENGA_2');
 insert into FUNCTORS values('EMPTYENGA', '1', 'EMPTYENGA_1');
@@ -226,12 +224,35 @@ insert into FUNCTORS values('ANAENGDET', '1', 'ANAENGDET_1');
 insert into FUNCTORS values('FILEBEPROP', '1', 'FILEBEPROP_1');
 insert into FUNCTORS values('DIRBEPROP', '1', 'DIRBEPROP_1');
 insert into FUNCTORS values('ANDENGCONJ', '1', 'ANDENGCONJ_1');
-insert into FUNCTORS values('ANDENGCONJ', '2', 'ANDENGCONJ_1');
 insert into FUNCTORS values('PROPERTIES', '1', 'PROPERTIES_2');
-insert into FUNCTORS values('PROPERTIES', '2', 'PROPERTIES_2');
 insert into FUNCTORS values('ORENGCONJ', '1', 'ORENGCONJ_1');
-insert into FUNCTORS values('ORENGCONJ', '2', 'ORENGCONJ_1');
 insert into FUNCTORS values('LOCATED', '1', 'LOCATED_1');
+insert into FUNCTORS values('BEPROPS', '1', 'BEPROPS_1');*/
+
+insert into FUNCTORS values('CON', '1', NULL);
+insert into FUNCTORS values('INENGPREP', '1', NULL);
+insert into FUNCTORS values('FROMENGPREP', '1', NULL);
+insert into FUNCTORS values('LISTENGV', '1', NULL);
+insert into FUNCTORS values('LISTENGV', '2', NULL);
+insert into FUNCTORS values('THATENGRPRO', '1', NULL);
+insert into FUNCTORS values('FILEENGN', '1', NULL);
+insert into FUNCTORS values('DIRECTORYENGN', '1', NULL);
+insert into FUNCTORS values('BEENGV', '1', NULL);
+insert into FUNCTORS values('NOTENGVNEG', '1', NULL);
+insert into FUNCTORS values('NOTENGANEG', '1', NULL);
+insert into FUNCTORS values('EXECUTABLEENGA', '1', NULL);
+insert into FUNCTORS values('EXECUTABLEENGA', '2', NULL);
+insert into FUNCTORS values('EMPTYENGA', '1', NULL);
+insert into FUNCTORS values('SYMLINKEDENGA', '1', NULL);
+insert into FUNCTORS values('SYMLINKEDENGA', '2', NULL);
+insert into FUNCTORS values('ANAENGDET', '1', NULL);
+insert into FUNCTORS values('FILEBEPROP', '1', NULL);
+insert into FUNCTORS values('DIRBEPROP', '1', NULL);
+insert into FUNCTORS values('ANDENGCONJ', '1', NULL);
+insert into FUNCTORS values('PROPERTIES', '1', NULL);
+insert into FUNCTORS values('ORENGCONJ', '1', NULL);
+insert into FUNCTORS values('LOCATED', '1', NULL);
+insert into FUNCTORS values('BEPROPS', '1', NULL);
 
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 
@@ -322,7 +343,7 @@ insert into LEXICON values('to', 'ENG', 'PAR', 'TOENGPAR');
 
 /*no value in the semantic_dependency field means no dependency*/
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
-insert into DEPOLEX values('DIRECTORYENGN', '1', '1', NULL, '2', NULL, '0', 'BEENGV', '2');
+insert into DEPOLEX values('DIRECTORYENGN', '1', '1', NULL, '2', NULL, '0', 'BEENGV', '1');
 insert into DEPOLEX values('DIRECTORYENGN', '1', '2', '1', '2', NULL, '1', 'CON', '1');
 insert into DEPOLEX values('EMPTYENGA', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('SYMLINKEDENGA', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
@@ -337,34 +358,17 @@ insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'FILEENG
 insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
 insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 
-insert into DEPOLEX values('BEENGV', '1', '1', '1', '2', '2', '0', 'NOTENGVNEG', '1');
-insert into DEPOLEX values('BEENGV', '1', '2', '1', '2', NULL, '0', 'PROPERTIES', '1');
-insert into DEPOLEX values('BEENGV', '2', '1', '1', '2', '2', '0', 'NOTENGVNEG', '2');
-insert into DEPOLEX values('BEENGV', '2', '2', '1', '2', NULL, '0', 'PROPERTIES', '2');
-insert into DEPOLEX values('NOTENGVNEG', '1', '1', NULL, '1', NULL, '0', 'PROPERTIES', '1');
-insert into DEPOLEX values('NOTENGVNEG', '2', '1', NULL, '1', NULL, '0', 'PROPERTIES', '2');
-
-/*insert into DEPOLEX values('BEENGV', '1', '1', '1', '1', NULL, '0', 'PROPERTIES', '1');
-insert into DEPOLEX values('BEENGV', '2', '1', '1', '1', NULL, '0', 'PROPERTIES', '2');*/
-
+insert into DEPOLEX values('BEENGV', '1', '1', '1', '1', NULL, '0', 'NOTENGVNEG', '1');
+insert into DEPOLEX values('NOTENGVNEG', '1', '1', '1', '1', NULL, '0', 'PROPERTIES', '1');
 insert into DEPOLEX values('PROPERTIES', '1', '1', '1', '2', '2', '1', 'NOTENGANEG', '1');
 insert into DEPOLEX values('PROPERTIES', '1', '2', '1', '3', '3', '1', 'ANDENGCONJ', '1');
 insert into DEPOLEX values('PROPERTIES', '1', '3', '1', '4', '4', '1', 'ORENGCONJ', '1');
-insert into DEPOLEX values('PROPERTIES', '1', '4', '1', '4', NULL, '0', 'FILEBEPROP', '1');
-insert into DEPOLEX values('PROPERTIES', '2', '1', '1', '2', '2', '1', 'NOTENGANEG', '2');
-insert into DEPOLEX values('PROPERTIES', '2', '2', '1', '3', '3', '1', 'ANDENGCONJ', '2');
-insert into DEPOLEX values('PROPERTIES', '2', '3', '1', '4', '4', '1', 'ORENGCONJ', '2');
-insert into DEPOLEX values('PROPERTIES', '2', '4', '1', '4', NULL, '0', 'DIRBEPROP', '1');
-insert into DEPOLEX values('NOTENGANEG', '1', '1', NULL, '1', NULL, '0', 'FILEBEPROP', '1');
-insert into DEPOLEX values('NOTENGANEG', '2', '1', NULL, '1', NULL, '0', 'DIRBEPROP', '1');
-insert into DEPOLEX values('ANDENGCONJ', '1', '1', NULL, '2', '2', '0', 'NOTENGANEG', '1');
-insert into DEPOLEX values('ANDENGCONJ', '1', '2', NULL, '2', NULL, '0', 'FILEBEPROP', '1');
-insert into DEPOLEX values('ANDENGCONJ', '2', '1', NULL, '2', '2', '0', 'NOTENGANEG', '2');
-insert into DEPOLEX values('ANDENGCONJ', '2', '2', NULL, '2', NULL, '0', 'DIRBEPROP', '1');
-insert into DEPOLEX values('ORENGCONJ', '1', '1', NULL, '2', '2', '0', 'NOTENGANEG', '1');
-insert into DEPOLEX values('ORENGCONJ', '1', '2', NULL, '2', NULL, '0', 'FILEBEPROP', '1');
-insert into DEPOLEX values('ORENGCONJ', '2', '1', NULL, '2', '2', '0', 'NOTENGANEG', '2');
-insert into DEPOLEX values('ORENGCONJ', '2', '2', NULL, '2', NULL, '0', 'DIRBEPROP', '1');
+insert into DEPOLEX values('PROPERTIES', '1', '4', '1', '4', NULL, '0', 'BEPROPS', '1');
+insert into DEPOLEX values('BEPROPS', '1', '1', '1', '2', '2', '0', 'FILEBEPROP', '1');
+insert into DEPOLEX values('BEPROPS', '1', '2', '1', '2', NULL, '0', 'DIRBEPROP', '1');
+insert into DEPOLEX values('NOTENGANEG', '1', '1', '1', '1', NULL, '0', 'BEPROPS', '1');
+insert into DEPOLEX values('ANDENGCONJ', '1', '1', NULL, '1', NULL, '0', 'NOTENGANEG', '1');
+insert into DEPOLEX values('ORENGCONJ', '1', '1', NULL, '1', NULL, '0', 'NOTENGANEG', '1');
 insert into DEPOLEX values('FILEBEPROP', '1', '1', '1', '2', '2', '0', 'SYMLINKEDENGA', '1');
 insert into DEPOLEX values('FILEBEPROP', '1', '2', '1', '3', '3', '0', 'EXECUTABLEENGA', '1');
 insert into DEPOLEX values('FILEBEPROP', '1', '3', '1', '3', NULL, '0', 'LOCATED', '1');
