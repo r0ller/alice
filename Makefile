@@ -143,7 +143,7 @@ android_parser:
 	mkdir -p ${BUILDDIR}/hi_android;\
 	parserfilename=$$(basename ${ANDROIDPARSERFILEPATH});\
 	srcfilepath=${BUILDDIR}/hi_android/$$parserfilename.cpp;\
-	bison -o $$srcfilepath ${ANDROIDPARSERFILEPATH};
+	bison -v -o $$srcfilepath ${ANDROIDPARSERFILEPATH};
 
 arm32_lib:
 	ndk32toolchaindir=${NDK32BITTOOLCHAINDIR};\

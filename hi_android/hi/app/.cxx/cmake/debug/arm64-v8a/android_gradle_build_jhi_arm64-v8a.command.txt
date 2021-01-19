@@ -1,8 +1,7 @@
-Executable : C:\Users\llencses\AppData\Local\Android\Sdk\cmake\3.6.4111459\bin\cmake.exe
+Executable : C:\Users\llencses\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
 arguments : 
---build
+-C
 C:\Users\llencses\AndroidStudioProjects\hi\app\.cxx\cmake\debug\arm64-v8a
---target
 jhi
 jvmArgs : 
 

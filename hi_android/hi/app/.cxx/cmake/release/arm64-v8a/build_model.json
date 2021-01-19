@@ -1,72 +1,219 @@
 {
-  "variant": {
-    "module": {
-      "rootBuildGradleFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi",
-      "sdkFolder": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk",
-      "isNativeCompilerSettingsCacheEnabled": false,
-      "isBuildOnlyTargetAbiEnabled": true,
-      "splitsAbiFilterSet": [],
-      "intermediatesFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates",
-      "gradleModulePathName": ":app",
-      "moduleRootFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app",
-      "makeFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\CMakeLists.txt",
-      "buildSystem": "CMAKE",
-      "compilerSettingsCacheFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\.cxx",
-      "cxxFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx",
-      "ndkFolder": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle",
-      "ndkVersion": "21.0.6113669",
-      "ndkSupportedAbiList": [
-        "ARMEABI_V7A",
-        "ARM64_V8A",
-        "X86",
-        "X86_64"
+  "abi": "ARM64_V8A",
+  "abiPlatformVersion": 23,
+  "buildSettings": {
+    "environmentVariables": []
+  },
+  "cmake": {
+    "cmakeArtifactsBaseFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a",
+    "cmakeServerLogFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\cmake_server_log.txt",
+    "cmakeWrappingBaseFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a",
+    "effectiveConfiguration": {
+      "name": "traditional-android-studio-cmake-environment",
+      "description": "Composite reified CMakeSettings configuration",
+      "generator": "Ninja",
+      "inheritEnvironments": [
+        "ndk"
       ],
+      "buildRoot": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a",
+      "cmakeToolchain": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake",
+      "cmakeExecutable": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
+      "variables": [
+        {
+          "name": "CMAKE_CXX_FLAGS",
+          "value": "-std\u003dc++11 -frtti -fexceptions"
+        },
+        {
+          "name": "CMAKE_FIND_ROOT_PATH",
+          "value": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\prefab\\arm64-v8a\\prefab"
+        },
+        {
+          "name": "CMAKE_BUILD_TYPE",
+          "value": "Release"
+        },
+        {
+          "name": "CMAKE_TOOLCHAIN_FILE",
+          "value": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake"
+        },
+        {
+          "name": "ANDROID_ABI",
+          "value": "arm64-v8a"
+        },
+        {
+          "name": "ANDROID_NDK",
+          "value": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle"
+        },
+        {
+          "name": "ANDROID_PLATFORM",
+          "value": "android-23"
+        },
+        {
+          "name": "CMAKE_ANDROID_ARCH_ABI",
+          "value": "arm64-v8a"
+        },
+        {
+          "name": "CMAKE_ANDROID_NDK",
+          "value": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle"
+        },
+        {
+          "name": "CMAKE_EXPORT_COMPILE_COMMANDS",
+          "value": "ON"
+        },
+        {
+          "name": "CMAKE_LIBRARY_OUTPUT_DIRECTORY",
+          "value": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a"
+        },
+        {
+          "name": "CMAKE_MAKE_PROGRAM",
+          "value": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
+        },
+        {
+          "name": "CMAKE_SYSTEM_NAME",
+          "value": "Android"
+        },
+        {
+          "name": "CMAKE_SYSTEM_VERSION",
+          "value": "23"
+        },
+        {
+          "name": "ANDROID_STL",
+          "value": "c++_shared"
+        },
+        {
+          "name": "ANDROID_TOOLCHAIN",
+          "value": "clang"
+        }
+      ]
+    }
+  },
+  "cxxBuildFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a",
+  "info": {
+    "abi": "ARM64_V8A",
+    "bitness": 64,
+    "deprecated": false,
+    "default": true
+  },
+  "originalCxxBuildFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a",
+  "variant": {
+    "buildSystemArgumentList": [
+      "-DANDROID_STL\u003dc++_shared",
+      "-DANDROID_TOOLCHAIN\u003dclang"
+    ],
+    "buildTargetSet": [],
+    "implicitBuildTargetSet": [],
+    "cFlagsList": [],
+    "cmakeSettingsConfiguration": "android-gradle-plugin-predetermined-name",
+    "cppFlagsList": [
+      "-std\u003dc++11 -frtti -fexceptions"
+    ],
+    "isDebuggableEnabled": false,
+    "module": {
+      "buildSystem": "CMAKE",
+      "cmake": {
+        "cmakeExe": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
+        "minimumCmakeVersion": "3.10.2",
+        "ninjaExe": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
+      },
+      "cmakeToolchainFile": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake",
+      "cxxFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx",
+      "gradleModulePathName": ":app",
+      "intermediatesFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates",
+      "makeFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\CMakeLists.txt",
+      "moduleBuildFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build.gradle",
+      "moduleRootFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app",
       "ndkDefaultAbiList": [
         "ARMEABI_V7A",
         "ARM64_V8A",
         "X86",
         "X86_64"
       ],
-      "cmakeToolchainFile": "."
+      "ndkFolder": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle",
+      "ndkMetaAbiList": [
+        {
+          "abi": "ARMEABI_V7A",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "ARM64_V8A",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86_64",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        }
+      ],
+      "ndkMetaPlatforms": {
+        "min": 16,
+        "max": 30,
+        "aliases": {
+          "20": 19,
+          "25": 24,
+          "J": 16,
+          "J-MR1": 17,
+          "J-MR2": 18,
+          "K": 19,
+          "L": 21,
+          "L-MR1": 22,
+          "M": 23,
+          "N": 24,
+          "N-MR1": 24,
+          "O": 26,
+          "O-MR1": 27,
+          "P": 28,
+          "Q": 29,
+          "R": 30
+        }
+      },
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultStl": "LIBCXX_STATIC",
+      "ndkVersion": "22.0.6917172",
+      "project": {
+        "compilerSettingsCacheFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\.cxx",
+        "cxxFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\.cxx",
+        "isBuildOnlyTargetAbiEnabled": true,
+        "isCmakeBuildCohabitationEnabled": false,
+        "isNativeCompilerSettingsCacheEnabled": false,
+        "rootBuildGradleFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi",
+        "sdkFolder": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk",
+        "isPrefabEnabled": false
+      },
+      "splitsAbiFilterSet": [],
+      "stlSharedObjectMap": {
+        "LIBCXX_SHARED": {
+          "ARMEABI_V7A": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\arm-linux-androideabi\\libc++_shared.so",
+          "ARM64_V8A": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\aarch64-linux-android\\libc++_shared.so",
+          "X86": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\i686-linux-android\\libc++_shared.so",
+          "X86_64": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\x86_64-linux-android\\libc++_shared.so"
+        },
+        "LIBCXX_STATIC": {},
+        "NONE": {},
+        "SYSTEM": {}
+      }
     },
-    "buildSystemArgumentList": [
-      "-DANDROID_STL\u003dc++_shared",
-      "-DANDROID_TOOLCHAIN\u003dclang"
-    ],
-    "cFlagList": [],
-    "cppFlagsList": [
-      "-std\u003dc++11 -frtti -fexceptions"
-    ],
-    "variantName": "release",
-    "soFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates\\cmake\\release\\lib",
     "objFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates\\cmake\\release\\obj",
-    "jsonFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release",
-    "gradleBuildOutputFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release",
-    "isDebuggableEnabled": false,
+    "variantName": "release",
     "validAbiList": [
       "ARM64_V8A"
     ],
-    "buildTargetSet": []
+    "prefabDirectory": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\prefab",
+    "prefabPackageDirectoryList": []
   },
-  "abi": "ARM64_V8A",
-  "abiPlatformVersion": 23,
-  "cxxBuildFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a",
-  "jsonFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\android_gradle_build.json",
-  "gradleBuildOutputFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a",
-  "objFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a",
-  "buildCommandFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\build_command.txt",
-  "buildOutputFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\build_output.txt",
-  "modelOutputFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\build_model.json",
-  "cmake": {
-    "cmakeListsWrapperFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\CMakeLists.txt",
-    "toolchainWrapperFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\android_gradle_build.toolchain.cmake",
-    "buildGenerationStateFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\build_generation_state.json",
-    "cacheKeyFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_cache_key.json",
-    "compilerCacheUseFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_cache_use.json",
-    "compilerCacheWriteFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_cache_write.json",
-    "toolchainSettingsFromCacheFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_settings_cache.cmake",
-    "cmakeWrappingBaseFolder": "."
-  },
-  "jsonGenerationLoggingRecordFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\json_generation_record.json",
-  "compileCommandsJsonFile": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\compile_commands.json"
+  "prefabFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\prefab\\arm64-v8a"
 }

@@ -39,7 +39,7 @@ public class DatabaseHelper {
 
 	public void open(String filename){
 		try{
-			sqlite=SQLiteDatabase.openDatabase(db_path+filename,null,SQLiteDatabase.OPEN_READONLY);
+			sqlite=SQLiteDatabase.openDatabase(db_path+filename,null,SQLiteDatabase.OPEN_READWRITE);
 		}
         catch (SQLException e){
             error_message=e.toString();

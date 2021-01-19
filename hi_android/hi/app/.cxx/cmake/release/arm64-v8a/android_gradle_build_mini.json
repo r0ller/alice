@@ -1,26 +1,23 @@
 {
   "buildFiles": [
-    "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\CMakeLists.txt"
+    "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\CMakeLists.txt",
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\platforms.cmake"
   ],
   "cleanCommands": [
-    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a --target clean"
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\" clean"
   ],
+  "buildTargetsCommand": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
-    "foma-Release-arm64-v8a": {
-      "artifactName": "foma",
-      "abi": "arm64-v8a",
-      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\src\\main\\jniLibs\\arm64-v8a\\libfoma.so"
-    },
     "jhi-Release-arm64-v8a": {
       "artifactName": "jhi",
-      "buildCommand": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a --target jhi",
+      "buildCommand": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\" jhi",
       "abi": "arm64-v8a",
-      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libjhi.so"
-    },
-    "hilib-Release-arm64-v8a": {
-      "artifactName": "hilib",
-      "abi": "arm64-v8a",
-      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\src\\main\\jniLibs\\arm64-v8a\\libhilib.so"
+      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\libjhi.so",
+      "runtimeFiles": [
+        "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\ndkLibs\\arm64-v8a\\libhilib.so",
+        "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\ndkLibs\\arm64-v8a\\libfoma.so"
+      ]
     }
   }
 }

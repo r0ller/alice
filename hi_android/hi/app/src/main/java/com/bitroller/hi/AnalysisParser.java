@@ -483,7 +483,7 @@ public class AnalysisParser {
                         JSONObject dependency=findMainFunctor(prevMorphology,prevSemantics,prevFunctors);
                         if(dependency!=null) {
                             JSONObject morpheme = getMorpheme(prevMorphology, dependency.getString("morpheme id"));
-                            if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN") {
+                            if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") {
                                 message.append("Megpróbálom az előző kontextusban értelmezni.");
                             } else {
                                 message.append("Trying to interpret it in the previous context.");
@@ -496,7 +496,7 @@ public class AnalysisParser {
                             MainActivity.getContext().startActivity(callingIntent);
                         }
                         else{
-                            if (LanguageChecker.getInstance().getDefaultLanguage() == "HUN") {
+                            if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") {
                                 message.append("Nem találtam a korábbi kontextusban funktort amivel együtt ezt értelmezni tudnám.");
                             } else {
                                 message.append("Didn't find functor in the previous context with which I could interpret this.");

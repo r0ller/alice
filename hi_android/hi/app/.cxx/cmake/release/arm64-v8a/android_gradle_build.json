@@ -1,54 +1,46 @@
-
 {
-	"buildFiles" : [ "C:/Users/llencses/AndroidStudioProjects/hi/app/CMakeLists.txt" ],
-	"cleanCommands" : 
-	[
-		"C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a --target clean"
-	],
-	"cppFileExtensions" : [ "cpp" ],
-	"libraries" : 
-	{
-		"foma-Release-arm64-v8a" : 
-		{
-			"abi" : "arm64-v8a",
-			"artifactName" : "foma",
-			"buildType" : "release",
-			"output" : "C:/Users/llencses/AndroidStudioProjects/hi/app/src/main/jniLibs/arm64-v8a/libfoma.so",
-			"toolchain" : "2402615091"
-		},
-		"hilib-Release-arm64-v8a" : 
-		{
-			"abi" : "arm64-v8a",
-			"artifactName" : "hilib",
-			"buildType" : "release",
-			"output" : "C:/Users/llencses/AndroidStudioProjects/hi/app/src/main/jniLibs/arm64-v8a/libhilib.so",
-			"toolchain" : "2402615091"
-		},
-		"jhi-Release-arm64-v8a" : 
-		{
-			"abi" : "arm64-v8a",
-			"artifactName" : "jhi",
-			"buildCommand" : "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a --target jhi",
-			"buildType" : "release",
-			"files" : 
-			[
-				
-				{
-					"flags" : "  --target=aarch64-none-linux-android23 --gcc-toolchain=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Djhi_EXPORTS -I..\\..\\..\\..\\jni  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -O2 -DNDEBUG  -fPIC    -c ",
-					"src" : "C:/Users/llencses/AndroidStudioProjects/hi/app/jni/jhi.cpp",
-					"workingDirectory" : "C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/arm64-v8a"
-				}
-			],
-			"output" : "C:/Users/llencses/AndroidStudioProjects/hi/app/build/intermediates/cmake/release/obj/arm64-v8a/libjhi.so",
-			"toolchain" : "2402615091"
-		}
-	},
-	"toolchains" : 
-	{
-		"2402615091" : 
-		{
-			"cCompilerExecutable" : "C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
-			"cppCompilerExecutable" : "C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
-		}
-	}
+  "stringTable": {
+    "0": "C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/arm64-v8a",
+    "1": "--target=aarch64-none-linux-android23 --gcc-toolchain=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Djhi_EXPORTS -I../../../../jni -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -std=c++11 -frtti -fexceptions -O2 -DNDEBUG -fPIC"
+  },
+  "buildFiles": [
+    "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\CMakeLists.txt",
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\build\\cmake\\platforms.cmake"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\" clean"
+  ],
+  "buildTargetsCommand": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "jhi-Release-arm64-v8a": {
+      "buildCommand": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\" jhi",
+      "buildType": "release",
+      "toolchain": "2913151282",
+      "abi": "arm64-v8a",
+      "artifactName": "jhi",
+      "files": [
+        {
+          "src": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\jni\\jhi.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\.cxx\\cmake\\release\\arm64-v8a\\libjhi.so",
+      "runtimeFiles": [
+        "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\ndkLibs\\arm64-v8a\\libhilib.so",
+        "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\ndkLibs\\arm64-v8a\\libfoma.so"
+      ]
+    }
+  },
+  "toolchains": {
+    "2913151282": {
+      "cppCompilerExecutable": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
 }

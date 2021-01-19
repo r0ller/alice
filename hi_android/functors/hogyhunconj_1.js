@@ -1,0 +1,11 @@
+text="";
+for(i=0;i<parameterList.length;++i){
+	if(parameterList[i].indexOf('CON_')>-1){
+		if(typeof arguments[i+2]!=='undefined'&&arguments[i+2].length>0){
+			con=JSON.parse(arguments[i+2]);
+			if(text.length>0)text=text+" "+con.word;
+			else text=con.word;
+		}
+	}
+}
+return text;

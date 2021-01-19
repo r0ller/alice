@@ -3,9 +3,22 @@
     tools:context="hi.hi.MainActivity" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:id="@+id/en_GB"
+        android:checkable="true"
+        android:enabled="true"
+        android:title="English GB"
+        android:visible="true" />
+    <item
+        android:id="@+id/en_US"
+        android:checkable="true"
+        android:enabled="true"
+        android:title="English US"
+        android:visible="true" />
+    <item
+        android:id="@+id/hu_HU"
+        android:checkable="true"
+        android:enabled="true"
+        android:title="Hungarian"
+        android:visible="true" />
 
 </menu>

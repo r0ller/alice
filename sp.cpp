@@ -21,11 +21,13 @@ int interpreter::set_node_info(const std::string& symbol, const lexicon& word){
 	unsigned int rule_step_failed=0;
 
 	nodeinfo.node_id=++nr_of_nodes;
-	if(word.gcat.empty()==true){
-		throw std::runtime_error("No way that I set an empty gcat for a node.");
-	}
 	nodeinfo.symbol=symbol;
-	if(word.lexeme.empty()==false) nodeinfo.expression=word;
+	if(word.lexeme.empty()==false){
+		if(word.gcat.empty()==true){
+			throw std::runtime_error("No way that I set an empty gcat for a node.");
+		}
+		nodeinfo.expression=word;
+	}
 	nodeinfo.left_child=0;
 	nodeinfo.right_child=0;
 	node_infos.push_back(nodeinfo);
@@ -1035,11 +1037,13 @@ std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_
 	}
 	std::get<1>(functor_found.second)=0;
 	std::get<2>(functor_found.second)=0;
+	functor_found.first.first=0;
+	functor_found.first.second=0;
 	for(auto&& i:longest_traversals){
 	//TODO: two interpretations with the same number of deps must not be allowed.
 	//The only exception is when the scripts behind the functors are the same.
 	//This logic is missing though here.
-		if(std::get<1>(i.second.first)>std::get<1>(functor_found.second)){
+		if(functor_found.first.first==0&&functor_found.first.second==0||std::get<1>(i.second.first)>std::get<1>(functor_found.second)){
 			functor_found.first=i.first;
 			functor_found.second=i.second.first;
 		}

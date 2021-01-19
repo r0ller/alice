@@ -368,6 +368,19 @@ insert into SYMBOLS values('HUN_ConjAlist','HUN',NULL);
 insert into SYMBOLS values('HUN_ConjA_End','HUN',NULL);
 insert into SYMBOLS values('HUN_Alist_End','HUN',NULL);
 insert into SYMBOLS values('HUN_Abar3_End','HUN',NULL);
+insert into SYMBOLS values('HUN_ANP','HUN','Attributive Noun Phrase');
+
+insert into SYMBOLS values('t_HUN_Verb_DefSg1','HUN',NULL);
+insert into SYMBOLS values('HUN_Verb_lfea_DefSg1','HUN',NULL);
+insert into SYMBOLS values('DefSg1','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Dat','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_lfea_Dat','HUN',NULL);
+insert into SYMBOLS values('Dat','HUN',NULL);
+insert into SYMBOLS values('HUN_N_Dat','HUN',NULL);
+insert into SYMBOLS values('HUN_Con_lfea_Dat','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_Dat','HUN',NULL);
+insert into SYMBOLS values('%empty','HUN',NULL);
+insert into SYMBOLS values('HUN_Empty','HUN',NULL);
 
 /*Entries with NULL value for token are not to be generated in the yacc source.*/
 insert into GCAT values('CON', 'Stem', 'ENG', '1',NULL,NULL);
@@ -465,6 +478,10 @@ insert into GCAT values('CON', 'Sub', 'HUN', '173',NULL,NULL);
 insert into GCAT values('CON', 'Ins', 'HUN', '174',NULL,NULL);
 insert into GCAT values('Verb', 'IndefPl3', 'HUN', '175',NULL,NULL);
 
+insert into GCAT values('Verb', 'DefSg1', 'HUN', '176',NULL,NULL);
+insert into GCAT values('Noun', 'Dat', 'HUN', '177',NULL,NULL);
+insert into GCAT values('CON', 'Dat', 'HUN', '178',NULL,NULL);
+
 insert into FUNCTOR_DEFS values('LISTENGV_1', 'js', '1', 'listengv_1.js');
 insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', 'contactengn_1.js');
 insert into FUNCTOR_DEFS values('Num_2', 'js', '1', 'numeng_1.js');
@@ -490,6 +507,14 @@ insert into FUNCTOR_DEFS values('Noun_1', 'js', '1', NULL);
 insert into FUNCTOR_DEFS values('KERESHUNV_1', 'js', '1', 'kereshunv_1.js');
 insert into FUNCTOR_DEFS values('NEVJEGYHUNN_1', 'js', '1', 'nevjegyhunn_1.js');
 insert into FUNCTOR_DEFS values('NEVJEGYZEKHUNN_1', 'js', '1', 'nevjegyhunn_1.js');
+insert into FUNCTOR_DEFS values('NYITHUNV_1', 'js', '1', 'nyithunv_1.js');
+insert into FUNCTOR_DEFS values('MEGHUNVBPFX_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('OLDALHUNNOUN_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('UZENHUNV_1', 'js', '1', 'uzenhunv_1.js');
+insert into FUNCTOR_DEFS values('CONTACT_1', 'js', '1', 'contact_1.js');
+insert into FUNCTOR_DEFS values('HOGYHUNCONJ_1', 'js', '1', 'hogyhunconj_1.js');
+insert into FUNCTOR_DEFS values('KULDHUNV_1', 'js', '1', 'kuldhunv_1.js');
+insert into FUNCTOR_DEFS values('NEHUNNEG_1', 'js', '1', 'nehunneg_1.js');
 
 insert into FUNCTOR_DEFS values('KEZDODHUNAR_1', 'js', '1', NULL);
 insert into FUNCTOR_DEFS values('VEGZODHUNAR_1', 'js', '1', NULL);
@@ -543,6 +568,14 @@ insert into FUNCTORS values('NEMHUNNEG', '1', 'NEMHUNNEG_1');
 insert into FUNCTORS values('NEVJEGYZEKHUNN', '1', 'NEVJEGYZEKHUNN_1');
 insert into FUNCTORS values('HUNACTPROPERTIES', '1', NULL);
 insert into FUNCTORS values('HUNPROPERTIES', '1', NULL);
+insert into FUNCTORS values('NYITHUNV', '1', 'NYITHUNV_1');
+insert into FUNCTORS values('MEGHUNVBPFX', '1', 'MEGHUNVBPFX_1');
+insert into FUNCTORS values('OLDALHUNNOUN', '1', 'OLDALHUNNOUN_1');
+insert into FUNCTORS values('UZENHUNV', '1', 'UZENHUNV_1');
+insert into FUNCTORS values('CONTACT', '1', 'CONTACT_1');
+insert into FUNCTORS values('HOGYHUNCONJ', '1', 'HOGYHUNCONJ_1');
+insert into FUNCTORS values('KULDHUNV', '1', 'KULDHUNV_1');
+insert into FUNCTORS values('NEHUNNEG', '1', 'NEHUNNEG_1');
 
 insert into FUNCTOR_TAGS values('CALLENGV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('CALLENGV', '1', NULL, '2', 'type', 'action');
@@ -554,6 +587,12 @@ insert into FUNCTOR_TAGS values('HIVHUNV', '1', 'main_verb', '1', 'type', 'actio
 insert into FUNCTOR_TAGS values('HIVHUNV', '1', NULL, '2', 'type', 'action');
 insert into FUNCTOR_TAGS values('KERESHUNV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('KERESHUNV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('NYITHUNV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('NYITHUNV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('UZENHUNV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('UZENHUNV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('KULDHUNV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('KULDHUNV', '1', NULL, '2', 'type', 'action');
 
 insert into LEXICON values('call', 'ENG', 'V', 'CALLENGV');
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -582,6 +621,13 @@ insert into LEXICON values('utolsó', 'HUN', 'Noun', 'ELSOUTSOHUNNOUN');
 insert into LEXICON values('keres', 'HUN', 'Verb', 'KERESHUNV');
 insert into LEXICON values('névjegy', 'HUN', 'Noun', 'NEVJEGYHUNN');
 insert into LEXICON values('névjegyzék', 'HUN', 'Noun', 'NEVJEGYZEKHUNN');
+insert into LEXICON values('nyit', 'HUN', 'Verb', 'NYITHUNV');
+insert into LEXICON values('meg', 'HUN', 'Vbpfx', 'MEGHUNVBPFX');
+insert into LEXICON values('oldal', 'HUN', 'Noun', 'OLDALHUNNOUN');
+insert into LEXICON values('üzen', 'HUN', 'Verb', 'UZENHUNV');
+insert into LEXICON values('hogy', 'HUN', 'Conj', 'HOGYHUNCONJ');
+insert into LEXICON values('küld', 'HUN', 'Verb', 'KULDHUNV');
+insert into LEXICON values('ne', 'HUN', 'Neg', 'NEHUNNEG');
 
 /*
 insert into LEXICON values('kezdőd', 'HUN', 'Adj', 'KEZDODHUNAR');*//*AR:adjective, reflexive; current foma fst does not break it down to this level*/
@@ -688,7 +734,9 @@ insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '4', 
 insert into RULE_TO_RULE_MAP values( 'HUN_Vbar1', 'HUN_ImpVerb', 'HUN_DP', '5', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar1', 'HUN_NP', '1', NULL, NULL, 'Noun', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_Vbar2', 'HUN_ImpVerb', 'HUN_N_Acc', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '1', NULL, '2', 'Noun', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar2', 'HUN_ImpVerb', 'HUN_N_Dat', '1', '2', NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_Vbar2', 'HUN_ImpVerb', 'HUN_N_Dat', '2', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '1', '13', '2', 'Noun', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '3', '4', '5', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Neg', NULL, 'N', 'HUN_Vhead', NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '4', '6', '5', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Verb', NULL, 'N', 'HUN_Vhead', NULL, 'HUN');
@@ -700,6 +748,8 @@ insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '9', '10',
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '10', NULL, NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Conj', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '11', '12', '12', 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '12', '12', NULL, 'Noun', NULL, 'N', 'HUN_RPro', NULL, 'Verb', NULL, 'N', 'HUN_IVP', NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_Vbar2', 'HUN_RC', '13', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Conj', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_RC', 'HUN_Conj', 'HUN_N_Sg', '1', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_IVPbar', 'HUN_N_Ins', 'HUN_V', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_IVPbar', 'HUN_N_Sub', 'HUN_V', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_IVPbar', 'HUN_V', 'HUN_N_Acc', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
@@ -743,6 +793,9 @@ insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_INVP', '1', NUL
 insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVP', '1', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVPlist', '1', '2', NULL, 'Conj', NULL, 'H', NULL, NULL, 'Neg', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVPlist', '2', NULL, NULL, 'Conj', NULL, 'H', NULL, NULL, 'Verb', NULL, 'N', 'HUN_IVP', NULL, 'HUN');
+
+insert into RULE_TO_RULE_MAP values( 'HUN_VP','HUN_ImpVerb','HUN_Empty', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'HUN_Empty', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP','HUN_Neg','HUN_ImpVerb', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'HUN');
 
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'CONTACTENGN', '1');
@@ -810,6 +863,19 @@ insert into DEPOLEX values('ESHUNCONJ', '1', '1', NULL, '2', '2', '0', 'NEMHUNNE
 insert into DEPOLEX values('ESHUNCONJ', '1', '2', NULL, '2', NULL, '0', 'HUNACTPROPERTIES', '1');
 insert into DEPOLEX values('VAGYHUNCONJ', '1', '1', NULL, '2', '2', '0', 'NEMHUNNEG', '1');
 insert into DEPOLEX values('VAGYHUNCONJ', '1', '2', NULL, '2', NULL, '0', 'HUNACTPROPERTIES', '1');
+
+insert into DEPOLEX values('NYITHUNV', '1', '1', NULL, NULL, '2', '0', 'MEGHUNVBPFX', '1');
+insert into DEPOLEX values('NYITHUNV', '1', '2', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('MEGHUNVBPFX', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+
+insert into DEPOLEX values('UZENHUNV', '1', '1', NULL, '2', NULL, '0', 'CONTACT', '1');
+insert into DEPOLEX values('UZENHUNV', '1', '2', NULL, NULL, NULL, '0', 'HOGYHUNCONJ', '1');
+insert into DEPOLEX values('CONTACT', '1', '1', '1', '2', NULL, '1', 'Noun', '1');
+insert into DEPOLEX values('CONTACT', '1', '2', '1', NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('HOGYHUNCONJ', '1', '1', NULL, NULL, NULL, '1', 'CON', '1');
+insert into DEPOLEX values('KULDHUNV', '1', '1', NULL, '2', NULL, '0', 'NEHUNNEG', '1');
+insert into DEPOLEX values('KULDHUNV', '1', '2', NULL, '2', NULL, '1', 'CON', '1');
+insert into DEPOLEX values('NEHUNNEG', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL,NULL);
@@ -1252,4 +1318,28 @@ insert into GRAMMAR values('HUN','HUN_IVPConj','HUN_IVPConj','HUN_ConjV',NULL,NU
 insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVPConj',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVP',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_INVP',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_ANP','HUN_N_Sg','HUN_N_Sg',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Acc','HUN_ANP','HUN_Noun_lfea_Acc',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_Verb_lfea_DefSg1','t_HUN_Verb_DefSg1',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_DefSg1',NULL,
+'"const node_info& HUN_Verb_stem=sparser->get_node_info($1);
+const node_info& HUN_Verb_lfea_DefSg1=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_DefSg1");
+$$=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_DefSg1);"');
+insert into GRAMMAR values('HUN','HUN_Noun_lfea_Dat','t_HUN_Noun_Dat',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_N_Sg','HUN_Noun_lfea_Dat',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Con_lfea_Dat','t_HUN_CON_Dat',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_N_Sg','HUN_Con_lfea_Dat',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_RC','HUN_Conj','HUN_N_Sg',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Vbar2','HUN_ImpVerb','HUN_N_Dat',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Empty','%empty',NULL,NULL,
+'"lexicon empty;
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Empty->%empty");
+$$=sparser->set_node_info("HUN_Empty",empty);"');
+insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerb','HUN_Empty',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_Neg','HUN_ImpVerb',NULL,NULL);
+
 COMMIT;
