@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private String commandScript;
     private byte[] commandBytes=null;
     private static String recognisedText="";
-    private static String originalText="";
+    private static String originalSendMsgText="";
 	private String lastFailure="";
     private ArrayList<String> recognisedTexts;
     private static Context context;
@@ -76,8 +76,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		return recognisedText;
 	}
 
-	public static String getOriginalText(){
-		return originalText;
+	public static String getOriginalSendMsgText(){
+		return originalSendMsgText;
 	}
 
 	static {
@@ -215,25 +215,26 @@ public class MainActivity extends Activity implements OnClickListener {
             AssetManager am = getAssets();
            	String[] assetsPath = am.list("");
            	if(assetsPath==null) finishAffinity();
-			//if(dbModified==new Date(0)){
-			//if(dbModified==new Date(0)){
 			if(dbModified.before(BuildConfig.buildTime)==true||dbModified==new Date(0)){
+				long diff=dbModified.getTime()-BuildConfig.buildTime.getTime();
+//				Toast.makeText(this, "diff:"+diff, Toast.LENGTH_LONG).show();
 				copyAsset(am, "hi.db", toPath + "/hi.db");
-			}
-			DatabaseHelper hiDb=new DatabaseHelper();
-			hiDb.open("hi.db");
-			String[] dbTables=hiDb.exec_sql("SELECT name FROM sqlite_master WHERE type='table' AND name='{settings}';");
-			if(dbTables==null){
-				hiDb.exec_sql("CREATE TABLE settings(key text primary key,value text);");
-				if(hiDb.error_message()!=null){
-					finishAffinity();
+				DatabaseHelper hiDb=new DatabaseHelper();
+				hiDb.open("hi.db");
+				String[] dbTables=hiDb.exec_sql("SELECT name FROM sqlite_master WHERE type='table' AND name='{settings}';");
+				if(dbTables==null){
+//					Toast.makeText(this, "creating settings", Toast.LENGTH_LONG).show();
+					hiDb.exec_sql("CREATE TABLE settings(key text primary key,value text);");
+					if(hiDb.error_message()!=null){
+						finishAffinity();
+					}
+					hiDb.exec_sql("INSERT INTO settings values('language','en-US');");
+					if(hiDb.error_message()!=null){
+						finishAffinity();
+					}
 				}
-				hiDb.exec_sql("INSERT INTO settings values('language','en-US');");
-				if(hiDb.error_message()!=null){
-					finishAffinity();
-				}
+				hiDb.close();
 			}
-			hiDb.close();
 			String assetPath="";
 			for (String assetIterator : assetsPath) {
 				if (assetIterator.endsWith(".fst") == true) {
@@ -274,60 +275,6 @@ public class MainActivity extends Activity implements OnClickListener {
 //			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_RECORD_AUDIO);
 //		}
 		triggerSpeechRecoginzer();
-//		//test new web scenario: nyisd meg a freemail.hu oldalt
-//		mWebView.setWebViewClient(new WebViewClient() {
-//			@Override
-//			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-//				//TODO: Handle error
-//			}
-//			@Override
-//			public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse){
-//				//TODO: Handle error
-//			}
-//			@Override
-//			public boolean shouldOverrideUrlLoading(WebView view, String url) {//TODO: String url got deprecated in api level 24, need to differentiate
-//				view.loadUrl(url);
-//				return false;
-//			}
-//			@Override
-//			public void onPageFinished(WebView view, String url) {
-//				super.onPageFinished(view, url);
-//				//https://stackoverflow.com/questions/59037366/how-to-convert-htmlcollection-to-string
-//				String js="(function() { var inputList=document.getElementsByTagName('input');inputArray=Array.from(inputList);var inputJSON={};for(var i=0;i<inputArray.length;++i){inputJSON['i'+i]=inputArray[i].outerHTML;} return JSON.stringify(inputJSON); })();";
-////				String js="(function() { return 'this'; })();";
-//				view.evaluateJavascript(js, new ValueCallback<String>() {
-//					@Override
-//					public void onReceiveValue(String s) {
-//						//https://stackoverflow.com/questions/19788294/how-does-evaluatejavascript-work
-////						JsonReader reader = new JsonReader(new StringReader(s));
-////						// Must set lenient to parse single values
-////						reader.setLenient(true);
-////						try {
-////							if(reader.peek() != JsonToken.NULL) {
-////								if(reader.peek() == JsonToken.STRING) {
-////									String msg = reader.nextString();
-////									if(msg != null) {
-////										//Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-////										setText(msg);
-////									}
-////								}
-////							}
-////						} catch (IOException e) {
-////							Log.e("TAG", "MainActivity: IOException", e);
-////						} finally {
-////							try {
-////								reader.close();
-////							} catch (IOException e) {
-////								// NOOP
-////							}
-////						}
-//					setText(s);
-//					}
-//				});
-////				view.loadUrl(js);
-//			}
-//		});
-//		mWebView.loadUrl("http://freemail.hu");
 	}
 
 	public void onResume() {
@@ -413,10 +360,15 @@ public class MainActivity extends Activity implements OnClickListener {
 						}
 						//((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
 					}
-					else if(recognisedText.indexOf(" hogy ")>0){
-						originalText=recognisedText;
-						recognisedText=recognisedText.substring(0,recognisedText.indexOf(" hogy "));
-						recognisedText+=" hogy x";
+					else{
+						if(recognisedText.indexOf(" hogy ")>0){
+							originalSendMsgText=recognisedText;
+							//remove message part as it's irrelevant from the analysis point of view
+							recognisedText=recognisedText.substring(0,recognisedText.indexOf(" hogy "));
+							//add 'x' as mock message otherwise the sentence w/o the removed message would be incorrect
+							recognisedText+=" hogy x";
+						}
+						else originalSendMsgText="";
 					}
 				}
 				String trimmedInput = recognisedText;
@@ -427,7 +379,15 @@ public class MainActivity extends Activity implements OnClickListener {
 					oText=recognisedText;
 				}
 				if(recognisedText.isEmpty()==false){
-					if(recognisedText.contentEquals(oText)==false) setText(recognisedText);
+					if(recognisedText.contentEquals(oText)==false){
+						if(originalSendMsgText.isEmpty()==true) {
+							setText(recognisedText);
+						}
+						else{
+							String mock=recognisedText.substring(0,recognisedText.length()-1);
+							setText(mock);
+						}
+					}
 					String language;
 					if(LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") {
 						language = "HUN";
@@ -489,10 +449,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
 		String language=LanguageChecker.getInstance().getDefaultLanguage();
-		if(language=="hu-HU"){
+//		Toast.makeText(this, "language:"+language, Toast.LENGTH_LONG).show();
+		if(language.contentEquals("hu-HU")){
 			optionsMenu.findItem(R.id.hu_HU).setChecked(true);
 		}
-		else if(language=="en-GB"){
+		else if(language.contentEquals("en-GB")){
 			optionsMenu.findItem(R.id.en_GB).setChecked(true);
 		}
 		else{
@@ -528,14 +489,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void triggerSpeechRecoginzer(){
 //beginSilentDebug
-//		LanguageChecker.getInstance().setLanguage("hu-HU");
-//		if(recognisedText.isEmpty()==true) recognisedText="üzenem péternek hogy búék";
-//		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
-//		Intent callingIntent = new Intent(context, MainActivity.class);
-//		callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//		callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//		callingIntent.putExtra("tryagain", "true");
-//		context.startActivity(callingIntent);
+/*		LanguageChecker.getInstance().setLanguage("hu-HU");
+		if(recognisedText.isEmpty()==true) recognisedText="üzenem gergőnek hogy helló";
+		((TextView)findViewById(R.id.texter)).append(recognisedText+"\n\n");
+		Intent callingIntent = new Intent(context, MainActivity.class);
+		callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		callingIntent.putExtra("tryagain", "true");
+		context.startActivity(callingIntent);*/
 //endSilentDebug
 
 //beginNormalDebug

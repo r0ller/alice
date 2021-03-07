@@ -15,5 +15,15 @@ for(i=0;i<parameterList.length;++i){
 			else send=send.stem;
 		}
 	}
+	else if(parameterList[i].indexOf('Num_')>-1){
+		if(typeof arguments[i+2]!=='undefined'&&arguments[i+2].length>0){
+			send=arguments[i+2];
+		}
+	}
+	else if(parameterList[i].indexOf('ELSOUTSOHUNNOUN_')>-1){
+		if(typeof arguments[i+2]!=='undefined'&&arguments[i+2].length>0){
+			send=arguments[i+2];
+		}
+	}
 }
 Android.assertSend(send);

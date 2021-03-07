@@ -1,2 +1,4 @@
 # ninja log v5
 0	10	0	clean	44b7c75eaf04bbbf
+1	3535	636763166	CMakeFiles/jhi.dir/jni/jhi.cpp.o	fcc4ec8abf735e27
+3538	6261	636763169	libjhi.so	458730d620725c6e

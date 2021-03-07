@@ -431,34 +431,31 @@ public class AnalysisParser {
                     //or if multiple morpheme analyses are available but only with CON gcat, leave the one having the most tags
                     for(int i=0;i<morphology.length();++i){
                         JSONObject morpheme_i=morphology.getJSONObject(i);
-                        if(indexesProcessed.contains(i)==false&&morpheme_i.getString("gcat").contentEquals("CON")){
+                        if(indexesToDelete.contains(i)==false&&morpheme_i.getString("gcat").contentEquals("CON")){
                             String wordForm=morpheme_i.getString("word");
                             JSONArray tags_i=morpheme_i.optJSONArray("tags");
                             int nrOfTags=0;
                             if(tags_i!=null) nrOfTags=tags_i.length();
-                            int morphemeIndex=i;
                             for(int j=0;j<morphology.length();++j){
                                 JSONObject morpheme_j=morphology.getJSONObject(j);
-                                if(i!=j&&morpheme_j.getString("gcat").contentEquals("CON")
+                                if(i!=j&&indexesToDelete.contains(j)==false&&morpheme_j.getString("gcat").contentEquals("CON")
                                         &&morpheme_j.getString("word").contentEquals(wordForm)){
                                     JSONArray tags_j=morpheme_j.optJSONArray("tags");
                                     if(tags_j!=null&&tags_j.length()>nrOfTags) {
                                         nrOfTags = tags_j.length();
-                                        indexesToDelete.add(morphemeIndex);
-                                        morphemeIndex=j;
+                                        indexesToDelete.add(i);
+                                        break;
                                     }
                                     else{
                                         indexesToDelete.add(j);
                                     }
-                                    indexesProcessed.add(j);
                                 }
                                 else if(i!=j&&morpheme_j.getString("gcat").contentEquals("CON")==false
                                         &&morpheme_j.getString("word").contentEquals(wordForm)){
                                     indexesToDelete.add(i);
-                                    indexesProcessed.add(j);
+                                    break;
                                 }
                             }
-                            indexesProcessed.add(i);
                         }
                     }
                     if(indexesToDelete.isEmpty()==false){

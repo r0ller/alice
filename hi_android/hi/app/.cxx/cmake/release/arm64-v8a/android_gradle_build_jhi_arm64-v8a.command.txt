@@ -1,0 +1,7 @@
+Executable : C:\Users\llencses\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+C:\Users\llencses\AndroidStudioProjects\hi\app\.cxx\cmake\release\arm64-v8a
+jhi
+jvmArgs : 
+

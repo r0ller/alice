@@ -1,5 +1,9 @@
 package com.bitroller.hi;
 
+import android.widget.Toast;
+
+import static android.widget.Toast.*;
+
 public class LanguageChecker{
 	private static LanguageChecker languageChecker;
 	private String defaultLanguage="";

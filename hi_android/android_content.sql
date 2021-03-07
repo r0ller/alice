@@ -373,14 +373,21 @@ insert into SYMBOLS values('HUN_ANP','HUN','Attributive Noun Phrase');
 insert into SYMBOLS values('t_HUN_Verb_DefSg1','HUN',NULL);
 insert into SYMBOLS values('HUN_Verb_lfea_DefSg1','HUN',NULL);
 insert into SYMBOLS values('DefSg1','HUN',NULL);
+insert into SYMBOLS values('Dat','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Noun_Dat','HUN',NULL);
 insert into SYMBOLS values('HUN_Noun_lfea_Dat','HUN',NULL);
-insert into SYMBOLS values('Dat','HUN',NULL);
 insert into SYMBOLS values('HUN_N_Dat','HUN',NULL);
 insert into SYMBOLS values('HUN_Con_lfea_Dat','HUN',NULL);
 insert into SYMBOLS values('t_HUN_CON_Dat','HUN',NULL);
 insert into SYMBOLS values('%empty','HUN',NULL);
 insert into SYMBOLS values('HUN_Empty','HUN',NULL);
+insert into SYMBOLS values('HUN_Num_lfea_Dat','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Dat','HUN',NULL);
+insert into SYMBOLS values('Del','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Del','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_lfea_Del','HUN',NULL);
+insert into SYMBOLS values('HUN_Num_lfea_Del','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Num_Del','HUN',NULL);
 
 /*Entries with NULL value for token are not to be generated in the yacc source.*/
 insert into GCAT values('CON', 'Stem', 'ENG', '1',NULL,NULL);
@@ -481,6 +488,9 @@ insert into GCAT values('Verb', 'IndefPl3', 'HUN', '175',NULL,NULL);
 insert into GCAT values('Verb', 'DefSg1', 'HUN', '176',NULL,NULL);
 insert into GCAT values('Noun', 'Dat', 'HUN', '177',NULL,NULL);
 insert into GCAT values('CON', 'Dat', 'HUN', '178',NULL,NULL);
+insert into GCAT values('Num', 'Dat', 'HUN', '179',NULL,NULL);
+insert into GCAT values('Noun', 'Del', 'HUN', '180',NULL,NULL);
+insert into GCAT values('Num', 'Del', 'HUN', '181',NULL,NULL);
 
 insert into FUNCTOR_DEFS values('LISTENGV_1', 'js', '1', 'listengv_1.js');
 insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', 'contactengn_1.js');
@@ -797,6 +807,10 @@ insert into RULE_TO_RULE_MAP values( 'HUN_ConjV','HUN_Conj','HUN_IVPlist', '2', 
 insert into RULE_TO_RULE_MAP values( 'HUN_VP','HUN_ImpVerb','HUN_Empty', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'HUN_Empty', NULL, 'N', NULL, NULL, 'HUN');
 insert into RULE_TO_RULE_MAP values( 'HUN_VP','HUN_Neg','HUN_ImpVerb', '1', NULL, NULL, 'Verb', NULL, 'N', NULL, NULL, 'Neg', NULL, 'H', NULL, NULL, 'HUN');
 
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerb', 'HUN_DP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerb', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, NULL, 'Num', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerb', 'HUN_DP', '3', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+
 insert into DEPOLEX values('CON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'CONTACTENGN', '1');
 insert into DEPOLEX values('LISTENGV', '2', '1', NULL, NULL, NULL, '0', 'CONTACTENGN', '2');
@@ -874,7 +888,9 @@ insert into DEPOLEX values('CONTACT', '1', '1', '1', '2', NULL, '1', 'Noun', '1'
 insert into DEPOLEX values('CONTACT', '1', '2', '1', NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('HOGYHUNCONJ', '1', '1', NULL, NULL, NULL, '1', 'CON', '1');
 insert into DEPOLEX values('KULDHUNV', '1', '1', NULL, '2', NULL, '0', 'NEHUNNEG', '1');
-insert into DEPOLEX values('KULDHUNV', '1', '2', NULL, '2', NULL, '1', 'CON', '1');
+insert into DEPOLEX values('KULDHUNV', '1', '2', NULL, '3', NULL, '0', 'Num', '1');
+insert into DEPOLEX values('KULDHUNV', '1', '3', NULL, '4', NULL, '0', 'ELSOUTSOHUNNOUN', '1');
+insert into DEPOLEX values('KULDHUNV', '1', '4', NULL, '4', NULL, '1', 'CON', '1');
 insert into DEPOLEX values('NEHUNNEG', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);
@@ -1341,5 +1357,15 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Empty->%empty"
 $$=sparser->set_node_info("HUN_Empty",empty);"');
 insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerb','HUN_Empty',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_VP','HUN_Neg','HUN_ImpVerb',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_DP','HUN_DPbar','HUN_N_Dat',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerb','HUN_DP',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_Num','HUN_Num_lfea_Dat',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_Nums','HUN_Num_lfea_Dat',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_lfea_Dat','t_HUN_Num_Dat',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_Num','HUN_Num_lfea_Del',NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Num_lfea_Del','t_HUN_Num_Del',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_Noun_lfea_Del','t_HUN_Noun_Del',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_N_Sg','HUN_Noun_lfea_Del',NULL,NULL);
 
 COMMIT;

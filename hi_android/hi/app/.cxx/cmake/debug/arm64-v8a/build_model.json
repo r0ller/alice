@@ -187,7 +187,6 @@
       "project": {
         "compilerSettingsCacheFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\.cxx",
         "cxxFolder": "C:\\Users\\llencses\\AndroidStudioProjects\\hi\\.cxx",
-        "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
         "isBuildOnlyTargetAbiEnabled": true,
         "isCmakeBuildCohabitationEnabled": false,
         "isNativeCompilerSettingsCacheEnabled": false,
