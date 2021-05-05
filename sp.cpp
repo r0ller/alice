@@ -1444,6 +1444,48 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	return rule_step_failed;
 }
 
+void interpreter::whatever(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >& functors_validated_for_nodes){
+    for(auto&& i:functors_validated_for_nodes){
+        node_info *main_node=&get_private_node_info(i.first);
+        node_info *dependent_node=&get_private_node_info(i.second.second);
+        if(main_node->expression.dependencies==NULL||dependent_node->expression.dependencies==NULL){
+            //TODO: check if rule_step_failed needs to be set here or exception should be thrown.
+            //This may be the right place (check it!) to prevent dumps if a word gets combined with another
+            //one where one of them is not registered in the DEPOLEX.
+            //See comments in lexer::dependencies_read_for_functor().
+            //As there may be more than one functors, it might be the case that execution can continue if
+            //there's at least one, where the dependencies attributes are not null.
+            //this may make sense as a first try instead of throwing an exception:
+            //rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
+        }
+        else{//this else branch was not here earlier so this alone may complicate matters even though the
+            // if branch still does not do anything
+            main_node->dependency_validation_matrix.insert(i.second);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme);
+            if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
+                dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
+            }
+        }
+    }
+}
+
+bool interpreter::is_valid_combination(node_info& main_node,node_info& dependent_node){
+    std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors_found=NULL;
+    std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
+    bool valid_combination=false;
+
+    functors_found=is_valid_expression(main_node,dependent_node);
+    if(functors_found!=NULL){
+        for(auto&& m:*functors_found){
+            functors_validated_for_nodes.insert(std::make_pair(main_node.node_id,std::make_pair(m.second.first,dependent_node.node_id)));
+        }
+        delete functors_found;
+        whatever(functors_validated_for_nodes);
+        valid_combination=true;
+    }
+    return valid_combination;
+}
+
 void interpreter::combine_sets(const unsigned int& operation, const std::vector<unsigned int>& prev_set, std::vector<unsigned int>& current_set){
 	if(operation==1){//union
 		std::set<unsigned int> union_set;

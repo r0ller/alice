@@ -70,7 +70,8 @@
 			node_info& get_private_node_info(unsigned int);
 			unsigned int get_head_node(const node_info&);
 			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
-			unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
+            std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
+            unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
 			void find_functors_for_dependency(const std::string&, const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* functors_found_for_dependencies(const node_info&, node_info&);
 			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&);
@@ -100,6 +101,7 @@
 					std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,
 					std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
 			void combine_sets(const unsigned int&, const std::vector<unsigned int>&, std::vector<unsigned int>&);
+            void whatever(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
 		public:
 			interpreter(const unsigned char toa);
 			~interpreter();
@@ -113,7 +115,7 @@
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&);
 			std::set<unsigned int> validated_terminals();
             std::vector<node_info> nodes();
-            std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
+            bool is_valid_combination(node_info&,node_info&);
     };
 
 	class semper_error:public std::exception{

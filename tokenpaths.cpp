@@ -733,7 +733,7 @@ lexicon tokenpaths::find_word_by_gcat(const std::vector<lexicon>& words,const st
     lexicon word_found;
 
     for(auto& word:words){
-        std::cout<<"gcats:"<<word.gcat<<std::endl;
+//        std::cout<<"gcats:"<<word.gcat<<std::endl;
         if(word.gcat==gcat){
             word_found=word;
             break;
@@ -776,8 +776,6 @@ void tokenpaths::build_dependency_semantics(interpreter *sparser,std::vector<lex
 }
 
 void tokenpaths::combine_nodes(interpreter *sparser,std::vector<lexicon>& words,std::set<unsigned int>& processed_words,const lexicon& main_word,const lexicon& dependent_word,unsigned int& main_verb_node_id){
-    std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors_found=NULL;
-    std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
 
     unsigned int main_node_id=sparser->set_node_info(main_word.gcat,main_word);
     node_info main_node=sparser->get_node_info(main_node_id);
@@ -785,38 +783,8 @@ void tokenpaths::combine_nodes(interpreter *sparser,std::vector<lexicon>& words,
     node_info dependent_node=sparser->get_node_info(dependent_node_id);
     std::cout<<"dependent.lexeme:"<<dependent_word.lexeme<<std::endl;
     try{
-        //wrap this in tokenpaths::is_valid_combination(){
-        functors_found=sparser->is_valid_expression(main_node,dependent_node);
-        if(functors_found!=NULL){
-            //this part is copied from interpreter::is_valid_combination()
-            //and may worth wrapping in a new method in that class so that
-            //it can be simply called here and there
-            for(auto&& m:*functors_found){
-                functors_validated_for_nodes.insert(std::make_pair(main_node.node_id,std::make_pair(m.second.first,dependent_node.node_id)));
-            }
-            delete functors_found;
-            for(auto&& i:functors_validated_for_nodes){
-                if(main_node.expression.dependencies==NULL||dependent_node.expression.dependencies==NULL){
-                    //TODO: check if rule_step_failed needs to be set here or exception should be thrown.
-                    //This may be the right place (check it!) to prevent dumps if a word gets combined with another
-                    //one where one of them is not registered in the DEPOLEX.
-                    //See comments in lexer::dependencies_read_for_functor().
-                    //As there may be more than one functors, it might be the case that execution can continue if
-                    //there's at least one, where the dependencies attributes are not null.
-                    //this may make sense as a first try instead of throwing an exception:
-                    //rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
-                }
-                else{//this else branch was not here earlier so this alone may complicate matters even though the
-                    // if branch still does not do anything
-                    main_node.dependency_validation_matrix.insert(i.second);
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in dvm ("+std::to_string(i.second.first)+","+std::to_string(i.second.second)+") dependent node functor "+dependent_node.expression.lexeme+" for main node functor "+main_node.expression.lexeme);
-                    if(dependent_node.node_links.find(main_node.node_id)==dependent_node.node_links.end()){
-                        dependent_node.node_links.insert(std::make_pair(main_node.node_id,0));//TODO:get rid of second member in node_links
-                    }
-                }
-            }
-        //}
-            //if tokenpaths::is_valid_combination() succeeds, only then combine_nodes()
+        bool valid_combination=sparser->is_valid_combination(main_node,dependent_node);
+        if(valid_combination==true){
             unsigned int combined_node_id=sparser->combine_nodes(main_word.gcat+"_"+dependent_word.gcat+"_"+std::to_string(main_node_id)+"_"+std::to_string(dependent_node_id),main_node,dependent_node);
             if(main_word.morphalytics->has_feature("main_verb")==true||main_word.morphalytics->has_feature("main_verb")==true) main_verb_node_id=combined_node_id;
             std::cout<<"combined_node_id:"<<combined_node_id<<std::endl;
