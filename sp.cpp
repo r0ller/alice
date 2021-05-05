@@ -7,7 +7,7 @@
 
 /*PUBLIC*/
 interpreter::interpreter(const unsigned char toa){
-	nr_of_nodes=0;
+    nr_of_nodes_=0;
 	toa_=toa;
 }
 
@@ -20,7 +20,7 @@ int interpreter::set_node_info(const std::string& symbol, const lexicon& word){
 	db *sqlite=NULL;
 	unsigned int rule_step_failed=0;
 
-	nodeinfo.node_id=++nr_of_nodes;
+    nodeinfo.node_id=++nr_of_nodes_;
 	nodeinfo.symbol=symbol;
 	if(word.lexeme.empty()==false){
 		if(word.gcat.empty()==true){
@@ -41,7 +41,7 @@ int interpreter::set_node_info(const std::string& symbol, const node_info& node)
 	unsigned int rule_step_failed=0;
 
 	word.gcat=symbol;
-	nodeinfo.node_id=++nr_of_nodes;
+    nodeinfo.node_id=++nr_of_nodes_;
 	if(word.gcat.empty()==true){
 		throw std::runtime_error("No way that I set an empty gcat for a node.");
 	}
@@ -197,7 +197,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 	else ;//TODO: What if none of them -like a programming language?
 	if(new_phrase_head_root.node_id!=0&&new_phrase_non_head_root.node_id!=0){
 		/*TODO:valamit kezdeni kell azzal ha a left_node->symbol='QPro' ill. ha az object_node-nak van gyereke*/
-		nodeinfo.node_id=++nr_of_nodes;
+        nodeinfo.node_id=++nr_of_nodes_;
 		nodeinfo.symbol=symbol;
 		if(toa_&HI_SEMANTICS){
 			sqlite=db_factory::get_instance();
@@ -225,7 +225,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 							non_head_leaf_words+=get_node_info(i).expression.morphalytics->word()+" ";
 					}
 					if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
-					throw invalid_combination(head_leaf_words,non_head_leaf_words);
+                    throw invalid_combination(head_leaf_words,non_head_leaf_words);
 				}
 			}
 		}
@@ -588,7 +588,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	std::stack<p_m1_node_id_m2_d_key> traversal_stack;
 
 	const node_info& node=get_node_info(node_id);
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for functor "+node.expression.lexeme+" d_key "+d_key);
+    logger::singleton("console",3,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for functor "+node.expression.lexeme+" d_key "+d_key);
 	if(node.expression.gcat=="CON"){
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme","CON");
 //		Just copied here as a reminder once CON is allowed to have more than one d_key
@@ -625,7 +626,11 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			d_counter_validated_dependencies.clear();
 			//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
-			for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
+            std::cout<<"dvm size:"<<node.dependency_validation_matrix.size()<<std::endl;
+            for(auto& i:node.dependency_validation_matrix){
+                std::cout<<"dvm:("<<i.first<<","<<i.second<<")"<<std::endl;
+            }
+            for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 					dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 					++dependency_matrix_entry){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dvm entry row index:"+std::to_string(dependency_matrix_entry->first)+", dep.node id:"+std::to_string(dependency_matrix_entry->second));
@@ -743,6 +748,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			find_dependencies_for_node(j->first,dependencies_found,optional_dependencies_checked);
 		}
 	}
+    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 }
 
 void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key,const unsigned int parent_d_counter,
@@ -760,7 +766,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0,path_nr=0,odep_level=0;
 
 	const node_info& node=get_node_info(node_id);
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for optional functor "+functor+" d_key "+d_key);
+    logger::singleton("console",3,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for optional functor "+functor+" d_key "+d_key);
 	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
 	if(depolex_entry==NULL){
 		//throw exception as for each functor there must be one entry with at least NULL dependency
@@ -939,6 +946,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(std::string(),0,0,0,0)));
 		}
 	}
+    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 }
 
 unsigned int interpreter::nr_of_dependencies_to_be_found(){
@@ -973,7 +981,8 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> functor_found;
 	std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > > longest_traversals;
 
-	const node_info& root_node=get_node_info(nr_of_nodes);
+    const node_info& root_node=get_node_info(nr_of_nodes_);
+    std::cout<<"root_node:"<<nr_of_nodes_<<std::endl;
 	//TODO: add an entry in the symbols table for the symbol main_verb
 	//and think over how to make it customizable for different languages
 	get_nodes_by_symbol(root_node,"main_verb",std::string(),verbs_found);
@@ -1005,7 +1014,7 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	}
 	else{
 		if(verbs_found.size()==0)
-			throw std::runtime_error("No main verb found.");
+            throw std::runtime_error("No main verb found.");
 		else
 			throw std::runtime_error("More than one main verb found.");
 	}
@@ -1753,6 +1762,6 @@ std::vector<node_info> interpreter::nodes(){
 }
 
 void interpreter::destroy_node_infos(){
-	nr_of_nodes=0;
+    nr_of_nodes_=0;
 	return;
 }

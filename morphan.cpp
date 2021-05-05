@@ -120,7 +120,7 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 		}
 	}
 	else{
-		analysis=new morphan_result(word,lid_);
+        analysis=new morphan_result(word,lid_,"");
 		if(analysis->is_erroneous()==false){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed without analysis");
 			analyses->push_back(*analysis);

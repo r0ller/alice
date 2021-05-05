@@ -6,13 +6,14 @@
 unsigned int morphan_result::global_id=0;
 
 /*PUBLIC*/
-morphan_result::morphan_result(const std::string& word, const std::string& lid){
+morphan_result::morphan_result(const std::string& word, const std::string& lid, const std::string& gcat=""){
 
 	this->lid=lid;
 	my_id=++morphan_result::global_id;
 	word_form=word;
 	word_stem=word;
-	word_gcat="CON";
+    if(gcat.empty()==true) word_gcat="CON";
+    else word_gcat=gcat;
 }
 
 morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes, const std::string& lid){

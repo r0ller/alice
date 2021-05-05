@@ -25,14 +25,15 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri){
 #endif
 
-	std::string analysis;
+    std::string analyses;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
 	std::locale locale;
 	yy::parser parser;
+    std::time_t timestamp=std::time(nullptr);
 
-	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths;
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
@@ -186,11 +187,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-	analysis=token_paths->create_analysis(toa,target_language,std::string(human_input));
-	if(analysis.empty()==false){
-		analysischr=new char[analysis.length()+1];
-		analysis.copy(analysischr,analysis.length(),0);
-		analysischr[analysis.length()]='\0';
+    analyses=token_paths->create_analysis(toa,target_language,std::string(human_input),timestamp,"test");
+    if(analyses.empty()==false){
+        analysischr=new char[analyses.length()+1];
+        analyses.copy(analysischr,analyses.length(),0);
+        analysischr[analyses.length()]='\0';
 	}
 	lexer::delete_cache();
 	delete token_paths;

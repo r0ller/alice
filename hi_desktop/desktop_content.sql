@@ -130,6 +130,8 @@ insert into SYMBOLS values('t_ENG_N_swVowel','ENG',NULL);
 insert into SYMBOLS values('t_ENG_N_swConsonant','ENG',NULL);
 insert into SYMBOLS values('t_ENG_CONJ_Stem','ENG',NULL);
 insert into SYMBOLS values('ENG_CONJ_Stem','ENG',NULL);
+insert into SYMBOLS values('%empty','ENG',NULL);
+insert into SYMBOLS values('ENG_Empty','ENG',NULL);
 
 insert into SYMBOLS values('HUN_VP','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
@@ -518,6 +520,24 @@ const node_info& ENG_PP=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);"');
+
+/*Mocking a missing terminal:
+insert into GRAMMAR values('ENG','ENG_V','%empty',NULL,NULL,
+'"lexicon empty;
+std::string symbol="t_ENG_V_Stem";
+auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+empty.word="";
+empty.gcat="V";
+empty.lexeme="?";
+empty.dependencies=lex->dependencies_read_for_functor("V");
+empty.morphalytics=new morphan_result(empty.word,"ENG","V");
+empty.token=symbol_token_map_entry->second;
+empty.tokens.clear();
+empty.tokens.push_back(empty.token);
+empty.lexicon_entry=false;
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Empty->%empty");
+$$=sparser->set_node_info("ENG_V",empty);"');
+*/
 
 /*start: taking out rules for negating adejctive phrase in relative clause*/
 /*insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_AP',

@@ -31,8 +31,9 @@
 			void add_internal_invalid_path(const std::vector<lexicon>&);
 			void reset();
 			std::string semantics(std::vector<lexicon>&, std::map<std::string,std::string>&,unsigned int&,const std::string&);
-			std::string morphology(std::vector<lexicon>&);
-			std::string yyerror;
+            std::string morphology(std::vector<lexicon>&,unsigned int&);
+            void morphology_wo_cons(const std::vector<lexicon>&,std::vector<lexicon>&);
+            std::string yyerror;
 			std::string functors(const std::map<std::string,std::map<std::string,std::string> >&,const std::map<std::string,std::vector<lexicon> >&,const unsigned int&,std::string&);
 			std::string dependencies(query_result&,std::map<std::pair<std::string,std::string>,std::string>&);
 			std::string syntax(const std::vector<node_info>&);
@@ -43,7 +44,12 @@
 			unsigned int current_path_nr;
 			std::vector<unsigned short int> path_indices;
 			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
-		public:
+            void build_dependency_semantics(interpreter *,std::vector<lexicon>&,std::set<unsigned int>&,const lexicon&,unsigned int&);
+            std::vector<lexicon> find_main_verb(const std::vector<lexicon>&);
+            void combine_nodes(interpreter*,std::vector<lexicon>&,std::set<unsigned int>&,const lexicon&,const lexicon&,unsigned int&);
+            lexicon find_word_by_lexeme(const std::vector<lexicon>&,const std::string&);
+            lexicon find_word_by_gcat(const std::vector<lexicon>&,const std::string&);
+        public:
 			tokenpaths();
 			tokenpaths(const unsigned int,const unsigned int);
 			~tokenpaths();
@@ -52,7 +58,7 @@
 			void validate_path(const std::vector<lexicon>&, const transgraph *, const bool store);
 			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
-			std::string create_analysis(const unsigned char&,const std::string&,const std::string&);
+            std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::time_t&,const std::string&);
 			void log_yyerror(const std::string&);
 			void validate_parse_tree(const std::vector<node_info>&);
 			void invalidate_parse_tree(const std::vector<node_info>&);

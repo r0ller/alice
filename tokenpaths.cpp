@@ -1,6 +1,7 @@
 #include "logger.h"
 #include "tokenpaths.h"
 #include "hilib.h"
+#include "sp.h"
 
 extern interpreter *sparser;
 extern std::map<std::string, unsigned int> symbol_token_map;
@@ -144,10 +145,10 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 				error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";
 				if(validated_words.empty()==false){
-					error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+                    error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
 				}
 				else{
-					error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+                    error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
 				}
 				error+="}";
 			}
@@ -353,14 +354,16 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 	return transcript;
 }
 
-std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses){
+std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned int& nr_of_cons){
 	std::string morphology;
 
+    nr_of_cons=0;
 	for(auto&& word:word_analyses){
 		morphology+="{\"morpheme id\":\""+std::to_string(word.morphalytics->id())+"\",";
 		morphology+="\"word\":\""+word.morphalytics->word()+"\",";
 		morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
 		morphology+="\"gcat\":\""+word.morphalytics->gcat()+"\"";
+        if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
 		if(word.morphalytics->is_mocked()==false){
 			morphology+=",\"tags\":[";
 			unsigned int morphan_index=0;
@@ -374,6 +377,44 @@ std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses){
 		morphology+="},";
 	}
 	return morphology;
+}
+
+void tokenpaths::morphology_wo_cons(const std::vector<lexicon>& word_analyses,std::vector<lexicon>& words_wo_cons){
+    lexicon con;
+    unsigned int most_con_tags=0,nr_of_non_cons=0;
+
+    //1) remove morphemes having CON gcat if multiple morpheme analyses are available for the same word form with
+    //different gcat and only leave the one having the most tags
+    //2) or if multiple morpheme analyses are available but only with CON gcat, leave the one having the most tags
+    for(auto& word_analysis:word_analyses){
+/*        if(word_analysis.morphalytics->gcat()=="CON"){
+            unsigned int nr_of_tags=word_analysis.morphalytics->morphemes().size();
+            if(nr_of_tags>most_con_tags){
+                most_con_tags=nr_of_tags;
+                con=word_analysis;
+            }
+        }
+        else{*/
+        std::cout<<"checking word_analysis:"<<word_analysis.word<<", gcat:"<<word_analysis.gcat<<", lexeme:"<<word_analysis.lexeme<<", morphemes:"<<word_analysis.morphalytics->morphemes().size()<<std::endl;
+            for(auto word_wo_con=words_wo_cons.begin();word_wo_con!=words_wo_cons.end();){
+                std::cout<<"checking word_wo_con:"<<word_wo_con->word<<", gcat:"<<word_wo_con->gcat<<", lexeme:"<<word_wo_con->lexeme<<", morphemes:"<<word_wo_con->morphalytics->morphemes().size()<<std::endl;
+                if(word_analysis.word==word_wo_con->word&&word_analysis.gcat==word_wo_con->gcat&&word_analysis.lexeme==word_wo_con->lexeme
+                   &&word_analysis.morphalytics->morphemes().size()>word_wo_con->morphalytics->morphemes().size()){
+                    std::cout<<"word_analysis word has more morphemes"<<std::endl;
+                    word_wo_con=words_wo_cons.erase(word_wo_con);
+                }
+                else{
+                    ++word_wo_con;
+                }
+            }
+            words_wo_cons.push_back(word_analysis);
+//            ++nr_of_non_cons;
+//        }
+    }
+//    if(nr_of_non_cons==0&&most_con_tags>0){
+//        words_wo_cons.push_back(con);
+//    }
+    return;
 }
 
 std::string tokenpaths::dependencies(query_result& dependency,std::map<std::pair<std::string,std::string>,std::string>& functor_dkey_id_of_dependencies){
@@ -481,25 +522,91 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	return functors;
 }
 
-std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& target_language,const std::string& sentence){
+std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
+    std::multimap<unsigned int,std::string> ranked_analyses_map;
+    db *sqlite=NULL;
+    std::string analysis;
+    unsigned int nr_of_cons=0;
 
-	unsigned int nr_of_analyses=valid_paths.size();
+    sqlite=db_factory::get_instance();
+    unsigned int nr_of_analyses=valid_paths.size();
 	if(nr_of_analyses==0&&toa==HI_MORPHOLOGY){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There is 1 analysis.");
 	}
 	else{
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
 	}
-	std::string analysis="{\"analyses\":[";
 	if(nr_of_analyses==0){
-		analysis+="{";
-		std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
-		if(toa&HI_MORPHOLOGY){
+        //TODO:
+        //1. done->rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
+        //2. check if the returned analyses has the 'errors' property
+        //3. if there's no error, return the ranked analyses
+        //4. if there's an error but there's a main verb, call the syntactically incorrect sentence analyzer algorithm
+        //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
+        //   of the verb finally chosen shall match the lexemes of the top ranked analysis.
+        //   Besides that if there are mandatory dependencies that the top ranked analysis does not provide,
+        //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) together
+        //   with the verb to construct a new (syntactically incorrect) sentence.
+        //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
+        //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
+        //   at the end of the interpretation
+        std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
+        std::vector<lexicon> words_wo_cons;
+        for(auto&& word_analyses:words_analyses){
+            morphology_wo_cons(word_analyses.second,words_wo_cons);
+        }
+        std::vector<lexicon> main_verbs=find_main_verb(words_wo_cons);
+        if(main_verbs.size()==1){
+            std::set<unsigned int> processed_words;
+            lexicon main_verb=main_verbs[0];
+            main_verb.morphalytics->add_feature("main_verb");
+            valid_parse_trees.clear();
+            valid_graphs.clear();
+            valid_paths.clear();
+            invalid_parse_trees.clear();
+            invalid_paths.clear();
+            interpreter *sparser=new interpreter(toa);
+//            try{
+                unsigned int main_verb_node_id=0;
+                build_dependency_semantics(sparser,words_wo_cons,processed_words,main_verb,main_verb_node_id);
+                const node_info& main_node=sparser->get_node_info(main_verb_node_id);
+                unsigned int root_node_id=sparser->set_node_info("S",main_node);
+                transgraph *transgraph=NULL;
+                transgraph=sparser->longest_match_for_semantic_rules_found();
+                if(transgraph!=NULL){
+                    validate_parse_tree(sparser->nodes());
+                    validate_path(words_wo_cons,transgraph,true);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
+                }
+                else{
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
+                    invalidate_parse_tree(sparser->nodes());
+                    invalidate_path(words_wo_cons,"semantic error",NULL);
+                }
+/*            }
+            catch(...){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
+            }*/
+        }
+        else{
+            if(main_verbs.size()>1){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
+            }
+            else{
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+            }
+        }
+    }
+    nr_of_analyses=valid_paths.size();
+    if(nr_of_analyses==0){
+        analysis="{";
+        std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
+        if(toa&HI_MORPHOLOGY){
 			analysis+="\"morphology\":[";
 			for(auto&& word_analyses:words_analyses){
-				analysis+=morphology(word_analyses.second);
+                analysis+=morphology(word_analyses.second,nr_of_cons);
 			}
 			if(analysis.back()==',') analysis.pop_back();
 			analysis+="],";
@@ -542,13 +649,14 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(analysis.back()==',') analysis.pop_back();
 		analysis+="}";
-	}
-	else{
+        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+analysis+"');");
+    }
+    else{
 		for(unsigned int i=0;i<nr_of_analyses;++i){
 			related_functors.clear();
-			analysis+="{";
+            analysis="{";
 			if(toa&HI_MORPHOLOGY){
-				analysis+="\"morphology\":["+morphology(valid_paths.at(i));
+                analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 			}
@@ -582,12 +690,152 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+="]";
 			}
 			if(analysis.back()==',') analysis.pop_back();
-			analysis+="},";
-		}
-		if(analysis.back()==',') analysis.pop_back();
+            analysis+="}";
+            ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
+            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+analysis+"');");
+        }
+        analysis="{\"analyses\":[";
+        for(auto& i:ranked_analyses_map){
+            analysis+=i.second+",";
+        }
+        if(analysis.back()==',') analysis.pop_back();
+        analysis+="]}";
 	}
-	analysis+="]}";
 	return analysis;
+}
+
+std::vector<lexicon> tokenpaths::find_main_verb(const std::vector<lexicon>& words){
+    std::vector<lexicon> main_verbs;
+
+    for(auto& word:words){
+        //TODO: introduce a key-value pair for main_verb (or just main?) and read the gcat value
+        if(word.morphalytics!=NULL&&word.gcat=="V"){
+            std::cout<<word.word<<","<<word.gcat<<","<<word.lexeme<<std::endl;
+            main_verbs.push_back(word);
+        }
+    }
+    return main_verbs;
+}
+
+lexicon tokenpaths::find_word_by_lexeme(const std::vector<lexicon>& words,const std::string& lexeme){
+    lexicon word_found;
+
+    for(auto& word:words){
+        if(word.lexeme==lexeme){
+            word_found=word;
+            break;
+        }
+    }
+    return word_found;
+}
+
+lexicon tokenpaths::find_word_by_gcat(const std::vector<lexicon>& words,const std::string& gcat){
+    lexicon word_found;
+
+    for(auto& word:words){
+        std::cout<<"gcats:"<<word.gcat<<std::endl;
+        if(word.gcat==gcat){
+            word_found=word;
+            break;
+        }
+    }
+    return word_found;
+}
+
+void tokenpaths::build_dependency_semantics(interpreter *sparser,std::vector<lexicon>& words,std::set<unsigned int>& processed_words,const lexicon& main_word,unsigned int& main_verb_node_id){
+    const std::pair<const unsigned int,field> *depolex_entry=NULL;
+
+    std::cout<<"main_word.lexeme:"<<main_word.lexeme<<", word:"<<main_word.word<<std::endl;
+    if(main_word.gcat!="CON"){
+        depolex_entry=main_word.dependencies->first_value_for_field_name_found("lexeme",main_word.lexeme);
+        while(depolex_entry!=NULL&&main_word.lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")){
+            std::string d_key=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+            while(depolex_entry!=NULL&&main_word.lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
+                  &&d_key==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
+                std::string dependency_lexeme=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency");
+                std::cout<<"dependency_lexeme:"<<dependency_lexeme<<std::endl;
+                //find_word_by_lexeme() returns the first hit but there may be more than one word with the same lexeme
+                //so when recording which word has already been combined as dependency then the word entry (lexicon) itself
+                //needs to be recorded not only the lexeme
+                lexicon dependency=find_word_by_lexeme(words,dependency_lexeme);
+                //combine_nodes() must be a recursive function that iterates over the dependency subtree of
+                //the current depolex_entry. It creates the nodes and calls interpreter::combine_nodes()
+                //After iterating over the dependency subtrees of the main_word, the same must be done what
+                //happens after a successful syntactic analyis -> see C_code.cpp
+                if(dependency.lexeme.empty()==true){
+                    dependency=find_word_by_gcat(words,dependency_lexeme);
+                }
+                std::cout<<"dependency.lexeme:"<<dependency.lexeme<<", dependency.gcat:"<<dependency.gcat<<std::endl;
+                if(dependency.lexeme.empty()==false||dependency.lexeme.empty()==true&&dependency.gcat=="CON"){
+                    combine_nodes(sparser,words,processed_words,main_word,dependency,main_verb_node_id);
+                }
+                depolex_entry=main_word.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",main_word.lexeme);
+            }
+        }
+    }
+}
+
+void tokenpaths::combine_nodes(interpreter *sparser,std::vector<lexicon>& words,std::set<unsigned int>& processed_words,const lexicon& main_word,const lexicon& dependent_word,unsigned int& main_verb_node_id){
+    std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors_found=NULL;
+    std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
+
+    unsigned int main_node_id=sparser->set_node_info(main_word.gcat,main_word);
+    node_info main_node=sparser->get_node_info(main_node_id);
+    unsigned int dependent_node_id=sparser->set_node_info(dependent_word.gcat,dependent_word);
+    node_info dependent_node=sparser->get_node_info(dependent_node_id);
+    std::cout<<"dependent.lexeme:"<<dependent_word.lexeme<<std::endl;
+    try{
+        //wrap this in tokenpaths::is_valid_combination(){
+        functors_found=sparser->is_valid_expression(main_node,dependent_node);
+        if(functors_found!=NULL){
+            //this part is copied from interpreter::is_valid_combination()
+            //and may worth wrapping in a new method in that class so that
+            //it can be simply called here and there
+            for(auto&& m:*functors_found){
+                functors_validated_for_nodes.insert(std::make_pair(main_node.node_id,std::make_pair(m.second.first,dependent_node.node_id)));
+            }
+            delete functors_found;
+            for(auto&& i:functors_validated_for_nodes){
+                if(main_node.expression.dependencies==NULL||dependent_node.expression.dependencies==NULL){
+                    //TODO: check if rule_step_failed needs to be set here or exception should be thrown.
+                    //This may be the right place (check it!) to prevent dumps if a word gets combined with another
+                    //one where one of them is not registered in the DEPOLEX.
+                    //See comments in lexer::dependencies_read_for_functor().
+                    //As there may be more than one functors, it might be the case that execution can continue if
+                    //there's at least one, where the dependencies attributes are not null.
+                    //this may make sense as a first try instead of throwing an exception:
+                    //rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
+                }
+                else{//this else branch was not here earlier so this alone may complicate matters even though the
+                    // if branch still does not do anything
+                    main_node.dependency_validation_matrix.insert(i.second);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in dvm ("+std::to_string(i.second.first)+","+std::to_string(i.second.second)+") dependent node functor "+dependent_node.expression.lexeme+" for main node functor "+main_node.expression.lexeme);
+                    if(dependent_node.node_links.find(main_node.node_id)==dependent_node.node_links.end()){
+                        dependent_node.node_links.insert(std::make_pair(main_node.node_id,0));//TODO:get rid of second member in node_links
+                    }
+                }
+            }
+        //}
+            //if tokenpaths::is_valid_combination() succeeds, only then combine_nodes()
+            unsigned int combined_node_id=sparser->combine_nodes(main_word.gcat+"_"+dependent_word.gcat+"_"+std::to_string(main_node_id)+"_"+std::to_string(dependent_node_id),main_node,dependent_node);
+            if(main_word.morphalytics->has_feature("main_verb")==true||main_word.morphalytics->has_feature("main_verb")==true) main_verb_node_id=combined_node_id;
+            std::cout<<"combined_node_id:"<<combined_node_id<<std::endl;
+            unsigned int i=0;
+            for(auto word=words.begin();word!=words.end();++word){
+                if(word->lexeme==dependent_word.lexeme&&processed_words.find(i)==processed_words.end()){
+                    //mark the first hit only as find_word_by_lexeme() returns always the first hit
+                    processed_words.insert(i);
+                    break;
+                }
+                ++i;
+            }
+        }
+    }
+    catch(invalid_combination& exception){
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception in tokenpaths::combine_nodes().");
+    }
+    //It doesn't matter if main_word and dependent_word cannot be combined, continue looking for possible combinations
+    build_dependency_semantics(sparser,words,processed_words,dependent_word,main_verb_node_id);
 }
 
 std::string tokenpaths::syntax(const std::vector<node_info>& nodes){
@@ -634,3 +882,16 @@ void tokenpaths::assign_lexer(lexer *lex){
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);
 }
+
+/*
+void tokenpaths::mapFunctorDependenciesToSemantics(){
+
+-get main verb
+-get functor id of main verb
+-get dependencies of main verb
+-get related dependencies (dependecies of all other words?)
+-merge dependencies and related dependencies
+-findFunctorDependenciesForSemanticOnes:
+    -
+}
+*/

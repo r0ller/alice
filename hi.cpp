@@ -151,8 +151,8 @@ int main(int argc,char **argv){
 	while(true){
 		getline(cin,text);
 		if(text.empty()==false){
-			toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-			analyses=hi(text.c_str(),"HUN",toa,"sh","hi_desktop/hi.db");
+            toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+            analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db");
 			if(analyses!=NULL){
 				cout<<analyses<<endl;
 				Document jsondoc;

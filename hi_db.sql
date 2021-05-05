@@ -123,14 +123,22 @@ FOREIGN KEY(gcat, lid) REFERENCES GCAT_LID(gcat, lid) DEFERRABLE INITIALLY DEFER
 /*);*/
 
 
-/*create table FCONTEXT(*/
-/*model_id text,*//*id for the model in which the context was interpreted*/
-/*context_source text,*//*user or other source of context*/
-/*session_id text,*/
-/*timestamp text,*/
-/*fcontext text,*//*already compiled, interpreted result*/
-/*PRIMARY KEY(model_id,context_source,session_id,timestamp)*/
-/*);*/
+create table ANALYSES(
+source text,/*user name or any other source of the utterance*/
+timestamp int,/*epoch*/
+sentence text,
+rank smallint,
+analysis text,
+PRIMARY KEY(source,timestamp,sentence,rank)
+);
+
+create table FAILED_ANALYSES(
+source text,/*user name or any other source of the utterance*/
+timestamp int,/*epoch*/
+sentence text,
+analysis text,
+PRIMARY KEY(source,timestamp,sentence)
+);
 
 create table FUNCTOR_DECL(
 functor varchar(47),
