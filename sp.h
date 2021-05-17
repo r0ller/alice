@@ -101,7 +101,7 @@
 					std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,
 					std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
 			void combine_sets(const unsigned int&, const std::vector<unsigned int>&, std::vector<unsigned int>&);
-            void whatever(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
+            void insert_in_main_dvm_and_dep_node_links(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
 		public:
 			interpreter(const unsigned char toa);
 			~interpreter();
@@ -115,7 +115,7 @@
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&);
 			std::set<unsigned int> validated_terminals();
             std::vector<node_info> nodes();
-            bool is_valid_combination(node_info&,node_info&);
+            bool is_valid_combination(const unsigned int&,const unsigned int&);
     };
 
 	class semper_error:public std::exception{

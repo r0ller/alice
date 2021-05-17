@@ -626,10 +626,6 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			d_counter_validated_dependencies.clear();
 			//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
-            std::cout<<"dvm size:"<<node.dependency_validation_matrix.size()<<std::endl;
-            for(auto& i:node.dependency_validation_matrix){
-                std::cout<<"dvm:("<<i.first<<","<<i.second<<")"<<std::endl;
-            }
             for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 					dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 					++dependency_matrix_entry){
@@ -982,13 +978,12 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > > longest_traversals;
 
     const node_info& root_node=get_node_info(nr_of_nodes_);
-    std::cout<<"root_node:"<<nr_of_nodes_<<std::endl;
 	//TODO: add an entry in the symbols table for the symbol main_verb
 	//and think over how to make it customizable for different languages
 	get_nodes_by_symbol(root_node,"main_verb",std::string(),verbs_found);
 	if(verbs_found.size()==1){
 		const node_info& node=get_node_info(*verbs_found.begin());
-		find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
+        find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
 		functor_found=calculate_longest_matching_dependency_route(longest_traversals);
 		d_key=functor_found.first.second;
 		//TODO: min nr of deps is shown differently here than in calculate_longest_matching_dependency_route
@@ -1410,28 +1405,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	}
 	if(valid_combination==true){
 		rule_step_failed=0;
-		for(auto&& i:functors_validated_for_nodes){
-			main_node=&get_private_node_info(i.first);
-			dependent_node=&get_private_node_info(i.second.second);
-			if(main_node->expression.dependencies==NULL||dependent_node->expression.dependencies==NULL){
-				//TODO: check if rule_step_failed needs to be set here or exception should be thrown.
-				//This may be the right place (check it!) to prevent dumps if a word gets combined with another
-				//one where one of them is not registered in the DEPOLEX.
-				//See comments in lexer::dependencies_read_for_functor().
-				//As there may be more than one functors, it might be the case that execution can continue if
-				//there's at least one, where the dependencies attributes are not null.
-				//this may make sense as a first try instead of throwing an exception:
-				//rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
-			}
-			else{//this else branch was not here earlier so this alone may complicate matters even though the
-				// if branch still does not do anything
-				main_node->dependency_validation_matrix.insert(i.second);
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in dvm, dependent node functor "+dependent_node->expression.lexeme+" for main node functor "+main_node->expression.lexeme);
-				if(dependent_node->node_links.find(main_node->node_id)==dependent_node->node_links.end()){
-					dependent_node->node_links.insert(std::make_pair(main_node->node_id,0));//TODO:get rid of second member in node_links
-				}
-			}
-		}
+        insert_in_main_dvm_and_dep_node_links(functors_validated_for_nodes);
 	}
 	else{
 		rule_step_failed=std::atoi(rule_entry_failure_copy->second.field_value.c_str());
@@ -1444,7 +1418,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 	return rule_step_failed;
 }
 
-void interpreter::whatever(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >& functors_validated_for_nodes){
+void interpreter::insert_in_main_dvm_and_dep_node_links(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >& functors_validated_for_nodes){
     for(auto&& i:functors_validated_for_nodes){
         node_info *main_node=&get_private_node_info(i.first);
         node_info *dependent_node=&get_private_node_info(i.second.second);
@@ -1469,18 +1443,20 @@ void interpreter::whatever(std::multimap<unsigned int,std::pair<unsigned int,uns
     }
 }
 
-bool interpreter::is_valid_combination(node_info& main_node,node_info& dependent_node){
+bool interpreter::is_valid_combination(const unsigned int& main_node_id,const unsigned int& dependent_node_id){
     std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> > *functors_found=NULL;
     std::multimap<unsigned int,std::pair<unsigned int,unsigned int> > functors_validated_for_nodes;
     bool valid_combination=false;
 
-    functors_found=is_valid_expression(main_node,dependent_node);
+    node_info *main_node=&get_private_node_info(main_node_id);
+    node_info *dependent_node=&get_private_node_info(dependent_node_id);
+    functors_found=is_valid_expression(*main_node,*dependent_node);
     if(functors_found!=NULL){
         for(auto&& m:*functors_found){
-            functors_validated_for_nodes.insert(std::make_pair(main_node.node_id,std::make_pair(m.second.first,dependent_node.node_id)));
+            functors_validated_for_nodes.insert(std::make_pair(main_node->node_id,std::make_pair(m.second.first,dependent_node->node_id)));
         }
         delete functors_found;
-        whatever(functors_validated_for_nodes);
+        insert_in_main_dvm_and_dep_node_links(functors_validated_for_nodes);
         valid_combination=true;
     }
     return valid_combination;

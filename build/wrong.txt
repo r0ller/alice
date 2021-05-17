@@ -1,0 +1,193 @@
+human_input:abc list directory
+picking new token path
+nr of paths:1
+current_path_nr:0
+lexer started
+interpreter started
+bison:syntax error, unexpected t_ENG_CON_Stem, expecting t_ENG_DET_Stem or t_ENG_V_Stem or t_ENG_PAR_Stem
+syntax error
+processed words:
+FALSE: error at abc
+There are 0 analyses.
+checking word_analysis:abc, gcat:CON, lexeme:abc, morphemes:0
+checking word_analysis:directory, gcat:N, lexeme:DIRECTORYENGN, morphemes:4
+checking word_wo_con:abc, gcat:CON, lexeme:abc, morphemes:0
+checking word_analysis:list, gcat:V, lexeme:LISTENGV, morphemes:2
+checking word_wo_con:abc, gcat:CON, lexeme:abc, morphemes:0
+checking word_wo_con:directory, gcat:N, lexeme:DIRECTORYENGN, morphemes:4
+list,V,LISTENGV
+main_word.lexeme:LISTENGV, word:list
+dependency_lexeme:FILEENGN
+dependency.lexeme:, dependency.gcat:
+dependency_lexeme:DIRECTORYENGN
+dependency.lexeme:DIRECTORYENGN, dependency.gcat:N
+dependent.lexeme:DIRECTORYENGN
+inserting in dvm, dependent node functor DIRECTORYENGN for main node functor LISTENGV
+inserting in dvm, dependent node functor DIRECTORYENGN for main node functor LISTENGV
+inserting in dvm, dependent node functor DIRECTORYENGN for main node functor LISTENGV
+combined_node_id:3
+main_word.lexeme:DIRECTORYENGN, word:directory
+dependency_lexeme:BEENGV
+dependency.lexeme:, dependency.gcat:
+dependency_lexeme:CON
+dependency.lexeme:abc, dependency.gcat:CON
+dependent.lexeme:abc
+inserting in dvm, dependent node functor abc for main node functor DIRECTORYENGN
+combined_node_id:6
+main_word.lexeme:abc, word:abc
+root_node:7
+checking dependency for functor LISTENGV d_key 1
+checking dependency entry FILEENGN ref_d_key 1 for functor LISTENGV d_key 1 d_counter 1
+looking up depolex entry with row id 0 in dep.val.matrix
+dvm size:3
+dvm:(1,2)
+dvm:(19,2)
+dvm:(19,2)
+dependency check for FILEENGN returned FALSE for functor LISTENGV with d_key 1
+next counter: 
+checking dependency for functor LISTENGV d_key 2
+checking dependency entry DIRECTORYENGN ref_d_key 1 for functor LISTENGV d_key 2 d_counter 1
+looking up depolex entry with row id 1 in dep.val.matrix
+dvm size:3
+dvm:(1,2)
+dvm:(19,2)
+dvm:(19,2)
+dvm entry row index:1, dep.node id:2
+checking dependency for functor DIRECTORYENGN d_key 1
+checking dependency entry BEENGV ref_d_key 1 for functor DIRECTORYENGN d_key 1 d_counter 1
+looking up depolex entry with row id 0 in dep.val.matrix
+dvm size:0
+dependency check for BEENGV returned FALSE for functor DIRECTORYENGN with d_key 1
+checking dependency for optional functor BEENGV d_key 1
+checking dependency entry NOTENGVNEG ref_d_key 1 for functor BEENGV d_key 1 d_counter 1
+looking up depolex entry with row id 2 in dep.val.matrix
+optional dependency level:1path_nr:1
+dependency check for NOTENGVNEG returned FALSE for functor BEENGV with d_key 1
+checking dependency for optional functor NOTENGVNEG d_key 1
+checking dependency entry PROPERTIES ref_d_key 1 for functor NOTENGVNEG d_key 1 d_counter 1
+looking up depolex entry with row id 3 in dep.val.matrix
+optional dependency level:2path_nr:1
+dependency check for PROPERTIES returned FALSE for functor NOTENGVNEG with d_key 1
+checking dependency for optional functor PROPERTIES d_key 1
+checking dependency entry NOTENGANEG ref_d_key 1 for functor PROPERTIES d_key 1 d_counter 1
+looking up depolex entry with row id 4 in dep.val.matrix
+optional dependency level:3path_nr:1
+dependency check for NOTENGANEG returned FALSE for functor PROPERTIES with d_key 1
+checking dependency for optional functor NOTENGANEG d_key 1
+checking dependency entry BEPROPS ref_d_key 1 for functor NOTENGANEG d_key 1 d_counter 1
+looking up depolex entry with row id 8 in dep.val.matrix
+optional dependency level:4path_nr:1
+dependency check for BEPROPS returned FALSE for functor NOTENGANEG with d_key 1
+checking dependency for optional functor BEPROPS d_key 1
+checking dependency entry FILEBEPROP ref_d_key 1 for functor BEPROPS d_key 1 d_counter 1
+looking up depolex entry with row id 9 in dep.val.matrix
+optional dependency level:5path_nr:1
+dependency check for FILEBEPROP returned FALSE for functor BEPROPS with d_key 1
+checking dependency for optional functor FILEBEPROP d_key 1
+checking dependency entry SYMLINKEDENGA ref_d_key 1 for functor FILEBEPROP d_key 1 d_counter 1
+looking up depolex entry with row id 11 in dep.val.matrix
+optional dependency level:6path_nr:1
+dependency check for SYMLINKEDENGA returned FALSE for functor FILEBEPROP with d_key 1
+checking dependency for optional functor SYMLINKEDENGA d_key 1
+next counter: 
+dependency  checked for functor SYMLINKEDENGA but has no further dependency
+checking dependency for optional functor EXECUTABLEENGA d_key 1
+next counter: 
+dependency  checked for functor EXECUTABLEENGA but has no further dependency
+checking dependency for optional functor LOCATED d_key 1
+checking dependency entry INENGPREP ref_d_key 1 for functor LOCATED d_key 1 d_counter 1
+looking up depolex entry with row id 16 in dep.val.matrix
+optional dependency level:7path_nr:1
+dependency check for INENGPREP returned FALSE for functor LOCATED with d_key 1
+deleting optional dependency with functor LOCATED and d_key 1
+next counter: 
+checking dependency for optional functor DIRBEPROP d_key 1
+checking dependency entry EMPTYENGA ref_d_key 1 for functor DIRBEPROP d_key 1 d_counter 1
+looking up depolex entry with row id 18 in dep.val.matrix
+optional dependency level:6path_nr:1
+dependency check for EMPTYENGA returned FALSE for functor DIRBEPROP with d_key 1
+checking dependency for optional functor EMPTYENGA d_key 1
+next counter: 
+dependency  checked for functor EMPTYENGA but has no further dependency
+checking dependency for optional functor SYMLINKEDENGA d_key 2
+next counter: 
+dependency  checked for functor SYMLINKEDENGA but has no further dependency
+checking dependency for optional functor EXECUTABLEENGA d_key 2
+next counter: 
+dependency  checked for functor EXECUTABLEENGA but has no further dependency
+checking dependency for optional functor LOCATED d_key 1
+checking dependency entry INENGPREP ref_d_key 1 for functor LOCATED d_key 1 d_counter 1
+looking up depolex entry with row id 16 in dep.val.matrix
+optional dependency level:7path_nr:1
+dependency check for INENGPREP returned FALSE for functor LOCATED with d_key 1
+deleting optional dependency with functor LOCATED and d_key 1
+next counter: 
+checking dependency for optional functor ANDENGCONJ d_key 1
+next counter: 1
+dependency  checked for functor ANDENGCONJ but has no further dependency
+checking dependency for optional functor ORENGCONJ d_key 1
+next counter: 1
+dependency  checked for functor ORENGCONJ but has no further dependency
+checking dependency for optional functor BEPROPS d_key 1
+checking dependency entry FILEBEPROP ref_d_key 1 for functor BEPROPS d_key 1 d_counter 1
+looking up depolex entry with row id 9 in dep.val.matrix
+optional dependency level:4path_nr:1
+dependency check for FILEBEPROP returned FALSE for functor BEPROPS with d_key 1
+checking dependency for optional functor FILEBEPROP d_key 1
+checking dependency entry SYMLINKEDENGA ref_d_key 1 for functor FILEBEPROP d_key 1 d_counter 1
+looking up depolex entry with row id 11 in dep.val.matrix
+optional dependency level:5path_nr:1
+dependency check for SYMLINKEDENGA returned FALSE for functor FILEBEPROP with d_key 1
+checking dependency for optional functor SYMLINKEDENGA d_key 1
+next counter: 
+dependency  checked for functor SYMLINKEDENGA but has no further dependency
+checking dependency for optional functor EXECUTABLEENGA d_key 1
+next counter: 
+dependency  checked for functor EXECUTABLEENGA but has no further dependency
+checking dependency for optional functor LOCATED d_key 1
+checking dependency entry INENGPREP ref_d_key 1 for functor LOCATED d_key 1 d_counter 1
+looking up depolex entry with row id 16 in dep.val.matrix
+optional dependency level:6path_nr:1
+dependency check for INENGPREP returned FALSE for functor LOCATED with d_key 1
+deleting optional dependency with functor LOCATED and d_key 1
+next counter: 
+checking dependency for optional functor DIRBEPROP d_key 1
+checking dependency entry EMPTYENGA ref_d_key 1 for functor DIRBEPROP d_key 1 d_counter 1
+looking up depolex entry with row id 18 in dep.val.matrix
+optional dependency level:5path_nr:1
+dependency check for EMPTYENGA returned FALSE for functor DIRBEPROP with d_key 1
+checking dependency for optional functor EMPTYENGA d_key 1
+next counter: 
+dependency  checked for functor EMPTYENGA but has no further dependency
+checking dependency for optional functor SYMLINKEDENGA d_key 2
+next counter: 
+dependency  checked for functor SYMLINKEDENGA but has no further dependency
+checking dependency for optional functor EXECUTABLEENGA d_key 2
+next counter: 
+dependency  checked for functor EXECUTABLEENGA but has no further dependency
+checking dependency for optional functor LOCATED d_key 1
+checking dependency entry INENGPREP ref_d_key 1 for functor LOCATED d_key 1 d_counter 1
+looking up depolex entry with row id 16 in dep.val.matrix
+optional dependency level:6path_nr:1
+dependency check for INENGPREP returned FALSE for functor LOCATED with d_key 1
+deleting optional dependency with functor LOCATED and d_key 1
+next counter: 
+dvm size:0
+checking dependency for optional functor CON d_key 1
+next counter: 
+dependency  checked for functor CON but has no further dependency
+dependencies with longest match:
+functor LISTENGV d_key 1: 0 deps found out of the expected 1 deps to be found
+dependencies with longest match:
+functor LISTENGV d_key 2: 1 deps found out of the expected 1 deps to be found
+functor DIRECTORYENGN d_key 1: 0 deps found out of the expected 0 deps to be found
+Minimum number of dependencies to match:1
+Matching nr of dependencies found for functor LISTENGV with d_key 2:1
+Total number of dependencies:3
+Not all dependencies have been found for functor LISTENGV
+TRUE
+transcripting:abc_1
+transcripting:LISTENGV_1
+transcripting:LISTENGV_2
+transcripting:DIRECTORYENGN_1
+{"morphology":[{"morpheme id":"1","word":"abc","stem":"abc","gcat":"CON"},{"morpheme id":"3","word":"directory","stem":"directory","gcat":"N","tags":["directory[stem]","N","Sg","swConsonant"]},{"morpheme id":"2","word":"list","stem":"list","gcat":"V","tags":["list[stem]","V"]}],"syntax":[],"semantics":[{"id":"1","functor":"CON","d_key":"1","morpheme id":"1"},{"id":"2","functor":"LISTENGV","d_key":"1","morpheme id":"2","tags":{"type":"action"},"functor id":""},{"id":"3","functor":"LISTENGV","d_key":"2","morpheme id":"2","functor id":""},{"id":"4","functor":"DIRECTORYENGN","d_key":"1","morpheme id":"3","functor id":""}],"related semantics":[],"functors":[],"errors":[{"tokenpath id":"1","messages":[{"source":"hi","type":"syntax error","last word":"abc"},{"source":"bison","type":"syntax error","message":"syntax error, unexpected t_ENG_CON_Stem, expecting t_ENG_DET_Stem or t_ENG_V_Stem or t_ENG_PAR_Stem"}]}]}
