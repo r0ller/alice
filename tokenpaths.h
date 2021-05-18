@@ -44,9 +44,9 @@
 			unsigned int current_path_nr;
 			std::vector<unsigned short int> path_indices;
 			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
-            void build_dependency_semantics(interpreter *,std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const std::string&);
+            void build_dependency_semantics(interpreter *,std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const std::string&,std::set<std::pair<unsigned int,unsigned int>>&);
             std::map<unsigned int,lexicon> find_main_verb(const std::vector<lexicon>&);
-            void combine_nodes(interpreter*,std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&);
+            unsigned int combine_nodes(interpreter*,std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&,std::set<std::pair<unsigned int,unsigned int>>&,const std::string&);
             lexicon find_word_by_lexeme(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
             lexicon find_word_by_gcat(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
         public:
