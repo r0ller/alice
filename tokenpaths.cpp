@@ -582,6 +582,8 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                 node_info root_node=sparser->get_node_info(root_node_id);
                 transgraph *transgraph=NULL;
                 transgraph=sparser->longest_match_for_semantic_rules_found();
+                //TODO: figure out how to log the errors from the previous run
+                //and also how to log the success or failure of this run
                 if(transgraph!=NULL){
                     validate_parse_tree(sparser->nodes());
                     validate_path(words_wo_cons,transgraph,true);
@@ -657,6 +659,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(analysis.back()==',') analysis.pop_back();
 		analysis+="}";
+        //TODO: unique constraint fails sometimes, check why
         sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+analysis+"');");
     }
     else{
@@ -700,6 +703,8 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			if(analysis.back()==',') analysis.pop_back();
             analysis+="}";
             ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
+            //TODO: unique constraint fails sometimes for FAILED_ANALYSES,
+            //check if it can happen here as well
             sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+analysis+"');");
         }
         analysis="{\"analyses\":[";
@@ -757,9 +762,6 @@ lexicon tokenpaths::find_word_by_gcat(const std::vector<lexicon>& words,const st
 void tokenpaths::build_dependency_semantics(interpreter *sparser,std::vector<lexicon>& words,std::set<unsigned int>& processed_words,std::map<unsigned int,unsigned int>& words2nodes,const unsigned int& main_node_id,const std::string& optional_dependency,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex){
     const std::pair<const unsigned int,field> *depolex_entry=NULL;
 
-    //TODO: minimal examples work ('abc list','abc directory list') and complex ones like
-    //'abc files directory in list' work but with more than one constant fails:
-    //'abc def list' or 'abc def directories list'
     const node_info& main_node=sparser->get_node_info(main_node_id);
     const lexicon& main_word=main_node.expression;
     std::string lexeme=main_word.lexeme;
@@ -775,36 +777,54 @@ void tokenpaths::build_dependency_semantics(interpreter *sparser,std::vector<lex
                   &&d_key==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
                 std::string dependency_lexeme=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency");
                 std::string ref_d_key=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"ref_d_key");
+                std::string manner=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"manner");
                 //find_word_by_lexeme() returns the first hit but there may be more than one word with the same lexeme
                 //so when recording which word has already been combined as dependency then the word entry (lexicon) itself
                 //is recorded not only the lexeme
-                unsigned int dependency_word_index=0;
-                lexicon dependency=find_word_by_lexeme(words,processed_words,dependency_lexeme,dependency_word_index);
-                if(dependency.lexeme.empty()==true){
-                    dependency=find_word_by_gcat(words,processed_words,dependency_lexeme,dependency_word_index);
-                }
-                std::cout<<"dependency.lexeme:"<<dependency.lexeme<<", dependency.gcat:"<<dependency.gcat<<std::endl;
-                unsigned int combined_node_id=0;
-                unsigned int dependent_node_id=0;
-                if(dependency.lexeme.empty()==false||dependency.lexeme.empty()==true&&dependency.gcat=="CON"){
-                    //NOTE: there may be >1 matching dependencies during the loop
-                    auto dependent_word_node=words2nodes.find(dependency_word_index);
-                    if(dependent_word_node!=words2nodes.end()&&dependent_word_node->first==dependency_word_index) dependent_node_id=dependent_word_node->second;
-                    else{
-                        dependent_node_id=sparser->set_node_info(dependency.gcat,dependency);
-                        words2nodes.insert(std::make_pair(dependency_word_index,dependent_node_id));
+                bool all_possibilities_checked=false;
+                std::set<unsigned int> dependencies_found;
+                while(all_possibilities_checked==false&&(dependencies_found.empty()==true
+                      ||manner=="1"&&dependencies_found.size()==1
+                      ||manner=="2"&&dependencies_found.size()<=1)){
+                    unsigned int dependency_word_index=0;
+                    lexicon dependency=find_word_by_lexeme(words,processed_words,dependency_lexeme,dependency_word_index);
+                    if(dependency.lexeme.empty()==true){
+                        dependency=find_word_by_gcat(words,processed_words,dependency_lexeme,dependency_word_index);
                     }
-                    if(processed_depolex.find(std::make_pair(main_node_id,dependent_node_id))==processed_depolex.end()){
-                        //No tree is built from the combined nodes as there's no syntax tree in this case
-                        combined_node_id=combine_nodes(sparser,words,processed_words,words2nodes,main_node_id,dependent_node_id,dependency_word_index,processed_depolex,ref_d_key);
+                    std::cout<<"dependency.lexeme:"<<dependency.lexeme<<", dependency.gcat:"<<dependency.gcat<<std::endl;
+                    unsigned int combined_node_id=0;
+                    unsigned int dependent_node_id=0;
+                    if(dependency.lexeme.empty()==false||dependency.lexeme.empty()==true&&dependency.gcat=="CON"){
+                        //NOTE: there may be >1 matching dependencies during the loop
+                        auto dependent_word_node=words2nodes.find(dependency_word_index);
+                        if(dependent_word_node!=words2nodes.end()&&dependent_word_node->first==dependency_word_index) dependent_node_id=dependent_word_node->second;
+                        else{
+                            dependent_node_id=sparser->set_node_info(dependency.gcat,dependency);
+                            words2nodes.insert(std::make_pair(dependency_word_index,dependent_node_id));
+                        }
+                        if(processed_depolex.find(std::make_pair(main_node_id,dependent_node_id))==processed_depolex.end()){
+                            //No tree is built from the combined nodes as there's no syntax tree in this case
+                            combined_node_id=combine_nodes(sparser,words,processed_words,words2nodes,main_node_id,dependent_node_id,dependency_word_index,processed_depolex,ref_d_key);
+                            dependencies_found.insert(dependent_node_id);
+                        }
+                    }
+                    else{
+                        all_possibilities_checked=true;
                     }
                 }
                 std::string dependency_counter=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter");
                 std::string dependency_failover=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
-                if(combined_node_id>0){
-                    build_dependency_semantics(sparser,words,processed_words,words2nodes,dependent_node_id,"",processed_depolex);
+                if((manner.empty()==true||manner=="0")&&dependencies_found.size()==1
+                        ||manner=="1"&&dependencies_found.size()>=1
+                        ||manner=="2"&&dependencies_found.size()>1){
+                    for(auto& dependent_node_id:dependencies_found){
+                        build_dependency_semantics(sparser,words,processed_words,words2nodes,dependent_node_id,"",processed_depolex);
+                    }
                 }
-                else if(combined_node_id==0&&std::atoi(dependency_failover.c_str())>=std::atoi(dependency_counter.c_str())){
+                else if(((manner.empty()==true||manner=="0")&&dependencies_found.size()==0
+                        ||manner=="1"&&dependencies_found.size()<1
+                        ||manner=="2"&&dependencies_found.size()<=1)
+                        &&std::atoi(dependency_failover.c_str())>=std::atoi(dependency_counter.c_str())){
                     build_dependency_semantics(sparser,words,processed_words,words2nodes,main_node_id,dependency_lexeme,processed_depolex);
                 }
                 depolex_entry=main_word.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",lexeme);
@@ -880,16 +900,3 @@ void tokenpaths::assign_lexer(lexer *lex){
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);
 }
-
-/*
-void tokenpaths::mapFunctorDependenciesToSemantics(){
-
--get main verb
--get functor id of main verb
--get dependencies of main verb
--get related dependencies (dependecies of all other words?)
--merge dependencies and related dependencies
--findFunctorDependenciesForSemanticOnes:
-    -
-}
-*/
