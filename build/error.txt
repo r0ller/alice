@@ -1,0 +1,239 @@
+human_input:abc def list
+
+picking new token path
+nr of paths:1
+current_path_nr:0
+lexer started
+interpreter started
+bison:syntax error, unexpected t_ENG_CON_Stem, expecting t_ENG_DET_Stem or t_ENG_V_Stem or t_ENG_PAR_Stem
+syntax error
+processed words:
+FALSE: error at abc
+There are 0 analyses.
+transcripting:abc_1
+transcripting:def_1
+transcripting:LISTENGV_1
+transcripting:LISTENGV_2
+timestamp:1622237214
+checking word_analysis:abc, gcat:CON, lexeme:abc, morphemes:0
+checking word_analysis:def, gcat:CON, lexeme:def, morphemes:0
+checking word_wo_con:abc, gcat:CON, lexeme:abc, morphemes:0
+checking word_analysis:list, gcat:V, lexeme:LISTENGV, morphemes:2
+checking word_wo_con:abc, gcat:CON, lexeme:abc, morphemes:0
+checking word_wo_con:def, gcat:CON, lexeme:def, morphemes:0
+lexeme:LISTENGV, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:DIRECTORYENGN, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:BEENGV, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:NOTENGVNEG, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:PROPERTIES, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:NOTENGANEG, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:BEPROPS, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:FILEBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:DIRBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:EMPTYENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:ANDENGCONJ, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:NOTENGANEG, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:BEPROPS, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:FILEBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:DIRBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:EMPTYENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:ORENGCONJ, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:NOTENGANEG, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:BEPROPS, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:FILEBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:DIRBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:EMPTYENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:BEPROPS, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:FILEBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:DIRBEPROP, word:list
+dependency.lexeme:, dependency.gcat:
+lexeme:EMPTYENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:SYMLINKEDENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:EXECUTABLEENGA, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:, dependency.gcat:
+lexeme:LOCATED, word:list
+dependency.lexeme:, dependency.gcat:
+dependency.lexeme:abc, dependency.gcat:CON
+combining nodes: main node with id 1, lexeme LISTENGV and dependent id 2, lexeme:abc
+inserting in dvm, dependent node functor abc for main node functor LISTENGV
+inserting in dvm, dependent node functor abc for main node functor LISTENGV
+inserting in dvm, dependent node functor abc for main node functor LISTENGV
+main word:list, dvm size:3
+combined_node_id:3
+dependency.lexeme:def, dependency.gcat:CON
+combining nodes: main node with id 1, lexeme LISTENGV and dependent id 4, lexeme:def
+inserting in dvm, dependent node functor def for main node functor LISTENGV
+inserting in dvm, dependent node functor def for main node functor LISTENGV
+inserting in dvm, dependent node functor def for main node functor LISTENGV
+main word:list, dvm size:6
+combined_node_id:5
+lexeme:abc, word:abc
+lexeme:def, word:def
+checking dependency for functor LISTENGV d_key 1
+checking dependency entry FILEENGN ref_d_key 1 for functor LISTENGV d_key 1 d_counter 1
+looking up depolex entry with row id 0 in dep.val.matrix
+dependency check for FILEENGN returned FALSE for functor LISTENGV with d_key 1
+next counter: 
+checking dependency for functor LISTENGV d_key 2
+checking dependency entry DIRECTORYENGN ref_d_key 1 for functor LISTENGV d_key 2 d_counter 1
+looking up depolex entry with row id 1 in dep.val.matrix
+dependency check for DIRECTORYENGN returned FALSE for functor LISTENGV with d_key 2
+checking dependency for optional functor DIRECTORYENGN d_key 1
+next counter: 2
+checking dependency entry CON ref_d_key 1 for functor DIRECTORYENGN d_key 1 d_counter 2
+looking up depolex entry with row id 21 in dep.val.matrix
+optional dependency level:1path_nr:1
+checking dependency for functor abc d_key 1
+checking dependency entry  ref_d_key  for functor abc d_key 1 d_counter 1
+leaf dependency  checked for functor abc and has no further dependency
+next counter: 
+checking dependency for functor def d_key 1
+checking dependency entry  ref_d_key  for functor def d_key 1 d_counter 1
+leaf dependency  checked for functor def and has no further dependency
+next counter: 
+dependencies with longest match:
+functor LISTENGV d_key 1: 0 deps found out of the expected 1 deps to be found
+dependencies with longest match:
+functor LISTENGV d_key 2: 2 deps found out of the expected 2 deps to be found
+functor abc d_key 1: 0 deps found out of the expected 0 deps to be found
+functor def d_key 1: 0 deps found out of the expected 0 deps to be found
+Minimum number of dependencies to match:2
+Matching nr of dependencies found for functor LISTENGV with d_key 2:2
+Total number of dependencies:2
+TRUE
+transcripting:LISTENGV_2
+transcripting:DIRECTORYENGN_1
+transcripting:CON_1
+transcripting:CON_1
+{"analyses":[{"morphology":[{"morpheme id":"1","word":"abc","stem":"abc","gcat":"CON"},{"morpheme id":"2","word":"def","stem":"def","gcat":"CON"},{"morpheme id":"3","word":"list","stem":"list","gcat":"V","tags":["list[stem]","V"]}],"syntax":[{"symbol":"S","left child":{},"right child":{"symbol":"V","morpheme id":"3"}}],"semantics":[{"id":"1","functor":"LISTENGV","d_key":"2","morpheme id":"3","functor id":"","dependencies":[{"id":"1_5","functor":"DIRECTORYENGN","d_key":"1","functor id":"","dependencies":[{"id":"2","functor":"CON","d_key":"1","morpheme id":"1"},{"id":"4","functor":"CON","d_key":"1","morpheme id":"2"}]}]}],"functors":[]}]}
+human_input:abc def list
+
+picking new token path
+nr of paths:1
+current_path_nr:0
+lexer started
+interpreter started
+bison:syntax error, unexpected t_ENG_CON_Stem, expecting t_ENG_DET_Stem or t_ENG_V_Stem or t_ENG_PAR_Stem
+syntax error
+processed words:
+FALSE: error at abc
+There are 0 analyses.
+transcripting:abc_1
+transcripting:def_1
+transcripting:LISTENGV_1
+transcripting:LISTENGV_2
+timestamp:1622237214
+terminate called after throwing an instance of 'sql_execution_error'
+  what():  UNIQUE constraint failed: FAILED_ANALYSES.source, FAILED_ANALYSES.timestamp, FAILED_ANALYSES.sentence

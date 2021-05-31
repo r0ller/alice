@@ -20,9 +20,9 @@ extern "C"{
 #endif
 
 #ifdef __ANDROID__
-const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj,const char *source){
 #else
-const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source){
 #endif
 
     std::string analyses;
@@ -187,7 +187,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-    analyses=token_paths->create_analysis(toa,target_language,std::string(human_input),timestamp,"test");
+    analyses=token_paths->create_analysis(toa,target_language,std::string(human_input),timestamp,std::string(source));
     if(analyses.empty()==false){
         analysischr=new char[analyses.length()+1];
         analyses.copy(analysischr,analyses.length(),0);

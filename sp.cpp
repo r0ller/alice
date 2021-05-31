@@ -976,11 +976,16 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	t_pair_of_node_id_and_d_key_with_nr_of_deps *node_id_and_d_key_with_nr_of_deps=NULL;
 	std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> functor_found;
 	std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > > longest_traversals;
+    db *sqlite=NULL;
+    query_result *result=NULL;
 
-    const node_info& root_node=get_node_info(nr_of_nodes_);
 	//TODO: add an entry in the symbols table for the symbol main_verb
 	//and think over how to make it customizable for different languages
-	get_nodes_by_symbol(root_node,"main_verb",std::string(),verbs_found);
+    sqlite=db_factory::get_instance();
+    result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+    std::string main_symbol=*result->field_value_at_row_position(0,"value");
+    const node_info& root_node=get_node_info(nr_of_nodes_);
+    get_nodes_by_symbol(root_node,main_symbol,std::string(),verbs_found);
 	if(verbs_found.size()==1){
 		const node_info& node=get_node_info(*verbs_found.begin());
         find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);

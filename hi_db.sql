@@ -207,3 +207,8 @@ FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid) /*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
 );
+
+create table SETTINGS(
+key text primary key,
+value text
+);

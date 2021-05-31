@@ -538,78 +538,6 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 	else{
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
 	}
-	if(nr_of_analyses==0){
-        //TODO:
-        //1. done->rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
-        //2. check if the returned analyses has the 'errors' property
-        //3. if there's no error, return the ranked analyses
-        //4. if there's an error but there's a main verb, call the syntactically incorrect sentence analyzer algorithm
-        //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
-        //   of the verb finally chosen shall match the lexemes of the top ranked analysis.
-        //   Besides that if there are mandatory dependencies that the top ranked analysis does not provide,
-        //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) together
-        //   with the verb to construct a new (syntactically incorrect) sentence.
-        //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
-        //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
-        //   at the end of the interpretation
-        std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
-        std::vector<lexicon> words_wo_cons;
-        for(auto&& word_analyses:words_analyses){
-            morphology_wo_cons(word_analyses.second,words_wo_cons);
-        }
-        std::map<unsigned int,lexicon> main_verbs=find_main_verb(words_wo_cons);
-        if(main_verbs.size()==1){
-            interpreter *sparser=new interpreter(toa);
-            std::set<unsigned int> processed_words;
-            std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
-            std::map<unsigned int,unsigned int> word_index_to_node_id_map;
-            std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
-            unsigned int word_index=main_verb_indexed.first;
-            lexicon main_verb=main_verb_indexed.second;
-            main_verb.morphalytics->add_feature("main_verb");
-            processed_words.insert(word_index);
-            unsigned int main_node_id=sparser->set_node_info(main_verb.gcat,main_verb);
-            word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
-            valid_parse_trees.clear();
-            valid_graphs.clear();
-            valid_paths.clear();
-            invalid_parse_trees.clear();
-            invalid_paths.clear();
-            try{
-                build_dependency_semantics(sparser,words_wo_cons,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex);
-                const node_info& main_node=sparser->get_node_info(main_node_id);
-                unsigned int root_node_id=sparser->set_node_info("S",main_node);
-                node_info root_node=sparser->get_node_info(root_node_id);
-                transgraph *transgraph=NULL;
-                transgraph=sparser->longest_match_for_semantic_rules_found();
-                //TODO: figure out how to log the errors from the previous run
-                //and also how to log the success or failure of this run
-                if(transgraph!=NULL){
-                    validate_parse_tree(sparser->nodes());
-                    validate_path(words_wo_cons,transgraph,true);
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
-                }
-                else{
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-                    invalidate_parse_tree(sparser->nodes());
-                    invalidate_path(words_wo_cons,"semantic error",NULL);
-                }
-            }
-            catch(...){
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            if(main_verbs.size()>1){
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
-            }
-            else{
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
-            }
-        }
-    }
-    nr_of_analyses=valid_paths.size();
     if(nr_of_analyses==0){
         analysis="{";
         std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
@@ -659,10 +587,85 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(analysis.back()==',') analysis.pop_back();
 		analysis+="}";
-        //TODO: unique constraint fails sometimes, check why
         sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+analysis+"');");
+        //TODO:
+        //1. done->rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
+        //2. check if the returned analyses has the 'errors' property
+        //3. if there's no error, return the ranked analyses
+        //4. if there's an error but there's a main verb, call the syntactically incorrect sentence analyzer algorithm
+        //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
+        //   of the verb finally chosen shall match the lexemes of the top ranked analysis.
+        //   Besides that if there are mandatory dependencies that the top ranked analysis does not provide,
+        //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) together
+        //   with the verb to construct a new (syntactically incorrect) sentence.
+        //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
+        //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
+        //   at the end of the interpretation
+        //std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
+        std::vector<lexicon> words_wo_cons;
+        for(auto&& word_analyses:words_analyses){
+            morphology_wo_cons(word_analyses.second,words_wo_cons);
+        }
+        std::map<unsigned int,lexicon> main_verbs=find_main_verb(words_wo_cons);
+        if(main_verbs.size()==1){
+            interpreter *sparser=new interpreter(toa);
+            std::set<unsigned int> processed_words;
+            std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
+            std::map<unsigned int,unsigned int> word_index_to_node_id_map;
+            std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
+            unsigned int word_index=main_verb_indexed.first;
+            lexicon main_verb=main_verb_indexed.second;
+            main_verb.morphalytics->add_feature("main_verb");
+            processed_words.insert(word_index);
+            unsigned int main_node_id=sparser->set_node_info(main_verb.gcat,main_verb);
+            word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
+            //TODO: check what else may need to be cleaned up so that
+            //in case of success the json analysis is not affected by
+            //previously failed runs.
+            valid_parse_trees.clear();
+            valid_graphs.clear();
+            valid_paths.clear();
+            invalid_parse_trees.clear();
+            invalid_paths.clear();
+            invalid_path_errors.clear();
+            try{
+                build_dependency_semantics(sparser,words_wo_cons,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex);
+                const node_info& main_node=sparser->get_node_info(main_node_id);
+                unsigned int root_node_id=sparser->set_node_info("S",main_node);
+                node_info root_node=sparser->get_node_info(root_node_id);
+                transgraph *transgraph=NULL;
+                transgraph=sparser->longest_match_for_semantic_rules_found();
+                if(transgraph!=NULL){
+                    validate_parse_tree(sparser->nodes());
+                    //calling validate_path(words_wo_cons,transgraph,true) doesn't work
+                    //as it does checks for different token paths which does not make sense
+                    //in dependency semantics so let's do the necessary part manually
+                    valid_paths.push_back(words_wo_cons);
+                    valid_graphs.push_back(transgraph);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
+                    nr_of_analyses=valid_paths.size();
+                }
+                else{
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
+                    invalidate_parse_tree(sparser->nodes());
+                    invalidate_path(words_wo_cons,"semantic error",NULL);
+                }
+            }
+            catch(...){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
+                exit(EXIT_FAILURE);
+            }
+        }
+        else{
+            if(main_verbs.size()>1){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
+            }
+            else{
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+            }
+        }
     }
-    else{
+    if(nr_of_analyses>0){
 		for(unsigned int i=0;i<nr_of_analyses;++i){
 			related_functors.clear();
             analysis="{";
@@ -703,8 +706,6 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			if(analysis.back()==',') analysis.pop_back();
             analysis+="}";
             ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
-            //TODO: unique constraint fails sometimes for FAILED_ANALYSES,
-            //check if it can happen here as well
             sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+analysis+"');");
         }
         analysis="{\"analyses\":[";
@@ -719,11 +720,20 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 
 std::map<unsigned int,lexicon> tokenpaths::find_main_verb(const std::vector<lexicon>& words){
     std::map<unsigned int,lexicon> main_verbs;
+    db *sqlite=NULL;
+    query_result *result=NULL;
+    const std::pair<const unsigned int,field> *result_entry=NULL;
 
+    sqlite=db_factory::get_instance();
+    result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+    std::string main_symbol=*result->field_value_at_row_position(0,"value");
+    delete result;
+    result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
+    std::string main_gcat=*result->field_value_at_row_position(0,"value");
     unsigned int index=0;
     for(auto& word:words){
         //TODO: introduce a key-value pair for main_verb (or just main?) and read the gcat value
-        if(word.morphalytics!=NULL&&word.gcat=="V"){
+        if(word.morphalytics!=NULL&&word.gcat==main_gcat){//"V"
             main_verbs.insert(std::make_pair(index,word));
         }
         ++index;
