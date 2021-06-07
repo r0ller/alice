@@ -58,7 +58,7 @@
 			void validate_path(const std::vector<lexicon>&, const transgraph *, const bool store);
 			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
-            std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::time_t&,const std::string&);
+            std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::string&,const std::time_t&,const std::string&);
 			void log_yyerror(const std::string&);
 			void validate_parse_tree(const std::vector<node_info>&);
 			void invalidate_parse_tree(const std::vector<node_info>&);

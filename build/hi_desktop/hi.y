@@ -1032,9 +1032,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				delete sparser;
 				sparser=NULL;
 				transgraph=NULL;
-			}
-			delete lex;
-			lex=NULL;
+            }
+            delete lex;
+            lex=NULL;
 			if(toa==HI_MORPHOLOGY) break;
 		}
 		catch(sql_execution_error& exception){
@@ -1111,7 +1111,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-    analyses=token_paths->create_analysis(toa,target_language,std::string(human_input),timestamp,std::string(source));
+    analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
     if(analyses.empty()==false){
         analysischr=new char[analyses.length()+1];
         analyses.copy(analysischr,analyses.length(),0);

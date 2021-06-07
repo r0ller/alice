@@ -122,7 +122,7 @@ FOREIGN KEY(gcat, lid) REFERENCES GCAT_LID(gcat, lid) DEFERRABLE INITIALLY DEFER
 /*PRIMARY KEY(model_id,context_source,session_id,timestamp,tag_counter)*/
 /*);*/
 
-
+/*TODO:add language*/
 create table ANALYSES(
 source text,/*user name or any other source of the utterance*/
 timestamp int,/*epoch*/
@@ -132,6 +132,7 @@ analysis text,
 PRIMARY KEY(source,timestamp,sentence,rank)
 );
 
+/*TODO:add language*/
 create table FAILED_ANALYSES(
 source text,/*user name or any other source of the utterance*/
 timestamp int,/*epoch*/

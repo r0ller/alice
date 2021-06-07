@@ -148,9 +148,9 @@ int main(int argc,char **argv){
 	char line[256];
 	unsigned char toa=0;
 
-//	while(true){
-        //getline(cin,text);
-        text="abc def list\n";
+    while(true){
+        getline(cin,text);
+        //text="abc\n";
 		if(text.empty()==false){
             toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
             analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db","test");
@@ -173,6 +173,6 @@ int main(int argc,char **argv){
 			}
 			text.clear();
 		}
-//		else break;
-//	}
+        else break;
+    }
 }
