@@ -588,7 +588,6 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	std::stack<p_m1_node_id_m2_d_key> traversal_stack;
 
 	const node_info& node=get_node_info(node_id);
-    logger::singleton("console",3,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
     logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for functor "+node.expression.lexeme+" d_key "+d_key);
 	if(node.expression.gcat=="CON"){
 		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme","CON");
@@ -744,7 +743,6 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			find_dependencies_for_node(j->first,dependencies_found,optional_dependencies_checked);
 		}
 	}
-    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 }
 
 void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key,const unsigned int parent_d_counter,
@@ -762,7 +760,6 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0,path_nr=0,odep_level=0;
 
 	const node_info& node=get_node_info(node_id);
-    logger::singleton("console",3,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
     logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for optional functor "+functor+" d_key "+d_key);
 	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
 	if(depolex_entry==NULL){
@@ -942,7 +939,6 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(std::string(),0,0,0,0)));
 		}
 	}
-    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 }
 
 unsigned int interpreter::nr_of_dependencies_to_be_found(){

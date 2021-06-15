@@ -146,14 +146,15 @@ int main(int argc,char **argv){
 	string text,script;
 	FILE *fp;
 	char line[256];
-	unsigned char toa=0;
+    unsigned char toa=0,crh=0;
 
     while(true){
         getline(cin,text);
         //text="abc\n";
 		if(text.empty()==false){
             toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-            analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db","test");
+            //crh=HI_VERB;
+            analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db","test",crh);
 			if(analyses!=NULL){
 				cout<<analyses<<endl;
 				Document jsondoc;

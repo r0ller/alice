@@ -63,7 +63,8 @@
 			void validate_parse_tree(const std::vector<node_info>&);
 			void invalidate_parse_tree(const std::vector<node_info>&);
 			void assign_lexer(lexer *);
-	};
+            void build_dependency_semantics(const unsigned char&,const unsigned char&,const std::string&);
+    };
 
 	class invalid_token_path:public std::exception{
 		public:

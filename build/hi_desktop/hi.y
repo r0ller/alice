@@ -944,9 +944,9 @@ extern "C"{
 #endif
 
 #ifdef __ANDROID__
-const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj,const char *source){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj,const char *source,const unsigned char crh){
 #else
-const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source,const unsigned char crh){
 #endif
 
     std::string analyses;
@@ -991,7 +991,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
 			sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
-			if(toa&HI_SYNTAX||toa&HI_SEMANTICS){
+            if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
 				int parse_error=parser.parse();
 				if(parse_error==0){
 					if(toa&HI_SEMANTICS){
@@ -1032,6 +1032,12 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				delete sparser;
 				sparser=NULL;
 				transgraph=NULL;
+            }
+            else if(toa&HI_SEMANTICS){
+                token_paths->build_dependency_semantics(toa,crh,language);
+                delete sparser;
+                sparser=NULL;
+                transgraph=NULL;
             }
             delete lex;
             lex=NULL;
