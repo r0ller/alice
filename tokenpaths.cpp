@@ -7,7 +7,8 @@ extern interpreter *sparser;
 extern std::map<std::string, unsigned int> symbol_token_map;
 extern std::map<unsigned int,std::string> token_symbol_map;
 
-tokenpaths::tokenpaths(){
+tokenpaths::tokenpaths(const unsigned char toa){
+    this->toa=toa;
 	lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=0;
@@ -16,7 +17,8 @@ tokenpaths::tokenpaths(){
 }
 
 tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
-	lex=NULL;
+    toa=0;
+    lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=start;
 	current_path_nr=start;
@@ -129,11 +131,16 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 		//	followup_token(lex->last_token_returned());
 
 			if(reason=="syntax error"||reason=="semantic error"){
-				validated_words=lex->validated_words();
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
-				if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
-					last_word=lex->last_word_scanned().morphalytics->word();
-				else last_word=lex->last_word_scanned().word;
+                if(toa&HI_SYNTAX){
+                    validated_words=lex->validated_words();
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
+                    if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
+                        last_word=lex->last_word_scanned().morphalytics->word();
+                    else last_word=lex->last_word_scanned().word;
+                }
+                else if(toa&HI_SEMANTICS){
+                    last_word=words[0].word;
+                }
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
 				error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";

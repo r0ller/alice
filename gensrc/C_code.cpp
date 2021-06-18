@@ -35,7 +35,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 
     logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
-	token_paths=new tokenpaths;
+    token_paths=new tokenpaths(toa);
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
 		try{

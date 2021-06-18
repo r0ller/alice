@@ -43,8 +43,9 @@
 			unsigned int current_path_nr;
 			std::vector<unsigned short int> path_indices;
 			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
+            unsigned char toa;
         public:
-			tokenpaths();
+            tokenpaths(const unsigned char);
 			tokenpaths(const unsigned int,const unsigned int);
 			~tokenpaths();
 			bool is_any_left();
