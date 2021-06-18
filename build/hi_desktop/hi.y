@@ -1034,10 +1034,14 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				transgraph=NULL;
             }
             else if(toa&HI_SEMANTICS){
-                token_paths->build_dependency_semantics(toa,crh,language);
+                //token_paths->build_dependency_semantics(toa,crh,language);
+                sparser->build_dependency_semantics(toa,crh,language,lex,token_paths);
                 delete sparser;
                 sparser=NULL;
                 transgraph=NULL;
+                delete lex;
+                lex=NULL;
+                break;
             }
             delete lex;
             lex=NULL;
