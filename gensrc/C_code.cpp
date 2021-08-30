@@ -20,21 +20,22 @@ extern "C"{
 #endif
 
 #ifdef __ANDROID__
-const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,JavaVM *vm,jobject activityobj,const char *source,const unsigned char crh){
 #else
-const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri){
+const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source,const unsigned char crh){
 #endif
 
-	std::string analysis;
+    std::string analyses;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
 	std::locale locale;
 	yy::parser parser;
+    std::time_t timestamp=std::time(nullptr);
 
-	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
-	token_paths=new tokenpaths;
+    token_paths=new tokenpaths(toa);
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
 		try{
@@ -66,7 +67,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
 			sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
-			if(toa&HI_SYNTAX||toa&HI_SEMANTICS){
+            if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
 				int parse_error=parser.parse();
 				if(parse_error==0){
 					if(toa&HI_SEMANTICS){
@@ -107,9 +108,18 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				delete sparser;
 				sparser=NULL;
 				transgraph=NULL;
-			}
-			delete lex;
-			lex=NULL;
+            }
+            else if(toa&HI_SEMANTICS){
+                sparser->build_dependency_semantics(toa,crh,language,lex,token_paths);
+                delete sparser;
+                sparser=NULL;
+                transgraph=NULL;
+                delete lex;
+                lex=NULL;
+                break;
+            }
+            delete lex;
+            lex=NULL;
 			if(toa==HI_MORPHOLOGY) break;
 		}
 		catch(sql_execution_error& exception){
@@ -186,11 +196,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	}
-	analysis=token_paths->create_analysis(toa,target_language,std::string(human_input));
-	if(analysis.empty()==false){
-		analysischr=new char[analysis.length()+1];
-		analysis.copy(analysischr,analysis.length(),0);
-		analysischr[analysis.length()]='\0';
+    analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
+    if(analyses.empty()==false){
+        analysischr=new char[analyses.length()+1];
+        analyses.copy(analysischr,analyses.length(),0);
+        analysischr[analyses.length()]='\0';
 	}
 	lexer::delete_cache();
 	delete token_paths;

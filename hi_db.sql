@@ -122,15 +122,24 @@ FOREIGN KEY(gcat, lid) REFERENCES GCAT_LID(gcat, lid) DEFERRABLE INITIALLY DEFER
 /*PRIMARY KEY(model_id,context_source,session_id,timestamp,tag_counter)*/
 /*);*/
 
+/*TODO:add language*/
+create table ANALYSES(
+source text,/*user name or any other source of the utterance*/
+timestamp int,/*epoch*/
+sentence text,
+rank smallint,
+analysis text,
+PRIMARY KEY(source,timestamp,sentence,rank)
+);
 
-/*create table FCONTEXT(*/
-/*model_id text,*//*id for the model in which the context was interpreted*/
-/*context_source text,*//*user or other source of context*/
-/*session_id text,*/
-/*timestamp text,*/
-/*fcontext text,*//*already compiled, interpreted result*/
-/*PRIMARY KEY(model_id,context_source,session_id,timestamp)*/
-/*);*/
+/*TODO:add language*/
+create table FAILED_ANALYSES(
+source text,/*user name or any other source of the utterance*/
+timestamp int,/*epoch*/
+sentence text,
+analysis text,
+PRIMARY KEY(source,timestamp,sentence)
+);
 
 create table FUNCTOR_DECL(
 functor varchar(47),
@@ -198,4 +207,9 @@ FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
 FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid) /*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
+);
+
+create table SETTINGS(
+key text primary key,
+value text
 );

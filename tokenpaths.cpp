@@ -1,12 +1,14 @@
 #include "logger.h"
 #include "tokenpaths.h"
 #include "hilib.h"
+#include "sp.h"
 
 extern interpreter *sparser;
 extern std::map<std::string, unsigned int> symbol_token_map;
 extern std::map<unsigned int,std::string> token_symbol_map;
 
-tokenpaths::tokenpaths(){
+tokenpaths::tokenpaths(const unsigned char toa){
+    this->toa=toa;
 	lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=0;
@@ -15,7 +17,8 @@ tokenpaths::tokenpaths(){
 }
 
 tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
-	lex=NULL;
+    toa=0;
+    lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=start;
 	current_path_nr=start;
@@ -88,6 +91,13 @@ void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgra
 	}
 }
 
+void tokenpaths::validate_path_wo_checks(const std::vector<lexicon>& words, const transgraph* transgraph){
+    //TODO:check why words are accepted from outside when the instance anyway has its own words attribute
+    valid_paths.push_back(words);
+    valid_graphs.push_back(transgraph);
+    reset();
+}
+
 void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::string& reason,std::exception *exception){
 	std::string last_word,validated_words,error;
 
@@ -121,11 +131,16 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 		//	followup_token(lex->last_token_returned());
 
 			if(reason=="syntax error"||reason=="semantic error"){
-				validated_words=lex->validated_words();
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
-				if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
-					last_word=lex->last_word_scanned().morphalytics->word();
-				else last_word=lex->last_word_scanned().word;
+                if(toa&HI_SYNTAX){
+                    validated_words=lex->validated_words();
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
+                    if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
+                        last_word=lex->last_word_scanned().morphalytics->word();
+                    else last_word=lex->last_word_scanned().word;
+                }
+                else if(toa&HI_SEMANTICS){
+                    last_word=words[0].word;
+                }
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
 				error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";
@@ -144,10 +159,10 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 				error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";
 				if(validated_words.empty()==false){
-					error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+                    error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
 				}
 				else{
-					error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+                    error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
 				}
 				error+="}";
 			}
@@ -353,14 +368,16 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 	return transcript;
 }
 
-std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses){
+std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned int& nr_of_cons){
 	std::string morphology;
 
+    nr_of_cons=0;
 	for(auto&& word:word_analyses){
 		morphology+="{\"morpheme id\":\""+std::to_string(word.morphalytics->id())+"\",";
 		morphology+="\"word\":\""+word.morphalytics->word()+"\",";
 		morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
 		morphology+="\"gcat\":\""+word.morphalytics->gcat()+"\"";
+        if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
 		if(word.morphalytics->is_mocked()==false){
 			morphology+=",\"tags\":[";
 			unsigned int morphan_index=0;
@@ -481,25 +498,29 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	return functors;
 }
 
-std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& target_language,const std::string& sentence){
+std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
+    std::multimap<unsigned int,std::string> ranked_analyses_map;
+    db *sqlite=NULL;
+    std::string analysis;
+    unsigned int nr_of_cons=0;
 
-	unsigned int nr_of_analyses=valid_paths.size();
+    sqlite=db_factory::get_instance();
+    unsigned int nr_of_analyses=valid_paths.size();
 	if(nr_of_analyses==0&&toa==HI_MORPHOLOGY){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There is 1 analysis.");
 	}
 	else{
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
 	}
-	std::string analysis="{\"analyses\":[";
-	if(nr_of_analyses==0){
-		analysis+="{";
-		std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
-		if(toa&HI_MORPHOLOGY){
+    if(nr_of_analyses==0){
+        analysis="{";
+        std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
+        if(toa&HI_MORPHOLOGY){
 			analysis+="\"morphology\":[";
 			for(auto&& word_analyses:words_analyses){
-				analysis+=morphology(word_analyses.second);
+                analysis+=morphology(word_analyses.second,nr_of_cons);
 			}
 			if(analysis.back()==',') analysis.pop_back();
 			analysis+="],";
@@ -542,13 +563,14 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(analysis.back()==',') analysis.pop_back();
 		analysis+="}";
-	}
-	else{
+        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+analysis+"');");
+    }
+    else{
 		for(unsigned int i=0;i<nr_of_analyses;++i){
 			related_functors.clear();
-			analysis+="{";
+            analysis="{";
 			if(toa&HI_MORPHOLOGY){
-				analysis+="\"morphology\":["+morphology(valid_paths.at(i));
+                analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 			}
@@ -582,11 +604,22 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+="]";
 			}
 			if(analysis.back()==',') analysis.pop_back();
-			analysis+="},";
-		}
-		if(analysis.back()==',') analysis.pop_back();
+            analysis+="}";
+            ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
+            std::string escaped_analysis="";
+            for(unsigned int i=0;i<analysis.length();++i){
+                if(analysis[i]=='\'') escaped_analysis+="\'\'";
+                else escaped_analysis+=analysis[i];
+            }
+            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+escaped_analysis+"');");
+        }
+        analysis="{\"analyses\":[";
+        for(auto& i:ranked_analyses_map){
+            analysis+=i.second+",";
+        }
+        if(analysis.back()==',') analysis.pop_back();
+        analysis+="]}";
 	}
-	analysis+="]}";
 	return analysis;
 }
 
@@ -629,7 +662,7 @@ void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
 }
 
 void tokenpaths::assign_lexer(lexer *lex){
-	this->lex=lex;
+    this->lex=lex;
 	if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);

@@ -31,7 +31,7 @@ const std::string sqlite_db::error_message(){
 query_result *sqlite_db::exec_sql(const std::string& sql){
 	query_result *result_set=NULL;
 
-	result_set=new query_result();
+    result_set=new query_result();
 	if(sqlite3_exec(sqlite, sql.c_str(), sqlite_db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"sql: "+sql);
 		throw sql_execution_error();

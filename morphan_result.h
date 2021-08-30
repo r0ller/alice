@@ -18,7 +18,7 @@
 			std::string lid;
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&, const std::string&);
-			morphan_result(const std::string&, const std::string&);
+            morphan_result(const std::string&, const std::string&, const std::string&);
 			~morphan_result();
 			const unsigned int& id() const;
 			const std::string& word() const;

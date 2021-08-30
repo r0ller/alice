@@ -10,6 +10,7 @@
 	#include <set>
 	#include "db_factory.h"
 	#include "transgraph.h"
+    #include "rapidjson/document.h"
 
 	typedef struct functor_data{
 		std::string functor;
@@ -64,14 +65,17 @@
 		const t_map_of_node_ids_and_d_keys_to_nr_of_deps& map_of_node_ids_and_d_keys_to_nr_of_deps;
 	};
 
-	class interpreter{
+    class lexer;
+    class tokenpaths;
+
+    class interpreter{
 		private:
 			unsigned char toa_;
 			node_info& get_private_node_info(unsigned int);
 			unsigned int get_head_node(const node_info&);
 			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
-			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
-			unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
+            std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
+            unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
 			void find_functors_for_dependency(const std::string&, const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* functors_found_for_dependencies(const node_info&, node_info&);
 			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&);
@@ -88,7 +92,7 @@
 			void destroy_node_infos();
 			std::vector<unsigned int> validated_nodes;
 			std::vector<node_info> node_infos;
-			unsigned int nr_of_nodes;
+            unsigned int nr_of_nodes_;
 			//std::string command;
 			//std::string options;
 			std::stack<p_m1_node_id_m2_d_key> node_dependency_traversal_stack;
@@ -101,7 +105,10 @@
 					std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,
 					std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
 			void combine_sets(const unsigned int&, const std::vector<unsigned int>&, std::vector<unsigned int>&);
-		public:
+            void insert_in_main_dvm_and_dep_node_links(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
+            void build_dependency_semantics(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const std::string&,std::set<std::pair<unsigned int,unsigned int>>&,lexer *);
+            unsigned int combine_nodes(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&,std::set<std::pair<unsigned int,unsigned int>>&,const std::string&);
+        public:
 			interpreter(const unsigned char toa);
 			~interpreter();
 			int set_node_info(const std::string&, const lexicon&);
@@ -113,8 +120,10 @@
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&);
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&);
 			std::set<unsigned int> validated_terminals();
-			std::vector<node_info> nodes();
-	};
+            std::vector<node_info> nodes();
+            bool is_valid_combination(const unsigned int&,const unsigned int&);
+            void build_dependency_semantics(const unsigned char&,const unsigned char&,const std::string&,lexer*,tokenpaths*);
+    };
 
 	class semper_error:public std::exception{
 		public:
@@ -159,7 +168,7 @@
 			}
 	};
 
-	class invalid_combination:public semper_error{
+    class invalid_combination:public semper_error{
 		private:
 			std::string left_node;
 			std::string right_node;
@@ -181,7 +190,7 @@
 				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
 				return message.c_str();
 			}
-	};
+    };
 
 	class missing_prerequisite_symbol:public semper_error{
 		private:
