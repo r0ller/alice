@@ -150,7 +150,6 @@ int main(int argc,char **argv){
 
     while(true){
         getline(cin,text);
-        //text="list executable\n";
 		if(text.empty()==false){
             toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
             //crh=HI_VERB;

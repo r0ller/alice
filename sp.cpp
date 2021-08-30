@@ -980,6 +980,7 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	//and think over how to make it customizable for different languages
     sqlite=db_factory::get_instance();
     result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+    if(result==NULL) throw std::runtime_error("No main symbol is set up in settings table.");
     std::string main_symbol=*result->field_value_at_row_position(0,"value");
     const node_info& root_node=get_node_info(nr_of_nodes_);
     get_nodes_by_symbol(root_node,main_symbol,std::string(),verbs_found);

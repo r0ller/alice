@@ -606,7 +606,12 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			if(analysis.back()==',') analysis.pop_back();
             analysis+="}";
             ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
-            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+analysis+"');");
+            std::string escaped_analysis="";
+            for(unsigned int i=0;i<analysis.length();++i){
+                if(analysis[i]=='\'') escaped_analysis+="\'\'";
+                else escaped_analysis+=analysis[i];
+            }
+            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+escaped_analysis+"');");
         }
         analysis="{\"analyses\":[";
         for(auto& i:ranked_analyses_map){

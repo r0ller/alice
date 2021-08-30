@@ -18,7 +18,7 @@ ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/
 ARM32LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/armeabi-v7a
 ARM32LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
 ARM64CXX=aarch64-linux-android23-clang++
-ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include/android
+ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include/android -I/usr/pkg/include
 ARM64LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/arm64-v8a
 ARM64LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
 JSINCLUDEDIRS=-I${BUILDDIR}/hi_js -I${PROJECTSRCDIR} -I/usr/pkg/include
@@ -27,7 +27,7 @@ JSDB=${ABSBUILDDIR}/hi_js/hi.db
 JSFST=${ABSBUILDDIR}/hi_js/english.fst
 EMSCRIPTENDIR=
 USERSHELL=$$(getent passwd $$(whoami)|cut -d: -f7)
-TESTSINCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/pkg/include/python3.6
+TESTSINCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/pkg/include/python3.7
 
 #posix trick for ifdef:if DEBUG is defined on command line (even as empty), the variable with the name of
 #the concatenation of CXXFLAGS_DEBUG and ${DEBUG} will be set and CXXFLAGS_DEBUG retains its preset value
@@ -252,7 +252,7 @@ test_tools:
 	includedirs="${TESTSINCLUDEDIRS}";\
 	cp $$projectdir/tests/remove_stex_output_duplicates.sh ${BUILDDIR};\
 	${CXX} $$projectdir/tests/stax.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp -o ${BUILDDIR}/stax ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
-	${CXX} $$projectdir/tests/stex.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp -o ${BUILDDIR}/stex ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lpython3.6 -lfoma;\
+	${CXX} $$projectdir/tests/stex.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp -o ${BUILDDIR}/stex ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lpython3.7 -lfoma;\
 
 ml_tools:
 	mkdir -p ${BUILDDIR};\
@@ -290,5 +290,5 @@ help:
 	@echo shared_native_lib: foma-0.9.17, sqlite3-3.8.11, bison-3.0.4
 	@echo arm32_lib, arm64_lib: Android NDK r16b
 	@echo embedded_js_lib, node_js_lib: emscripten-1.36.0
-	@echo test_tools: sqlite3-3.8.11, foma-0.9.17, python-3.6, nltk-3.3
+	@echo test_tools: sqlite3-3.8.11, foma-0.9.17, python-3.7, nltk-3.3
 	@echo "ml_tools: ABL-1.2 (Alignment-Based Learning framework)"
