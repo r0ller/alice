@@ -1,6 +1,9 @@
 PRAGMA foreign_keys = ON;
 BEGIN;
 
+insert into SETTINGS values('main_symbol','main_verb');
+insert into SETTINGS values('main_verb','V');
+
 insert into ROOT_TYPE values('H');
 insert into ROOT_TYPE values('N');
 

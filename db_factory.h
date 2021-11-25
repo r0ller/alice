@@ -6,8 +6,8 @@
 	#define NETWORK 3
 
 	#if defined(__ANDROID__)
-		#include "jni_db.h"
-	#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+        #include "jni_db.h"
+    #elif defined(__EMSCRIPTEN__) && FS==NETWORK
 		#include "js_db.h"
 	#else
 		#include "sqlite_db.h"
@@ -20,8 +20,8 @@
 			static db *get_instance(){
 				if(db_factory::singleton_instance==NULL){
 					#if defined(__ANDROID__)
-						db_factory::singleton_instance=new jni_db;
-					#elif defined(__EMSCRIPTEN__) && FS==NETWORK
+                        db_factory::singleton_instance=new jni_db;
+                    #elif defined(__EMSCRIPTEN__) && FS==NETWORK
 						db_factory::singleton_instance=new js_db;
 					#else
 						db_factory::singleton_instance=new sqlite_db;

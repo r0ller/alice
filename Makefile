@@ -13,8 +13,8 @@ NATIVEEXELDFLAGS=-Wl,-rpath=${ABSBUILDDIR}/hi_desktop -lhilib -lsqlite3 -lfoma -
 PARSERGENLDFLAGS=-lsqlite3
 NDK32BITTOOLCHAINDIR=
 NDK64BITTOOLCHAINDIR=
-ARM32CXX=arm-linux-androideabi-clang++
-ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include/android
+ARM32CXX=armv7a-linux-androideabi23-clang++
+ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include/android -I/usr/pkg/include
 ARM32LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/armeabi-v7a
 ARM32LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
 ARM64CXX=aarch64-linux-android23-clang++
@@ -158,7 +158,6 @@ arm32_lib:
 	system=$$(uname -s);\
 	case $$system in \
 	NetBSD) arm32libfilepath=${BUILDDIR}/hi_android/arm32/fifo_hilib;\
-	LD_LIBRARY_PATH=/usr/lib;\
 	if [ -f $$arm32libfilepath ]; then rm $$arm32libfilepath; fi;\
 	mkfifo $$arm32libfilepath;\
 	cat $$arm32libfilepath > ${BUILDDIR}/hi_android/arm32/libhilib.so &\
@@ -175,7 +174,16 @@ arm64_lib:
 	parserfilename=$$(basename ${ANDROIDPARSERFILEPATH});\
 	androidsrcfilepath=${BUILDDIR}/hi_android/$$parserfilename.cpp;\
 	androidobjfilepath=${BUILDDIR}/hi_android/arm64/$$parserfilename.o;\
-	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o ${BUILDDIR}/hi_android/arm64/libhilib.so ${ARM64LIBDIR} ${ARM64LDFLAGS};
+	arm64libfilepath=${BUILDDIR}/hi_android/arm64/libhilib.so;\
+	system=$$(uname -s);\
+	case $$system in \
+	NetBSD) arm64libfilepath=${BUILDDIR}/hi_android/arm64/fifo_hilib;\
+	if [ -f $$arm64libfilepath ]; then rm $$arm64libfilepath; fi;\
+	mkfifo $$arm64libfilepath;\
+	cat $$arm64libfilepath > ${BUILDDIR}/hi_android/arm64/libhilib.so &\
+	;;\
+	esac;\
+	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm64libfilepath ${ARM64LIBDIR} ${ARM64LDFLAGS};
 
 js_fst:
 	mkdir -p ${BUILDDIR}/hi_js;\

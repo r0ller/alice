@@ -39,7 +39,8 @@ query_result *sqlite_db::exec_sql(const std::string& sql){
 	if(result_set->nr_of_result_rows()==0){
 		delete result_set;
 		result_set=NULL;
-	}
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Result set empty.");
+    }
 	return result_set;
 }
 

@@ -81,7 +81,7 @@ query_result *jni_db::exec_sql(const std::string& sql){
 				jobject column_name_jobj=env->GetObjectArrayElement(column_names,i);
 				jstring column_name=reinterpret_cast<jstring>(column_name_jobj);
 				std::string colname=jstring2string(column_name);
-				env->DeleteLocalRef(column_name_jobj);
+                env->DeleteLocalRef(column_name_jobj);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"execsql:"+colname);
 				fields[i]=new char[colname.length()+1];
 				fields[i][colname.length()]='\0';
@@ -118,6 +118,9 @@ query_result *jni_db::exec_sql(const std::string& sql){
 		}
 		env->DeleteLocalRef(raw_sqlite_result);
 	}
+    else{
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Result set empty.");
+    }
 	return result;
 }
 
@@ -136,10 +139,10 @@ std::string jni_db::jstring2string(const jstring& jtext){
 
     if(jtext!=NULL){
 		const auto stringJbytes=(jbyteArray) env->CallObjectMethod(jtext,getBytes);
-		const auto length=env->GetArrayLength(stringJbytes);
-		const auto pBytes=env->GetByteArrayElements(stringJbytes,NULL);
-		text=std::string((char *)pBytes,length);
-    	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"jstring2string:"+text);
+        const auto length=env->GetArrayLength(stringJbytes);
+        const auto pBytes=env->GetByteArrayElements(stringJbytes,NULL);
+        text=std::string((char *)pBytes,length);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"jstring2string:"+text);
 		env->ReleaseByteArrayElements(stringJbytes,pBytes,JNI_ABORT);
 		env->DeleteLocalRef(stringJbytes);
     }

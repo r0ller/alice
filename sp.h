@@ -102,8 +102,8 @@
 			void get_leafs_of_node_lr(const node_info&, std::vector<unsigned int>&);
 			unsigned int check_prerequisite_symbols(const node_info&, const node_info&);
 			std::pair<std::string,unsigned int> find_child_for_parent_bottom_up_via_optional_path(const unsigned int, const std::string&, const unsigned int, const unsigned int,
-					std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,
-					std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
+            std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,
+            std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
 			void combine_sets(const unsigned int&, const std::vector<unsigned int>&, std::vector<unsigned int>&);
             void insert_in_main_dvm_and_dep_node_links(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
             void build_dependency_semantics(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const std::string&,std::set<std::pair<unsigned int,unsigned int>>&,lexer *);
