@@ -336,13 +336,13 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	if(dependencies==NULL){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
 		//Don't throw anything, see comment in tokenize_word() when calling this function for lexemes not being found in the lexicon
 		//throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
 	}
 	else{
 		for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
 			semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
 			ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){

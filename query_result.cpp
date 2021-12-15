@@ -7,6 +7,7 @@ query_result::query_result(){
 }
 
 query_result::~query_result(){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"query result destructor called");
 }
 
 std::multimap<unsigned int,field>::const_iterator query_result::row_at_position(unsigned int rowid) const{
@@ -23,6 +24,7 @@ const std::string* query_result::field_value_at_row_position(unsigned int rowid,
 		if(position!=raw_result_set.end()) return &position->second.field_value;
 		else return NULL;
 	}
+    return NULL;
 }
 
 const std::multimap<unsigned int,field>& query_result::result_set() const{
@@ -39,7 +41,7 @@ unsigned int query_result::nr_of_result_rows() const{
 }
 
 void query_result::insert(const std::pair<unsigned int, field>& row){
-	//insert() ensures that the field values for each field of the same row id are unqiue in the table
+    //insert() ensures that the field values for each field of the same row id are unqiue in the table
 	unsigned int nr_of_inserted_columns=0;
 	std::set<std::string> fields_inserted;
 	std::multimap<unsigned int,field>::iterator upper_bound;

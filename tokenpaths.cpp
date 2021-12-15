@@ -1,6 +1,6 @@
 #include "logger.h"
 #include "tokenpaths.h"
-#include "hilib.h"
+#include "hi_constants.h"
 #include "sp.h"
 
 extern interpreter *sparser;

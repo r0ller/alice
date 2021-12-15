@@ -1,6 +1,6 @@
 #include "logger.h"
 #include "sp.h"
-#include "hilib.h"
+#include "hi_constants.h"
 #include <iterator>
 #include <algorithm>
 #include <functional>
@@ -202,7 +202,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 		nodeinfo.symbol=symbol;
 		if(toa_&HI_SEMANTICS){
 			sqlite=db_factory::get_instance();
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Looking for symbols for parent:"+symbol+", head root:"+new_phrase_head_root.symbol+", non-head root:"+new_phrase_non_head_root.symbol);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Looking for symbols for parent:"+symbol+", head root:"+new_phrase_head_root.symbol+", non-head root:"+new_phrase_non_head_root.symbol);
 			rule_to_rule_map=sqlite->exec_sql("SELECT * FROM RULE_TO_RULE_MAP WHERE PARENT_SYMBOL = '"+symbol+"' AND HEAD_ROOT_SYMBOL = '"+new_phrase_head_root.symbol+"' AND NON_HEAD_ROOT_SYMBOL = '"+new_phrase_non_head_root.symbol+"';");
 			if(rule_to_rule_map!=NULL){
 			/* TODO: Instead of the current validation, the head node needs to be validated against

@@ -65,7 +65,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			lex=new lexer(human_input,language,locale,false,token_paths);
 			token_paths->assign_lexer(lex);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
-			sparser=new interpreter(toa);
+            sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
             if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
 				int parse_error=parser.parse();
