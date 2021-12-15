@@ -121,6 +121,7 @@ hi_desktop/foma/english.lexc
 hi_desktop/foma/engnoun.lexc
 hi_desktop/functors/andengconj_1.sh
 hi_desktop/functors/beengv_1.sh
+hi_desktop/functors/beengv_2.sh
 hi_desktop/functors/dirbeprop_1.sh
 hi_desktop/functors/directoryengn_1.sh
 hi_desktop/functors/emptyenga_1.sh
@@ -137,6 +138,7 @@ hi_desktop/functors/orengconj_1.sh
 hi_desktop/functors/properties_2.sh
 hi_desktop/functors/symlinkedenga_2.sh
 hi_desktop/hi-engmorph-foma-content.sql
+hi_desktop/n_desktop_content.sql
 hi_desktop/o_desktop_content.sql
 hi_js/emscripten_howto_compile_libarchive
 hi_js/foma/english.foma
