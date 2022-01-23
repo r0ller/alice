@@ -10,10 +10,7 @@ do
 	echo content;
 	echo "$v";
 	case "$i" in 
-		*_out) if [ -n "$(echo "$v"|grep '"gcat":"CON"')" ];
-		then out="$out""$(echo "$v"|cut -f3 -d:|cut -f1 -d,)";
-		else out="$v";
-		fi; 
+		*_out) out="$v"; 
 		;;
 	esac;
 	c=$(($c+1));

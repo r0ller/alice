@@ -10,13 +10,7 @@ do
 	echo content;
 	echo "$v";
 	case "$i" in 
-		PROPERTIES_*_out) if [ -n "$out" ];
-		then out="$(echo "$v"|sed "s/|/$out/g")";
-		else out="$v";
-		fi;
-		break; 
-		;;
-		*_out) out="$out""$v"; 
+		*_out) out="$v"; 
 		;;
 	esac;
 	c=$(($c+1));

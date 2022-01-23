@@ -1,26 +1,16 @@
 echo "printing parameters and their contents for" $1;
 unset out;
-ordered_args=$(echo $2|tr " " "\n"|sort -t "_" -k 3,3n -k 4,4n);
 c=1;
-for i in $ordered_args;
+for i in $2;
 do 
-	eval v="\$$i";
+	p=$(($c+2));
+	eval v="\$$p";
 	echo name;
 	echo $i;
 	echo content;
 	echo "$v";
 	case "$i" in 
-		*_out) option="$v";
-		if [ -z "$out" ];
-		then out="$option";
-		else out="$out&$option";
-		fi; 
-		;;
-		*_morphology) option="$v";
-		if [ -z "$out" ];
-		then out="$option";
-		else out="$out<$option";
-		fi; 
+		*_out) out="$v"; 
 		;;
 	esac;
 	c=$(($c+1));

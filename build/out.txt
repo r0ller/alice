@@ -1,0 +1,232 @@
+human_input:is file abc executable
+picking new token path
+nr of paths:1
+current_path_nr:0
+lexer started
+interpreter started
+V->BEENGV
+ENG_V->ENG_V_Stem
+N->FILEENGN
+t_ENG_N_Sg->
+ENG_N_Sg_0Con->ENG_N_Stem ENG_N_lfea_Sg
+t_ENG_N_swConsonant->
+ENG_N_Sg_0Con_swC->ENG_N_Sg_0Con ENG_lfea_swConsonant
+CON->abc
+ENG_1Con->ENG_Con
+ENG_N_Sg->ENG_N_Sg_0Con_swC ENG_1Con
+ENG_N->ENG_N_Sg
+ENG_CNP->ENG_N
+ENG_NP->ENG_CNP
+ENG_Vbar1->ENG_V ENG_NP
+step:1 failover:2 successor:0
+step:2 failover:3 successor:4
+step:4 failover:0 successor:5
+step:5 failover:5 successor:6
+step:6 failover:7 successor:9
+step:9 failover:0 successor:10
+step:10 failover:0 successor:11
+step:11 failover:0 successor:0
+inserting in dvm, dependent node functor FILEENGN for main node functor BEENGV
+inserting in dvm, dependent node functor FILEENGN for main node functor BEENGV
+inserting in dvm, dependent node functor abc for main node functor FILEENGN
+inserting in dvm, dependent node functor abc for main node functor FILEENGN
+inserting in dvm, dependent node functor abc for main node functor FILEENGN
+inserting in dvm, dependent node functor abc for main node functor FILEENGN
+A->EXECUTABLEENGA
+ENG_A->ENG_A_Stem
+ENG_A0NEG->ENG_A
+ENG_Abar1->ENG_A0NEG
+ENG_AP->ENG_Abar1
+ENG_VP_Int->ENG_Vbar1 ENG_AP
+step:1 failover:0 successor:0
+inserting in dvm, dependent node functor EXECUTABLEENGA for main node functor BEENGV
+inserting in dvm, dependent node functor EXECUTABLEENGA for main node functor BEENGV
+inserting in dvm, dependent node functor EXECUTABLEENGA for main node functor BEENGV
+S->ENG_VP_Int
+dependencies with longest match:
+functor BEENGV d_key 1: 2 deps found out of the expected 2 deps to be found
+functor FILEENGN d_key 1: 2 deps found out of the expected 2 deps to be found
+functor abc d_key 1: 0 deps found out of the expected 0 deps to be found
+functor EXECUTABLEENGA d_key 1: 0 deps found out of the expected 0 deps to be found
+dependencies with longest match:
+functor BEENGV d_key 2: 1 deps found out of the expected 1 deps to be found
+functor EXECUTABLEENGA d_key 2: 0 deps found out of the expected 0 deps to be found
+Minimum number of dependencies to match:4
+Matching nr of dependencies found for functor BEENGV with d_key 1:4
+Total number of dependencies:3
+Not all dependencies have been found for functor BEENGV
+TRUE
+There are 1 analyses.
+transcripting:BEENGV_1
+transcripting:PROPERTIES_1
+transcripting:FILEBEPROP_1
+transcripting:EXECUTABLEENGA_1
+transcripting:FILEENGN_1
+transcripting:BEENGV_1
+transcripting:PROPERTIES_1
+transcripting:FILEBEPROP_1
+transcripting:FILEENGN_1
+transcripting:CON_1
+{"analyses":[{"morphology":[{"morpheme id":"1","word":"is","stem":"be","gcat":"V","tags":["be[stem]","V","Sg"]},{"morpheme id":"2","word":"file","stem":"file","gcat":"N","tags":["file[stem]","N","Sg","swConsonant"]},{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"},{"morpheme id":"4","word":"executable","stem":"executable","gcat":"A","tags":["executable[stem]","A"]}],"syntax":[{"symbol":"S","left child":{},"right child":{"symbol":"ENG_VP_Int","left child":{"symbol":"ENG_Vbar1","left child":{"symbol":"ENG_V","left child":{},"right child":{"symbol":"ENG_V_Stem","morpheme id":"1"}},"right child":{"symbol":"ENG_NP","left child":{},"right child":{"symbol":"ENG_CNP","left child":{},"right child":{"symbol":"ENG_N","left child":{},"right child":{"symbol":"ENG_N_Sg","left child":{"symbol":"ENG_N_Sg_0Con_swC","left child":{"symbol":"ENG_N_Sg_0Con","left child":{"symbol":"ENG_N_Stem","morpheme id":"2"},"right child":{"symbol":"ENG_N_lfea_Sg"}},"right child":{"symbol":"ENG_lfea_swConsonant"}},"right child":{"symbol":"ENG_1Con","left child":{},"right child":{"symbol":"ENG_Con","morpheme id":"3"}}}}}}},"right child":{"symbol":"ENG_AP","left child":{},"right child":{"symbol":"ENG_Abar1","left child":{},"right child":{"symbol":"ENG_A0NEG","left child":{},"right child":{"symbol":"ENG_A","left child":{},"right child":{"symbol":"ENG_A_Stem","morpheme id":"4"}}}}}}}],"semantics":[{"id":"1","functor":"BEENGV","d_key":"1","morpheme id":"1","tags":{"mood":"interrogative"},"functor id":"BEENGV_1","dependencies":[{"id":"1_1","functor":"PROPERTIES","d_key":"1","functor id":"PROPERTIES_1","dependencies":[{"id":"1_2","functor":"FILEBEPROP","d_key":"1","functor id":"FILEBEPROP_1","dependencies":[{"id":"15","functor":"EXECUTABLEENGA","d_key":"1","morpheme id":"4","functor id":"EXECUTABLEENGA_1"},{"id":"3","functor":"FILEENGN","d_key":"1","morpheme id":"2","functor id":"FILEENGN_1","dependencies":[{"id":"3_3","functor":"BEENGV","d_key":"1","tags":{},"functor id":"BEENGV_1","dependencies":[{"id":"3_4","functor":"PROPERTIES","d_key":"1","functor id":"PROPERTIES_1","dependencies":[{"id":"3_5","functor":"FILEBEPROP","d_key":"1","functor id":"FILEBEPROP_1","dependencies":[{"id":"3_6","functor":"FILEENGN","d_key":"1","functor id":"FILEENGN_1","dependencies":[{"id":"8","functor":"CON","d_key":"1","morpheme id":"3"}]}]}]}]}]}]}]}]}],"functors":[{"functor id":"BEENGV_1","definition":"echo \"printing parameters and their contents for\" $1;unset out;c=1;for i in $2;do p=$(($c+2));eval v=\"\\$$p\";echo name;echo $i;echo content;echo \"$v\";case \"$i\" in *_out) out=\"$v\"; ;;esac;c=$(($c+1));done;eval \"$1\"_out='\"$out\"';"},{"functor id":"EXECUTABLEENGA_1","definition":"echo \"printing parameters and their contents for\" $1;unset out;c=1;for i in $2;do p=$(($c+2));eval v=\"\\$$p\";echo name;echo $i;echo content;echo \"$v\";case \"$i\" in *_out) out=\"$v\"; ;;esac;c=$(($c+1));done;eval \"$1\"_out='\"$out\"';"},{"functor id":"FILEBEPROP_1","definition":"echo \"printing parameters and their contents for\" $1;unset out;c=1;for i in $2;do p=$(($c+2));eval v=\"\\$$p\";echo name;echo $i;echo content;echo \"$v\";case \"$i\" in *_out) out=\"$v\"; ;;esac;c=$(($c+1));done;eval \"$1\"_out='\"$out\"';"},{"functor id":"FILEENGN_1","definition":"echo \"printing parameters and their contents for\" $1;unset out;c=1;for i in $2;do p=$(($c+2));eval v=\"\\$$p\";echo name;echo $i;echo content;echo \"$v\";case \"$i\" in *_out) out=\"$v\"; ;;esac;c=$(($c+1));done;eval \"$1\"_out='\"$out\"';"},{"functor id":"PROPERTIES_1","definition":"echo \"printing parameters and their contents for\" $1;unset out;c=1;for i in $2;do p=$(($c+2));eval v=\"\\$$p\";echo name;echo $i;echo content;echo \"$v\";case \"$i\" in *_out) out=\"$v\"; ;;esac;c=$(($c+1));done;eval \"$1\"_out='\"$out\"';"}]}]}
+printing parameters and their contents for EXECUTABLEENGA_1_15
+
+name
+
+EXECUTABLEENGA_1_15_morphology
+
+content
+
+{"morpheme id":"4","word":"executable","stem":"executable","gcat":"A","tags":["executable[stem]","A"]}
+
+printing parameters and their contents for FILEENGN_1_3_6
+
+name
+
+CON_8_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+FILEENGN_1_3_6_morphology
+
+content
+
+
+
+printing parameters and their contents for FILEBEPROP_1_3_5
+
+name
+
+FILEENGN_1_3_6_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+FILEBEPROP_1_3_5_morphology
+
+content
+
+
+
+printing parameters and their contents for PROPERTIES_1_3_4
+
+name
+
+FILEBEPROP_1_3_5_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+PROPERTIES_1_3_4_morphology
+
+content
+
+
+
+printing parameters and their contents for BEENGV_1_3_3
+
+name
+
+PROPERTIES_1_3_4_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+BEENGV_1_3_3_morphology
+
+content
+
+
+
+printing parameters and their contents for FILEENGN_1_3
+
+name
+
+BEENGV_1_3_3_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+FILEENGN_1_3_morphology
+
+content
+
+{"morpheme id":"2","word":"file","stem":"file","gcat":"N","tags":["file[stem]","N","Sg","swConsonant"]}
+
+printing parameters and their contents for FILEBEPROP_1_1_2
+
+name
+
+EXECUTABLEENGA_1_15_out
+
+content
+
+
+
+name
+
+FILEENGN_1_3_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+FILEBEPROP_1_1_2_morphology
+
+content
+
+
+
+printing parameters and their contents for PROPERTIES_1_1_1
+
+name
+
+FILEBEPROP_1_1_2_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+PROPERTIES_1_1_1_morphology
+
+content
+
+
+
+printing parameters and their contents for BEENGV_1_1
+
+name
+
+PROPERTIES_1_1_1_out
+
+content
+
+{"morpheme id":"3","word":"abc","stem":"abc","gcat":"CON"}
+
+name
+
+BEENGV_1_1_morphology
+
+content
+
+{"morpheme id":"1","word":"is","stem":"be","gcat":"V","tags":["be[stem]","V","Sg"]}
+
