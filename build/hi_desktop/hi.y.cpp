@@ -207,27 +207,31 @@ namespace yy {
     YYUNDEF = 257,                 // "invalid token"
     t_ENG_CON_Stem = 258,          // t_ENG_CON_Stem
     t_ENG_A_Stem = 259,            // t_ENG_A_Stem
-    t_ENG_ADV_Stem = 260,          // t_ENG_ADV_Stem
-    t_ENG_DET_Stem = 261,          // t_ENG_DET_Stem
-    t_ENG_N_Stem = 262,            // t_ENG_N_Stem
-    t_ENG_N_Pl = 263,              // t_ENG_N_Pl
-    t_ENG_N_Sg = 264,              // t_ENG_N_Sg
-    t_ENG_PREP_Stem = 265,         // t_ENG_PREP_Stem
-    t_ENG_QPRO_Stem = 266,         // t_ENG_QPRO_Stem
-    t_ENG_V_Stem = 267,            // t_ENG_V_Stem
-    t_ENG_V_Aux = 268,             // t_ENG_V_Aux
-    t_ENG_RPRO_Stem = 269,         // t_ENG_RPRO_Stem
-    t_ENG_RPRO_Relative = 270,     // t_ENG_RPRO_Relative
-    t_ENG_VNEG_Stem = 271,         // t_ENG_VNEG_Stem
-    t_ENG_ANEG_Stem = 272,         // t_ENG_ANEG_Stem
-    t_ENG_PAR_Stem = 273,          // t_ENG_PAR_Stem
-    t_ENG_DET_Indef = 274,         // t_ENG_DET_Indef
-    t_ENG_DET_fwVowel = 275,       // t_ENG_DET_fwVowel
-    t_ENG_DET_fwConsonant = 276,   // t_ENG_DET_fwConsonant
-    t_ENG_N_swVowel = 277,         // t_ENG_N_swVowel
-    t_ENG_N_swConsonant = 278,     // t_ENG_N_swConsonant
-    t_ENG_V_Gerund = 279,          // t_ENG_V_Gerund
-    t_ENG_CONJ_Stem = 280          // t_ENG_CONJ_Stem
+    t_ENG_Punct_Stem = 260,        // t_ENG_Punct_Stem
+    t_ENG_Punct_FullStop = 261,    // t_ENG_Punct_FullStop
+    t_ENG_Punct_QuestionMark = 262, // t_ENG_Punct_QuestionMark
+    t_ENG_Punct_ExclamationMark = 263, // t_ENG_Punct_ExclamationMark
+    t_ENG_ADV_Stem = 264,          // t_ENG_ADV_Stem
+    t_ENG_DET_Stem = 265,          // t_ENG_DET_Stem
+    t_ENG_N_Stem = 266,            // t_ENG_N_Stem
+    t_ENG_N_Pl = 267,              // t_ENG_N_Pl
+    t_ENG_N_Sg = 268,              // t_ENG_N_Sg
+    t_ENG_PREP_Stem = 269,         // t_ENG_PREP_Stem
+    t_ENG_QPRO_Stem = 270,         // t_ENG_QPRO_Stem
+    t_ENG_V_Stem = 271,            // t_ENG_V_Stem
+    t_ENG_V_Aux = 272,             // t_ENG_V_Aux
+    t_ENG_RPRO_Stem = 273,         // t_ENG_RPRO_Stem
+    t_ENG_RPRO_Relative = 274,     // t_ENG_RPRO_Relative
+    t_ENG_VNEG_Stem = 275,         // t_ENG_VNEG_Stem
+    t_ENG_ANEG_Stem = 276,         // t_ENG_ANEG_Stem
+    t_ENG_PAR_Stem = 277,          // t_ENG_PAR_Stem
+    t_ENG_DET_Indef = 278,         // t_ENG_DET_Indef
+    t_ENG_DET_fwVowel = 279,       // t_ENG_DET_fwVowel
+    t_ENG_DET_fwConsonant = 280,   // t_ENG_DET_fwConsonant
+    t_ENG_N_swVowel = 281,         // t_ENG_N_swVowel
+    t_ENG_N_swConsonant = 282,     // t_ENG_N_swConsonant
+    t_ENG_V_Gerund = 283,          // t_ENG_V_Gerund
+    t_ENG_CONJ_Stem = 284          // t_ENG_CONJ_Stem
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -244,104 +248,111 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 26, ///< Number of tokens.
+        YYNTOKENS = 30, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // END
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
         S_t_ENG_CON_Stem = 3,                    // t_ENG_CON_Stem
         S_t_ENG_A_Stem = 4,                      // t_ENG_A_Stem
-        S_t_ENG_ADV_Stem = 5,                    // t_ENG_ADV_Stem
-        S_t_ENG_DET_Stem = 6,                    // t_ENG_DET_Stem
-        S_t_ENG_N_Stem = 7,                      // t_ENG_N_Stem
-        S_t_ENG_N_Pl = 8,                        // t_ENG_N_Pl
-        S_t_ENG_N_Sg = 9,                        // t_ENG_N_Sg
-        S_t_ENG_PREP_Stem = 10,                  // t_ENG_PREP_Stem
-        S_t_ENG_QPRO_Stem = 11,                  // t_ENG_QPRO_Stem
-        S_t_ENG_V_Stem = 12,                     // t_ENG_V_Stem
-        S_t_ENG_V_Aux = 13,                      // t_ENG_V_Aux
-        S_t_ENG_RPRO_Stem = 14,                  // t_ENG_RPRO_Stem
-        S_t_ENG_RPRO_Relative = 15,              // t_ENG_RPRO_Relative
-        S_t_ENG_VNEG_Stem = 16,                  // t_ENG_VNEG_Stem
-        S_t_ENG_ANEG_Stem = 17,                  // t_ENG_ANEG_Stem
-        S_t_ENG_PAR_Stem = 18,                   // t_ENG_PAR_Stem
-        S_t_ENG_DET_Indef = 19,                  // t_ENG_DET_Indef
-        S_t_ENG_DET_fwVowel = 20,                // t_ENG_DET_fwVowel
-        S_t_ENG_DET_fwConsonant = 21,            // t_ENG_DET_fwConsonant
-        S_t_ENG_N_swVowel = 22,                  // t_ENG_N_swVowel
-        S_t_ENG_N_swConsonant = 23,              // t_ENG_N_swConsonant
-        S_t_ENG_V_Gerund = 24,                   // t_ENG_V_Gerund
-        S_t_ENG_CONJ_Stem = 25,                  // t_ENG_CONJ_Stem
-        S_YYACCEPT = 26,                         // $accept
-        S_ENG_1Con = 27,                         // ENG_1Con
-        S_ENG_A = 28,                            // ENG_A
-        S_ENG_A0NEG = 29,                        // ENG_A0NEG
-        S_ENG_ANEG = 30,                         // ENG_ANEG
-        S_ENG_ANEG_Stem = 31,                    // ENG_ANEG_Stem
-        S_ENG_AP = 32,                           // ENG_AP
-        S_ENG_A_Stem = 33,                       // ENG_A_Stem
-        S_ENG_Abar1 = 34,                        // ENG_Abar1
-        S_ENG_Abar2 = 35,                        // ENG_Abar2
-        S_ENG_Adv = 36,                          // ENG_Adv
-        S_ENG_AdvP = 37,                         // ENG_AdvP
-        S_ENG_Ahead = 38,                        // ENG_Ahead
-        S_ENG_Alist = 39,                        // ENG_Alist
-        S_ENG_CAP = 40,                          // ENG_CAP
-        S_ENG_CNP = 41,                          // ENG_CNP
-        S_ENG_CONJ = 42,                         // ENG_CONJ
-        S_ENG_CONJA = 43,                        // ENG_CONJA
-        S_ENG_CONJ_Stem = 44,                    // ENG_CONJ_Stem
-        S_ENG_Con = 45,                          // ENG_Con
-        S_ENG_DP = 46,                           // ENG_DP
-        S_ENG_Det_stem = 47,                     // ENG_Det_stem
-        S_ENG_IVP = 48,                          // ENG_IVP
-        S_ENG_Indef_Det = 49,                    // ENG_Indef_Det
-        S_ENG_Indef_Det_a = 50,                  // ENG_Indef_Det_a
-        S_ENG_Indef_Det_an = 51,                 // ENG_Indef_Det_an
-        S_ENG_N = 52,                            // ENG_N
-        S_ENG_NP = 53,                           // ENG_NP
-        S_ENG_NV = 54,                           // ENG_NV
-        S_ENG_N_Pl = 55,                         // ENG_N_Pl
-        S_ENG_N_Pl_0Con = 56,                    // ENG_N_Pl_0Con
-        S_ENG_N_Pl_0Con_swC = 57,                // ENG_N_Pl_0Con_swC
-        S_ENG_N_Pl_0Con_swV = 58,                // ENG_N_Pl_0Con_swV
-        S_ENG_N_Sg = 59,                         // ENG_N_Sg
-        S_ENG_N_Sg_0Con = 60,                    // ENG_N_Sg_0Con
-        S_ENG_N_Sg_0Con_swC = 61,                // ENG_N_Sg_0Con_swC
-        S_ENG_N_Sg_0Con_swV = 62,                // ENG_N_Sg_0Con_swV
-        S_ENG_N_Stem = 63,                       // ENG_N_Stem
-        S_ENG_N_lfea_Pl = 64,                    // ENG_N_lfea_Pl
-        S_ENG_N_lfea_Sg = 65,                    // ENG_N_lfea_Sg
-        S_ENG_PP = 66,                           // ENG_PP
-        S_ENG_Prep = 67,                         // ENG_Prep
-        S_ENG_QPro = 68,                         // ENG_QPro
-        S_ENG_RC = 69,                           // ENG_RC
-        S_ENG_RPro = 70,                         // ENG_RPro
-        S_ENG_RPro_lfea_relative = 71,           // ENG_RPro_lfea_relative
-        S_ENG_RPro_stem = 72,                    // ENG_RPro_stem
-        S_ENG_TP = 73,                           // ENG_TP
-        S_ENG_Tense_particle = 74,               // ENG_Tense_particle
-        S_ENG_V = 75,                            // ENG_V
-        S_ENG_VNEG = 76,                         // ENG_VNEG
-        S_ENG_VNEG_Stem = 77,                    // ENG_VNEG_Stem
-        S_ENG_VP = 78,                           // ENG_VP
-        S_ENG_VP_Int = 79,                       // ENG_VP_Int
-        S_ENG_V_Stem = 80,                       // ENG_V_Stem
-        S_ENG_V_ger = 81,                        // ENG_V_ger
-        S_ENG_V_lfea_aux = 82,                   // ENG_V_lfea_aux
-        S_ENG_V_lfea_ger = 83,                   // ENG_V_lfea_ger
-        S_ENG_Vbar1 = 84,                        // ENG_Vbar1
-        S_ENG_Vbar1_Ind = 85,                    // ENG_Vbar1_Ind
-        S_ENG_Vbar2 = 86,                        // ENG_Vbar2
-        S_ENG_Vbar3 = 87,                        // ENG_Vbar3
-        S_ENG_Vbar4 = 88,                        // ENG_Vbar4
-        S_ENG_lfea_IndefDet = 89,                // ENG_lfea_IndefDet
-        S_ENG_lfea_fwConsonant = 90,             // ENG_lfea_fwConsonant
-        S_ENG_lfea_fwVowel = 91,                 // ENG_lfea_fwVowel
-        S_ENG_lfea_swConsonant = 92,             // ENG_lfea_swConsonant
-        S_ENG_lfea_swVowel = 93,                 // ENG_lfea_swVowel
-        S_ENG_nCon = 94,                         // ENG_nCon
-        S_S = 95                                 // S
+        S_t_ENG_Punct_Stem = 5,                  // t_ENG_Punct_Stem
+        S_t_ENG_Punct_FullStop = 6,              // t_ENG_Punct_FullStop
+        S_t_ENG_Punct_QuestionMark = 7,          // t_ENG_Punct_QuestionMark
+        S_t_ENG_Punct_ExclamationMark = 8,       // t_ENG_Punct_ExclamationMark
+        S_t_ENG_ADV_Stem = 9,                    // t_ENG_ADV_Stem
+        S_t_ENG_DET_Stem = 10,                   // t_ENG_DET_Stem
+        S_t_ENG_N_Stem = 11,                     // t_ENG_N_Stem
+        S_t_ENG_N_Pl = 12,                       // t_ENG_N_Pl
+        S_t_ENG_N_Sg = 13,                       // t_ENG_N_Sg
+        S_t_ENG_PREP_Stem = 14,                  // t_ENG_PREP_Stem
+        S_t_ENG_QPRO_Stem = 15,                  // t_ENG_QPRO_Stem
+        S_t_ENG_V_Stem = 16,                     // t_ENG_V_Stem
+        S_t_ENG_V_Aux = 17,                      // t_ENG_V_Aux
+        S_t_ENG_RPRO_Stem = 18,                  // t_ENG_RPRO_Stem
+        S_t_ENG_RPRO_Relative = 19,              // t_ENG_RPRO_Relative
+        S_t_ENG_VNEG_Stem = 20,                  // t_ENG_VNEG_Stem
+        S_t_ENG_ANEG_Stem = 21,                  // t_ENG_ANEG_Stem
+        S_t_ENG_PAR_Stem = 22,                   // t_ENG_PAR_Stem
+        S_t_ENG_DET_Indef = 23,                  // t_ENG_DET_Indef
+        S_t_ENG_DET_fwVowel = 24,                // t_ENG_DET_fwVowel
+        S_t_ENG_DET_fwConsonant = 25,            // t_ENG_DET_fwConsonant
+        S_t_ENG_N_swVowel = 26,                  // t_ENG_N_swVowel
+        S_t_ENG_N_swConsonant = 27,              // t_ENG_N_swConsonant
+        S_t_ENG_V_Gerund = 28,                   // t_ENG_V_Gerund
+        S_t_ENG_CONJ_Stem = 29,                  // t_ENG_CONJ_Stem
+        S_YYACCEPT = 30,                         // $accept
+        S_ENG_1Con = 31,                         // ENG_1Con
+        S_ENG_A = 32,                            // ENG_A
+        S_ENG_A0NEG = 33,                        // ENG_A0NEG
+        S_ENG_ANEG = 34,                         // ENG_ANEG
+        S_ENG_ANEG_Stem = 35,                    // ENG_ANEG_Stem
+        S_ENG_AP = 36,                           // ENG_AP
+        S_ENG_A_Stem = 37,                       // ENG_A_Stem
+        S_ENG_Abar1 = 38,                        // ENG_Abar1
+        S_ENG_Abar2 = 39,                        // ENG_Abar2
+        S_ENG_Adv = 40,                          // ENG_Adv
+        S_ENG_AdvP = 41,                         // ENG_AdvP
+        S_ENG_Ahead = 42,                        // ENG_Ahead
+        S_ENG_Alist = 43,                        // ENG_Alist
+        S_ENG_CAP = 44,                          // ENG_CAP
+        S_ENG_CNP = 45,                          // ENG_CNP
+        S_ENG_CONJ = 46,                         // ENG_CONJ
+        S_ENG_CONJA = 47,                        // ENG_CONJA
+        S_ENG_CONJ_Stem = 48,                    // ENG_CONJ_Stem
+        S_ENG_Con = 49,                          // ENG_Con
+        S_ENG_DP = 50,                           // ENG_DP
+        S_ENG_Det_stem = 51,                     // ENG_Det_stem
+        S_ENG_IVP = 52,                          // ENG_IVP
+        S_ENG_Indef_Det = 53,                    // ENG_Indef_Det
+        S_ENG_Indef_Det_a = 54,                  // ENG_Indef_Det_a
+        S_ENG_Indef_Det_an = 55,                 // ENG_Indef_Det_an
+        S_ENG_N = 56,                            // ENG_N
+        S_ENG_NP = 57,                           // ENG_NP
+        S_ENG_NV = 58,                           // ENG_NV
+        S_ENG_N_Pl = 59,                         // ENG_N_Pl
+        S_ENG_N_Pl_0Con = 60,                    // ENG_N_Pl_0Con
+        S_ENG_N_Pl_0Con_swC = 61,                // ENG_N_Pl_0Con_swC
+        S_ENG_N_Pl_0Con_swV = 62,                // ENG_N_Pl_0Con_swV
+        S_ENG_N_Sg = 63,                         // ENG_N_Sg
+        S_ENG_N_Sg_0Con = 64,                    // ENG_N_Sg_0Con
+        S_ENG_N_Sg_0Con_swC = 65,                // ENG_N_Sg_0Con_swC
+        S_ENG_N_Sg_0Con_swV = 66,                // ENG_N_Sg_0Con_swV
+        S_ENG_N_Stem = 67,                       // ENG_N_Stem
+        S_ENG_N_lfea_Pl = 68,                    // ENG_N_lfea_Pl
+        S_ENG_N_lfea_Sg = 69,                    // ENG_N_lfea_Sg
+        S_ENG_PP = 70,                           // ENG_PP
+        S_ENG_Prep = 71,                         // ENG_Prep
+        S_ENG_Punct = 72,                        // ENG_Punct
+        S_ENG_Punct_FullStop = 73,               // ENG_Punct_FullStop
+        S_ENG_Punct_Stem = 74,                   // ENG_Punct_Stem
+        S_ENG_QPro = 75,                         // ENG_QPro
+        S_ENG_RC = 76,                           // ENG_RC
+        S_ENG_RPro = 77,                         // ENG_RPro
+        S_ENG_RPro_lfea_relative = 78,           // ENG_RPro_lfea_relative
+        S_ENG_RPro_stem = 79,                    // ENG_RPro_stem
+        S_ENG_TP = 80,                           // ENG_TP
+        S_ENG_Tense_particle = 81,               // ENG_Tense_particle
+        S_ENG_V = 82,                            // ENG_V
+        S_ENG_VNEG = 83,                         // ENG_VNEG
+        S_ENG_VNEG_Stem = 84,                    // ENG_VNEG_Stem
+        S_ENG_VP = 85,                           // ENG_VP
+        S_ENG_VP_Int = 86,                       // ENG_VP_Int
+        S_ENG_V_Stem = 87,                       // ENG_V_Stem
+        S_ENG_V_ger = 88,                        // ENG_V_ger
+        S_ENG_V_lfea_aux = 89,                   // ENG_V_lfea_aux
+        S_ENG_V_lfea_ger = 90,                   // ENG_V_lfea_ger
+        S_ENG_Vbar1 = 91,                        // ENG_Vbar1
+        S_ENG_Vbar1_Ind = 92,                    // ENG_Vbar1_Ind
+        S_ENG_Vbar2 = 93,                        // ENG_Vbar2
+        S_ENG_Vbar3 = 94,                        // ENG_Vbar3
+        S_ENG_Vbar4 = 95,                        // ENG_Vbar4
+        S_ENG_lfea_IndefDet = 96,                // ENG_lfea_IndefDet
+        S_ENG_lfea_fwConsonant = 97,             // ENG_lfea_fwConsonant
+        S_ENG_lfea_fwVowel = 98,                 // ENG_lfea_fwVowel
+        S_ENG_lfea_swConsonant = 99,             // ENG_lfea_swConsonant
+        S_ENG_lfea_swVowel = 100,                // ENG_lfea_swVowel
+        S_ENG_nCon = 101,                        // ENG_nCon
+        S_S = 102                                // S
       };
     };
 
@@ -587,7 +598,7 @@ namespace yy {
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const signed char yypgoto_[];
+    static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
     static const short yydefgoto_[];
@@ -597,7 +608,7 @@ namespace yy {
     // number is the opposite.  If YYTABLE_NINF, syntax error.
     static const short yytable_[];
 
-    static const unsigned char yycheck_[];
+    static const short yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
     // symbol of state STATE-NUM.
@@ -839,9 +850,9 @@ namespace yy {
     /// Constants.
     enum
     {
-      yylast_ = 132,     ///< Last index in yytable_.
-      yynnts_ = 70,  ///< Number of nonterminal symbols.
-      yyfinal_ = 103 ///< Termination state number.
+      yylast_ = 135,     ///< Last index in yytable_.
+      yynnts_ = 73,  ///< Number of nonterminal symbols.
+      yyfinal_ = 106 ///< Termination state number.
     };
 
 
@@ -850,7 +861,7 @@ namespace yy {
 
 
 } // yy
-#line 854 "build/hi_desktop/hi.y.cpp"
+#line 865 "build/hi_desktop/hi.y.cpp"
 
 
 
@@ -891,7 +902,7 @@ tokenpaths *token_paths=NULL;
 db *db_factory::singleton_instance=NULL;
 
 
-#line 895 "build/hi_desktop/hi.y.cpp"
+#line 906 "build/hi_desktop/hi.y.cpp"
 
 
 #ifndef YY_
@@ -964,7 +975,7 @@ db *db_factory::singleton_instance=NULL;
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 968 "build/hi_desktop/hi.y.cpp"
+#line 979 "build/hi_desktop/hi.y.cpp"
 
   /// Build a parser object.
   parser::parser ()
@@ -1412,51 +1423,51 @@ namespace yy {
           switch (yyn)
             {
   case 2: // ENG_1Con: ENG_Con
-#line 64 "build/hi_desktop/hi.y"
+#line 68 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Con=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_1Con->ENG_Con");
 yylhs.value=sparser->set_node_info("ENG_1Con",ENG_Con);
 
 }
-#line 1423 "build/hi_desktop/hi.y.cpp"
+#line 1434 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 3: // ENG_A: ENG_A_Stem
-#line 72 "build/hi_desktop/hi.y"
+#line 76 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_A_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_A->ENG_A_Stem");
 yylhs.value=sparser->set_node_info("ENG_A",ENG_A_Stem);
 
 }
-#line 1434 "build/hi_desktop/hi.y.cpp"
+#line 1445 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 4: // ENG_A0NEG: ENG_A
-#line 80 "build/hi_desktop/hi.y"
+#line 84 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_A=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_A0NEG->ENG_A");
 yylhs.value=sparser->set_node_info("ENG_A0NEG",ENG_A);
 
 }
-#line 1445 "build/hi_desktop/hi.y.cpp"
+#line 1456 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 5: // ENG_ANEG: ENG_ANEG_Stem
-#line 88 "build/hi_desktop/hi.y"
+#line 92 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_ANEG_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ANEG->ENG_ANEG_Stem");
 yylhs.value=sparser->set_node_info("ENG_ANEG",ENG_ANEG_Stem);
 
 }
-#line 1456 "build/hi_desktop/hi.y.cpp"
+#line 1467 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 6: // ENG_ANEG_Stem: t_ENG_ANEG_Stem
-#line 96 "build/hi_desktop/hi.y"
+#line 100 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_ANEG_Stem);
@@ -1464,44 +1475,44 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_ANEG_Stem",word);
 
 }
-#line 1468 "build/hi_desktop/hi.y.cpp"
+#line 1479 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 7: // ENG_AP: ENG_Abar1
-#line 105 "build/hi_desktop/hi.y"
+#line 109 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Abar1=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Abar1");
 yylhs.value=sparser->set_node_info("ENG_AP",ENG_Abar1);
 
 }
-#line 1479 "build/hi_desktop/hi.y.cpp"
+#line 1490 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 8: // ENG_AP: ENG_Abar2
-#line 112 "build/hi_desktop/hi.y"
+#line 116 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Abar2=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Abar2");
 yylhs.value=sparser->set_node_info("ENG_AP",ENG_Abar2);
 
 }
-#line 1490 "build/hi_desktop/hi.y.cpp"
+#line 1501 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 9: // ENG_AP: ENG_Alist
-#line 119 "build/hi_desktop/hi.y"
+#line 123 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Alist=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Alist");
 yylhs.value=sparser->set_node_info("ENG_AP",ENG_Alist);
 
 }
-#line 1501 "build/hi_desktop/hi.y.cpp"
+#line 1512 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 10: // ENG_A_Stem: t_ENG_A_Stem
-#line 127 "build/hi_desktop/hi.y"
+#line 131 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_A_Stem);
@@ -1509,22 +1520,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_A_Stem",word);
 
 }
-#line 1513 "build/hi_desktop/hi.y.cpp"
+#line 1524 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 11: // ENG_Abar1: ENG_A0NEG
-#line 136 "build/hi_desktop/hi.y"
+#line 140 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_A0NEG=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar1->ENG_A0NEG");
 yylhs.value=sparser->set_node_info("ENG_Abar1",ENG_A0NEG);
 
 }
-#line 1524 "build/hi_desktop/hi.y.cpp"
+#line 1535 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 12: // ENG_Abar1: ENG_ANEG ENG_A
-#line 143 "build/hi_desktop/hi.y"
+#line 147 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_ANEG=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_A=sparser->get_node_info(yystack_[0].value);
@@ -1532,11 +1543,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar1->ENG_ANE
 yylhs.value=sparser->combine_nodes("ENG_Abar1",ENG_ANEG,ENG_A);
 
 }
-#line 1536 "build/hi_desktop/hi.y.cpp"
+#line 1547 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 13: // ENG_Abar2: ENG_Abar2 ENG_CONJA
-#line 152 "build/hi_desktop/hi.y"
+#line 156 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Abar2=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_CONJA=sparser->get_node_info(yystack_[0].value);
@@ -1544,11 +1555,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Aba
 yylhs.value=sparser->combine_nodes("ENG_Abar2",ENG_Abar2,ENG_CONJA);
 
 }
-#line 1548 "build/hi_desktop/hi.y.cpp"
+#line 1559 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 14: // ENG_Abar2: ENG_Ahead ENG_CONJA
-#line 160 "build/hi_desktop/hi.y"
+#line 164 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Ahead=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_CONJA=sparser->get_node_info(yystack_[0].value);
@@ -1556,11 +1567,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Ahe
 yylhs.value=sparser->combine_nodes("ENG_Abar2",ENG_Ahead,ENG_CONJA);
 
 }
-#line 1560 "build/hi_desktop/hi.y.cpp"
+#line 1571 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 15: // ENG_Abar2: ENG_Alist ENG_CONJA
-#line 168 "build/hi_desktop/hi.y"
+#line 172 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Alist=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_CONJA=sparser->get_node_info(yystack_[0].value);
@@ -1568,11 +1579,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Ali
 yylhs.value=sparser->combine_nodes("ENG_Abar2",ENG_Alist,ENG_CONJA);
 
 }
-#line 1572 "build/hi_desktop/hi.y.cpp"
+#line 1583 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 16: // ENG_Adv: t_ENG_ADV_Stem
-#line 177 "build/hi_desktop/hi.y"
+#line 181 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_ADV_Stem);
@@ -1580,33 +1591,33 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Adv",word);
 
 }
-#line 1584 "build/hi_desktop/hi.y.cpp"
+#line 1595 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 17: // ENG_AdvP: ENG_Adv
-#line 186 "build/hi_desktop/hi.y"
+#line 190 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Adv=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AdvP->ENG_Adv");
 yylhs.value=sparser->set_node_info("ENG_AdvP",ENG_Adv);
 
 }
-#line 1595 "build/hi_desktop/hi.y.cpp"
+#line 1606 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 18: // ENG_Ahead: ENG_Abar1
-#line 194 "build/hi_desktop/hi.y"
+#line 198 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Abar1=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Ahead->ENG_Abar1");
 yylhs.value=sparser->set_node_info("ENG_Ahead",ENG_Abar1);
 
 }
-#line 1606 "build/hi_desktop/hi.y.cpp"
+#line 1617 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 19: // ENG_Alist: ENG_Abar1 ENG_Abar1
-#line 202 "build/hi_desktop/hi.y"
+#line 206 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Abar11=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Abar12=sparser->get_node_info(yystack_[0].value);
@@ -1614,11 +1625,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Alist->ENG_Aba
 yylhs.value=sparser->combine_nodes("ENG_Alist",ENG_Abar11,ENG_Abar12);
 
 }
-#line 1618 "build/hi_desktop/hi.y.cpp"
+#line 1629 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 20: // ENG_Alist: ENG_Alist ENG_Abar1
-#line 210 "build/hi_desktop/hi.y"
+#line 214 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Alist=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Abar1=sparser->get_node_info(yystack_[0].value);
@@ -1626,11 +1637,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Alist->ENG_Ali
 yylhs.value=sparser->combine_nodes("ENG_Alist",ENG_Alist,ENG_Abar1);
 
 }
-#line 1630 "build/hi_desktop/hi.y.cpp"
+#line 1641 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 21: // ENG_CAP: ENG_1Con ENG_N_Pl_0Con_swC
-#line 219 "build/hi_desktop/hi.y"
+#line 223 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_1Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info(yystack_[0].value);
@@ -1638,11 +1649,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CAP->ENG_1Con 
 yylhs.value=sparser->combine_nodes("ENG_CAP",ENG_1Con,ENG_N_Pl_0Con_swC);
 
 }
-#line 1642 "build/hi_desktop/hi.y.cpp"
+#line 1653 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 22: // ENG_CAP: ENG_1Con ENG_N_Pl_0Con_swV
-#line 227 "build/hi_desktop/hi.y"
+#line 231 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_1Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info(yystack_[0].value);
@@ -1650,11 +1661,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CAP->ENG_1Con 
 yylhs.value=sparser->combine_nodes("ENG_CAP",ENG_1Con,ENG_N_Pl_0Con_swV);
 
 }
-#line 1654 "build/hi_desktop/hi.y.cpp"
+#line 1665 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 23: // ENG_CNP: ENG_AP ENG_N
-#line 236 "build/hi_desktop/hi.y"
+#line 240 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_AP=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N=sparser->get_node_info(yystack_[0].value);
@@ -1662,33 +1673,33 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CNP->ENG_AP EN
 yylhs.value=sparser->combine_nodes("ENG_CNP",ENG_AP,ENG_N);
 
 }
-#line 1666 "build/hi_desktop/hi.y.cpp"
+#line 1677 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 24: // ENG_CNP: ENG_N
-#line 244 "build/hi_desktop/hi.y"
+#line 248 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CNP->ENG_N");
 yylhs.value=sparser->set_node_info("ENG_CNP",ENG_N);
 
 }
-#line 1677 "build/hi_desktop/hi.y.cpp"
+#line 1688 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 25: // ENG_CONJ: ENG_CONJ_Stem
-#line 252 "build/hi_desktop/hi.y"
+#line 256 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_CONJ_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJ->ENG_CONJ_Stem");
 yylhs.value=sparser->set_node_info("ENG_CONJ",ENG_CONJ_Stem);
 
 }
-#line 1688 "build/hi_desktop/hi.y.cpp"
+#line 1699 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 26: // ENG_CONJA: ENG_CONJ ENG_Abar1
-#line 260 "build/hi_desktop/hi.y"
+#line 264 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_CONJ=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Abar1=sparser->get_node_info(yystack_[0].value);
@@ -1696,11 +1707,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJA->ENG_CON
 yylhs.value=sparser->combine_nodes("ENG_CONJA",ENG_CONJ,ENG_Abar1);
 
 }
-#line 1700 "build/hi_desktop/hi.y.cpp"
+#line 1711 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 27: // ENG_CONJA: ENG_CONJ ENG_Alist
-#line 268 "build/hi_desktop/hi.y"
+#line 272 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_CONJ=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Alist=sparser->get_node_info(yystack_[0].value);
@@ -1708,11 +1719,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJA->ENG_CON
 yylhs.value=sparser->combine_nodes("ENG_CONJA",ENG_CONJ,ENG_Alist);
 
 }
-#line 1712 "build/hi_desktop/hi.y.cpp"
+#line 1723 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 28: // ENG_CONJ_Stem: t_ENG_CONJ_Stem
-#line 277 "build/hi_desktop/hi.y"
+#line 281 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_CONJ_Stem);
@@ -1720,11 +1731,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_CONJ_Stem",word);
 
 }
-#line 1724 "build/hi_desktop/hi.y.cpp"
+#line 1735 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 29: // ENG_Con: t_ENG_CON_Stem
-#line 286 "build/hi_desktop/hi.y"
+#line 290 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_CON_Stem);
@@ -1732,11 +1743,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Con",word);
 
 }
-#line 1736 "build/hi_desktop/hi.y.cpp"
+#line 1747 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 30: // ENG_DP: ENG_Indef_Det_a ENG_N_Sg_0Con_swC
-#line 295 "build/hi_desktop/hi.y"
+#line 299 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Indef_Det_a=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info(yystack_[0].value);
@@ -1744,11 +1755,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Indef_
 yylhs.value=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_a,ENG_N_Sg_0Con_swC);
 
 }
-#line 1748 "build/hi_desktop/hi.y.cpp"
+#line 1759 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 31: // ENG_DP: ENG_Indef_Det_an ENG_N_Sg_0Con_swV
-#line 303 "build/hi_desktop/hi.y"
+#line 307 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Indef_Det_an=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info(yystack_[0].value);
@@ -1756,11 +1767,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Indef_
 yylhs.value=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_an,ENG_N_Sg_0Con_swV);
 
 }
-#line 1760 "build/hi_desktop/hi.y.cpp"
+#line 1771 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 32: // ENG_Det_stem: t_ENG_DET_Stem
-#line 312 "build/hi_desktop/hi.y"
+#line 316 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_DET_Stem);
@@ -1768,11 +1779,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Det_stem",word);
 
 }
-#line 1772 "build/hi_desktop/hi.y.cpp"
+#line 1783 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 33: // ENG_IVP: ENG_NV ENG_PP
-#line 321 "build/hi_desktop/hi.y"
+#line 325 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_NV=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_PP=sparser->get_node_info(yystack_[0].value);
@@ -1780,11 +1791,11 @@ sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 }
-#line 1784 "build/hi_desktop/hi.y.cpp"
+#line 1795 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 34: // ENG_IVP: ENG_V ENG_AP
-#line 329 "build/hi_desktop/hi.y"
+#line 333 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_AP=sparser->get_node_info(yystack_[0].value);
@@ -1792,11 +1803,11 @@ sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);
 }
-#line 1796 "build/hi_desktop/hi.y.cpp"
+#line 1807 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 35: // ENG_IVP: ENG_V ENG_PP
-#line 337 "build/hi_desktop/hi.y"
+#line 341 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_PP=sparser->get_node_info(yystack_[0].value);
@@ -1804,11 +1815,11 @@ sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 }
-#line 1808 "build/hi_desktop/hi.y.cpp"
+#line 1819 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 36: // ENG_Indef_Det: ENG_Det_stem ENG_lfea_IndefDet
-#line 346 "build/hi_desktop/hi.y"
+#line 350 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Det_stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_IndefDet=sparser->get_node_info(yystack_[0].value);
@@ -1816,11 +1827,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det->ENG
 yylhs.value=sparser->combine_nodes("ENG_Indef_Det",ENG_Det_stem,ENG_lfea_IndefDet);
 
 }
-#line 1820 "build/hi_desktop/hi.y.cpp"
+#line 1831 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 37: // ENG_Indef_Det_a: ENG_Indef_Det ENG_lfea_fwConsonant
-#line 355 "build/hi_desktop/hi.y"
+#line 359 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Indef_Det=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_fwConsonant=sparser->get_node_info(yystack_[0].value);
@@ -1828,11 +1839,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det_a->E
 yylhs.value=sparser->combine_nodes("ENG_Indef_Det_a",ENG_Indef_Det,ENG_lfea_fwConsonant);
 
 }
-#line 1832 "build/hi_desktop/hi.y.cpp"
+#line 1843 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 38: // ENG_Indef_Det_an: ENG_Indef_Det ENG_lfea_fwVowel
-#line 364 "build/hi_desktop/hi.y"
+#line 368 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Indef_Det=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_fwVowel=sparser->get_node_info(yystack_[0].value);
@@ -1840,55 +1851,55 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det_an->
 yylhs.value=sparser->combine_nodes("ENG_Indef_Det_an",ENG_Indef_Det,ENG_lfea_fwVowel);
 
 }
-#line 1844 "build/hi_desktop/hi.y.cpp"
+#line 1855 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 39: // ENG_N: ENG_N_Pl
-#line 373 "build/hi_desktop/hi.y"
+#line 377 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N->ENG_N_Pl");
 yylhs.value=sparser->set_node_info("ENG_N",ENG_N_Pl);
 
 }
-#line 1855 "build/hi_desktop/hi.y.cpp"
+#line 1866 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 40: // ENG_N: ENG_N_Sg
-#line 380 "build/hi_desktop/hi.y"
+#line 384 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N->ENG_N_Sg");
 yylhs.value=sparser->set_node_info("ENG_N",ENG_N_Sg);
 
 }
-#line 1866 "build/hi_desktop/hi.y.cpp"
+#line 1877 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 41: // ENG_NP: ENG_CAP
-#line 388 "build/hi_desktop/hi.y"
+#line 392 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_CAP=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CAP");
 yylhs.value=sparser->set_node_info("ENG_NP",ENG_CAP);
 
 }
-#line 1877 "build/hi_desktop/hi.y.cpp"
+#line 1888 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 42: // ENG_NP: ENG_CNP
-#line 395 "build/hi_desktop/hi.y"
+#line 399 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_CNP=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CNP");
 yylhs.value=sparser->set_node_info("ENG_NP",ENG_CNP);
 
 }
-#line 1888 "build/hi_desktop/hi.y.cpp"
+#line 1899 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 43: // ENG_NP: ENG_QPro ENG_CNP
-#line 402 "build/hi_desktop/hi.y"
+#line 406 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_QPro=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_CNP=sparser->get_node_info(yystack_[0].value);
@@ -1896,11 +1907,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_QPro E
 yylhs.value=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
 
 }
-#line 1900 "build/hi_desktop/hi.y.cpp"
+#line 1911 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 44: // ENG_NV: ENG_V ENG_VNEG
-#line 411 "build/hi_desktop/hi.y"
+#line 415 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_VNEG=sparser->get_node_info(yystack_[0].value);
@@ -1908,22 +1919,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NV->ENG_V ENG_
 yylhs.value=sparser->combine_nodes("ENG_NV",ENG_V,ENG_VNEG);
 
 }
-#line 1912 "build/hi_desktop/hi.y.cpp"
+#line 1923 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 45: // ENG_N_Pl: ENG_N_Pl_0Con_swC
-#line 420 "build/hi_desktop/hi.y"
+#line 424 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swC");
 yylhs.value=sparser->set_node_info("ENG_N_Pl",ENG_N_Pl_0Con_swC);
 
 }
-#line 1923 "build/hi_desktop/hi.y.cpp"
+#line 1934 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 46: // ENG_N_Pl: ENG_N_Pl_0Con_swC ENG_nCon
-#line 427 "build/hi_desktop/hi.y"
+#line 431 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl_0Con_swC=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_nCon=sparser->get_node_info(yystack_[0].value);
@@ -1931,22 +1942,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl
 yylhs.value=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swC,ENG_nCon);
 
 }
-#line 1935 "build/hi_desktop/hi.y.cpp"
+#line 1946 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 47: // ENG_N_Pl: ENG_N_Pl_0Con_swV
-#line 435 "build/hi_desktop/hi.y"
+#line 439 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl_0Con_swV");
 yylhs.value=sparser->set_node_info("ENG_N_Pl",ENG_N_Pl_0Con_swV);
 
 }
-#line 1946 "build/hi_desktop/hi.y.cpp"
+#line 1957 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 48: // ENG_N_Pl: ENG_N_Pl_0Con_swV ENG_nCon
-#line 442 "build/hi_desktop/hi.y"
+#line 446 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl_0Con_swV=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_nCon=sparser->get_node_info(yystack_[0].value);
@@ -1954,33 +1965,33 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl
 yylhs.value=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
 
 }
-#line 1958 "build/hi_desktop/hi.y.cpp"
+#line 1969 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 49: // ENG_N_Pl: ENG_N_Sg ENG_nCon
-#line 450 "build/hi_desktop/hi.y"
+#line 454 "build/hi_desktop/hi.y"
 {
 //Exploit read ahead triggered by the shift/reduce conflict due to this very rule and return error to make sure
 //that a singular noun cannot combine with more than one constant like in 'list file abc def'
 //TODO: Any better solution???
 YYERROR;
 }
-#line 1969 "build/hi_desktop/hi.y.cpp"
+#line 1980 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 50: // ENG_N_Pl: ENG_nCon
-#line 457 "build/hi_desktop/hi.y"
+#line 461 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_nCon=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_nCon");
 yylhs.value=sparser->set_node_info("ENG_N_Pl",ENG_nCon);
 
 }
-#line 1980 "build/hi_desktop/hi.y.cpp"
+#line 1991 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 51: // ENG_N_Pl_0Con: ENG_N_Stem ENG_N_lfea_Pl
-#line 465 "build/hi_desktop/hi.y"
+#line 469 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_lfea_Pl=sparser->get_node_info(yystack_[0].value);
@@ -1988,11 +1999,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con->ENG
 yylhs.value=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
 
 }
-#line 1992 "build/hi_desktop/hi.y.cpp"
+#line 2003 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 52: // ENG_N_Pl_0Con_swC: ENG_N_Pl_0Con ENG_lfea_swConsonant
-#line 474 "build/hi_desktop/hi.y"
+#line 478 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl_0Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_swConsonant=sparser->get_node_info(yystack_[0].value);
@@ -2000,11 +2011,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con_swC-
 yylhs.value=sparser->combine_nodes("ENG_N_Pl_0Con_swC",ENG_N_Pl_0Con,ENG_lfea_swConsonant);
 
 }
-#line 2004 "build/hi_desktop/hi.y.cpp"
+#line 2015 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 53: // ENG_N_Pl_0Con_swV: ENG_N_Pl_0Con ENG_lfea_swVowel
-#line 483 "build/hi_desktop/hi.y"
+#line 487 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Pl_0Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_swVowel=sparser->get_node_info(yystack_[0].value);
@@ -2012,33 +2023,33 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con_swV-
 yylhs.value=sparser->combine_nodes("ENG_N_Pl_0Con_swV",ENG_N_Pl_0Con,ENG_lfea_swVowel);
 
 }
-#line 2016 "build/hi_desktop/hi.y.cpp"
+#line 2027 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 54: // ENG_N_Sg: ENG_1Con
-#line 492 "build/hi_desktop/hi.y"
+#line 496 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_1Con=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_1Con");
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_1Con);
 
 }
-#line 2027 "build/hi_desktop/hi.y.cpp"
+#line 2038 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 55: // ENG_N_Sg: ENG_N_Sg_0Con_swC
-#line 499 "build/hi_desktop/hi.y"
+#line 503 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swC");
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_N_Sg_0Con_swC);
 
 }
-#line 2038 "build/hi_desktop/hi.y.cpp"
+#line 2049 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 56: // ENG_N_Sg: ENG_N_Sg_0Con_swC ENG_1Con
-#line 506 "build/hi_desktop/hi.y"
+#line 510 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg_0Con_swC=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_1Con=sparser->get_node_info(yystack_[0].value);
@@ -2046,22 +2057,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg
 yylhs.value=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swC,ENG_1Con);
 
 }
-#line 2050 "build/hi_desktop/hi.y.cpp"
+#line 2061 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 57: // ENG_N_Sg: ENG_N_Sg_0Con_swV
-#line 514 "build/hi_desktop/hi.y"
+#line 518 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg_0Con_swV");
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_N_Sg_0Con_swV);
 
 }
-#line 2061 "build/hi_desktop/hi.y.cpp"
+#line 2072 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 58: // ENG_N_Sg: ENG_N_Sg_0Con_swV ENG_1Con
-#line 521 "build/hi_desktop/hi.y"
+#line 525 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg_0Con_swV=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_1Con=sparser->get_node_info(yystack_[0].value);
@@ -2069,11 +2080,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg
 yylhs.value=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swV,ENG_1Con);
 
 }
-#line 2073 "build/hi_desktop/hi.y.cpp"
+#line 2084 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 59: // ENG_N_Sg_0Con: ENG_N_Stem ENG_N_lfea_Sg
-#line 530 "build/hi_desktop/hi.y"
+#line 534 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_lfea_Sg=sparser->get_node_info(yystack_[0].value);
@@ -2081,11 +2092,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con->ENG
 yylhs.value=sparser->combine_nodes("ENG_N_Sg_0Con",ENG_N_Stem,ENG_N_lfea_Sg);
 
 }
-#line 2085 "build/hi_desktop/hi.y.cpp"
+#line 2096 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 60: // ENG_N_Sg_0Con_swC: ENG_N_Sg_0Con ENG_lfea_swConsonant
-#line 539 "build/hi_desktop/hi.y"
+#line 543 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg_0Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_swConsonant=sparser->get_node_info(yystack_[0].value);
@@ -2093,11 +2104,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con_swC-
 yylhs.value=sparser->combine_nodes("ENG_N_Sg_0Con_swC",ENG_N_Sg_0Con,ENG_lfea_swConsonant);
 
 }
-#line 2097 "build/hi_desktop/hi.y.cpp"
+#line 2108 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 61: // ENG_N_Sg_0Con_swV: ENG_N_Sg_0Con ENG_lfea_swVowel
-#line 548 "build/hi_desktop/hi.y"
+#line 552 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg_0Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_lfea_swVowel=sparser->get_node_info(yystack_[0].value);
@@ -2105,11 +2116,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con_swV-
 yylhs.value=sparser->combine_nodes("ENG_N_Sg_0Con_swV",ENG_N_Sg_0Con,ENG_lfea_swVowel);
 
 }
-#line 2109 "build/hi_desktop/hi.y.cpp"
+#line 2120 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 62: // ENG_N_Stem: t_ENG_N_Stem
-#line 557 "build/hi_desktop/hi.y"
+#line 561 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_Stem);
@@ -2117,11 +2128,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_Stem",word);
 
 }
-#line 2121 "build/hi_desktop/hi.y.cpp"
+#line 2132 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 63: // ENG_N_lfea_Pl: t_ENG_N_Pl
-#line 566 "build/hi_desktop/hi.y"
+#line 570 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_Pl);
@@ -2129,11 +2140,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_lfea_Pl",word);
 
 }
-#line 2133 "build/hi_desktop/hi.y.cpp"
+#line 2144 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 64: // ENG_N_lfea_Sg: t_ENG_N_Sg
-#line 575 "build/hi_desktop/hi.y"
+#line 579 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_Sg);
@@ -2141,11 +2152,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_lfea_Sg",word);
 
 }
-#line 2145 "build/hi_desktop/hi.y.cpp"
+#line 2156 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 65: // ENG_PP: ENG_Prep ENG_NP
-#line 584 "build/hi_desktop/hi.y"
+#line 588 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Prep=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -2153,11 +2164,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PP->ENG_Prep E
 yylhs.value=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
 
 }
-#line 2157 "build/hi_desktop/hi.y.cpp"
+#line 2168 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 66: // ENG_Prep: t_ENG_PREP_Stem
-#line 593 "build/hi_desktop/hi.y"
+#line 597 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_PREP_Stem);
@@ -2165,11 +2176,47 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Prep",word);
 
 }
-#line 2169 "build/hi_desktop/hi.y.cpp"
+#line 2180 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 67: // ENG_QPro: t_ENG_QPRO_Stem
-#line 602 "build/hi_desktop/hi.y"
+  case 67: // ENG_Punct: ENG_Punct_Stem ENG_Punct_FullStop
+#line 606 "build/hi_desktop/hi.y"
+{
+const node_info& ENG_Punct_Stem=sparser->get_node_info(yystack_[1].value);
+const node_info& ENG_Punct_FullStop=sparser->get_node_info(yystack_[0].value);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Punct->ENG_Punct_Stem ENG_Punct_FullStop");
+yylhs.value=sparser->combine_nodes("ENG_Punct",ENG_Punct_Stem,ENG_Punct_FullStop);
+
+}
+#line 2192 "build/hi_desktop/hi.y.cpp"
+    break;
+
+  case 68: // ENG_Punct_FullStop: t_ENG_Punct_FullStop
+#line 615 "build/hi_desktop/hi.y"
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Punct_FullStop);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+yylhs.value=sparser->set_node_info("ENG_Punct_FullStop",word);
+
+}
+#line 2204 "build/hi_desktop/hi.y.cpp"
+    break;
+
+  case 69: // ENG_Punct_Stem: t_ENG_Punct_Stem
+#line 624 "build/hi_desktop/hi.y"
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Punct_Stem);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+yylhs.value=sparser->set_node_info("ENG_Punct_Stem",word);
+
+}
+#line 2216 "build/hi_desktop/hi.y.cpp"
+    break;
+
+  case 70: // ENG_QPro: t_ENG_QPRO_Stem
+#line 633 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_QPRO_Stem);
@@ -2177,11 +2224,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_QPro",word);
 
 }
-#line 2181 "build/hi_desktop/hi.y.cpp"
+#line 2228 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 68: // ENG_RC: ENG_RPro ENG_IVP
-#line 611 "build/hi_desktop/hi.y"
+  case 71: // ENG_RC: ENG_RPro ENG_IVP
+#line 642 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_RPro=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_IVP=sparser->get_node_info(yystack_[0].value);
@@ -2189,11 +2236,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RC->ENG_RPro E
 yylhs.value=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVP);
 
 }
-#line 2193 "build/hi_desktop/hi.y.cpp"
+#line 2240 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 69: // ENG_RPro: ENG_RPro_stem ENG_RPro_lfea_relative
-#line 620 "build/hi_desktop/hi.y"
+  case 72: // ENG_RPro: ENG_RPro_stem ENG_RPro_lfea_relative
+#line 651 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_RPro_stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_RPro_lfea_relative=sparser->get_node_info(yystack_[0].value);
@@ -2201,11 +2248,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RPro->ENG_RPro
 yylhs.value=sparser->combine_nodes("ENG_RPro",ENG_RPro_stem,ENG_RPro_lfea_relative);
 
 }
-#line 2205 "build/hi_desktop/hi.y.cpp"
+#line 2252 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 70: // ENG_RPro_lfea_relative: t_ENG_RPRO_Relative
-#line 629 "build/hi_desktop/hi.y"
+  case 73: // ENG_RPro_lfea_relative: t_ENG_RPRO_Relative
+#line 660 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_RPRO_Relative);
@@ -2213,11 +2260,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_RPro_lfea_relative",word);
 
 }
-#line 2217 "build/hi_desktop/hi.y.cpp"
+#line 2264 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 71: // ENG_RPro_stem: t_ENG_RPRO_Stem
-#line 638 "build/hi_desktop/hi.y"
+  case 74: // ENG_RPro_stem: t_ENG_RPRO_Stem
+#line 669 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_RPRO_Stem);
@@ -2225,11 +2272,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_RPro_stem",word);
 
 }
-#line 2229 "build/hi_desktop/hi.y.cpp"
+#line 2276 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 72: // ENG_TP: ENG_Tense_particle ENG_V_Stem
-#line 647 "build/hi_desktop/hi.y"
+  case 75: // ENG_TP: ENG_Tense_particle ENG_V_Stem
+#line 678 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Tense_particle=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V_Stem=sparser->get_node_info(yystack_[0].value);
@@ -2237,22 +2284,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_TP->ENG_Tense_
 yylhs.value=sparser->combine_nodes("ENG_TP",ENG_Tense_particle,ENG_V_Stem);
 
 }
-#line 2241 "build/hi_desktop/hi.y.cpp"
+#line 2288 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 73: // ENG_TP: ENG_V_ger
-#line 655 "build/hi_desktop/hi.y"
+  case 76: // ENG_TP: ENG_V_ger
+#line 686 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V_ger=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_TP->ENG_V_ger");
 yylhs.value=sparser->set_node_info("ENG_TP",ENG_V_ger);
 
 }
-#line 2252 "build/hi_desktop/hi.y.cpp"
+#line 2299 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 74: // ENG_Tense_particle: t_ENG_PAR_Stem
-#line 663 "build/hi_desktop/hi.y"
+  case 77: // ENG_Tense_particle: t_ENG_PAR_Stem
+#line 694 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_PAR_Stem);
@@ -2260,22 +2307,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Tense_particle",word);
 
 }
-#line 2264 "build/hi_desktop/hi.y.cpp"
+#line 2311 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 75: // ENG_V: ENG_V_Stem
-#line 672 "build/hi_desktop/hi.y"
+  case 78: // ENG_V: ENG_V_Stem
+#line 703 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem");
 yylhs.value=sparser->set_node_info("ENG_V",ENG_V_Stem);
 
 }
-#line 2275 "build/hi_desktop/hi.y.cpp"
+#line 2322 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 76: // ENG_V: ENG_V_Stem ENG_V_lfea_aux
-#line 679 "build/hi_desktop/hi.y"
+  case 79: // ENG_V: ENG_V_Stem ENG_V_lfea_aux
+#line 710 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V_lfea_aux=sparser->get_node_info(yystack_[0].value);
@@ -2283,22 +2330,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem 
 yylhs.value=sparser->combine_nodes("ENG_V",ENG_V_Stem,ENG_V_lfea_aux);
 
 }
-#line 2287 "build/hi_desktop/hi.y.cpp"
+#line 2334 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 77: // ENG_VNEG: ENG_VNEG_Stem
-#line 688 "build/hi_desktop/hi.y"
+  case 80: // ENG_VNEG: ENG_VNEG_Stem
+#line 719 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_VNEG_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VNEG->ENG_VNEG_Stem");
 yylhs.value=sparser->set_node_info("ENG_VNEG",ENG_VNEG_Stem);
 
 }
-#line 2298 "build/hi_desktop/hi.y.cpp"
+#line 2345 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 78: // ENG_VNEG_Stem: t_ENG_VNEG_Stem
-#line 696 "build/hi_desktop/hi.y"
+  case 81: // ENG_VNEG_Stem: t_ENG_VNEG_Stem
+#line 727 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_VNEG_Stem);
@@ -2306,22 +2353,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_VNEG_Stem",word);
 
 }
-#line 2310 "build/hi_desktop/hi.y.cpp"
+#line 2357 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 79: // ENG_VP: ENG_Vbar1
-#line 705 "build/hi_desktop/hi.y"
+  case 82: // ENG_VP: ENG_Vbar1
+#line 736 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1");
 yylhs.value=sparser->set_node_info("ENG_VP",ENG_Vbar1);
 
 }
-#line 2321 "build/hi_desktop/hi.y.cpp"
+#line 2368 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 80: // ENG_VP: ENG_Vbar1 ENG_AdvP
-#line 712 "build/hi_desktop/hi.y"
+  case 83: // ENG_VP: ENG_Vbar1 ENG_AdvP
+#line 743 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_AdvP=sparser->get_node_info(yystack_[0].value);
@@ -2329,11 +2376,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
 
 }
-#line 2333 "build/hi_desktop/hi.y.cpp"
+#line 2380 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 81: // ENG_VP: ENG_Vbar1 ENG_RC
-#line 720 "build/hi_desktop/hi.y"
+  case 84: // ENG_VP: ENG_Vbar1 ENG_RC
+#line 751 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_RC=sparser->get_node_info(yystack_[0].value);
@@ -2341,11 +2388,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
 
 }
-#line 2345 "build/hi_desktop/hi.y.cpp"
+#line 2392 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 82: // ENG_VP: ENG_Vbar1_Ind ENG_AP
-#line 728 "build/hi_desktop/hi.y"
+  case 85: // ENG_VP: ENG_Vbar1_Ind ENG_AP
+#line 759 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1_Ind=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_AP=sparser->get_node_info(yystack_[0].value);
@@ -2353,11 +2400,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1_
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1_Ind,ENG_AP);
 
 }
-#line 2357 "build/hi_desktop/hi.y.cpp"
+#line 2404 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 83: // ENG_VP: ENG_Vbar1_Ind ENG_DP
-#line 736 "build/hi_desktop/hi.y"
+  case 86: // ENG_VP: ENG_Vbar1_Ind ENG_DP
+#line 767 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1_Ind=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_DP=sparser->get_node_info(yystack_[0].value);
@@ -2365,22 +2412,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1_
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1_Ind,ENG_DP);
 
 }
-#line 2369 "build/hi_desktop/hi.y.cpp"
+#line 2416 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 84: // ENG_VP: ENG_Vbar2
-#line 744 "build/hi_desktop/hi.y"
+  case 87: // ENG_VP: ENG_Vbar2
+#line 775 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar2=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2");
 yylhs.value=sparser->set_node_info("ENG_VP",ENG_Vbar2);
 
 }
-#line 2380 "build/hi_desktop/hi.y.cpp"
+#line 2427 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 85: // ENG_VP: ENG_Vbar2 ENG_PP
-#line 751 "build/hi_desktop/hi.y"
+  case 88: // ENG_VP: ENG_Vbar2 ENG_PP
+#line 782 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar2=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_PP=sparser->get_node_info(yystack_[0].value);
@@ -2388,11 +2435,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
 
 }
-#line 2392 "build/hi_desktop/hi.y.cpp"
+#line 2439 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 86: // ENG_VP: ENG_Vbar2 ENG_RC
-#line 759 "build/hi_desktop/hi.y"
+  case 89: // ENG_VP: ENG_Vbar2 ENG_RC
+#line 790 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar2=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_RC=sparser->get_node_info(yystack_[0].value);
@@ -2400,11 +2447,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
 
 }
-#line 2404 "build/hi_desktop/hi.y.cpp"
+#line 2451 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 87: // ENG_VP: ENG_Vbar3 ENG_NP
-#line 767 "build/hi_desktop/hi.y"
+  case 90: // ENG_VP: ENG_Vbar3 ENG_NP
+#line 798 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar3=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -2412,11 +2459,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar3 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
 
 }
-#line 2416 "build/hi_desktop/hi.y.cpp"
+#line 2463 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 88: // ENG_VP: ENG_Vbar4 ENG_DP
-#line 775 "build/hi_desktop/hi.y"
+  case 91: // ENG_VP: ENG_Vbar4 ENG_DP
+#line 806 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar4=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_DP=sparser->get_node_info(yystack_[0].value);
@@ -2424,23 +2471,23 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar4 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar4,ENG_DP);
 
 }
-#line 2428 "build/hi_desktop/hi.y.cpp"
+#line 2475 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 89: // ENG_VP_Int: ENG_Vbar1 ENG_AP
-#line 784 "build/hi_desktop/hi.y"
+  case 92: // ENG_VP_Int: ENG_Vbar1 ENG_AP
+#line 815 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_AP=sparser->get_node_info(yystack_[0].value);
-sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative");
+sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative",true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Int->ENG_Vbar1 ENG_AP");
 yylhs.value=sparser->combine_nodes("ENG_VP_Int",ENG_Vbar1,ENG_AP);
 }
-#line 2440 "build/hi_desktop/hi.y.cpp"
+#line 2487 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 90: // ENG_V_Stem: t_ENG_V_Stem
-#line 793 "build/hi_desktop/hi.y"
+  case 93: // ENG_V_Stem: t_ENG_V_Stem
+#line 824 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_V_Stem);
@@ -2448,11 +2495,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_Stem",word);
 
 }
-#line 2452 "build/hi_desktop/hi.y.cpp"
+#line 2499 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 91: // ENG_V_ger: ENG_V_Stem ENG_V_lfea_ger
-#line 802 "build/hi_desktop/hi.y"
+  case 94: // ENG_V_ger: ENG_V_Stem ENG_V_lfea_ger
+#line 833 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V_lfea_ger=sparser->get_node_info(yystack_[0].value);
@@ -2460,11 +2507,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V_ger->ENG_V_S
 yylhs.value=sparser->combine_nodes("ENG_V_ger",ENG_V_Stem,ENG_V_lfea_ger);
 
 }
-#line 2464 "build/hi_desktop/hi.y.cpp"
+#line 2511 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 92: // ENG_V_lfea_aux: t_ENG_V_Aux
-#line 811 "build/hi_desktop/hi.y"
+  case 95: // ENG_V_lfea_aux: t_ENG_V_Aux
+#line 842 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_V_Aux);
@@ -2472,11 +2519,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_lfea_aux",word);
 
 }
-#line 2476 "build/hi_desktop/hi.y.cpp"
+#line 2523 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 93: // ENG_V_lfea_ger: t_ENG_V_Gerund
-#line 820 "build/hi_desktop/hi.y"
+  case 96: // ENG_V_lfea_ger: t_ENG_V_Gerund
+#line 851 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_V_Gerund);
@@ -2484,11 +2531,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_lfea_ger",word);
 
 }
-#line 2488 "build/hi_desktop/hi.y.cpp"
+#line 2535 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 94: // ENG_Vbar1: ENG_V ENG_NP
-#line 829 "build/hi_desktop/hi.y"
+  case 97: // ENG_Vbar1: ENG_V ENG_NP
+#line 860 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -2496,11 +2543,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");
 yylhs.value=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
 }
-#line 2500 "build/hi_desktop/hi.y.cpp"
+#line 2547 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 95: // ENG_Vbar1_Ind: ENG_N_Sg ENG_V
-#line 838 "build/hi_desktop/hi.y"
+  case 98: // ENG_Vbar1_Ind: ENG_N_Sg ENG_V
+#line 869 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Sg=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V=sparser->get_node_info(yystack_[0].value);
@@ -2508,11 +2555,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1_Ind->ENG_N_Sg ENG_V");
 yylhs.value=sparser->combine_nodes("ENG_Vbar1_Ind",ENG_V,ENG_N_Sg);
 }
-#line 2512 "build/hi_desktop/hi.y.cpp"
+#line 2559 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 96: // ENG_Vbar2: ENG_Vbar1 ENG_NP
-#line 847 "build/hi_desktop/hi.y"
+  case 99: // ENG_Vbar2: ENG_Vbar1 ENG_NP
+#line 878 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -2520,11 +2567,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar2->ENG_Vba
 yylhs.value=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
 
 }
-#line 2524 "build/hi_desktop/hi.y.cpp"
+#line 2571 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 97: // ENG_Vbar2: ENG_Vbar1 ENG_PP
-#line 855 "build/hi_desktop/hi.y"
+  case 100: // ENG_Vbar2: ENG_Vbar1 ENG_PP
+#line 886 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_PP=sparser->get_node_info(yystack_[0].value);
@@ -2532,11 +2579,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar2->ENG_Vba
 yylhs.value=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_PP);
 
 }
-#line 2536 "build/hi_desktop/hi.y.cpp"
+#line 2583 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 98: // ENG_Vbar3: ENG_V ENG_AdvP
-#line 864 "build/hi_desktop/hi.y"
+  case 101: // ENG_Vbar3: ENG_V ENG_AdvP
+#line 895 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_AdvP=sparser->get_node_info(yystack_[0].value);
@@ -2544,11 +2591,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar3->ENG_V E
 yylhs.value=sparser->combine_nodes("ENG_Vbar3",ENG_V,ENG_AdvP);
 
 }
-#line 2548 "build/hi_desktop/hi.y.cpp"
+#line 2595 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 99: // ENG_Vbar4: ENG_DP ENG_V
-#line 873 "build/hi_desktop/hi.y"
+  case 102: // ENG_Vbar4: ENG_DP ENG_V
+#line 904 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_DP=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V=sparser->get_node_info(yystack_[0].value);
@@ -2556,11 +2603,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");
 yylhs.value=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
 }
-#line 2560 "build/hi_desktop/hi.y.cpp"
+#line 2607 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 100: // ENG_Vbar4: ENG_TP ENG_V
-#line 881 "build/hi_desktop/hi.y"
+  case 103: // ENG_Vbar4: ENG_TP ENG_V
+#line 912 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_TP=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V=sparser->get_node_info(yystack_[0].value);
@@ -2568,11 +2615,11 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");
 yylhs.value=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
 }
-#line 2572 "build/hi_desktop/hi.y.cpp"
+#line 2619 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 101: // ENG_lfea_IndefDet: t_ENG_DET_Indef
-#line 890 "build/hi_desktop/hi.y"
+  case 104: // ENG_lfea_IndefDet: t_ENG_DET_Indef
+#line 921 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_DET_Indef);
@@ -2580,11 +2627,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_IndefDet",word);
 
 }
-#line 2584 "build/hi_desktop/hi.y.cpp"
+#line 2631 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 102: // ENG_lfea_fwConsonant: t_ENG_DET_fwConsonant
-#line 899 "build/hi_desktop/hi.y"
+  case 105: // ENG_lfea_fwConsonant: t_ENG_DET_fwConsonant
+#line 930 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_DET_fwConsonant);
@@ -2592,11 +2639,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_fwConsonant",word);
 
 }
-#line 2596 "build/hi_desktop/hi.y.cpp"
+#line 2643 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 103: // ENG_lfea_fwVowel: t_ENG_DET_fwVowel
-#line 908 "build/hi_desktop/hi.y"
+  case 106: // ENG_lfea_fwVowel: t_ENG_DET_fwVowel
+#line 939 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_DET_fwVowel);
@@ -2604,11 +2651,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_fwVowel",word);
 
 }
-#line 2608 "build/hi_desktop/hi.y.cpp"
+#line 2655 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 104: // ENG_lfea_swConsonant: t_ENG_N_swConsonant
-#line 917 "build/hi_desktop/hi.y"
+  case 107: // ENG_lfea_swConsonant: t_ENG_N_swConsonant
+#line 948 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_swConsonant);
@@ -2616,11 +2663,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_swConsonant",word);
 
 }
-#line 2620 "build/hi_desktop/hi.y.cpp"
+#line 2667 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 105: // ENG_lfea_swVowel: t_ENG_N_swVowel
-#line 926 "build/hi_desktop/hi.y"
+  case 108: // ENG_lfea_swVowel: t_ENG_N_swVowel
+#line 957 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_swVowel);
@@ -2628,11 +2675,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_swVowel",word);
 
 }
-#line 2632 "build/hi_desktop/hi.y.cpp"
+#line 2679 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 106: // ENG_nCon: ENG_1Con ENG_Con
-#line 935 "build/hi_desktop/hi.y"
+  case 109: // ENG_nCon: ENG_1Con ENG_Con
+#line 966 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_1Con=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Con=sparser->get_node_info(yystack_[0].value);
@@ -2640,11 +2687,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_nCon->ENG_1Con
 yylhs.value=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
 
 }
-#line 2644 "build/hi_desktop/hi.y.cpp"
+#line 2691 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 107: // ENG_nCon: ENG_nCon ENG_Con
-#line 943 "build/hi_desktop/hi.y"
+  case 110: // ENG_nCon: ENG_nCon ENG_Con
+#line 974 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_nCon=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Con=sparser->get_node_info(yystack_[0].value);
@@ -2652,33 +2699,34 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_nCon->ENG_nCon
 yylhs.value=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 
 }
-#line 2656 "build/hi_desktop/hi.y.cpp"
+#line 2703 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 108: // S: ENG_VP
-#line 952 "build/hi_desktop/hi.y"
+  case 111: // S: ENG_VP ENG_Punct
+#line 983 "build/hi_desktop/hi.y"
 {
-const node_info& ENG_VP=sparser->get_node_info(yystack_[0].value);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP");
-yylhs.value=sparser->set_node_info("S",ENG_VP);
+const node_info& ENG_VP=sparser->get_node_info(yystack_[1].value);
+const node_info& ENG_Punct=sparser->get_node_info(yystack_[0].value);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP ENG_Punct");
+yylhs.value=sparser->combine_nodes("S",ENG_VP,ENG_Punct);
 
 }
-#line 2667 "build/hi_desktop/hi.y.cpp"
+#line 2715 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 109: // S: ENG_VP_Int
-#line 959 "build/hi_desktop/hi.y"
+  case 112: // S: ENG_VP_Int
+#line 991 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_VP_Int=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP_Int");
 yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
 
 }
-#line 2678 "build/hi_desktop/hi.y.cpp"
+#line 2726 "build/hi_desktop/hi.y.cpp"
     break;
 
 
-#line 2682 "build/hi_desktop/hi.y.cpp"
+#line 2730 "build/hi_desktop/hi.y.cpp"
 
             default:
               break;
@@ -3023,146 +3071,149 @@ yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
   }
 
 
-  const signed char parser::yypact_ninf_ = -61;
+  const signed char parser::yypact_ninf_ = -58;
 
   const signed char parser::yytable_ninf_ = -19;
 
   const signed char
   parser::yypact_[] =
   {
-      29,   -61,   -61,   -61,   -61,   -61,   -61,   -61,     7,    47,
-      24,    50,    50,     7,    38,    18,    18,    59,     7,     7,
-      81,   -61,   -61,    14,   -61,    45,    22,    10,    93,    72,
-      87,   -61,    69,   -61,   -61,   -61,   -61,   -61,   -61,    76,
-     -61,    92,   -61,   -61,   -61,   -61,   -61,   -61,   -61,   -61,
-     -61,   -61,   -61,   -61,   -61,   -61,   -61,   -61,    39,   -61,
-     -61,    99,   -61,    39,   -61,     8,    94,   -61,   -61,    94,
-      12,   -61,   -61,   -61,   -61,   -61,    38,    18,    18,    18,
-      97,    60,    18,   -61,   -61,   -61,   -61,   -61,   -61,    39,
-     -61,   -61,   -61,    93,   -61,     7,   102,   -61,   -61,   -61,
-     -61,   -61,   -61,   -61,   -61,   -61,   -61,   110,   -61,    18,
-     -61,   -61,   -61,    26,   -61,   -61,   -61,   -61,   -61,   -61,
-     -61,    18,    18,    18,    18,   -61,   -61,   -61,   -61,   -61,
-     -61,   111,    85,   -61,   -61,    26,    26,   -61,   -61,   -61,
-     -61,   -61,   -61
+      21,   -58,   -58,   -58,   -58,   -58,   -58,   -58,    -4,     7,
+      51,    14,    14,    -4,    36,    47,    47,    27,    -4,    -4,
+      86,    48,   -58,    -2,   -58,    43,    17,    37,    88,    58,
+      77,   -58,    65,   -58,   -58,   -58,   -58,   -58,   -58,    69,
+     -58,    76,   -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,
+     -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,    31,   -58,
+     -58,    96,   -58,    31,   -58,    12,    79,   -58,   -58,    79,
+      15,   -58,   -58,   -58,   -58,   -58,    36,    47,    47,    47,
+      74,    45,    47,   -58,   -58,   100,   -58,   -58,   -58,   -58,
+     -58,   -58,    31,   -58,   -58,   -58,    88,   -58,    -4,   101,
+     -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,
+     109,   -58,    47,   -58,   -58,   -58,    24,   -58,   -58,   -58,
+     -58,   -58,   -58,   -58,    47,    47,    47,    47,   -58,   -58,
+     -58,   -58,   -58,   -58,   -58,   -58,   108,    84,   -58,   -58,
+      24,    24,   -58,   -58,   -58,   -58,   -58,   -58
   };
 
   const signed char
   parser::yydefact_[] =
   {
-       0,    29,    32,    62,    90,    74,    54,     2,     0,     0,
+       0,    29,    32,    62,    93,    77,    54,     2,     0,     0,
        0,     0,     0,     0,     0,    55,    57,     0,     0,     0,
-       0,   108,   109,    75,    73,    79,     0,    84,     0,     0,
-       0,    99,    75,   101,    36,   103,   102,    37,    38,     0,
-      30,     0,    31,    95,   105,   104,    60,    61,    56,    58,
-      64,    59,   100,    72,    10,    16,    67,     6,    54,     4,
-      11,     0,     5,     0,     3,     7,     8,    17,    98,     0,
-       9,    41,    42,    24,    94,    39,     0,    45,    47,    40,
-       0,     0,    50,    92,    93,    76,    91,    66,    71,    89,
-      80,    96,    97,     0,    81,     0,     0,    82,    83,    85,
-      86,    87,    88,     1,   106,    21,    22,     0,    12,    54,
-      23,    19,    28,     0,    13,    25,    14,    20,    15,    52,
-      53,     0,    46,    48,    49,    63,    51,    43,   107,    65,
-      68,     0,     0,    70,    69,    26,    27,    33,    78,    34,
-      35,    44,    77
+       0,     0,   112,    78,    76,    82,     0,    87,     0,     0,
+       0,   102,    78,   104,    36,   106,   105,    37,    38,     0,
+      30,     0,    31,    98,   108,   107,    60,    61,    56,    58,
+      64,    59,   103,    75,    10,    16,    70,     6,    54,     4,
+      11,     0,     5,     0,     3,     7,     8,    17,   101,     0,
+       9,    41,    42,    24,    97,    39,     0,    45,    47,    40,
+       0,     0,    50,    69,   111,     0,    95,    96,    79,    94,
+      66,    74,    92,    83,    99,   100,     0,    84,     0,     0,
+      85,    86,    88,    89,    90,    91,     1,   109,    21,    22,
+       0,    12,    54,    23,    19,    28,     0,    13,    25,    14,
+      20,    15,    52,    53,     0,    46,    48,    49,    63,    51,
+      43,   110,    68,    67,    65,    71,     0,     0,    73,    72,
+      26,    27,    33,    81,    34,    35,    44,    80
   };
 
-  const signed char
+  const short
   parser::yypgoto_[] =
   {
-     -61,     2,    61,   -61,   -61,   -61,   -25,   -61,   -60,   -61,
-     -61,    95,   -61,    13,   -61,    42,   -61,    46,   -61,   -51,
-      25,   -61,   -61,   -61,   -61,   -61,   -49,   -19,   -61,   -61,
-     -61,    66,    67,   127,    82,   117,   118,    11,   -61,   -61,
-     -23,   -61,   -61,   104,   -61,   -61,   -61,   -61,   -61,    -5,
-     -61,   -61,   -61,   -61,    15,   -61,   -61,   -61,   -61,   -61,
-     -61,   -61,   -61,   -61,   -61,   -61,    53,    56,    34,   -61
+     -58,     2,    62,   -58,   -58,   -58,   -25,   -58,   -56,   -58,
+     -58,   102,   -58,     8,   -58,    44,   -58,    49,   -58,   -53,
+      41,   -58,   -58,   -58,   -58,   -58,   -57,   -18,   -58,   -58,
+     -58,    68,    70,   129,    99,   119,   120,    11,   -58,   -58,
+     -23,   -58,   -58,   -58,   -58,   -58,   104,   -58,   -58,   -58,
+     -58,   -58,    -5,   -58,   -58,   -58,   -58,    20,   -58,   -58,
+     -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,   -58,    57,
+      59,    38,   -58
   };
 
   const short
   parser::yydefgoto_[] =
   {
       -1,    58,    59,    60,    61,    62,    63,    64,    65,    66,
-      67,    68,    69,    70,    71,    72,   113,   114,   115,     7,
-       8,     9,   130,    10,    11,    12,    73,    74,   131,    75,
-      76,    77,    78,    79,    14,    15,    16,    80,   126,    51,
-      92,    93,    81,    94,    95,   134,    96,    18,    19,    20,
-     141,   142,    21,    22,    32,    24,    85,    86,    25,    26,
-      27,    28,    29,    34,    37,    38,    46,    47,    82,    30
+      67,    68,    69,    70,    71,    72,   116,   117,   118,     7,
+       8,     9,   135,    10,    11,    12,    73,    74,   136,    75,
+      76,    77,    78,    79,    14,    15,    16,    80,   129,    51,
+      95,    96,    84,   133,    85,    81,    97,    98,   139,    99,
+      18,    19,    20,   146,   147,    21,    22,    32,    24,    88,
+      89,    25,    26,    27,    28,    29,    34,    37,    38,    46,
+      47,    82,    30
   };
 
   const short
   parser::yytable_[] =
   {
-      89,    97,     6,    31,    99,   111,    91,   104,    43,   101,
-     117,    17,    54,    52,   110,    23,    54,    48,    49,     4,
-      87,     1,    17,    17,    88,    57,    54,    83,     2,    57,
-      54,   128,     1,   -18,    53,     2,     3,   112,    84,    57,
-     110,     4,     1,    57,    35,    36,     3,     5,     1,    54,
-      55,    98,     3,   135,   102,    87,    56,     3,   104,    88,
-      44,    45,    57,     1,    54,   109,    33,     3,    50,   107,
-     104,   128,   128,   128,   129,   111,   117,    57,     2,   121,
-     121,   121,    83,   109,     1,    54,    55,   103,     3,    54,
-     132,   109,    56,    39,    41,    87,     1,    54,    57,    45,
-       3,   138,    57,    54,    56,   125,    50,   139,   137,   140,
-      57,   122,   123,   124,    44,   116,   118,   133,   125,   112,
-      90,    87,   108,   127,   105,   106,   136,    13,    40,   119,
-      42,   100,   120
+      92,   100,     6,    31,   102,   107,   113,    94,    43,   114,
+     104,    17,     4,    52,   120,    86,    54,    48,    49,    54,
+      23,    54,    17,    17,     1,     3,    87,     2,    54,   131,
+      33,     2,     3,    57,     1,   113,    57,     4,    57,    53,
+      50,   -18,     3,     5,   115,    57,     1,    54,     1,    54,
+       1,    90,    55,    83,     3,    91,     3,    90,    56,   107,
+     140,    91,    44,    45,    57,   112,    57,   101,     2,   110,
+     105,   107,   131,   131,   131,    35,    36,   106,   134,   124,
+     124,   124,    86,   112,   114,   120,   128,    50,    54,     1,
+      54,     1,    54,   137,   112,    55,    45,     3,    90,     3,
+      54,    56,    44,    56,   143,    57,   132,    57,   115,    57,
+      39,    41,   144,   142,   145,   125,   126,   127,   119,   121,
+     138,   128,    90,   111,   141,   130,   108,    93,   109,    13,
+      40,   103,    42,   122,     0,   123
   };
 
-  const unsigned char
+  const short
   parser::yycheck_[] =
   {
-      25,    26,     0,     8,    27,    65,    25,    58,    13,    28,
-      70,     0,     4,    18,    63,     0,     4,    15,    16,    12,
-      10,     3,    11,    12,    14,    17,     4,    13,     6,    17,
-       4,    82,     3,    25,    19,     6,     7,    25,    24,    17,
-      89,    12,     3,    17,    20,    21,     7,    18,     3,     4,
-       5,    26,     7,   113,    29,    10,    11,     7,   109,    14,
-      22,    23,    17,     3,     4,    63,    19,     7,     9,    58,
-     121,   122,   123,   124,    93,   135,   136,    17,     6,    77,
-      78,    79,    13,    81,     3,     4,     5,     0,     7,     4,
-      95,    89,    11,    11,    12,    10,     3,     4,    17,    23,
-       7,    16,    17,     4,    11,     8,     9,   132,   131,   132,
-      17,    77,    78,    79,    22,    69,    70,    15,     8,    25,
-      25,    10,    61,    81,    58,    58,   113,     0,    11,    76,
-      12,    27,    76
+      25,    26,     0,     8,    27,    58,    63,    25,    13,    65,
+      28,     0,    16,    18,    70,    17,     4,    15,    16,     4,
+       0,     4,    11,    12,     3,    11,    28,    10,     4,    82,
+      23,    10,    11,    21,     3,    92,    21,    16,    21,    19,
+      13,    29,    11,    22,    29,    21,     3,     4,     3,     4,
+       3,    14,     9,     5,    11,    18,    11,    14,    15,   112,
+     116,    18,    26,    27,    21,    63,    21,    26,    10,    58,
+      29,   124,   125,   126,   127,    24,    25,     0,    96,    77,
+      78,    79,    17,    81,   140,   141,    12,    13,     4,     3,
+       4,     3,     4,    98,    92,     9,    27,    11,    14,    11,
+       4,    15,    26,    15,    20,    21,     6,    21,    29,    21,
+      11,    12,   137,   136,   137,    77,    78,    79,    69,    70,
+      19,    12,    14,    61,   116,    81,    58,    25,    58,     0,
+      11,    27,    12,    76,    -1,    76
   };
 
   const signed char
   parser::yystos_[] =
   {
-       0,     3,     6,     7,    12,    18,    27,    45,    46,    47,
-      49,    50,    51,    59,    60,    61,    62,    63,    73,    74,
-      75,    78,    79,    80,    81,    84,    85,    86,    87,    88,
-      95,    75,    80,    19,    89,    20,    21,    90,    91,    60,
-      61,    60,    62,    75,    22,    23,    92,    93,    27,    27,
-       9,    65,    75,    80,     4,     5,    11,    17,    27,    28,
-      29,    30,    31,    32,    33,    34,    35,    36,    37,    38,
-      39,    40,    41,    52,    53,    55,    56,    57,    58,    59,
-      63,    68,    94,    13,    24,    82,    83,    10,    14,    32,
-      37,    53,    66,    67,    69,    70,    72,    32,    46,    66,
-      69,    53,    46,     0,    45,    57,    58,    63,    28,    27,
-      52,    34,    25,    42,    43,    44,    43,    34,    43,    92,
-      93,    27,    94,    94,    94,     8,    64,    41,    45,    53,
-      48,    54,    75,    15,    71,    34,    39,    66,    16,    32,
-      66,    76,    77
+       0,     3,    10,    11,    16,    22,    31,    49,    50,    51,
+      53,    54,    55,    63,    64,    65,    66,    67,    80,    81,
+      82,    85,    86,    87,    88,    91,    92,    93,    94,    95,
+     102,    82,    87,    23,    96,    24,    25,    97,    98,    64,
+      65,    64,    66,    82,    26,    27,    99,   100,    31,    31,
+      13,    69,    82,    87,     4,     9,    15,    21,    31,    32,
+      33,    34,    35,    36,    37,    38,    39,    40,    41,    42,
+      43,    44,    45,    56,    57,    59,    60,    61,    62,    63,
+      67,    75,   101,     5,    72,    74,    17,    28,    89,    90,
+      14,    18,    36,    41,    57,    70,    71,    76,    77,    79,
+      36,    50,    70,    76,    57,    50,     0,    49,    61,    62,
+      67,    32,    31,    56,    38,    29,    46,    47,    48,    47,
+      38,    47,    99,   100,    31,   101,   101,   101,    12,    68,
+      45,    49,     6,    73,    57,    52,    58,    82,    19,    78,
+      38,    43,    70,    20,    36,    70,    83,    84
   };
 
   const signed char
   parser::yyr1_[] =
   {
-       0,    26,    27,    28,    29,    30,    31,    32,    32,    32,
-      33,    34,    34,    35,    35,    35,    36,    37,    38,    39,
-      39,    40,    40,    41,    41,    42,    43,    43,    44,    45,
-      46,    46,    47,    48,    48,    48,    49,    50,    51,    52,
-      52,    53,    53,    53,    54,    55,    55,    55,    55,    55,
-      55,    56,    57,    58,    59,    59,    59,    59,    59,    60,
-      61,    62,    63,    64,    65,    66,    67,    68,    69,    70,
-      71,    72,    73,    73,    74,    75,    75,    76,    77,    78,
-      78,    78,    78,    78,    78,    78,    78,    78,    78,    79,
-      80,    81,    82,    83,    84,    85,    86,    86,    87,    88,
-      88,    89,    90,    91,    92,    93,    94,    94,    95,    95
+       0,    30,    31,    32,    33,    34,    35,    36,    36,    36,
+      37,    38,    38,    39,    39,    39,    40,    41,    42,    43,
+      43,    44,    44,    45,    45,    46,    47,    47,    48,    49,
+      50,    50,    51,    52,    52,    52,    53,    54,    55,    56,
+      56,    57,    57,    57,    58,    59,    59,    59,    59,    59,
+      59,    60,    61,    62,    63,    63,    63,    63,    63,    64,
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
+      75,    76,    77,    78,    79,    80,    80,    81,    82,    82,
+      83,    84,    85,    85,    85,    85,    85,    85,    85,    85,
+      85,    85,    86,    87,    88,    89,    90,    91,    92,    93,
+      93,    94,    95,    95,    96,    97,    98,    99,   100,   101,
+     101,   102,   102
   };
 
   const signed char
@@ -3174,11 +3225,12 @@ yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
        2,     2,     1,     2,     2,     2,     2,     2,     2,     1,
        1,     1,     1,     2,     2,     1,     2,     1,     2,     2,
        1,     2,     2,     2,     1,     1,     2,     1,     2,     2,
-       2,     2,     1,     1,     1,     2,     1,     1,     2,     2,
-       1,     1,     2,     1,     1,     1,     2,     1,     1,     1,
-       2,     2,     2,     2,     1,     2,     2,     2,     2,     2,
-       1,     2,     1,     1,     2,     2,     2,     2,     2,     2,
-       2,     1,     1,     1,     1,     1,     2,     2,     1,     1
+       2,     2,     1,     1,     1,     2,     1,     2,     1,     1,
+       1,     2,     2,     1,     1,     2,     1,     1,     1,     2,
+       1,     1,     1,     2,     2,     2,     2,     1,     2,     2,
+       2,     2,     2,     1,     2,     1,     1,     2,     2,     2,
+       2,     2,     2,     2,     1,     1,     1,     1,     1,     2,
+       2,     2,     1
   };
 
 
@@ -3189,24 +3241,27 @@ yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
   const parser::yytname_[] =
   {
   "END", "error", "\"invalid token\"", "t_ENG_CON_Stem", "t_ENG_A_Stem",
-  "t_ENG_ADV_Stem", "t_ENG_DET_Stem", "t_ENG_N_Stem", "t_ENG_N_Pl",
-  "t_ENG_N_Sg", "t_ENG_PREP_Stem", "t_ENG_QPRO_Stem", "t_ENG_V_Stem",
-  "t_ENG_V_Aux", "t_ENG_RPRO_Stem", "t_ENG_RPRO_Relative",
-  "t_ENG_VNEG_Stem", "t_ENG_ANEG_Stem", "t_ENG_PAR_Stem",
-  "t_ENG_DET_Indef", "t_ENG_DET_fwVowel", "t_ENG_DET_fwConsonant",
-  "t_ENG_N_swVowel", "t_ENG_N_swConsonant", "t_ENG_V_Gerund",
-  "t_ENG_CONJ_Stem", "$accept", "ENG_1Con", "ENG_A", "ENG_A0NEG",
-  "ENG_ANEG", "ENG_ANEG_Stem", "ENG_AP", "ENG_A_Stem", "ENG_Abar1",
-  "ENG_Abar2", "ENG_Adv", "ENG_AdvP", "ENG_Ahead", "ENG_Alist", "ENG_CAP",
-  "ENG_CNP", "ENG_CONJ", "ENG_CONJA", "ENG_CONJ_Stem", "ENG_Con", "ENG_DP",
-  "ENG_Det_stem", "ENG_IVP", "ENG_Indef_Det", "ENG_Indef_Det_a",
-  "ENG_Indef_Det_an", "ENG_N", "ENG_NP", "ENG_NV", "ENG_N_Pl",
-  "ENG_N_Pl_0Con", "ENG_N_Pl_0Con_swC", "ENG_N_Pl_0Con_swV", "ENG_N_Sg",
-  "ENG_N_Sg_0Con", "ENG_N_Sg_0Con_swC", "ENG_N_Sg_0Con_swV", "ENG_N_Stem",
-  "ENG_N_lfea_Pl", "ENG_N_lfea_Sg", "ENG_PP", "ENG_Prep", "ENG_QPro",
-  "ENG_RC", "ENG_RPro", "ENG_RPro_lfea_relative", "ENG_RPro_stem",
-  "ENG_TP", "ENG_Tense_particle", "ENG_V", "ENG_VNEG", "ENG_VNEG_Stem",
-  "ENG_VP", "ENG_VP_Int", "ENG_V_Stem", "ENG_V_ger", "ENG_V_lfea_aux",
+  "t_ENG_Punct_Stem", "t_ENG_Punct_FullStop", "t_ENG_Punct_QuestionMark",
+  "t_ENG_Punct_ExclamationMark", "t_ENG_ADV_Stem", "t_ENG_DET_Stem",
+  "t_ENG_N_Stem", "t_ENG_N_Pl", "t_ENG_N_Sg", "t_ENG_PREP_Stem",
+  "t_ENG_QPRO_Stem", "t_ENG_V_Stem", "t_ENG_V_Aux", "t_ENG_RPRO_Stem",
+  "t_ENG_RPRO_Relative", "t_ENG_VNEG_Stem", "t_ENG_ANEG_Stem",
+  "t_ENG_PAR_Stem", "t_ENG_DET_Indef", "t_ENG_DET_fwVowel",
+  "t_ENG_DET_fwConsonant", "t_ENG_N_swVowel", "t_ENG_N_swConsonant",
+  "t_ENG_V_Gerund", "t_ENG_CONJ_Stem", "$accept", "ENG_1Con", "ENG_A",
+  "ENG_A0NEG", "ENG_ANEG", "ENG_ANEG_Stem", "ENG_AP", "ENG_A_Stem",
+  "ENG_Abar1", "ENG_Abar2", "ENG_Adv", "ENG_AdvP", "ENG_Ahead",
+  "ENG_Alist", "ENG_CAP", "ENG_CNP", "ENG_CONJ", "ENG_CONJA",
+  "ENG_CONJ_Stem", "ENG_Con", "ENG_DP", "ENG_Det_stem", "ENG_IVP",
+  "ENG_Indef_Det", "ENG_Indef_Det_a", "ENG_Indef_Det_an", "ENG_N",
+  "ENG_NP", "ENG_NV", "ENG_N_Pl", "ENG_N_Pl_0Con", "ENG_N_Pl_0Con_swC",
+  "ENG_N_Pl_0Con_swV", "ENG_N_Sg", "ENG_N_Sg_0Con", "ENG_N_Sg_0Con_swC",
+  "ENG_N_Sg_0Con_swV", "ENG_N_Stem", "ENG_N_lfea_Pl", "ENG_N_lfea_Sg",
+  "ENG_PP", "ENG_Prep", "ENG_Punct", "ENG_Punct_FullStop",
+  "ENG_Punct_Stem", "ENG_QPro", "ENG_RC", "ENG_RPro",
+  "ENG_RPro_lfea_relative", "ENG_RPro_stem", "ENG_TP",
+  "ENG_Tense_particle", "ENG_V", "ENG_VNEG", "ENG_VNEG_Stem", "ENG_VP",
+  "ENG_VP_Int", "ENG_V_Stem", "ENG_V_ger", "ENG_V_lfea_aux",
   "ENG_V_lfea_ger", "ENG_Vbar1", "ENG_Vbar1_Ind", "ENG_Vbar2", "ENG_Vbar3",
   "ENG_Vbar4", "ENG_lfea_IndefDet", "ENG_lfea_fwConsonant",
   "ENG_lfea_fwVowel", "ENG_lfea_swConsonant", "ENG_lfea_swVowel",
@@ -3219,17 +3274,18 @@ yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
   const short
   parser::yyrline_[] =
   {
-       0,    63,    63,    71,    79,    87,    95,   104,   111,   118,
-     126,   135,   142,   151,   159,   167,   176,   185,   193,   201,
-     209,   218,   226,   235,   243,   251,   259,   267,   276,   285,
-     294,   302,   311,   320,   328,   336,   345,   354,   363,   372,
-     379,   387,   394,   401,   410,   419,   426,   434,   441,   449,
-     456,   464,   473,   482,   491,   498,   505,   513,   520,   529,
-     538,   547,   556,   565,   574,   583,   592,   601,   610,   619,
-     628,   637,   646,   654,   662,   671,   678,   687,   695,   704,
-     711,   719,   727,   735,   743,   750,   758,   766,   774,   783,
-     792,   801,   810,   819,   828,   837,   846,   854,   863,   872,
-     880,   889,   898,   907,   916,   925,   934,   942,   951,   958
+       0,    67,    67,    75,    83,    91,    99,   108,   115,   122,
+     130,   139,   146,   155,   163,   171,   180,   189,   197,   205,
+     213,   222,   230,   239,   247,   255,   263,   271,   280,   289,
+     298,   306,   315,   324,   332,   340,   349,   358,   367,   376,
+     383,   391,   398,   405,   414,   423,   430,   438,   445,   453,
+     460,   468,   477,   486,   495,   502,   509,   517,   524,   533,
+     542,   551,   560,   569,   578,   587,   596,   605,   614,   623,
+     632,   641,   650,   659,   668,   677,   685,   693,   702,   709,
+     718,   726,   735,   742,   750,   758,   766,   774,   781,   789,
+     797,   805,   814,   823,   832,   841,   850,   859,   868,   877,
+     885,   894,   903,   911,   920,   929,   938,   947,   956,   965,
+     973,   982,   990
   };
 
   void
@@ -3296,10 +3352,10 @@ yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25
+      25,    26,    27,    28,    29
     };
     // Last valid token kind.
-    const int code_max = 280;
+    const int code_max = 284;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -3310,9 +3366,9 @@ yylhs.value=sparser->set_node_info("S",ENG_VP_Int);
   }
 
 } // yy
-#line 3314 "build/hi_desktop/hi.y.cpp"
+#line 3370 "build/hi_desktop/hi.y.cpp"
 
-#line 965 "build/hi_desktop/hi.y"
+#line 997 "build/hi_desktop/hi.y"
 
 int yylex(yy::parser::semantic_type* yylval){
 	int token;
@@ -3511,7 +3567,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"unexpected error ...");
 			return NULL;
 		}
-	}
+    morphan_result::clear_global_features();
+    transgraph::clear_node_functor_map();
+    }
     analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
     if(analyses.empty()==false){
         analysischr=new char[analyses.length()+1];

@@ -4,13 +4,16 @@
 #include "query_result.h"
 
 unsigned int transgraph::global_id=0;
+std::map<unsigned int,std::pair<std::string,unsigned int>> transgraph::node_functor_map_;
 
-transgraph::transgraph(const std::string& id,const std::pair<std::string,unsigned int>& functor,const morphan_result *morphan){
+transgraph::transgraph(const std::string& id,const std::pair<std::string,unsigned int>& functor,morphan_result *morphan){
 	this->functor=functor;
-	if(morphan!=NULL){
+    if(morphan!=NULL){
+        morphan->copy_global_features();
 		this->morphan=morphan;
 		if(id.empty()==false) my_id=id;
 		else my_id=std::to_string(++transgraph::global_id);
+        node_functor_map_.insert(std::make_pair(std::atoi(id.c_str()),functor));
 	}
 	else{
 		this->morphan=NULL;
@@ -33,7 +36,7 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 	arguments.insert(std::make_pair(d_counter,functor));
 }
 
-std::string transgraph::transcript(std::map<std::string,std::string>& functors, const std::string& target_language) const{
+std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language) const{
 	std::string transcript,initial_argscript,argument_list,functor_id,functor_def;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL,*functor_tag_entries=NULL;
@@ -45,6 +48,10 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
 	if(morphan!=NULL){
+        std::map<unsigned int,std::string> global_features=morphan->global_features_copy();
+        for(auto&& node_feature:global_features){
+            morphan_result::add_global_feature(node_feature.first,node_feature.second);
+        }
 		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
 			transcript+="\"functor\":\"CON\",";
@@ -98,10 +105,53 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 					}
 				}
 			}
-			if(tags.back()==',') tags.pop_back();
+            std::map<unsigned int,std::string> global_features=morphan_result::global_features();
+            for(auto&& node_feature:global_features){
+                std::pair<std::string,unsigned int> functor=node_functor_map.find(node_feature.first)->second;
+                functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
+                if(functor_tag_entries!=NULL){
+                    unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
+                    for(unsigned int i=0;i<nr_of_entries;++i){
+                        std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
+                        if(trigger_tag.empty()==false){
+                            std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
+                            std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
+                            if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
+                                tags+="\""+tag+"\":\""+value+"\",";
+                                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
+                            }
+                        }
+                    }
+                }
+            }
+            if(tags.back()==',') tags.pop_back();
 			tags+="},";
 			transcript+=tags;
 		}
+        else{
+            std::string tags="\"tags\":{";
+            std::map<unsigned int,std::string> global_features=morphan_result::global_features();
+            for(auto&& node_feature:global_features){
+                std::pair<std::string,unsigned int> functor=node_functor_map.find(node_feature.first)->second;
+                functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
+                if(functor_tag_entries!=NULL){
+                    unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
+                    for(unsigned int i=0;i<nr_of_entries;++i){
+                        std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
+                        if(trigger_tag.empty()==false){
+                            std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
+                            std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
+                            if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
+                                tags+="\""+tag+"\":\""+value+"\",";
+                            }
+                        }
+                    }
+                }
+            }
+            if(tags.back()==',') tags.pop_back();
+            tags+="},";
+            transcript+=tags;
+        }
 		transcript+="\"functor id\":\""+functor_id+"\"";
 		for(auto&& i:arguments){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking argument with d_counter "+std::to_string(i.first));
@@ -116,20 +166,20 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors, 
 			if(*semantic_dependency=="CON"){
 				auto argument_script=argument_scripts.find(i.first);
 				if(argument_script!=argument_scripts.end()){
-					argument_script->second+=i.second->transcript(functors,target_language);
+                    argument_script->second+=i.second->transcript(functors,node_functor_map,target_language);
 				}
 				else{
-					initial_argscript=i.second->transcript(functors,target_language);
+                    initial_argscript=i.second->transcript(functors,node_functor_map,target_language);
 					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
 				}
 			}
 			else{
 				auto argument_script=argument_scripts.find(i.first);
 				if(argument_script!=argument_scripts.end()){
-					argument_script->second+=i.second->transcript(functors,target_language);
+                    argument_script->second+=i.second->transcript(functors,node_functor_map,target_language);
 				}
 				else{
-					initial_argscript=i.second->transcript(functors,target_language);
+                    initial_argscript=i.second->transcript(functors,node_functor_map,target_language);
 					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
 				}
 			}

@@ -195,7 +195,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"unexpected error ...");
 			return NULL;
 		}
-	}
+    morphan_result::clear_global_features();
+    transgraph::clear_node_functor_map();
+    }
     analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
     if(analyses.empty()==false){
         analysischr=new char[analyses.length()+1];

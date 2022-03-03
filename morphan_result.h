@@ -4,6 +4,7 @@
 	#include <string>
 	#include <vector>
 	#include <set>
+    #include <map>
 
 	class morphan_result{
 		private:
@@ -16,7 +17,9 @@
 			static unsigned int global_id;//TODO:figure out when to reset or change it to instance level
 			unsigned int my_id;
 			std::string lid;
-		public:
+            static std::map<unsigned int,std::string> global_features_;
+            std::map<unsigned int,std::string> global_features_copy_;
+        public:
 			morphan_result(const std::string&, const std::vector<std::string>&, const std::string&);
             morphan_result(const std::string&, const std::string&, const std::string&);
 			~morphan_result();
@@ -30,7 +33,18 @@
 			const std::set<std::string>& lfeas() const;
 			bool is_erroneous() const;
 			bool is_mocked() const;
-			//prefix();
+            static void add_global_feature(const unsigned int node_id,const std::string& feature){
+                global_features_.insert(std::make_pair(node_id,feature));
+            }
+            std::map<unsigned int,std::string> global_features_copy();
+            static std::map<unsigned int,std::string> global_features(){
+                return global_features_;
+            }
+            static void clear_global_features(){
+                global_features_.clear();
+            }
+            void copy_global_features();
+            //prefix();
 			//suffix();
 			//infix();
 	};

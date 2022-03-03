@@ -3,6 +3,10 @@
 std::map<std::string, unsigned int> symbol_token_map={
 {"t_ENG_CON_Stem",yy::parser::token::t_ENG_CON_Stem},
 {"t_ENG_A_Stem",yy::parser::token::t_ENG_A_Stem},
+{"t_ENG_Punct_Stem",yy::parser::token::t_ENG_Punct_Stem},
+{"t_ENG_Punct_FullStop",yy::parser::token::t_ENG_Punct_FullStop},
+{"t_ENG_Punct_QuestionMark",yy::parser::token::t_ENG_Punct_QuestionMark},
+{"t_ENG_Punct_ExclamationMark",yy::parser::token::t_ENG_Punct_ExclamationMark},
 {"t_ENG_ADV_Stem",yy::parser::token::t_ENG_ADV_Stem},
 {"t_ENG_DET_Stem",yy::parser::token::t_ENG_DET_Stem},
 {"t_ENG_N_Stem",yy::parser::token::t_ENG_N_Stem},
@@ -29,6 +33,10 @@ std::map<std::string, unsigned int> symbol_token_map={
 std::map<unsigned int,std::string> token_symbol_map={
 {yy::parser::token::t_ENG_CON_Stem,"t_ENG_CON_Stem"},
 {yy::parser::token::t_ENG_A_Stem,"t_ENG_A_Stem"},
+{yy::parser::token::t_ENG_Punct_Stem,"t_ENG_Punct_Stem"},
+{yy::parser::token::t_ENG_Punct_FullStop,"t_ENG_Punct_FullStop"},
+{yy::parser::token::t_ENG_Punct_QuestionMark,"t_ENG_Punct_QuestionMark"},
+{yy::parser::token::t_ENG_Punct_ExclamationMark,"t_ENG_Punct_ExclamationMark"},
 {yy::parser::token::t_ENG_ADV_Stem,"t_ENG_ADV_Stem"},
 {yy::parser::token::t_ENG_DET_Stem,"t_ENG_DET_Stem"},
 {yy::parser::token::t_ENG_N_Stem,"t_ENG_N_Stem"},

@@ -37,6 +37,10 @@ db *db_factory::singleton_instance=NULL;
 %token	END 0
 %token	t_ENG_CON_Stem
 %token	t_ENG_A_Stem
+%token	t_ENG_Punct_Stem
+%token	t_ENG_Punct_FullStop
+%token	t_ENG_Punct_QuestionMark
+%token	t_ENG_Punct_ExclamationMark
 %token	t_ENG_ADV_Stem
 %token	t_ENG_DET_Stem
 %token	t_ENG_N_Stem
@@ -597,6 +601,33 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 $$=sparser->set_node_info("ENG_Prep",word);
 
 };
+ENG_Punct:
+ENG_Punct_Stem ENG_Punct_FullStop
+{
+const node_info& ENG_Punct_Stem=sparser->get_node_info($1);
+const node_info& ENG_Punct_FullStop=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Punct->ENG_Punct_Stem ENG_Punct_FullStop");
+$$=sparser->combine_nodes("ENG_Punct",ENG_Punct_Stem,ENG_Punct_FullStop);
+
+};
+ENG_Punct_FullStop:
+t_ENG_Punct_FullStop 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Punct_FullStop);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("ENG_Punct_FullStop",word);
+
+};
+ENG_Punct_Stem:
+t_ENG_Punct_Stem 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Punct_Stem);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("ENG_Punct_Stem",word);
+
+};
 ENG_QPro:
 t_ENG_QPRO_Stem 
 {
@@ -784,7 +815,7 @@ ENG_Vbar1 ENG_AP
 {
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 const node_info& ENG_AP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative");
+sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative",true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Int->ENG_Vbar1 ENG_AP");
 $$=sparser->combine_nodes("ENG_VP_Int",ENG_Vbar1,ENG_AP);
 };
@@ -948,11 +979,12 @@ $$=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 
 };
 S:
-ENG_VP 
+ENG_VP ENG_Punct
 {
 const node_info& ENG_VP=sparser->get_node_info($1);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP");
-$$=sparser->set_node_info("S",ENG_VP);
+const node_info& ENG_Punct=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP ENG_Punct");
+$$=sparser->combine_nodes("S",ENG_VP,ENG_Punct);
 
 }
 |ENG_VP_Int 
@@ -1160,7 +1192,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"unexpected error ...");
 			return NULL;
 		}
-	}
+    morphan_result::clear_global_features();
+    transgraph::clear_node_functor_map();
+    }
     analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
     if(analyses.empty()==false){
         analysischr=new char[analyses.length()+1];

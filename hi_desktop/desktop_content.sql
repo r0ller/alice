@@ -138,6 +138,17 @@ insert into SYMBOLS values('ENG_Empty','ENG',NULL);
 
 insert into SYMBOLS values('ENG_Vbar1_Ind','ENG','Vbar1 indicative mood');
 insert into SYMBOLS values('ENG_VP_Int','ENG','VP interrogative mood');
+insert into SYMBOLS values('FullStop', 'ENG', 'FullStop');
+insert into SYMBOLS values('QuestionMark', 'ENG', 'QuestionMark');
+insert into SYMBOLS values('ExclamationMark', 'ENG', 'ExclamationMark');
+insert into SYMBOLS values('Punct', 'ENG', 'Punctuation');
+insert into SYMBOLS values('ENG_Punct', 'ENG', 'Punctuation');
+insert into SYMBOLS values('ENG_Punct_Stem', 'ENG', 'Punctuation');
+insert into SYMBOLS values('t_ENG_Punct_Stem', 'ENG', 'Punctuation');
+insert into SYMBOLS values('t_ENG_Punct_FullStop', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Punct_FullStop', 'ENG', NULL);
+insert into SYMBOLS values('t_ENG_Punct_QuestionMark', 'ENG', NULL);
+insert into SYMBOLS values('t_ENG_Punct_ExclamationMark', 'ENG', NULL);
 
 insert into SYMBOLS values('HUN_VP','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
@@ -187,6 +198,11 @@ insert into GCAT values('N', 'swVowel', 'ENG', '22', NULL, NULL);
 insert into GCAT values('N', 'swConsonant', 'ENG', '23', NULL, NULL);
 insert into GCAT values('V', 'Gerund', 'ENG', '24', NULL, NULL);
 insert into GCAT values('CONJ', 'Stem', 'ENG', '25', NULL, NULL);
+
+insert into GCAT values('Punct', 'Stem', 'ENG', '1',NULL,NULL);
+insert into GCAT values('Punct', 'FullStop', 'ENG', '1',NULL,NULL);
+insert into GCAT values('Punct', 'QuestionMark', 'ENG', '1',NULL,NULL);
+insert into GCAT values('Punct', 'ExclamationMark', 'ENG', '1',NULL,NULL);
 
 insert into FUNCTOR_DEFS values('LISTENGV_1', 'sh', '1', 'listengv_1.sh');
 insert into FUNCTOR_DEFS values('LISTENGV_2', 'sh', '1', 'listengv_2.sh');
@@ -431,7 +447,8 @@ insert into DEPOLEX values('ANAENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, 
 /*insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);*/
 
-insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);
+/*insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);*/
+insert into GRAMMAR values('ENG','S','ENG_VP','ENG_Punct',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AdvP',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2',NULL,NULL,NULL);
@@ -578,13 +595,16 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1_Ind->ENG
 $$=sparser->combine_nodes("ENG_Vbar1_Ind",ENG_V,ENG_N_Sg);"');
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1_Ind','ENG_DP',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1_Ind','ENG_AP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Punct_Stem','t_ENG_Punct_Stem',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Punct_FullStop','t_ENG_Punct_FullStop',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Punct','ENG_Punct_Stem','ENG_Punct_FullStop',NULL,NULL);
 /*end rules for statements*/
 
 /*begin rules for questions*/
 insert into GRAMMAR values('ENG','ENG_VP_Int','ENG_Vbar1','ENG_AP',NULL,
 '"const node_info& ENG_Vbar1=sparser->get_node_info($1);
 const node_info& ENG_AP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative");
+sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative",true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Int->ENG_Vbar1 ENG_AP");
 $$=sparser->combine_nodes("ENG_VP_Int",ENG_Vbar1,ENG_AP);"');
 insert into GRAMMAR values('ENG','S','ENG_VP_Int',NULL,NULL,NULL);

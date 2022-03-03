@@ -77,6 +77,21 @@ string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencie
 		}
         string morphologyVarName=functionName+"_morphology";
         arguments.push_back(morphologyVarName);
+
+        string tags;
+        string tagsVarName;
+        if(dependency.HasMember("tags")==true){
+            for(auto& tag: dependency["tags"].GetObject()){
+                tags+="\""+string(tag.name.GetString())+"\":\""+string(tag.value.GetString())+"\",";
+            }
+            if(tags.empty()==false){
+                tags.pop_back();
+                tags="{"+tags+"}";
+                tagsVarName=functionName+"_tags";
+                arguments.push_back(tagsVarName);
+            }
+        }
+
         string argStr=args_to_shfun_arglist(arguments);
         string parameterList=args_to_shfun_pmlist(arguments);
         string functorDef;
@@ -98,6 +113,7 @@ string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencie
         }
         else{
             script+=morphologyVarName+"="+"\""+morphologyArg+"\";";
+            if(tags.empty()==false) script+=tagsVarName+"="+"\""+tags+"\";";
             script+=functorDef+functionName+" \""+functionName+"\" \""+parameterList+"\" "+argStr+";";
         }
         arguments.clear();
@@ -161,6 +177,7 @@ int main(int argc,char **argv){
 				jsondoc.Parse(analyses);
 				script=transcript(toa,jsondoc);
 				if(script.length()>0){
+                    cout<<script<<endl;
 					if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
 					fp=popen(script.c_str(),"r");
 					if(fp!=NULL){

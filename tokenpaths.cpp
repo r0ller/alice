@@ -85,6 +85,7 @@ void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgra
 			if(store==true){
 				valid_paths.push_back(words);
 				valid_graphs.push_back(transgraph);
+                valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
 			}
 			reset();
 		}
@@ -95,6 +96,7 @@ void tokenpaths::validate_path_wo_checks(const std::vector<lexicon>& words, cons
     //TODO:check why words are accepted from outside when the instance anyway has its own words attribute
     valid_paths.push_back(words);
     valid_graphs.push_back(transgraph);
+    valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
     reset();
 }
 
@@ -344,13 +346,15 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(word.lexeme,d_key);
 						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 						id_index=std::atoi(graph->id().c_str());
-						transcript+=graph->transcript(functors,target_language);
+                        std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
+                        transcript+=graph->transcript(functors,node_functor_map,target_language);
 					}
 					else{
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 						id_index=std::atoi(graph->id().c_str());
-						transcript+=graph->transcript(functors,target_language);
+                        std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
+                        transcript+=graph->transcript(functors,node_functor_map,target_language);
 					}
 				}
 				rowid_field=word.dependencies->value_for_field_name_found_after_row_position(rowid_field->first,"lexeme",functor);
@@ -362,7 +366,8 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 			transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 			id_index=std::atoi(graph->id().c_str());
-			transcript+=graph->transcript(functors,target_language);
+            std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
+            transcript+=graph->transcript(functors,node_functor_map,target_language);
 		}
 	}
 	return transcript;
@@ -590,7 +595,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+="],";
 			}
 			if(toa&HI_SEMANTICS){
-				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,target_language);
+                analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 				analysis+="\"functors\":[";

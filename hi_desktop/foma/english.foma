@@ -64,6 +64,12 @@ define Cleanup "^" -> 0;
 def AddTag [..] -> "+swVowel" || .#. V ?* _ .#. .o. 
            [..] -> "+swConsonant" || .#. C ?* _ .#. ;
 
+read lexc engpunct.lexc
+define LexiconPunct
+
+define GrammarPunct LexiconPunct .o. 
+                    Cleanup;
+
 read lexc engnoun.lexc
 define LexiconN
 
@@ -97,4 +103,4 @@ define Grammar Lexicon           .o.
 
 #regex Grammar | Grammarup;
 
-regex [GrammarN.i .o. AddTag].i | Grammar;
+regex [GrammarN.i .o. AddTag].i | Grammar | GrammarPunct;
