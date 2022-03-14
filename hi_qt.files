@@ -140,6 +140,7 @@ hi_desktop/functors/o_beengv_1.sh
 hi_desktop/functors/o_executableenga_1.sh
 hi_desktop/functors/o_filebeprop_1.sh
 hi_desktop/functors/o_fileengn_1.sh
+hi_desktop/functors/o_listengv_1.sh
 hi_desktop/functors/o_properties_1.sh
 hi_desktop/functors/orengconj_1.sh
 hi_desktop/functors/properties_1.sh

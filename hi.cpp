@@ -166,7 +166,7 @@ int main(int argc,char **argv){
 
     while(true){
         getline(cin,text);
-//        text="is file abc executable\n";
+//        text="list files that are executable !\n";
 		if(text.empty()==false){
             toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
             //crh=HI_VERB;

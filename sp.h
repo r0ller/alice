@@ -73,7 +73,6 @@
 			unsigned char toa_;
 			node_info& get_private_node_info(unsigned int);
 			unsigned int get_head_node(const node_info&);
-			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
             std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* is_valid_expression(node_info&, node_info&);
             unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
 			void find_functors_for_dependency(const std::string&, const std::string&, const query_result&, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
@@ -88,8 +87,8 @@
 			transgraph* build_transgraph(const p_m1_node_id_m2_d_key&, const std::pair<std::string,unsigned int>&,
 					std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&,
 					const unsigned int = 1, const unsigned int = 0);
-			unsigned int direct_descendant_of(const node_info&);
-			void destroy_node_infos();
+            unsigned int direct_descendant_of(const node_info&);
+            void destroy_node_infos();
 			std::vector<unsigned int> validated_nodes;
 			std::vector<node_info> node_infos;
             unsigned int nr_of_nodes_;
@@ -123,6 +122,7 @@
             std::vector<node_info> nodes();
             bool is_valid_combination(const unsigned int&,const unsigned int&);
             void build_dependency_semantics(const unsigned char&,const unsigned char&,const std::string&,lexer*,tokenpaths*);
+            void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
     };
 
 	class semper_error:public std::exception{

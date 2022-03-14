@@ -136,8 +136,7 @@ insert into SYMBOLS values('ENG_CONJ_Stem','ENG',NULL);
 insert into SYMBOLS values('%empty','ENG',NULL);
 insert into SYMBOLS values('ENG_Empty','ENG',NULL);
 
-insert into SYMBOLS values('ENG_Vbar1_Ind','ENG','Vbar1 indicative mood');
-insert into SYMBOLS values('ENG_VP_Int','ENG','VP interrogative mood');
+insert into SYMBOLS values('ENG_Vbar5','ENG','Vbar1 indicative mood');
 insert into SYMBOLS values('FullStop', 'ENG', 'FullStop');
 insert into SYMBOLS values('QuestionMark', 'ENG', 'QuestionMark');
 insert into SYMBOLS values('ExclamationMark', 'ENG', 'ExclamationMark');
@@ -149,6 +148,8 @@ insert into SYMBOLS values('t_ENG_Punct_FullStop', 'ENG', NULL);
 insert into SYMBOLS values('ENG_Punct_FullStop', 'ENG', NULL);
 insert into SYMBOLS values('t_ENG_Punct_QuestionMark', 'ENG', NULL);
 insert into SYMBOLS values('t_ENG_Punct_ExclamationMark', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Punct_QuestionMark', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Punct_ExclamationMark', 'ENG', NULL);
 
 insert into SYMBOLS values('HUN_VP','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
@@ -286,7 +287,9 @@ insert into FUNCTORS values('ORENGCONJ', '2', 'ORENGCONJ_1');
 insert into FUNCTORS values('LOCATED', '1', 'LOCATED_1');
 
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('LISTENGV', '1', 'imperative', '1', 'mood', 'imperative');
 insert into FUNCTOR_TAGS values('BEENGV', '1', 'interrogative', '1', 'mood', 'interrogative');
+insert into FUNCTOR_TAGS values('BEENGV', '1', 'indicative', '1', 'mood', 'indicative');
 
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
@@ -344,13 +347,13 @@ insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2
 insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
 
 /*begin rules for statements*/
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1_Ind', 'ENG_V', 'ENG_N_Sg', '1', NULL, '2', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1_Ind', 'ENG_V', 'ENG_N_Sg', '2', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1_Ind', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar5', 'ENG_V', 'ENG_N_Sg', '1', NULL, '2', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar5', 'ENG_V', 'ENG_N_Sg', '2', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar5', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
 /*end rules for statements*/
 
 /*begin rules for questions*/
-insert into RULE_TO_RULE_MAP values( 'ENG_VP_Int', 'ENG_Vbar1', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
 /*end rules for questions*/
 
 /*insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
@@ -448,7 +451,28 @@ insert into DEPOLEX values('ANAENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, 
 insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);*/
 
 /*insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);*/
-insert into GRAMMAR values('ENG','S','ENG_VP','ENG_Punct',NULL,NULL);
+insert into GRAMMAR values('ENG','S','ENG_VP','ENG_Punct',NULL,
+'"const node_info& ENG_VP=sparser->get_node_info($1);
+const node_info& ENG_Punct=sparser->get_node_info($2);
+std::vector<unsigned int> nodes;
+sparser->get_nodes_by_symbol(ENG_Punct,"QuestionMark",std::string(),nodes);
+if(nodes.size()==1){
+	const node_info& punct=sparser->get_node_info(nodes[0]);
+	sparser->add_feature_to_leaf(ENG_VP,"main_verb","interrogative",true);
+}
+else{
+	nodes.clear();
+	sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),nodes);
+	if(nodes.size()==1){
+		const node_info& punct=sparser->get_node_info(nodes[0]);
+		sparser->add_feature_to_leaf(ENG_VP,"main_verb","indicative",true);
+	}
+	else{
+		sparser->add_feature_to_leaf(ENG_VP,"main_verb","imperative",true);
+	}
+}
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP ENG_Punct");
+$$=sparser->combine_nodes("S",ENG_VP,ENG_Punct);"');
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AdvP',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar2',NULL,NULL,NULL);
@@ -587,28 +611,30 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV EN
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);"');
 
 /*begin rules for statements*/
-insert into GRAMMAR values('ENG','ENG_Vbar1_Ind','ENG_N_Sg','ENG_V',NULL,
+insert into GRAMMAR values('ENG','ENG_Vbar5','ENG_N_Sg','ENG_V',NULL,
 '"const node_info& ENG_N_Sg=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1_Ind->ENG_N_Sg ENG_V");
-$$=sparser->combine_nodes("ENG_Vbar1_Ind",ENG_V,ENG_N_Sg);"');
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1_Ind','ENG_DP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1_Ind','ENG_AP',NULL,NULL);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar5->ENG_N_Sg ENG_V");
+$$=sparser->combine_nodes("ENG_Vbar5",ENG_V,ENG_N_Sg);"');
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar5','ENG_DP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar5','ENG_AP',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Punct_Stem','t_ENG_Punct_Stem',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Punct_FullStop','t_ENG_Punct_FullStop',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Punct','ENG_Punct_Stem','ENG_Punct_FullStop',NULL,NULL);
 /*end rules for statements*/
 
 /*begin rules for questions*/
-insert into GRAMMAR values('ENG','ENG_VP_Int','ENG_Vbar1','ENG_AP',NULL,
-'"const node_info& ENG_Vbar1=sparser->get_node_info($1);
-const node_info& ENG_AP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_Vbar1,"V","interrogative",true);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Int->ENG_Vbar1 ENG_AP");
-$$=sparser->combine_nodes("ENG_VP_Int",ENG_Vbar1,ENG_AP);"');
-insert into GRAMMAR values('ENG','S','ENG_VP_Int',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_AP',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Punct_QuestionMark','t_ENG_Punct_QuestionMark',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Punct','ENG_Punct_Stem','ENG_Punct_QuestionMark',NULL,NULL);
 /*end rules for questions*/
+
+/*begin rules for questions*/
+insert into GRAMMAR values('ENG','ENG_Punct_ExclamationMark','t_ENG_Punct_ExclamationMark',NULL,NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_Punct','ENG_Punct_Stem','ENG_Punct_ExclamationMark',NULL,NULL);
+/*end rules for questions*/
+
 
 /*Mocking a missing terminal:
 insert into GRAMMAR values('ENG','ENG_V','%empty',NULL,NULL,
