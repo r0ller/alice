@@ -21,28 +21,7 @@ do
 done;
 if [ $mood = "imperative" ]; then 
 echo $mood;
-c=1;
-for i in $2;
-do 
-	p=$(($c+2));
-	eval v="\$$p";
-	echo name;
-	echo $i;
-	echo content;
-	echo "$v";
-	case "$i" in 
-		PROPERTIES_*_out) if [ -n "$out" ];
-		then out="$(echo "$v"|sed "s/|/$out/g")";
-		else out="$v";
-		fi;
-		break; 
-		;;
-		*_out) out="$out""$v"; 
-		;;
-	esac;
-	c=$(($c+1));
-done;
-eval "$1"_out='"$out"';
+eval "$1"_out="executable";
 elif [ $mood = "interrogative" ]; then 
 	echo $mood;
 elif [ $mood = "indicative" ]; then 

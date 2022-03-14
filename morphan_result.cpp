@@ -4,6 +4,7 @@
 #include "db_factory.h"
 
 unsigned int morphan_result::global_id=0;
+std::map<unsigned int,std::string> morphan_result::global_features_;
 
 /*PUBLIC*/
 morphan_result::morphan_result(const std::string& word, const std::string& lid, const std::string& gcat=""){
@@ -136,4 +137,12 @@ bool morphan_result::is_erroneous() const{
 
 bool morphan_result::is_mocked() const{
 	return word_morphemes.empty();
+}
+
+void morphan_result::copy_global_features(){
+    global_features_copy_=global_features_;
+}
+
+std::map<unsigned int,std::string> morphan_result::global_features_copy(){
+    return global_features_copy_;
 }

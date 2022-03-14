@@ -44,6 +44,7 @@
 			std::vector<unsigned short int> path_indices;
 			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
             unsigned char toa;
+            std::vector<std::map<unsigned int,std::pair<std::string,unsigned int>>> valid_graphs_node_functor_maps;
         public:
             tokenpaths(const unsigned char);
 			tokenpaths(const unsigned int,const unsigned int);
