@@ -6,7 +6,7 @@
 #include "query_result.h"
 #include "rapidjson/document.h"
 
-void apply_filter(const query_result *dependencies,const std::string& lexeme,const std::string& d_key,const std::string& dependency, const std::string& ref_d_key,const unsigned int& distance,const std::string& distance_op,const unsigned int& lexeme_row_nr,const unsigned int& current_distance,std::set<std::pair<unsigned int,unsigned int>>& row_nrs_found){
+void apply_filter(const query_result *dependencies,const std::string& lexeme,const std::string& d_key,const std::string& dependency, const std::string& ref_d_key,const unsigned int& distance,const std::string& distance_op,const unsigned int& lexeme_row_nr,const bool start_lexeme_found,const unsigned int& current_distance,std::set<std::pair<unsigned int,unsigned int>>& row_nrs_found){
     //1)find lexeme with d_key, store row id, set distance to 0
     //2)follow its dependencies increasing current_distance till dependency is found
     //(it may happen that a dependency is found but the distance_op is not fulfilled but the
@@ -16,31 +16,51 @@ void apply_filter(const query_result *dependencies,const std::string& lexeme,con
     //store the row nr of the lexeme and that of the dependency (the row nr in which the dependency is in the lexeme field)
     //and go on to step 1) to look for other matches
     //5)return the row nr pairs of the lexemes and corresponding dependencies found
-    const std::pair<const unsigned int,field> *row_nr_field=dependencies->value_for_field_name_found_after_row_position(lexeme_row_nr,"lexeme",lexeme);
-    if(row_nr_field!=NULL){
-        if(row_nr_field->second.field_value==dependency){
-            std::string row_d_key=*dependencies->field_value_at_row_position(row_nr_field->first,"d_key");
-            if(row_d_key==ref_d_key){
-                if(distance_op=="<"&&current_distance<distance
-                    ||distance_op=="<="&&current_distance<=distance
-                    ||distance_op=="="&&current_distance==distance
-                    ||distance_op==">="&&current_distance>=distance
-                    ||distance_op==">"&&current_distance>distance){
-                    row_nrs_found.insert(std::make_pair(lexeme_row_nr,row_nr_field->first));
-                }
-                else{
-                    //TODO: handle error: unknown operator
+    if(start_lexeme_found==true){
+        const std::pair<const unsigned int,field> *row_nr_field=dependencies->value_for_field_name_found_after_row_position(lexeme_row_nr,"lexeme",lexeme);
+        if(row_nr_field!=NULL){
+            if(row_nr_field->second.field_value==dependency){
+                std::string row_d_key=*dependencies->field_value_at_row_position(row_nr_field->first,"d_key");
+                if(row_d_key==ref_d_key){
+                    if(distance_op=="<"&&current_distance<distance
+                        ||distance_op=="<="&&current_distance<=distance
+                        ||distance_op=="="&&current_distance==distance
+                        ||distance_op==">="&&current_distance>=distance
+                        ||distance_op==">"&&current_distance>distance){
+                        row_nrs_found.insert(std::make_pair(lexeme_row_nr,row_nr_field->first));
+                    }
+                    else{
+                        //TODO: handle error: unknown operator
+                    }
                 }
             }
+            std::string row_dependency=*dependencies->field_value_at_row_position(row_nr_field->first,"dependency");
+            std::string row_ref_d_key=*dependencies->field_value_at_row_position(row_nr_field->first,"ref_d_key");
+            if(row_dependency.empty()==false&&std::atoi(row_ref_d_key.c_str())>0){
+                apply_filter(dependencies,row_dependency,row_ref_d_key,dependency,ref_d_key,distance,distance_op,lexeme_row_nr,start_lexeme_found,current_distance+1,row_nrs_found);
+            }
+            row_nr_field=dependencies->value_for_field_name_found_after_row_position(row_nr_field->first,"lexeme",lexeme);
+            if(row_nr_field!=NULL){
+                apply_filter(dependencies,lexeme,d_key,dependency,ref_d_key,distance,distance_op,row_nr_field->first,false,0,row_nrs_found);
+            }
         }
-        std::string row_dependency=*dependencies->field_value_at_row_position(row_nr_field->first,"dependency");
-        std::string row_ref_d_key=*dependencies->field_value_at_row_position(row_nr_field->first,"ref_d_key");
-        if(row_dependency.empty()==false&&std::atoi(row_ref_d_key.c_str())>0){
-            apply_filter(dependencies,row_dependency,row_ref_d_key,dependency,ref_d_key,distance,distance_op,lexeme_row_nr,current_distance+1,row_nrs_found);
-        }
-        row_nr_field=dependencies->value_for_field_name_found_after_row_position(row_nr_field->first,"lexeme",lexeme);
-        if(row_nr_field!=NULL){
-            apply_filter(dependencies,lexeme,d_key,dependency,ref_d_key,distance,distance_op,row_nr_field->first,0,row_nrs_found);
+    }
+    else{
+        unsigned int dependencies_size=dependencies->nr_of_result_rows();
+        for(unsigned int i=lexeme_row_nr;i<dependencies_size;++i){
+            std::string row_lexeme=*dependencies->field_value_at_row_position(i,"lexeme");
+            if(row_lexeme==lexeme){
+                std::string row_d_key=*dependencies->field_value_at_row_position(i,"d_key");
+                if(row_d_key==d_key){
+                    std::string row_dependency=*dependencies->field_value_at_row_position(i,"dependency");
+                    std::string row_ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
+                    if(row_dependency==dependency&&row_ref_d_key==ref_d_key){
+                        if(row_dependency.empty()==false&&std::atoi(row_ref_d_key.c_str())>0){
+                            apply_filter(dependencies,row_dependency,row_ref_d_key,dependency,ref_d_key,distance,distance_op,i,true,0,row_nrs_found);
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -77,7 +97,7 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
             }
             current_filter_counter=dependencyObject["filter_d_counter"].GetUint();
             std::set<std::pair<unsigned int,unsigned int>> dependencies_rows;
-            apply_filter(dependencies,dependencyObject["lexeme"].GetString(),std::to_string(dependencyObject["d_key"].GetUint()),dependencyObject["dependency"].GetString(),std::to_string(dependencyObject["ref_d_key"].GetUint()),dependencyObject["distance"].GetUint(),dependencyObject["distance_op"].GetString(),0,0,dependencies_rows);
+            apply_filter(dependencies,dependencyObject["lexeme"].GetString(),std::to_string(dependencyObject["d_key"].GetUint()),dependencyObject["dependency"].GetString(),std::to_string(dependencyObject["ref_d_key"].GetUint()),dependencyObject["distance"].GetUint(),dependencyObject["distance_op"].GetString(),0,false,0,dependencies_rows);
             filter_nr_to_dependencies_rows_map.insert(std::make_pair(std::make_tuple(dependencyObject["filter_nr"].GetUint(),dependencyObject["filter_d_counter"].GetUint(),dependencyObject["lexeme"].GetString(),dependencyObject["d_key"].GetUint()),dependencies_rows));
             //cross reference (>) examples (see json field structure in hi_query comment):
             //example 1: a>b,b>c (b is the same)
