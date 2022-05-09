@@ -158,6 +158,7 @@ hi_js/libfoma.a
 hi_js/libreadline.a
 hi_js/libsqlite3.a
 hi_js/libz.a
+hi_query.cpp
 hilib.h
 index.html
 jni_db.cpp

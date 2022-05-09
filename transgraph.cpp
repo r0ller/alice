@@ -36,7 +36,8 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 	arguments.insert(std::make_pair(d_counter,functor));
 }
 
-std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language) const{
+std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language,
+    std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int>>& dependency_path,const unsigned int level) const{
 	std::string transcript,initial_argscript,argument_list,functor_id,functor_def;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL,*functor_tag_entries=NULL;
@@ -44,18 +45,22 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 	const std::string *semantic_dependency=NULL;
 	std::map<d_counter,std::string> argument_scripts;
 
-	sqlite=db_factory::get_instance();
+    sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
 	if(morphan!=NULL){
         std::map<unsigned int,std::string> global_features=morphan->global_features_copy();
+        //TODO: This is not really efficient as we are trying to add the entries all the time
+        //and simply let insertion fail if the entries are already there.
         for(auto&& node_feature:global_features){
             morphan_result::add_global_feature(node_feature.first,node_feature.second);
         }
 		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
 			transcript+="\"functor\":\"CON\",";
-		}
+            dependency_path.push_back(std::make_tuple(level,morphan->word(),functor.first,functor.second,1,"",0));
+            //std::cout<<"level:"<<level<<",word:"<<morphan->word()<<",lexeme:"<<functor.first<<",d_key:"<<functor.second<<",d_counter:1,dependency:NULL,ref_d_key:NULL"<<std::endl;
+        }
 		else{
 			transcript+="\"functor\":\""+functor.first+"\",";
 		}
@@ -153,37 +158,50 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
             transcript+=tags;
         }
 		transcript+="\"functor id\":\""+functor_id+"\"";
-		for(auto&& i:arguments){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking argument with d_counter "+std::to_string(i.first));
-			d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
-			if(d_counter_field==NULL){
-				throw std::runtime_error("Empty d_counter field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
-			}
-			semantic_dependency=dependencies->field_value_at_row_position(d_counter_field->first,"semantic_dependency");
-			if(semantic_dependency==NULL){
-				throw std::runtime_error("Empty semantic_dependency field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
-			}
-			if(*semantic_dependency=="CON"){
-				auto argument_script=argument_scripts.find(i.first);
-				if(argument_script!=argument_scripts.end()){
-                    argument_script->second+=i.second->transcript(functors,node_functor_map,target_language);
-				}
-				else{
-                    initial_argscript=i.second->transcript(functors,node_functor_map,target_language);
-					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
-				}
-			}
-			else{
-				auto argument_script=argument_scripts.find(i.first);
-				if(argument_script!=argument_scripts.end()){
-                    argument_script->second+=i.second->transcript(functors,node_functor_map,target_language);
-				}
-				else{
-                    initial_argscript=i.second->transcript(functors,node_functor_map,target_language);
-					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
-				}
-			}
-		}
+        if(arguments.empty()==false){
+            for(auto&& i:arguments){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking argument with d_counter "+std::to_string(i.first));
+                d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
+                if(d_counter_field==NULL){
+                    throw std::runtime_error("Empty d_counter field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
+                }
+                semantic_dependency=dependencies->field_value_at_row_position(d_counter_field->first,"semantic_dependency");
+                if(semantic_dependency==NULL){
+                    throw std::runtime_error("Empty semantic_dependency field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
+                }
+                const std::string *ref_d_key=dependencies->field_value_at_row_position(d_counter_field->first,"ref_d_key");
+                std::string word;
+                if(morphan!=NULL) word=morphan->word();
+                dependency_path.push_back(std::make_tuple(level,word,functor.first,functor.second,std::stoi(d_counter_field->second.field_value),*semantic_dependency,std::stoi(*ref_d_key)));
+                //std::cout<<"level:"<<level<<",word:"<<word<<",lexeme:"<<functor.first<<",d_key:"<<functor.second<<",d_counter:"<<d_counter_field->second.field_value<<",dependency:"<<*semantic_dependency<<",ref_d_key:"<<*ref_d_key<<std::endl;
+                if(*semantic_dependency=="CON"){
+                    auto argument_script=argument_scripts.find(i.first);
+                    if(argument_script!=argument_scripts.end()){
+                        argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1);
+                    }
+                    else{
+                        initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1);
+                        argument_scripts.insert(std::make_pair(i.first,initial_argscript));
+                    }
+                }
+                else{
+                    auto argument_script=argument_scripts.find(i.first);
+                    if(argument_script!=argument_scripts.end()){
+                        argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1);
+                    }
+                    else{
+                        initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1);
+                        argument_scripts.insert(std::make_pair(i.first,initial_argscript));
+                    }
+                }
+            }
+        }
+        else{
+            std::string word;
+            if(morphan!=NULL) word=morphan->word();
+            dependency_path.push_back(std::make_tuple(level,word,functor.first,functor.second,1,"",0));
+            //std::cout<<"level:"<<level<<",word:"<<word<<",lexeme:"<<functor.first<<",d_key:"<<functor.second<<",d_counter:1,dependency:NULL,ref_d_key:NULL"<<std::endl;
+        }
 		if(argument_scripts.empty()==false){
 			transcript+=",\"dependencies\":[";
 			for(auto&& i:argument_scripts){

@@ -14,7 +14,8 @@
 		extern "C"{
 		#endif
         const char *hi(const char *,const char *,const unsigned char,const char *,const char *,const char *,const unsigned char);
-		#ifdef __EMSCRIPTEN__
+        const char *hi_query(const char*, const char*, const unsigned int, const char*);
+        #ifdef __EMSCRIPTEN__
 		}
 		#endif
 	#endif

@@ -164,33 +164,42 @@ int main(int argc,char **argv){
 	char line[256];
     unsigned char toa=0,crh=0;
 
-    while(true){
-        getline(cin,text);
-//        text="list files that are executable !\n";
-		if(text.empty()==false){
-            toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-            //crh=HI_VERB;
-            analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db","test",crh);
-			if(analyses!=NULL){
-				cout<<analyses<<endl;
-				Document jsondoc;
-				jsondoc.Parse(analyses);
-				script=transcript(toa,jsondoc);
-				if(script.length()>0){
-                    cout<<script<<endl;
-					if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
-					fp=popen(script.c_str(),"r");
-					if(fp!=NULL){
-						while(fgets(line,sizeof line,fp))
-						{
-							cout<<line<<endl;
-						}
-						pclose(fp);
-					}
-				}
-			}
-			text.clear();
-		}
-        else break;
-    }
+//    if(argc==3&&string(argv[1])=="-q"){
+        //[{filter_nr: n, filter_d_counter: n, filter_nr_d_ref: filter_nr/filter_d_counter, lexeme: "", d_key: n, distance (>=0): n, distance_op (<=,<,=,>,>=): n, ref_d_filter_nr: filter_nr/filter_d_counter, dependency: "", ref_d_key: n},...]
+        analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":[{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"EXECUTABLEENGA\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"\",\"ref_d_key\":0}]}");
+        if(analyses!=NULL){
+            cout<<analyses<<endl;
+        }
+//    }
+/*    else{
+        while(true){
+            getline(cin,text);
+    //        text="file abc is executable .\n";
+            if(text.empty()==false){
+                toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+                //crh=HI_VERB;
+                analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db","test",crh);
+                if(analyses!=NULL){
+                    cout<<analyses<<endl;
+                    Document jsondoc;
+                    jsondoc.Parse(analyses);
+                    script=transcript(toa,jsondoc);
+                    if(script.length()>0){
+                        cout<<script<<endl;
+                        if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
+                        fp=popen(script.c_str(),"r");
+                        if(fp!=NULL){
+                            while(fgets(line,sizeof line,fp))
+                            {
+                                cout<<line<<endl;
+                            }
+                            pclose(fp);
+                        }
+                    }
+                }
+                text.clear();
+            }
+            else break;
+        }
+    }*/
 }
