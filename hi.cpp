@@ -169,8 +169,20 @@ int main(int argc,char **argv){
         //test1: look for analyses with root 'BEENGV-1' and find 'EXECUTABLEENGA-1' with no dependency
         //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":[{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"EXECUTABLEENGA\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"\",\"ref_d_key\":0}]}");
         //test2: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'EXECUTABLEENGA-1'
+        //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+        //"{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGB\",\"ref_d_key\":1}]}");
+        //test3: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'EXECUTABLEENGA-1'
+        //-look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'CON-1'
+        //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+        //"{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":2,\"distance_op\":\"=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1},"
+        //"{\"filter_nr\": 1,\"filter_d_counter\": 2,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":8,\"distance_op\":\"=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"CON\",\"ref_d_key\":1}]}");
+        //test4: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'FILEBEPROP-1'
+        //-look for analyses with root 'BEENGV-1' and find 'FILEBEPROP-1' with dependency 'EXECUTABLEENGA-1'
+        //-look for analyses with root 'BEENGV-1' and find 'FILEBEPROP-1' with dependency 'CON-1'
         analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
-        "{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1}]}");
+        "{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"FILEBEPROP\",\"ref_d_key\":1},"
+        "{\"filter_nr\": 2,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"1/1\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1},"
+        "{\"filter_nr\": 2,\"filter_d_counter\": 2,\"filter_nr_d_ref\":\"1/1\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"CON\",\"ref_d_key\":1}]}");
         if(analyses!=NULL){
             cout<<analyses<<endl;
         }

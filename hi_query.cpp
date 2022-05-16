@@ -39,10 +39,11 @@ void apply_filter(const query_result *dependencies,const std::string& lexeme,con
             if(row_dependency.empty()==false&&std::atoi(row_ref_d_key.c_str())>0){
                 apply_filter(dependencies,row_dependency,row_ref_d_key,dependency,ref_d_key,distance,distance_op,lexeme_row_nr,start_lexeme_found,row_nr_field->first,current_distance+1,row_nrs_found);
             }
-            row_nr_field=dependencies->value_for_field_name_found_after_row_position(row_nr_field->first,"lexeme",lexeme);
-            if(row_nr_field!=NULL){
+            //unsigned int row_nr=row_nr_field->first;
+            //row_nr_field=dependencies->value_for_field_name_found_after_row_position(row_nr_field->first,"lexeme",lexeme);
+            //if(row_nr_field!=NULL){
                 apply_filter(dependencies,lexeme,d_key,dependency,ref_d_key,distance,distance_op,lexeme_row_nr,start_lexeme_found,row_nr_field->first,current_distance+1,row_nrs_found);
-            }
+            //}
         }
     }
     else{
@@ -67,7 +68,7 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
     //TODO: apply filter conditions as outlined below
     //This shall call a recursive function that traverses the dependencies
     //to find the lexeme and its dependency in each filter entry.
-    std::multimap<std::tuple<unsigned int,unsigned int,std::string,unsigned int>,std::set<std::pair<unsigned int,unsigned int>>> filter_nr_to_dependencies_rows_map;//accessing dependency_filters[index] is allowed
+    std::multimap<std::tuple<unsigned int,unsigned int,std::string,unsigned int,std::string,unsigned int>,std::set<std::pair<unsigned int,unsigned int>>> filter_nr_to_dependencies_rows_map;//accessing dependency_filters[index] is allowed
     std::map<unsigned int,unsigned int> nr_of_filters_applied_on_filter_nr;
     unsigned int current_filter_nr=0;
     unsigned int current_filter_counter=0;
@@ -97,7 +98,7 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
             std::set<std::pair<unsigned int,unsigned int>> dependencies_rows;
             apply_filter(dependencies,dependencyObject["lexeme"].GetString(),std::to_string(dependencyObject["d_key"].GetUint()),dependencyObject["dependency"].GetString(),std::to_string(dependencyObject["ref_d_key"].GetUint()),dependencyObject["distance"].GetUint(),dependencyObject["distance_op"].GetString(),0,false,0,0,dependencies_rows);
             if(dependencies_rows.empty()==false){
-                filter_nr_to_dependencies_rows_map.insert(std::make_pair(std::make_tuple(dependencyObject["filter_nr"].GetUint(),dependencyObject["filter_d_counter"].GetUint(),dependencyObject["lexeme"].GetString(),dependencyObject["d_key"].GetUint()),dependencies_rows));
+                filter_nr_to_dependencies_rows_map.insert(std::make_pair(std::make_tuple(dependencyObject["filter_nr"].GetUint(),dependencyObject["filter_d_counter"].GetUint(),dependencyObject["lexeme"].GetString(),dependencyObject["d_key"].GetUint(),dependencyObject["dependency"].GetString(),dependencyObject["ref_d_key"].GetUint()),dependencies_rows));
             }
             //cross reference (>) examples (see json field structure in hi_query comment):
             //example 1: a>b,b>c (b is the same)
@@ -115,9 +116,13 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
             //TODO: handle error
         }
     }
-    //-check cross references (how? apply_filter() must return not only the row nr of the lexeme first found in but the last entry's row nr as well in which the dependency is found in the dependency field) and leave all dependencies_rows entries that satisfy the cross refs criteria (if there are no cross refs, leave all entries as they are),
+    //-check cross references (how?: apply_filter() must return not only the row nr of the lexeme
+    //first found but the last entry's row nr as well in which the dependency is found in the
+    //dependency field) and leave all dependencies_rows entries that satisfy the cross refs criteria
+    //(if there are no cross refs, leave all entries as they are),
     //after which delete the dependencies_rows preserved for this filter from all other filters
-    //but if that deletion removed all entries from an already checked filter, don't delete the last one but then delete that from the currently checked filter.
+    //but if that deletion removed all entries from an already checked filter, don't delete the
+    //last one but then delete that from the currently checked filter.
     //Theoretically, this postponed deletion ensures a best fit logic.
     unsigned int nr_of_filters_applied=0;
     for(auto&& j:filter_nr_to_dependencies_rows_map){
@@ -125,34 +130,38 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
     }
     if(nr_of_filters_applied<current_filter_counter) return false;
     nr_of_filters_applied_on_filter_nr.insert(std::make_pair(nr_of_filters_applied,current_filter_nr));
-    //bool check_result=true;
-    //if(nr_of_filters_applied_on_filter_nr.empty()==true) check_result=false;
+    //loop over nr_of_filters_applied_on_filter_nr in reverse direction to begin with the entry having the most filters
     for(auto&& rev_it=nr_of_filters_applied_on_filter_nr.rbegin();rev_it!=nr_of_filters_applied_on_filter_nr.rend();++rev_it){
+        //loop over the filter conditions
         for(auto& dependencyObject:dependency_filters.GetArray()){
             unsigned int int_filter_nr_d_ref=0;
             unsigned int int_filter_counter_d_ref=0;
+            //check if there's a lexeme to dependency reference in the filter
             if(dependencyObject.HasMember("filter_nr_d_ref")==true){
                 std::string filter_nr_d_ref=dependencyObject["filter_nr_d_ref"].GetString();
                 std::string::size_type slash_index=filter_nr_d_ref.find_first_of('/');
                 if(slash_index!=std::string::npos){
                     int_filter_nr_d_ref=std::atoi(filter_nr_d_ref.substr(0,slash_index).c_str());
-                    int_filter_counter_d_ref=std::atoi(filter_nr_d_ref.substr(slash_index).c_str());
+                    int_filter_counter_d_ref=std::atoi(filter_nr_d_ref.substr(slash_index+1).c_str());
                 }
             }
             unsigned int int_ref_d_filter_nr=0;
             unsigned int int_ref_d_filter_counter=0;
+            //check if there's a dependency to dependency reference in the filter
             if(dependencyObject.HasMember("ref_d_filter_nr")==true){
                 std::string ref_d_filter_nr=dependencyObject["ref_d_filter_nr"].GetString();
                 std::string::size_type slash_index=ref_d_filter_nr.find_first_of('/');
                 if(slash_index!=std::string::npos){
                     int_ref_d_filter_nr=std::atoi(ref_d_filter_nr.substr(0,slash_index).c_str());
-                    int_ref_d_filter_counter=std::atoi(ref_d_filter_nr.substr(slash_index).c_str());
+                    int_ref_d_filter_counter=std::atoi(ref_d_filter_nr.substr(slash_index+1).c_str());
                 }
             }
+            //check if there's any reference in the filter
             if((int_filter_nr_d_ref>0&&int_filter_counter_d_ref>0)
                 ||(int_ref_d_filter_nr>0&&int_ref_d_filter_counter>0)
                 &&rev_it->second!=dependencyObject["filter_nr"].GetUint()&&(rev_it->second==int_filter_nr_d_ref||rev_it->second==int_ref_d_filter_nr)){
                 std::set<unsigned int> filter_to_match_dependency_rows;
+                //collect the referencing lexeme/dependency row numbers found for the filter entry
                 for(auto&& filter_nr_row:filter_nr_to_dependencies_rows_map){
                     if(dependencyObject["filter_nr"].GetUint()==std::get<0>(filter_nr_row.first)&&dependencyObject["filter_d_counter"].GetUint()==std::get<1>(filter_nr_row.first)){
                         if(int_filter_nr_d_ref>0&&int_filter_counter_d_ref>0){
@@ -167,25 +176,51 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
                         }
                     }
                 }
+                //get referenced filter from the referencing lexeme/dependency
                 if(filter_to_match_dependency_rows.empty()==false){
+                    std::string referenced_filter_dependency="";
+                    unsigned int referenced_filter_d_key=0;
                     unsigned int referenced_filter_nr=0;
                     unsigned int referenced_filter_counter=0;
                     if(int_filter_nr_d_ref>0&&int_filter_counter_d_ref>0){
                         referenced_filter_nr=int_filter_nr_d_ref;
                         referenced_filter_counter=int_filter_counter_d_ref;
+                        referenced_filter_dependency=dependencyObject["lexeme"].GetString();
+                        referenced_filter_d_key=dependencyObject["d_key"].GetUint();
                     }
                     else{
                         referenced_filter_nr=int_ref_d_filter_nr;
                         referenced_filter_counter=int_ref_d_filter_counter;
+                        referenced_filter_dependency=dependencyObject["dependency"].GetString();
+                        referenced_filter_d_key=dependencyObject["ref_d_key"].GetUint();
                     }
-                    std::multimap<std::tuple<unsigned int,unsigned int,std::string,unsigned int>,std::set<std::pair<unsigned int,unsigned int>>>::iterator filter_nr_row;
+                    std::multimap<std::tuple<unsigned int,unsigned int,std::string,unsigned int,std::string,unsigned int>,std::set<std::pair<unsigned int,unsigned int>>>::iterator filter_nr_row;
+                    //find the filter entry referenced
                     for(filter_nr_row=filter_nr_to_dependencies_rows_map.begin();filter_nr_row!=filter_nr_to_dependencies_rows_map.end();++filter_nr_row){
-                        if(referenced_filter_nr==std::get<0>(filter_nr_row->first)&&referenced_filter_counter==std::get<1>(filter_nr_row->first)){
+                        if(referenced_filter_nr==std::get<0>(filter_nr_row->first)
+                            &&referenced_filter_counter==std::get<1>(filter_nr_row->first)
+                            &&referenced_filter_dependency==std::get<4>(filter_nr_row->first)
+                            &&referenced_filter_d_key==std::get<5>(filter_nr_row->first)){
                             break;
                         }
                     }
+                    if(filter_nr_row==filter_nr_to_dependencies_rows_map.end()){
+                        return false;
+                    }
+                    //delete dependencies found for the filter if not referenced
                     for(auto&& dependency_row=filter_nr_row->second.begin();dependency_row!=filter_nr_row->second.end();){
-                        if(filter_to_match_dependency_rows.find(dependency_row->second)==filter_to_match_dependency_rows.end()){
+                        std::string filter_dependency_level=*dependencies->field_value_at_row_position(dependency_row->second,"level");
+                        bool dependency_referenced=false;
+                        for(auto&& referencing_row:filter_to_match_dependency_rows){
+                            std::string referencing_row_level=*dependencies->field_value_at_row_position(referencing_row,"level");
+                            //if the stack level of the dependency of referencing_row and that of filter_dependency
+                            //are the same in the analysis dependency tree, they can be considered the same
+                            if(referencing_row_level==filter_dependency_level){
+                                dependency_referenced=true;
+                                break;
+                            }
+                        }
+                        if(dependency_referenced==false){
                             dependency_row=filter_nr_row->second.erase(dependency_row);
                         }
                         else{
@@ -195,13 +230,13 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
                     if(filter_nr_row->second.empty()==true){//no reference matched the dependencies found for the filter nr/counter
                         return false;
                     }
-                    else{//leave one entry ...
+                    else{//more than one entry may be referenced but leave only one (the first) entry ...
                         std::pair<unsigned int,unsigned int> dependency_validated_for_filter_nr_counter;
                         for(auto&& dependency_row=filter_nr_row->second.begin();dependency_row!=filter_nr_row->second.end();){
                             if(dependency_row!=filter_nr_row->second.begin()){
                                 dependency_row=filter_nr_row->second.erase(dependency_row);
                             }
-                            else{
+                            else{//copy the first entry so it can be looked up and deleted elsewhere
                                 dependency_validated_for_filter_nr_counter=*dependency_row;
                                 ++dependency_row;
                             }
@@ -227,7 +262,7 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
             }
         }
     }
-    return true;// check_result;
+    return true;
 }
 
 const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsigned int root_d_key, const char* p_dependencies){
