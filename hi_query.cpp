@@ -157,8 +157,8 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
                 }
             }
             //check if there's any reference in the filter
-            if((int_filter_nr_d_ref>0&&int_filter_counter_d_ref>0)
-                ||(int_ref_d_filter_nr>0&&int_ref_d_filter_counter>0)
+            if(((int_filter_nr_d_ref>0&&int_filter_counter_d_ref>0)
+                ||(int_ref_d_filter_nr>0&&int_ref_d_filter_counter>0))
                 &&rev_it->second!=dependencyObject["filter_nr"].GetUint()&&(rev_it->second==int_filter_nr_d_ref||rev_it->second==int_ref_d_filter_nr)){
                 std::set<unsigned int> filter_to_match_dependency_rows;
                 //collect the referencing lexeme/dependency row numbers found for the filter entry
