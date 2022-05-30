@@ -1,3 +1,4 @@
+#include <iostream>
 #include <tuple>
 #include <set>
 #include <vector>
@@ -265,8 +266,34 @@ bool check_dependencies(rapidjson::Value& dependency_filters,query_result *depen
     return true;
 }
 
-const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsigned int root_d_key, const char* p_dependencies){
+const char *hi_query_original(const char *db_uri, const char* p_root_lexeme, const unsigned int root_d_key, const char* p_dependencies){
 //dependencies: [{filter_nr: n, filter_d_counter: n, filter_nr_d_ref: filter_nr/filter_d_counter, lexeme: "", d_key: n, distance (>=0): n, distance_op (<=,<,=,>,>=): n, ref_d_filter_nr: filter_nr/filter_d_counter, dependency: "", ref_d_key: n},...]
+//Tests:
+    //[{filter_nr: n, filter_d_counter: n, filter_nr_d_ref: filter_nr/filter_d_counter, lexeme: "", d_key: n, distance (>=0): n, distance_op (<=,<,=,>,>=): n, ref_d_filter_nr: filter_nr/filter_d_counter, dependency: "", ref_d_key: n},...]
+    //test1: look for analyses with root 'BEENGV-1' and find 'EXECUTABLEENGA-1' with no dependency
+    //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":[{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"EXECUTABLEENGA\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"\",\"ref_d_key\":0}]}");
+    //test2: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'EXECUTABLEENGA-1'
+    //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+    //"{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGB\",\"ref_d_key\":1}]}");
+    //test3: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'EXECUTABLEENGA-1'
+    //-look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'CON-1'
+    //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+    //"{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":2,\"distance_op\":\"=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1},"
+    //"{\"filter_nr\": 1,\"filter_d_counter\": 2,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":8,\"distance_op\":\"=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"CON\",\"ref_d_key\":1}]}");
+    //test4: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'FILEBEPROP-1'
+    //-look for analyses with root 'BEENGV-1' and find 'FILEBEPROP-1' (referencing 1/1 FILEBEPROP-1) with dependency 'EXECUTABLEENGA-1'
+    //-look for analyses with root 'BEENGV-1' and find 'FILEBEPROP-1' (referencing 1/1 FILEBEPROP-1) with dependency 'CON-1'
+    //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+    //"{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"FILEBEPROP\",\"ref_d_key\":1},"
+    //"{\"filter_nr\": 2,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"1/1\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1},"
+    //"{\"filter_nr\": 2,\"filter_d_counter\": 2,\"filter_nr_d_ref\":\"1/1\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"CON\",\"ref_d_key\":1}]}");
+    //test5: look for analyses with root 'BEENGV-1' and find 'BEENGV-1' with dependency 'EXECUTABLEENGA-1'
+    //-look for analyses with root 'BEENGV-1' and find 'FILEBEPROP-1' with dependency 'EXECUTABLEENGA-1' (referencing 1/1 EXECUTABLEENGA-1)
+    //-look for analyses with root 'BEENGV-1' and find 'FILEBEPROP-1' with dependency 'CON-1'
+    //analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+    //"{\"filter_nr\": 1,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1},"
+    //"{\"filter_nr\": 2,\"filter_d_counter\": 1,\"filter_nr_d_ref\":\"\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"1/1\",\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1},"
+    //"{\"filter_nr\": 2,\"filter_d_counter\": 2,\"filter_nr_d_ref\":\"\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"distance\":0,\"distance_op\":\">=\",\"ref_d_filter_nr\":\"\",\"dependency\":\"CON\",\"ref_d_key\":1}]}");
 
     db *sqlite=NULL;
     query_result *result=NULL;
@@ -342,6 +369,169 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                         }
                         std::string analysis=*analysis_entry->field_value_at_row_position(0,"analysis");
                         analyses_found+=analysis+",";
+                    }
+                }
+                delete result;
+            }
+            sqlite->close();
+            db_factory::delete_instance();
+        }
+    }
+    if(analyses_found.empty()==false){
+        analyses_found.pop_back();
+        analyses_found="{\"analyses\":["+analyses_found+"]}";
+        p_analyses_found=new char[analyses_found.length()+1];
+        analyses_found.copy(p_analyses_found,analyses_found.length(),0);
+        p_analyses_found[analyses_found.length()]='\0';
+    }
+    return p_analyses_found;
+}
+
+const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsigned int root_d_key, const char* p_dependencies){
+//TESTS:
+//hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+//"{\"lexeme\":\"EXECUTABLEENGA\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
+//"{\"lexeme\":\"FILEENGN\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
+//"{\"lexeme\":\"abc\",\"c_value\":\"\",\"word\":\"abc\",\"is_con\":true,\"is_qword\":false,\"mood\":\"indicative\"}"
+//"]}");
+
+    db *sqlite=NULL;
+    query_result *result=NULL;
+    std::string analyses_found;
+    char *p_analyses_found=NULL;
+    //std::vector<std::tuple<unsigned int, std::string, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, std::string, unsigned int>> dependencies;
+
+    std::string root_lexeme=std::string(p_root_lexeme);
+    rapidjson::Document jsondoc;
+    jsondoc.Parse(p_dependencies);
+    if(jsondoc.HasMember("dependencies")==true){
+        rapidjson::Value& dependenciesArray=jsondoc["dependencies"];
+        if(dependenciesArray.IsArray()==true&&dependenciesArray.Size()>0){
+            sqlite=db_factory::get_instance();
+            sqlite->open(db_uri);
+            std::map<std::string,std::pair<std::string,std::string>> lexemes_to_cvalues_cons;
+            std::set<std::string> qwords;
+            std::string mood;
+            for(auto& dependencyObject:dependenciesArray.GetArray()){
+                if(dependencyObject.HasMember("lexeme")==true
+                    &&dependencyObject.HasMember("c_value")==true
+                    &&dependencyObject.HasMember("word")==true
+                    &&dependencyObject.HasMember("is_con")==true
+                    &&dependencyObject.HasMember("is_qword")==true
+                    &&dependencyObject.HasMember("mood")==true){
+                    if(mood.empty()==true) mood=dependencyObject["mood"].GetString();
+                    if(dependencyObject["is_qword"].GetBool()==true){
+                        qwords.insert(dependencyObject["word"].GetString());
+                    }
+                    else{
+                        if(dependencyObject["is_con"].GetBool()==true){
+                            lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
+                        }
+                        else{
+                            lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
+                        }
+                    }
+                }
+                else {
+                    //TODO: error handling
+                }
+            }
+            std::string query="select count(*) as lexeme_count,source,timestamp,sentence,rank,mood from analyses_deps where mood='"+mood+"' and (";
+            std::string tag_conditions;
+            if(qwords.empty()==true){//add main verb's lexeme if there's no question word
+                lexemes_to_cvalues_cons.insert(std::make_pair(root_lexeme,std::make_pair("","")));
+            }
+            else{
+                for(auto&& qword:qwords){
+                    tag_conditions+="tags like '%"+qword+"%' or ";
+                }
+                tag_conditions=tag_conditions.substr(0,tag_conditions.length()-4);
+            }
+            std::string lexeme_conditions;
+            for(auto&& lexeme_cvalue_con:lexemes_to_cvalues_cons){
+                if(lexeme_cvalue_con.second.first.empty()==true){//cvalue empty
+                    if(lexeme_cvalue_con.second.second.empty()==true){//con empty
+                        lexeme_conditions+="lexeme='"+lexeme_cvalue_con.first+"' or ";
+                    }
+                    else{
+                        lexeme_conditions+="lexeme='"+lexeme_cvalue_con.first+"' and word='"+lexeme_cvalue_con.second.second+"' or ";
+                    }
+                }
+                else{
+                    lexeme_conditions+="lexeme='"+lexeme_cvalue_con.first+"' and c_value='"+lexeme_cvalue_con.second.first+"' or ";
+                }
+            }
+            lexeme_conditions=lexeme_conditions.substr(0,lexeme_conditions.length()-4);
+            if(tag_conditions.empty()==true){
+                query+=lexeme_conditions;
+            }
+            else{
+                query+="("+lexeme_conditions+") and ("+tag_conditions+") or ("+lexeme_conditions+") and tags=''";
+            }
+            query+=") group by source,timestamp,sentence,rank,mood order by lexeme_count desc;";
+            std::cout<<"query:"<<query<<std::endl;
+            result=sqlite->exec_sql(query);
+            if(result==NULL){
+                //TODO: return whatever
+            }
+            //loop over result and get unique keys
+            std::set<std::tuple<std::string,std::string,std::string,std::string,std::string>> andeps_keys;
+            unsigned int result_size=result->nr_of_result_rows();
+            for(unsigned int i=0;i<result_size;++i){
+                std::string source=*result->field_value_at_row_position(i,"source");
+                std::string timestamp=*result->field_value_at_row_position(i,"timestamp");
+                std::string sentence=*result->field_value_at_row_position(i,"sentence");
+                std::string rank=*result->field_value_at_row_position(i,"rank");
+                std::string mood=*result->field_value_at_row_position(i,"mood");
+                std::tuple<std::string,std::string,std::string,std::string,std::string> andeps_key=std::make_tuple(source,timestamp,sentence,rank,mood);
+                andeps_keys.insert(andeps_key);
+            }
+            delete result;
+            //loop over result and get entries whose root match root_word, root_lexeme and root_d_key
+            for(auto&& key:andeps_keys){
+                std::string query="select * from analyses_deps where source='"+std::get<0>(key)
+                    +"' and timestamp='"+std::get<1>(key)
+                    +"' and sentence='"+std::get<2>(key)
+                    +"' and rank='"+std::get<3>(key)
+                    +"' and mood='"+std::get<4>(key)+"' order by counter;";
+                result=sqlite->exec_sql(query);
+                if(result==NULL){
+                    //TODO: do whatever
+                }
+                std::string lexeme=*result->field_value_at_row_position(0,"lexeme");
+                std::string d_key=*result->field_value_at_row_position(0,"d_key");
+                if(root_lexeme==lexeme&&root_d_key==std::atoi(d_key.c_str())){
+                    for(unsigned int i=0;i<result->nr_of_result_rows();++i){
+                        std::string source=*result->field_value_at_row_position(i,"source");
+                        analyses_found+="{\"source\":\""+source+"\",";
+                        std::string timestamp=*result->field_value_at_row_position(i,"timestamp");
+                        analyses_found+="\"timestamp\":\""+timestamp+"\",";
+                        std::string sentence=*result->field_value_at_row_position(i,"sentence");
+                        analyses_found+="\"sentence\":\""+sentence+"\",";
+                        std::string rank=*result->field_value_at_row_position(i,"rank");
+                        analyses_found+="\"rank\":\""+rank+"\",";
+                        std::string mood=*result->field_value_at_row_position(i,"mood");
+                        analyses_found+="\"mood\":\""+mood+"\",";
+                        std::string counter=*result->field_value_at_row_position(i,"counter");
+                        analyses_found+="\"counter\":\""+counter+"\",";
+                        std::string level=*result->field_value_at_row_position(i,"level");
+                        analyses_found+="\"level\":\""+level+"\",";
+                        std::string word=*result->field_value_at_row_position(i,"word");
+                        analyses_found+="\"word\":\""+word+"\",";
+                        std::string lexeme=*result->field_value_at_row_position(i,"lexeme");
+                        analyses_found+="\"lexeme\":\""+lexeme+"\",";
+                        std::string d_key=*result->field_value_at_row_position(i,"d_key");
+                        analyses_found+="\"d_key\":\""+d_key+"\",";
+                        std::string d_counter=*result->field_value_at_row_position(i,"d_counter");
+                        analyses_found+="\"d_counter\":\""+d_counter+"\",";
+                        std::string dependency=*result->field_value_at_row_position(i,"dependency");
+                        analyses_found+="\"dependency\":\""+dependency+"\",";
+                        std::string ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
+                        analyses_found+="\"ref_d_key\":\""+ref_d_key+"\",";
+                        std::string tags=*result->field_value_at_row_position(i,"tags");
+                        analyses_found+="\"tags\":\""+tags+"\",";
+                        std::string c_value=*result->field_value_at_row_position(i,"c_value");
+                        analyses_found+="\"c_value\":\""+c_value+"\"},";
                     }
                 }
                 delete result;

@@ -228,5 +228,7 @@ d_key smallint,
 d_counter smallint,
 dependency text,
 ref_d_key smallint,
+tags text,
+c_value text,
 PRIMARY KEY(source,timestamp,sentence,rank,mood,counter)/*key contains that of the analyses table to be able to make match*/
 );

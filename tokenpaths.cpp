@@ -338,7 +338,7 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transpiling functor "+functor);
 			unsigned int prev_dkey=0;
 			rowid_field=word.dependencies->first_value_for_field_name_found("lexeme",functor);
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int>> dependency_path;
+            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string>> dependency_path;
             while(rowid_field!=NULL){
 				unsigned int d_key=std::atoi(word.dependencies->field_value_at_row_position(rowid_field->first,"d_key")->c_str());
 				if(d_key!=prev_dkey){
@@ -368,7 +368,7 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 			id_index=std::atoi(graph->id().c_str());
             std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int>> dependency_path;
+            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string>> dependency_path;
             transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
 		}
 	}
@@ -382,7 +382,8 @@ std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned 
 	for(auto&& word:word_analyses){
 		morphology+="{\"morpheme id\":\""+std::to_string(word.morphalytics->id())+"\",";
 		morphology+="\"word\":\""+word.morphalytics->word()+"\",";
-		morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
+        morphology+="\"lexeme\":\""+word.lexeme+"\",";
+        morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
 		morphology+="\"gcat\":\""+word.morphalytics->gcat()+"\"";
         if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
 		if(word.morphalytics->is_mocked()==false){
@@ -596,7 +597,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+=syntax(valid_parse_trees.at(i));
 				analysis+="],";
 			}
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int>> dependency_path;
+            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string>> dependency_path;
 			if(toa&HI_SEMANTICS){
                 analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
 				if(analysis.back()==',') analysis.pop_back();
@@ -614,12 +615,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			if(analysis.back()==',') analysis.pop_back();
             analysis+="}";
             ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
-            std::string escaped_analysis="";
-            for(unsigned int i=0;i<analysis.length();++i){
-                if(analysis[i]=='\'') escaped_analysis+="\'\'";
-                else escaped_analysis+=analysis[i];
-            }
-            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+escaped_analysis+"');");
+            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(nr_of_cons)+"','"+sqlite->escape(analysis)+"');");
             //preparing to collect data for jsemantics
             std::map<unsigned int,std::string> global_features=morphan_result::global_features();
             query_result *result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='indicative_mood_tag' OR key='interrogative_mood_tag' OR key='imperative_mood_tag';");
@@ -648,14 +644,16 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                 }
                 if(mood.empty()==false){
                     for(unsigned int i=0;i<dependency_path.size();++i){
-                        sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sentence+"','"+std::to_string(nr_of_cons)+"','"+mood
+                        sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(nr_of_cons)+"','"+mood
                             +"','"+std::to_string(i)+"','"+std::to_string(std::get<0>(dependency_path[i]))
                             +"','"+std::get<1>(dependency_path[i])
                             +"','"+std::get<2>(dependency_path[i])
                             +"','"+std::to_string(std::get<3>(dependency_path[i]))
                             +"','"+std::to_string(std::get<4>(dependency_path[i]))
                             +"','"+std::get<5>(dependency_path[i])
-                            +"','"+std::to_string(std::get<6>(dependency_path[i]))+"');");
+                            +"','"+std::to_string(std::get<6>(dependency_path[i]))
+                            +"','"+std::get<7>(dependency_path[i])
+                            +"','');");//no calculated value can be supplied here
                     }
                 }
             }

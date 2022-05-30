@@ -2,3 +2,4 @@
 hi_android/hi/app/jni
 hi_desktop
 hi_desktop/functors
+build/hi_desktop

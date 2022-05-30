@@ -37,8 +37,8 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 }
 
 std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language,
-    std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int>>& dependency_path,const unsigned int level) const{
-	std::string transcript,initial_argscript,argument_list,functor_id,functor_def;
+    std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string>>& dependency_path,const unsigned int level) const{
+    std::string transcript,initial_argscript,argument_list,functor_id,functor_def,tag_content;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL,*functor_tag_entries=NULL;
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
@@ -58,7 +58,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
 			transcript+="\"functor\":\"CON\",";
-            dependency_path.push_back(std::make_tuple(level,morphan->word(),functor.first,functor.second,1,"",0));
+            dependency_path.push_back(std::make_tuple(level,morphan->word(),functor.first,functor.second,1,"",0,tag_content));
             //std::cout<<"level:"<<level<<",word:"<<morphan->word()<<",lexeme:"<<functor.first<<",d_key:"<<functor.second<<",d_counter:1,dependency:NULL,ref_d_key:NULL"<<std::endl;
         }
 		else{
@@ -97,8 +97,8 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Empty functor_id field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}
 		functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
-		if(functor_tag_entries!=NULL){
-			std::string tags="\"tags\":{";
+        if(functor_tag_entries!=NULL){
+            std::string tags="\"tags\":{";
 			unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
 			for(unsigned int i=0;i<nr_of_entries;++i){
 				std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
@@ -107,6 +107,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 					std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
 					if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
 						tags+="\""+tag+"\":\""+value+"\",";
+                        tag_content+="\""+tag+"\":\""+value+"\",";
 					}
 				}
 			}
@@ -123,13 +124,17 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                             std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
                             if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
                                 tags+="\""+tag+"\":\""+value+"\",";
+                                tag_content+="\""+tag+"\":\""+value+"\",";
                                 logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
                             }
                         }
                     }
                 }
             }
-            if(tags.back()==',') tags.pop_back();
+            if(tags.back()==','){
+                tags.pop_back();
+                tag_content.pop_back();
+            }
 			tags+="},";
 			transcript+=tags;
 		}
@@ -148,12 +153,16 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                             std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
                             if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
                                 tags+="\""+tag+"\":\""+value+"\",";
+                                tag_content+="\""+tag+"\":\""+value+"\",";
                             }
                         }
                     }
                 }
             }
-            if(tags.back()==',') tags.pop_back();
+            if(tags.back()==','){
+                tags.pop_back();
+                tag_content.pop_back();
+            }
             tags+="},";
             transcript+=tags;
         }
@@ -172,7 +181,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                 const std::string *ref_d_key=dependencies->field_value_at_row_position(d_counter_field->first,"ref_d_key");
                 std::string word;
                 if(morphan!=NULL) word=morphan->word();
-                dependency_path.push_back(std::make_tuple(level,word,functor.first,functor.second,std::stoi(d_counter_field->second.field_value),*semantic_dependency,std::stoi(*ref_d_key)));
+                dependency_path.push_back(std::make_tuple(level,word,functor.first,functor.second,std::stoi(d_counter_field->second.field_value),*semantic_dependency,std::stoi(*ref_d_key),tag_content));
                 //std::cout<<"level:"<<level<<",word:"<<word<<",lexeme:"<<functor.first<<",d_key:"<<functor.second<<",d_counter:"<<d_counter_field->second.field_value<<",dependency:"<<*semantic_dependency<<",ref_d_key:"<<*ref_d_key<<std::endl;
                 if(*semantic_dependency=="CON"){
                     auto argument_script=argument_scripts.find(i.first);
@@ -199,7 +208,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
         else{
             std::string word;
             if(morphan!=NULL) word=morphan->word();
-            dependency_path.push_back(std::make_tuple(level,word,functor.first,functor.second,1,"",0));
+            dependency_path.push_back(std::make_tuple(level,word,functor.first,functor.second,1,"",0,tag_content));
             //std::cout<<"level:"<<level<<",word:"<<word<<",lexeme:"<<functor.first<<",d_key:"<<functor.second<<",d_counter:1,dependency:NULL,ref_d_key:NULL"<<std::endl;
         }
 		if(argument_scripts.empty()==false){

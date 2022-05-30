@@ -16,6 +16,7 @@ do
 		else echo "error"; 
 		fi; 
 		;;
+		*_morphology) morph="$v";
 	esac;
 	c=$(($c+1));
 done;
@@ -43,8 +44,11 @@ do
 	c=$(($c+1));
 done;
 eval "$1"_out='"$out"';
-elif [ $mood = "interrogative" ]; then 
+elif [ $mood = "interrogative" -a -n "$morph" ]; then 
 	echo $mood;
+	echo $morph;
+	analyses="$(/home/r0ller/hi/build/hi -q test)";
+	echo $analyses;
 elif [ $mood = "indicative" ]; then 
 	echo $mood;
 fi;

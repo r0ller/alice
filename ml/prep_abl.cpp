@@ -138,6 +138,7 @@ int main(int argc, char* argv[]){
 	bool pun=false,lexicalize=false;
 	char delimiter='\n';
 	unsigned int nr_of_threads=1;
+    std::string nopun_list;
 
 	logger::singleton("console",0,"LE");
 	if(argc<5){
@@ -150,7 +151,10 @@ int main(int argc, char* argv[]){
 	output=argv[4];
 	if(argc>5){
 		std::string pun_option=std::string(argv[5]);
-		if(pun_option=="pun") pun=true;
+        if(pun_option.substr(0,3)=="pun"){
+            pun=true;
+            if(pun_option.length()>3) nopun_list=pun_option.substr(3);
+        }
 		else if(pun_option=="nopun") pun=false;
 		else{
 			std::cerr<<"error: \""<<pun_option<<"\" is unknown option for punctuation"<<std::endl;
@@ -195,7 +199,7 @@ int main(int argc, char* argv[]){
 			locale=std::locale();
 			auto i=sentence.begin();
 			while(i!=sentence.end()){
-				if(ispunct(*i,locale)==true){
+                if(ispunct(*i,locale)==true&&nopun_list.find(*i)==std::string::npos){
 					if(i!=sentence.begin()&&isspace(*(i-1),locale)==false){
 						i=sentence.insert(i,' ');
 						++i;
@@ -212,6 +216,7 @@ int main(int argc, char* argv[]){
 			auto new_end=remove_if(sentence.begin(),sentence.end(),[](char x){return std::ispunct(x,std::locale());});
 			sentence.erase(new_end,sentence.end());
 		}
+        std::cout<<"analysing:"<<sentence<<std::endl;
 		assign_token_paths(sentence,lid,lexicalize,output,nr_of_threads);
 		lexer::delete_cache();
 	}

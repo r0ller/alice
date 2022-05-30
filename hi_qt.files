@@ -1,5 +1,7 @@
 Makefile
 README.md
+build/hi_desktop/corpus
+build/hi_desktop/main_verb
 db.h
 db_factory.h
 gensrc/C_code.cpp
