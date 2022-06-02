@@ -166,9 +166,9 @@ int main(int argc,char **argv){
 
     if(argc==3&&string(argv[1])=="-q"){
         analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
-        "{\"lexeme\":\"EXECUTABLEENGA\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
-        "{\"lexeme\":\"FILEENGN\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
-        "{\"lexeme\":\"abc\",\"c_value\":\"\",\"word\":\"abc\",\"is_con\":true,\"is_qword\":false,\"mood\":\"indicative\"}"
+        "{\"lexeme\":\"WHATENGPRON\",\"c_value\":\"\",\"word\":\"what\",\"is_con\":false,\"is_qword\":true,\"mood\":\"indicative\"},"
+        "{\"lexeme\":\"BEENGV\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
+        "{\"lexeme\":\"EXECUTABLEENGA\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"}"
         "]}");
         if(analyses!=NULL){
             cout<<analyses<<endl;
@@ -177,7 +177,7 @@ int main(int argc,char **argv){
     else{
         while(true){
             getline(cin,text);
-    //        text="file abc is executable .\n";
+            //text="file abc is executable .\n";
             if(text.empty()==false){
                 toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 //crh=HI_VERB;

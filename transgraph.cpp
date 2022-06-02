@@ -124,7 +124,6 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                             std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
                             if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
                                 tags+="\""+tag+"\":\""+value+"\",";
-                                tag_content+="\""+tag+"\":\""+value+"\",";
                                 logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
                             }
                         }
@@ -133,9 +132,11 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
             }
             if(tags.back()==','){
                 tags.pop_back();
+            }
+            if(tag_content.back()==','){
                 tag_content.pop_back();
             }
-			tags+="},";
+            tags+="},";
 			transcript+=tags;
 		}
         else{
@@ -153,7 +154,6 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                             std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
                             if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
                                 tags+="\""+tag+"\":\""+value+"\",";
-                                tag_content+="\""+tag+"\":\""+value+"\",";
                             }
                         }
                     }
@@ -161,7 +161,6 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
             }
             if(tags.back()==','){
                 tags.pop_back();
-                tag_content.pop_back();
             }
             tags+="},";
             transcript+=tags;

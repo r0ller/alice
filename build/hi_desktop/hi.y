@@ -41,6 +41,9 @@ db *db_factory::singleton_instance=NULL;
 %token	t_ENG_Punct_FullStop
 %token	t_ENG_Punct_QuestionMark
 %token	t_ENG_Punct_ExclamationMark
+%token	t_ENG_Pron_Stem
+%token	t_ENG_Pron_3sg
+%token	t_ENG_Pron_wh
 %token	t_ENG_ADV_Stem
 %token	t_ENG_DET_Stem
 %token	t_ENG_N_Stem
@@ -325,7 +328,7 @@ ENG_NV ENG_PP
 {
 const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+sparser->add_feature_to_leaf(ENG_NV,"V",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 }
@@ -601,6 +604,51 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 $$=sparser->set_node_info("ENG_Prep",word);
 
 };
+ENG_Pron:
+ENG_Pron_Stem ENG_Pron_3sg
+{
+const node_info& ENG_Pron_Stem=sparser->get_node_info($1);
+const node_info& ENG_Pron_3sg=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Pron->ENG_Pron_Stem ENG_Pron_3sg");
+$$=sparser->combine_nodes("ENG_Pron",ENG_Pron_Stem,ENG_Pron_3sg);
+
+};
+ENG_Pron_3sg:
+t_ENG_Pron_3sg 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Pron_3sg);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("ENG_Pron_3sg",word);
+
+};
+ENG_Pron_Stem:
+t_ENG_Pron_Stem 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Pron_Stem);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("ENG_Pron_Stem",word);
+
+};
+ENG_Pron_qw:
+ENG_Pron ENG_Pron_wh
+{
+const node_info& ENG_Pron=sparser->get_node_info($1);
+const node_info& ENG_Pron_wh=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Pron_qw->ENG_Pron ENG_Pron_wh");
+$$=sparser->combine_nodes("ENG_Pron_qw",ENG_Pron,ENG_Pron_wh);
+
+};
+ENG_Pron_wh:
+t_ENG_Pron_wh 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_ENG_Pron_wh);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("ENG_Pron_wh",word);
+
+};
 ENG_Punct:
 ENG_Punct_Stem ENG_Punct_ExclamationMark
 {
@@ -766,7 +814,15 @@ $$=sparser->set_node_info("ENG_VNEG_Stem",word);
 
 };
 ENG_VP:
-ENG_Vbar1 
+ENG_Pron_qw ENG_Vbar6
+{
+const node_info& ENG_Pron_qw=sparser->get_node_info($1);
+const node_info& ENG_Vbar6=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Pron_qw ENG_Vbar6");
+$$=sparser->combine_nodes("ENG_VP",ENG_Pron_qw,ENG_Vbar6);
+
+}
+|ENG_Vbar1 
 {
 const node_info& ENG_Vbar1=sparser->get_node_info($1);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1");
@@ -946,8 +1002,20 @@ ENG_N_Sg ENG_V
 const node_info& ENG_N_Sg=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
+std::cout<<"debug1"<<std::endl;
+sparser->add_feature_to_leaf(ENG_N_Sg,"N",std::string("qw_what"));
+std::cout<<"debug3"<<std::endl;
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar5->ENG_N_Sg ENG_V");
 $$=sparser->combine_nodes("ENG_Vbar5",ENG_V,ENG_N_Sg);
+};
+ENG_Vbar6:
+ENG_V ENG_AP
+{
+const node_info& ENG_V=sparser->get_node_info($1);
+const node_info& ENG_AP=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_V,"main_verb");
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar6->ENG_V ENG_AP");
+$$=sparser->combine_nodes("ENG_Vbar6",ENG_V,ENG_AP);
 };
 ENG_lfea_IndefDet:
 t_ENG_DET_Indef 

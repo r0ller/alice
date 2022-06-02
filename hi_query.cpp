@@ -434,6 +434,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 }
                 else {
                     //TODO: error handling
+                    exit(EXIT_FAILURE);
                 }
             }
             std::string query="select count(*) as lexeme_count,source,timestamp,sentence,rank,mood from analyses_deps where mood='"+mood+"' and (";
@@ -466,13 +467,14 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 query+=lexeme_conditions;
             }
             else{
-                query+="("+lexeme_conditions+") and ("+tag_conditions+") or ("+lexeme_conditions+") and tags=''";
+                query+="("+lexeme_conditions+") or ("+tag_conditions+")";
             }
             query+=") group by source,timestamp,sentence,rank,mood order by lexeme_count desc;";
             std::cout<<"query:"<<query<<std::endl;
             result=sqlite->exec_sql(query);
             if(result==NULL){
                 //TODO: return whatever
+                exit(EXIT_FAILURE);
             }
             //loop over result and get unique keys
             std::set<std::tuple<std::string,std::string,std::string,std::string,std::string>> andeps_keys;
@@ -497,6 +499,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 result=sqlite->exec_sql(query);
                 if(result==NULL){
                     //TODO: do whatever
+                    exit(EXIT_FAILURE);
                 }
                 std::string lexeme=*result->field_value_at_row_position(0,"lexeme");
                 std::string d_key=*result->field_value_at_row_position(0,"d_key");

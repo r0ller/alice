@@ -237,7 +237,7 @@ $$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);"');
 insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',NULL,
 '"const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"V","RCV");
+sparser->add_feature_to_leaf(ENG_NV,"V",std::string("RCV"));
 std::cout<<"ENG_IVP->ENG_NV ENG_PP"<<std::endl;
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);"');
 insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_NEG',NULL,NULL);
