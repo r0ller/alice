@@ -1,4 +1,5 @@
 echo "printing parameters and their contents for" $1;
+echo $analysis_deps;
 unset out;
 c=1;
 mood="";
@@ -47,7 +48,7 @@ eval "$1"_out='"$out"';
 elif [ $mood = "interrogative" -a -n "$morph" ]; then 
 	echo $mood;
 	echo $morph;
-	analyses="$(/home/r0ller/hi/build/hi -q test)";
+	analyses="$(/home/r0ller/hi/build/hi -q /home/r0ller/hi/build/hi_desktop/hi.db BEENGV 1 {})";
 	echo $analyses;
 elif [ $mood = "indicative" ]; then 
 	echo $mood;

@@ -220,6 +220,7 @@ timestamp int,
 sentence text,
 rank smallint,
 mood text,
+function text,
 counter smallint,
 level smallint,
 word text,
@@ -230,5 +231,5 @@ dependency text,
 ref_d_key smallint,
 tags text,
 c_value text,
-PRIMARY KEY(source,timestamp,sentence,rank,mood,counter)/*key contains that of the analyses table to be able to make match*/
+PRIMARY KEY(source,timestamp,sentence,rank,mood,function)/*key contains that of the analyses table to be able to make match*/
 );

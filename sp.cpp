@@ -1716,24 +1716,19 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 	unsigned int leaf_node_id=0;
 	std::vector<unsigned int> nodes;
 
-    std::cout<<"debug2"<<std::endl;
     get_nodes_by_symbol(node,leaf_symbol,std::string(),nodes);
 	if(nodes.size()==1){
-        std::cout<<"debug2a"<<std::endl;
         leaf_node_id=*nodes.begin();
 		if(leaf_node_id>0){
             if(global==true){
-                std::cout<<"debug2b"<<std::endl;
                 morphan_result::add_global_feature(leaf_node_id,feature);
             }
             else{
-                std::cout<<"debug2c"<<std::endl;
                 const node_info& leaf_node=get_node_info(leaf_node_id);
                 leaf_node.expression.morphalytics->add_feature(feature);
             }
 		}
 	}
-    std::cout<<"debug2d"<<std::endl;
     return leaf_node_id;
 }
 

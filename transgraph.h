@@ -21,7 +21,7 @@
 		~transgraph();
 		void insert(const unsigned int, const transgraph *);
         std::string transcript(std::map<std::string,std::string>&,const std::map<unsigned int,std::pair<std::string,unsigned int>>&,const std::string&,
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string>>&, const unsigned int =0) const;
+            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>>&, const unsigned int =0,const std::string& ="",const unsigned int& =0,const unsigned int& =0) const;
 		std::string id() const;
 		static std::string apply_json_escapes(const std::string&);
         static std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map(){

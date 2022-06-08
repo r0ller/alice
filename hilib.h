@@ -15,6 +15,7 @@
 		#endif
         const char *hi(const char *,const char *,const unsigned char,const char *,const char *,const char *,const unsigned char);
         const char *hi_query(const char*, const char*, const unsigned int, const char*);
+        int hi_state_cvalue(const char *,const char *,const char *);
         #ifdef __EMSCRIPTEN__
 		}
 		#endif

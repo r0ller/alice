@@ -434,6 +434,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 }
                 else {
                     //TODO: error handling
+                    std::cout<<"exiting: not all json parameters found"<<std::endl;
                     exit(EXIT_FAILURE);
                 }
             }
@@ -470,10 +471,11 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 query+="("+lexeme_conditions+") or ("+tag_conditions+")";
             }
             query+=") group by source,timestamp,sentence,rank,mood order by lexeme_count desc;";
-            std::cout<<"query:"<<query<<std::endl;
+            //std::cout<<"query:"<<query<<std::endl;
             result=sqlite->exec_sql(query);
             if(result==NULL){
                 //TODO: return whatever
+                std::cout<<"exiting: no SQL query result"<<std::endl;
                 exit(EXIT_FAILURE);
             }
             //loop over result and get unique keys
@@ -499,10 +501,11 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 result=sqlite->exec_sql(query);
                 if(result==NULL){
                     //TODO: do whatever
+                    std::cout<<"exiting: no entries found for a key"<<std::endl;
                     exit(EXIT_FAILURE);
                 }
-                std::string lexeme=*result->field_value_at_row_position(0,"lexeme");
-                std::string d_key=*result->field_value_at_row_position(0,"d_key");
+                std::string lexeme=*result->field_value_at_row_position(0,"dependency");//first entry does not have parent, so no lexeme
+                std::string d_key=*result->field_value_at_row_position(0,"ref_d_key");//first entry does not have parent, so no d_key
                 if(root_lexeme==lexeme&&root_d_key==std::atoi(d_key.c_str())){
                     for(unsigned int i=0;i<result->nr_of_result_rows();++i){
                         std::string source=*result->field_value_at_row_position(i,"source");

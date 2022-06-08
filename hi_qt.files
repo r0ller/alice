@@ -116,6 +116,7 @@ hi_android/hi/gradle/wrapper/gradle-wrapper.properties
 hi_android/hi/gradlew
 hi_android/hi/gradlew.bat
 hi_android/hi/settings.gradle
+hi_cvalue.cpp
 hi_db.sql
 hi_desktop/desktop_content.sql
 hi_desktop/foma/english.foma

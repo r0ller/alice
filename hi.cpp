@@ -47,8 +47,8 @@ string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencie
 	string script;
 	vector<string> arguments;
 
-	for(unsigned int i=0;i<dependencies.Size();++i){
-		Value& dependency=dependencies[i];
+    for(unsigned int i=0;i<dependencies.Size();++i){
+        Value& dependency=dependencies[i];
 		string functorID;
 		if(dependency.HasMember("functor id")==true){
 			functorID=dependency["functor id"].GetString();
@@ -56,13 +56,13 @@ string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencie
 		if(functorID.empty()==true){
 			functorID=dependency["functor"].GetString();
 		}
-		string dependencyID=dependency["id"].GetString();
+        string dependencyID=dependency["id"].GetString();
 		string functionName=functorID+"_"+dependencyID;
-		string argument=functionName+"_out";
+        string argument=functionName+"_out";
 		argList.push_back(argument);
 		if(dependency.HasMember("dependencies")==true){
-			script+=transcribeDependencies(morphology,syntax,dependency["dependencies"],functors,arguments);
-		}
+            script+=transcribeDependencies(morphology,syntax,dependency["dependencies"],functors,arguments);
+        }
 		string morphologyArg;
 		if(dependency.HasMember("morpheme id")==true){
 			string morphemeID=dependency["morpheme id"].GetString();
@@ -118,7 +118,7 @@ string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencie
         }
         arguments.clear();
 	}
-	return script;
+    return script;
 }
 
 string transcript(const unsigned int toa,Document& jsondoc){
@@ -139,10 +139,12 @@ string transcript(const unsigned int toa,Document& jsondoc){
 					relatedSemantics=analysis["related semantics"];
 				}
 				Value& functors=analysis["functors"];
-				if(analysis.HasMember("errors")==false){
+                Value& analysis_deps=analysis["analysis_deps"];
+                if(analysis.HasMember("errors")==false){
 					if(semantics.Size()>0){
-						script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
-					}
+                        script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
+                        script="analysis_deps='"+value_to_string(analysis_deps)+"';"+script;
+                    }
 					else{
 
 					}
@@ -164,15 +166,21 @@ int main(int argc,char **argv){
 	char line[256];
     unsigned char toa=0,crh=0;
 
-    if(argc==3&&string(argv[1])=="-q"){
-        analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
+    if(argc==6&&string(argv[1])=="-q"){
+        //In case of interrogative mood each functor should return in its $1_out parameter a table appending such a json object
+        //entry like in the example below in order that the main verb functor can modify it and pass the table to hi_query().
+        /*analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
         "{\"lexeme\":\"WHATENGPRON\",\"c_value\":\"\",\"word\":\"what\",\"is_con\":false,\"is_qword\":true,\"mood\":\"indicative\"},"
         "{\"lexeme\":\"BEENGV\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
         "{\"lexeme\":\"EXECUTABLEENGA\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"}"
-        "]}");
+        "]}");*/
+        analyses=hi_query(argv[2],argv[3],atoi(argv[4]),argv[5]);
         if(analyses!=NULL){
             cout<<analyses<<endl;
         }
+    }
+    else if(argc==5&&string(argv[1])=="-c"){
+        hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1654702622,\"sentence\":\"file abc is executable .\",\"rank\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","test");
     }
     else{
         while(true){
