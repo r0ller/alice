@@ -913,7 +913,7 @@ $$=sparser->set_node_info("ENG_Vbar4",ENG_V);"');
 insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_PP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
-unsigned int leaf_node_id=sparser->add_feature_to_leaf(ENG_V,"ENG_V_Aux","V","RCV");
+unsigned int leaf_node_id=sparser->add_feature_to_leaf(ENG_V,"ENG_V_Aux","V",std::string("RCV"));
 if(leaf_node_id==0) sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
 $$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);"');
@@ -1036,7 +1036,7 @@ insert into GRAMMAR values('ENG','ENG_NV','ENG_V','ENG_VNEG',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_PP',NULL,
 '"const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_PP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V","RCV");
+sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);"');
 insert into GRAMMAR values('ENG','ENG_Def_Det','ENG_Det_stem','ENG_lfea_DefDet',NULL,NULL);
@@ -1075,14 +1075,14 @@ insert into GRAMMAR values('ENG','ENG_NV','ENG_NV_Aux','ENG_V_Stem',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_IVP','ENG_V','ENG_NP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
-unsigned int leaf_node_id=sparser->add_feature_to_leaf(ENG_V,"ENG_V_Aux","V","RCV");
+unsigned int leaf_node_id=sparser->add_feature_to_leaf(ENG_V,"ENG_V_Aux","V",std::string("RCV"));
 if(leaf_node_id==0) sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_NP");
 $$=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_NP);"');
 insert into GRAMMAR values('ENG','ENG_IVP','ENG_NV','ENG_NP',NULL,
 '"const node_info& ENG_NV=sparser->get_node_info($1);
 const node_info& ENG_NP=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V","RCV");
+sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_NP");
 $$=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_NP);"');
 insert into GRAMMAR values('ENG','ENG_PVPbar','ENG_V_Ger','ENG_PP',NULL,
@@ -1224,43 +1224,43 @@ insert into GRAMMAR values('HUN','HUN_RC','HUN_RPro','HUN_IVPlist',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_N_Ins','HUN_V',NULL,
 '"const node_info& HUN_N_Ins=sparser->get_node_info($1);
 const node_info& HUN_V=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Ins HUN_V");
 $$=sparser->combine_nodes("HUN_IVPbar",HUN_N_Ins,HUN_V);"');
 insert into GRAMMAR values('HUN','HUN_INVPbar','HUN_V','HUN_N_Ins',NULL,
 '"const node_info& HUN_V=sparser->get_node_info($1);
 const node_info& HUN_N_Ins=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar->HUN_V HUN_N_Ins");
 $$=sparser->combine_nodes("HUN_INVPbar",HUN_V,HUN_N_Ins);"');
 insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_N_Sub','HUN_V',NULL,
 '"const node_info& HUN_N_Sub=sparser->get_node_info($1);
 const node_info& HUN_V=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Sub HUN_V");
 $$=sparser->combine_nodes("HUN_IVPbar",HUN_N_Sub,HUN_V);"');
 insert into GRAMMAR values('HUN','HUN_INVPbar','HUN_V','HUN_N_Sub',NULL,
 '"const node_info& HUN_V=sparser->get_node_info($1);
 const node_info& HUN_N_Sub=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar->HUN_V HUN_N_Sub");
 $$=sparser->combine_nodes("HUN_INVPbar",HUN_V,HUN_N_Sub);"');
 insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_N_Acc','HUN_V',NULL,
 '"const node_info& HUN_N_Acc=sparser->get_node_info($1);
 const node_info& HUN_V=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Acc HUN_V");
 $$=sparser->combine_nodes("HUN_IVPbar",HUN_V,HUN_N_Acc);"');
 insert into GRAMMAR values('HUN','HUN_IVPbar','HUN_V','HUN_N_Acc',NULL,
 '"const node_info& HUN_V=sparser->get_node_info($1);
 const node_info& HUN_N_Acc=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_V HUN_N_Acc");
 $$=sparser->combine_nodes("HUN_IVPbar",HUN_V,HUN_N_Acc);"');
 insert into GRAMMAR values('HUN','HUN_INVPbar2','HUN_Neg','HUN_V',NULL,
 '"const node_info& HUN_Neg=sparser->get_node_info($1);
 const node_info& HUN_V=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_V,"Verb","RCV");
+sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar2->HUN_Neg HUN_V");
 $$=sparser->combine_nodes("HUN_INVPbar2",HUN_Neg,HUN_V);"');
 insert into GRAMMAR values('HUN','HUN_V','HUN_Verb_stem','HUN_Verb_lfea_IndefPl3',NULL,NULL);

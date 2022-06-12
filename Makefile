@@ -113,7 +113,7 @@ shared_native_lib:
 	parserfilename=$$(basename ${NATIVEPARSERFILEPATH});\
 	nativesrcfilepath=${BUILDDIR}/hi_desktop/$$parserfilename.cpp;\
 	nativeobjfilepath=${BUILDDIR}/hi_desktop/$$parserfilename.o;\
-	${CXX} $$nativesrcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -U__ANDROID__ -U__EMSCRIPTEN ${CXXFLAGS} ${CXXFLAGS_DEBUG} -I${BUILDDIR}/hi_desktop $$includedirs -shared -o ${BUILDDIR}/hi_desktop/libhilib.so;
+	${CXX} $$nativesrcfilepath $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -U__ANDROID__ -U__EMSCRIPTEN ${CXXFLAGS} ${CXXFLAGS_DEBUG} -I${BUILDDIR}/hi_desktop $$includedirs -shared -o ${BUILDDIR}/hi_desktop/libhilib.so;
 
 android_fst:
 	mkdir -p ${BUILDDIR}/hi_android;\

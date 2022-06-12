@@ -1716,9 +1716,9 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 	unsigned int leaf_node_id=0;
 	std::vector<unsigned int> nodes;
 
-	get_nodes_by_symbol(node,leaf_symbol,std::string(),nodes);
+    get_nodes_by_symbol(node,leaf_symbol,std::string(),nodes);
 	if(nodes.size()==1){
-		leaf_node_id=*nodes.begin();
+        leaf_node_id=*nodes.begin();
 		if(leaf_node_id>0){
             if(global==true){
                 morphan_result::add_global_feature(leaf_node_id,feature);
@@ -1729,7 +1729,7 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
             }
 		}
 	}
-	return leaf_node_id;
+    return leaf_node_id;
 }
 
 unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& subnode_symbol, const std::string& leaf_symbol, const std::string& feature, const bool& global){

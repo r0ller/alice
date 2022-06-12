@@ -36,28 +36,33 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 	arguments.insert(std::make_pair(d_counter,functor));
 }
 
-std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language) const{
-	std::string transcript,initial_argscript,argument_list,functor_id,functor_def;
+std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language,
+    std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>>& dependency_path,const unsigned int level,const std::string& parent_functor,
+    const unsigned int& parent_d_key,const unsigned int& parent_d_counter) const{
+    std::string transcript,initial_argscript,argument_list,functor_id,functor_def,tag_content;
 	db *sqlite=NULL;
 	query_result *dependencies=NULL,*functor_id_entry=NULL,*functor_def_entry=NULL,*functor_tag_entries=NULL;
 	const std::pair<const unsigned int,field> *d_counter_field=NULL;
 	const std::string *semantic_dependency=NULL;
 	std::map<d_counter,std::string> argument_scripts;
 
-	sqlite=db_factory::get_instance();
+    sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor.first+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
 	if(morphan!=NULL){
         std::map<unsigned int,std::string> global_features=morphan->global_features_copy();
+        //TODO: This is not really efficient as we are trying to add the entries all the time
+        //and simply let insertion fail if the entries are already there.
         for(auto&& node_feature:global_features){
             morphan_result::add_global_feature(node_feature.first,node_feature.second);
         }
 		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
 			transcript+="\"functor\":\"CON\",";
-		}
-		else{
-			transcript+="\"functor\":\""+functor.first+"\",";
+            dependency_path.push_back(std::make_tuple(level,morphan->word(),parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,"CON_"+my_id));
+        }
+        else{
+            transcript+="\"functor\":\""+functor.first+"\",";
 		}
 		transcript+="\"d_key\":\""+std::to_string(functor.second)+"\",";
 		transcript+="\"morpheme id\":\""+std::to_string(morphan->id())+"\",";
@@ -92,8 +97,8 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Empty functor_id field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}
 		functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
-		if(functor_tag_entries!=NULL){
-			std::string tags="\"tags\":{";
+        if(functor_tag_entries!=NULL){
+            std::string tags="\"tags\":{";
 			unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
 			for(unsigned int i=0;i<nr_of_entries;++i){
 				std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
@@ -102,6 +107,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 					std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
 					if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
 						tags+="\""+tag+"\":\""+value+"\",";
+                        tag_content+="\""+tag+"\":\""+value+"\",";
 					}
 				}
 			}
@@ -124,8 +130,13 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                     }
                 }
             }
-            if(tags.back()==',') tags.pop_back();
-			tags+="},";
+            if(tags.back()==','){
+                tags.pop_back();
+            }
+            if(tag_content.back()==','){
+                tag_content.pop_back();
+            }
+            tags+="},";
 			transcript+=tags;
 		}
         else{
@@ -148,42 +159,57 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
                     }
                 }
             }
-            if(tags.back()==',') tags.pop_back();
+            if(tags.back()==','){
+                tags.pop_back();
+            }
             tags+="},";
             transcript+=tags;
         }
-		transcript+="\"functor id\":\""+functor_id+"\"";
-		for(auto&& i:arguments){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking argument with d_counter "+std::to_string(i.first));
-			d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
-			if(d_counter_field==NULL){
-				throw std::runtime_error("Empty d_counter field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
-			}
-			semantic_dependency=dependencies->field_value_at_row_position(d_counter_field->first,"semantic_dependency");
-			if(semantic_dependency==NULL){
-				throw std::runtime_error("Empty semantic_dependency field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
-			}
-			if(*semantic_dependency=="CON"){
-				auto argument_script=argument_scripts.find(i.first);
-				if(argument_script!=argument_scripts.end()){
-                    argument_script->second+=i.second->transcript(functors,node_functor_map,target_language);
-				}
-				else{
-                    initial_argscript=i.second->transcript(functors,node_functor_map,target_language);
-					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
-				}
-			}
-			else{
-				auto argument_script=argument_scripts.find(i.first);
-				if(argument_script!=argument_scripts.end()){
-                    argument_script->second+=i.second->transcript(functors,node_functor_map,target_language);
-				}
-				else{
-                    initial_argscript=i.second->transcript(functors,node_functor_map,target_language);
-					argument_scripts.insert(std::make_pair(i.first,initial_argscript));
-				}
-			}
-		}
+        std::string word;
+        if(morphan!=NULL) word=morphan->word();
+        if(functor_id.empty()==true){
+            dependency_path.push_back(std::make_tuple(level,word,parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,functor.first+"_"+my_id));
+        }
+        else{
+            dependency_path.push_back(std::make_tuple(level,word,parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,functor_id+"_"+my_id));
+        }
+        transcript+="\"functor id\":\""+functor_id+"\"";
+        if(arguments.empty()==false){
+            for(auto&& i:arguments){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking argument with d_counter "+std::to_string(i.first));
+                d_counter_field=dependencies->first_value_for_field_name_found("d_counter",std::to_string(i.first));
+                if(d_counter_field==NULL){
+                    throw std::runtime_error("Empty d_counter field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
+                }
+                semantic_dependency=dependencies->field_value_at_row_position(d_counter_field->first,"semantic_dependency");
+                if(semantic_dependency==NULL){
+                    throw std::runtime_error("Empty semantic_dependency field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in DEPOLEX db table.");
+                }
+                const std::string *ref_d_key=dependencies->field_value_at_row_position(d_counter_field->first,"ref_d_key");
+                std::string word;
+                if(morphan!=NULL) word=morphan->word();
+                if(*semantic_dependency=="CON"){
+                    auto argument_script=argument_scripts.find(i.first);
+                    if(argument_script!=argument_scripts.end()){
+                        argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+                    }
+                    else{
+                        initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+                        argument_scripts.insert(std::make_pair(i.first,initial_argscript));
+                    }
+                }
+                else{
+                    auto argument_script=argument_scripts.find(i.first);
+                    if(argument_script!=argument_scripts.end()){
+                        argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+                    }
+                    else{
+                        initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+                        argument_scripts.insert(std::make_pair(i.first,initial_argscript));
+                    }
+                }
+            }
+        }
 		if(argument_scripts.empty()==false){
 			transcript+=",\"dependencies\":[";
 			for(auto&& i:argument_scripts){
@@ -195,7 +221,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 		transcript+="},";
 	}
 	else{
-		if(transcript.back()==',') transcript.pop_back();
+        if(transcript.back()==',') transcript.pop_back();
 		transcript+="},";
 	}
 	return transcript;

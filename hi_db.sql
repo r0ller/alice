@@ -127,7 +127,7 @@ create table ANALYSES(
 source text,/*user name or any other source of the utterance*/
 timestamp int,/*epoch*/
 sentence text,
-rank smallint,
+rank smallint,/*nr of constants, the smaller the better*/
 analysis text,
 PRIMARY KEY(source,timestamp,sentence,rank)
 );
@@ -212,4 +212,24 @@ FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid) /*Reference to GCAT
 create table SETTINGS(
 key text primary key,
 value text
+);
+
+create table ANALYSES_DEPS(
+source text,
+timestamp int,
+sentence text,
+rank smallint,
+mood text,
+function text,
+counter smallint,
+level smallint,
+word text,
+lexeme text,
+d_key smallint,
+d_counter smallint,
+dependency text,
+ref_d_key smallint,
+tags text,
+c_value text,
+PRIMARY KEY(source,timestamp,sentence,rank,mood,function)/*key contains that of the analyses table to be able to make match*/
 );
