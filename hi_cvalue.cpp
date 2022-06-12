@@ -1,3 +1,4 @@
+#include "hilib.h"
 #include <iostream>
 #include "db_factory.h"
 #include "rapidjson/document.h"

@@ -2,168 +2,16 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
+#include <fstream>
 
 using namespace std;
-using namespace rapidjson;
-
-void find_replace(string& findrep,const string& search_for,const string& replace_with){
-	size_t pos=findrep.find(search_for);
-	while(pos!=string::npos){
-		findrep.replace(pos,search_for.size(),replace_with);
-		pos=findrep.find(search_for,pos+replace_with.size());
-	}
-}
-
-string value_to_string(Value& jsonvalue){
-	StringBuffer buffer;
-	Writer<StringBuffer> writer(buffer);
-	jsonvalue.Accept(writer);
-	return buffer.GetString();
-}
-
-string args_to_shfun_arglist(vector<string>& arguments){
-	string arglist;
-
-	for(auto&& i:arguments){
-		arglist+="\"$"+i+"\" ";
-	}
-	if(arglist.empty()==false) arglist.pop_back();
-	return arglist;
-}
-
-string args_to_shfun_pmlist(vector<string>& arguments){
-	string arglist;
-
-	for(auto&& i:arguments){
-		arglist+=i+" ";
-	}
-	if(arglist.empty()==false) arglist.pop_back();
-	return arglist;
-}
-
-string transcribeDependencies(Value& morphology,Value& syntax,Value& dependencies,Value& functors,vector<string>& argList){
-	string script;
-	vector<string> arguments;
-
-    for(unsigned int i=0;i<dependencies.Size();++i){
-        Value& dependency=dependencies[i];
-		string functorID;
-		if(dependency.HasMember("functor id")==true){
-			functorID=dependency["functor id"].GetString();
-		}
-		if(functorID.empty()==true){
-			functorID=dependency["functor"].GetString();
-		}
-        string dependencyID=dependency["id"].GetString();
-		string functionName=functorID+"_"+dependencyID;
-        string argument=functionName+"_out";
-		argList.push_back(argument);
-		if(dependency.HasMember("dependencies")==true){
-            script+=transcribeDependencies(morphology,syntax,dependency["dependencies"],functors,arguments);
-        }
-		string morphologyArg;
-		if(dependency.HasMember("morpheme id")==true){
-			string morphemeID=dependency["morpheme id"].GetString();
-			for(unsigned int j=0;j<morphology.Size();++j){
-				Value& morphologyObj=morphology[j];
-                if(morphologyObj["morpheme id"].GetString()==morphemeID){
-                	morphologyArg=value_to_string(morphologyObj);
-                	find_replace(morphologyArg,"\"","\\\"");
-                    break;
-                }
-			}
-		}
-        string morphologyVarName=functionName+"_morphology";
-        arguments.push_back(morphologyVarName);
-
-        string tags;
-        string tagsVarName;
-        if(dependency.HasMember("tags")==true){
-            for(auto& tag: dependency["tags"].GetObject()){
-                tags+="\""+string(tag.name.GetString())+"\":\""+string(tag.value.GetString())+"\",";
-            }
-            if(tags.empty()==false){
-                tags.pop_back();
-                tags="{"+tags+"}";
-                tagsVarName=functionName+"_tags";
-                arguments.push_back(tagsVarName);
-            }
-        }
-
-        string argStr=args_to_shfun_arglist(arguments);
-        string parameterList=args_to_shfun_pmlist(arguments);
-        string functorDef;
-        for(unsigned int j=0;j<functors.Size();++j){
-            Value& functor=functors[j];
-            if(functor["functor id"].GetString()==functorID){
-                functorDef=functor["definition"].GetString();
-                if(functorDef.empty()==false){
-                    functorDef=functionName+"(){ "+functorDef+" };";
-                }
-                break;
-            }
-        }
-        if(functorDef.empty()==true){
-            //TODO:if functor has no definition but has dependencies, propagate the outgoing result of its dependencies to the parent.
-            //However, if there are more than one functor having no definition it'll be necessary to pass on which is the last
-            //functor that has a definition in order that the arguments are propagated to the right level.
-            script+=functionName+"_out="+"\""+morphologyArg+"\";";
-        }
-        else{
-            script+=morphologyVarName+"="+"\""+morphologyArg+"\";";
-            if(tags.empty()==false) script+=tagsVarName+"="+"\""+tags+"\";";
-            script+=functorDef+functionName+" \""+functionName+"\" \""+parameterList+"\" "+argStr+";";
-        }
-        arguments.clear();
-	}
-    return script;
-}
-
-string transcript(const unsigned int toa,Document& jsondoc){
-	string script;
-	vector<string> arguments;
-	Value morphology,syntax,semantics;
-
-	if(jsondoc.HasMember("analyses")==true){
-		Value& analysesArray = jsondoc["analyses"];
-		if(analysesArray.IsArray()==true&&analysesArray.Size()>0){
-			Value& analysis=analysesArray[0];
-			if(toa&HI_MORPHOLOGY) morphology=analysis["morphology"];
-			if(toa&HI_SYNTAX) syntax=analysis["syntax"];
-			if(toa&HI_SEMANTICS){
-				semantics=analysis["semantics"];
-				Value relatedSemantics;
-				if(analysis.HasMember("related semantics")==true){
-					relatedSemantics=analysis["related semantics"];
-				}
-				Value& functors=analysis["functors"];
-                Value& analysis_deps=analysis["analysis_deps"];
-                if(analysis.HasMember("errors")==false){
-					if(semantics.Size()>0){
-                        script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
-                        script="analysis_deps='"+value_to_string(analysis_deps)+"';"+script;
-                    }
-					else{
-
-					}
-				}
-				else{
-
-				}
-			}
-		}
-	}
-	return script;
-}
 
 int main(int argc,char **argv){
 
-	const char *analyses;
-	string text,script;
+    const char *analyses,*script_chr=NULL;
+    string text,script,language="sh";
 	FILE *fp;
-	char line[256];
+    char line[256];
     unsigned char toa=0,crh=0;
 
     if(argc==6&&string(argv[1])=="-q"){
@@ -180,31 +28,49 @@ int main(int argc,char **argv){
         }
     }
     else if(argc==5&&string(argv[1])=="-c"){
-        hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1654702622,\"sentence\":\"file abc is executable .\",\"rank\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","test");
+        //hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1654702622,\"sentence\":\"file abc is executable .\",\"rank\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","test");
+        hi_state_cvalue(argv[2],argv[3],argv[4]);
     }
     else{
         while(true){
             getline(cin,text);
-            //text="file abc is executable .\n";
+            //text="list files !\n";
             if(text.empty()==false){
                 toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 //crh=HI_VERB;
-                analyses=hi(text.c_str(),"ENG",toa,"sh","hi_desktop/hi.db","test",crh);
+                analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
                 if(analyses!=NULL){
                     cout<<analyses<<endl;
-                    Document jsondoc;
-                    jsondoc.Parse(analyses);
-                    script=transcript(toa,jsondoc);
-                    if(script.length()>0){
-                        cout<<script<<endl;
-                        if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
-                        fp=popen(script.c_str(),"r");
-                        if(fp!=NULL){
-                            while(fgets(line,sizeof line,fp))
-                            {
-                                cout<<line<<endl;
+                    script_chr=hi_transcribe(language.c_str(),analyses);
+                    if(script_chr!=NULL){
+                        script=string(script_chr);
+                        if(script.length()>0){
+                            cout<<script<<endl;
+                            if(language=="sh"){
+                                if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
+                                fp=popen(script.c_str(),"r");
+                                if(fp!=NULL){
+                                    while(fgets(line,sizeof line,fp))
+                                    {
+                                        cout<<line<<endl;
+                                    }
+                                    pclose(fp);
+                                }
                             }
-                            pclose(fp);
+                            else if(language=="js"){
+                                ofstream *js_file=new std::ofstream("script.js");
+                                *js_file << script;
+                                js_file->close();
+                                delete js_file;
+                                fp=popen("node -e \"$(cat script.js)\"","r");
+                                if(fp!=NULL){
+                                    while(fgets(line,sizeof line,fp))
+                                    {
+                                        cout<<line<<endl;
+                                    }
+                                    pclose(fp);
+                                }
+                            }
                         }
                     }
                 }

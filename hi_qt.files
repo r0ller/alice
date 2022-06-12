@@ -131,9 +131,11 @@ hi_desktop/functors/emptyenga_1.sh
 hi_desktop/functors/executableenga_1.sh
 hi_desktop/functors/executableenga_2.sh
 hi_desktop/functors/filebeprop_1.sh
+hi_desktop/functors/fileengn_1.js
 hi_desktop/functors/fileengn_1.sh
 hi_desktop/functors/fileengn_2.sh
 hi_desktop/functors/inengprep_1.sh
+hi_desktop/functors/listengv_1.js
 hi_desktop/functors/listengv_1.sh
 hi_desktop/functors/listengv_2.sh
 hi_desktop/functors/located_1.sh
@@ -162,12 +164,15 @@ hi_js/libreadline.a
 hi_js/libsqlite3.a
 hi_js/libz.a
 hi_query.cpp
+hi_transcribe.cpp
 hilib.h
 index.html
 jni_db.cpp
 jni_db.h
 js_db.cpp
 js_db.h
+js_transcriptor.cpp
+js_transcriptor.h
 lexer.cpp
 lexer.h
 logger.cpp
@@ -181,6 +186,8 @@ morphan_result.cpp
 morphan_result.h
 query_result.cpp
 query_result.h
+sh_transcriptor.cpp
+sh_transcriptor.h
 sp.cpp
 sp.h
 sqlite_db.cpp
@@ -191,5 +198,7 @@ tests/stex.cpp
 tokenpaths.cpp
 tokenpaths.h
 tools/stops2linebreaks.sh
+transcriptor.cpp
+transcriptor.h
 transgraph.cpp
 transgraph.h
