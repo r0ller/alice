@@ -1,4 +1,3 @@
-#include "hilib.h"
 #include <iostream>
 #include <tuple>
 #include <set>
@@ -439,7 +438,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                     exit(EXIT_FAILURE);
                 }
             }
-            std::string query="select count(*) as lexeme_count,source,timestamp,sentence,rank,mood from analyses_deps where mood='"+mood+"' and (";
+            std::string query="select count(*) as lexeme_count,source,timestamp,sentence,rank,a_counter,mood from analyses_deps where mood='"+mood+"' and (";
             std::string tag_conditions;
             if(qwords.empty()==true){//add main verb's lexeme if there's no question word
                 lexemes_to_cvalues_cons.insert(std::make_pair(root_lexeme,std::make_pair("","")));
@@ -471,7 +470,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
             else{
                 query+="("+lexeme_conditions+") or ("+tag_conditions+")";
             }
-            query+=") group by source,timestamp,sentence,rank,mood order by lexeme_count desc;";
+            query+=") group by source,timestamp,sentence,rank,a_counter,mood order by lexeme_count desc;";
             //std::cout<<"query:"<<query<<std::endl;
             result=sqlite->exec_sql(query);
             if(result==NULL){
@@ -480,15 +479,16 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 exit(EXIT_FAILURE);
             }
             //loop over result and get unique keys
-            std::set<std::tuple<std::string,std::string,std::string,std::string,std::string>> andeps_keys;
+            std::set<std::tuple<std::string,std::string,std::string,std::string,std::string,std::string>> andeps_keys;
             unsigned int result_size=result->nr_of_result_rows();
             for(unsigned int i=0;i<result_size;++i){
                 std::string source=*result->field_value_at_row_position(i,"source");
                 std::string timestamp=*result->field_value_at_row_position(i,"timestamp");
                 std::string sentence=*result->field_value_at_row_position(i,"sentence");
                 std::string rank=*result->field_value_at_row_position(i,"rank");
+                std::string a_counter=*result->field_value_at_row_position(i,"a_counter");
                 std::string mood=*result->field_value_at_row_position(i,"mood");
-                std::tuple<std::string,std::string,std::string,std::string,std::string> andeps_key=std::make_tuple(source,timestamp,sentence,rank,mood);
+                std::tuple<std::string,std::string,std::string,std::string,std::string,std::string> andeps_key=std::make_tuple(source,timestamp,sentence,rank,a_counter,mood);
                 andeps_keys.insert(andeps_key);
             }
             delete result;
@@ -498,7 +498,9 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                     +"' and timestamp='"+std::get<1>(key)
                     +"' and sentence='"+std::get<2>(key)
                     +"' and rank='"+std::get<3>(key)
-                    +"' and mood='"+std::get<4>(key)+"' order by counter;";
+                    +"' and a_counter='"+std::get<4>(key)
+                    +"' and mood='"+std::get<5>(key)+"' order by counter;";
+                //std::cout<<"query:"<<query<<std::endl;
                 result=sqlite->exec_sql(query);
                 if(result==NULL){
                     //TODO: do whatever
@@ -517,8 +519,12 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                         analyses_found+="\"sentence\":\""+sentence+"\",";
                         std::string rank=*result->field_value_at_row_position(i,"rank");
                         analyses_found+="\"rank\":\""+rank+"\",";
+                        std::string a_counter=*result->field_value_at_row_position(i,"a_counter");
+                        analyses_found+="\"a_counter\":\""+a_counter+"\",";
                         std::string mood=*result->field_value_at_row_position(i,"mood");
                         analyses_found+="\"mood\":\""+mood+"\",";
+                        std::string function=*result->field_value_at_row_position(i,"function");
+                        analyses_found+="\"function\":\""+function+"\",";
                         std::string counter=*result->field_value_at_row_position(i,"counter");
                         analyses_found+="\"counter\":\""+counter+"\",";
                         std::string level=*result->field_value_at_row_position(i,"level");
@@ -548,6 +554,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
         }
     }
     if(analyses_found.empty()==false){
+        std::cout<<analyses_found<<std::endl;
         analyses_found.pop_back();
         analyses_found="{\"analyses\":["+analyses_found+"]}";
         p_analyses_found=new char[analyses_found.length()+1];

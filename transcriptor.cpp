@@ -22,27 +22,28 @@ std::string transcriptor::value_to_string(rapidjson::Value& jsonvalue){
 std::string transcriptor::transcribe(){
     std::string script;
     std::vector<std::string> arguments;
-    rapidjson::Value morphology,syntax,semantics;
 
     if(jsondoc.HasMember("analyses")==true){
         rapidjson::Value& analysesArray = jsondoc["analyses"];
         if(analysesArray.IsArray()==true&&analysesArray.Size()>0){
             rapidjson::Value& analysis=analysesArray[0];//analyses are ranked, the first is the best
-            morphology=analysis["morphology"];
-            syntax=analysis["syntax"];
-            semantics=analysis["semantics"];
+            rapidjson::Value& morphology=analysis["morphology"];
+            rapidjson::Value& syntax=analysis["syntax"];
+            rapidjson::Value& semantics=analysis["semantics"];
             rapidjson::Value relatedSemantics;
             if(analysis.HasMember("related semantics")==true){
                 relatedSemantics=analysis["related semantics"];
             }
             rapidjson::Value& functors=analysis["functors"];
-            rapidjson::Value& analysis_deps=analysis["analysis_deps"];
             if(analysis.HasMember("errors")==false){
                 if(semantics.Size()>0){
                     script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
-                    std::string analysis_deps_escaped=value_to_string(analysis_deps);
-                    find_replace(analysis_deps_escaped,"\"","\\\"");
-                    script="analysis_deps='"+analysis_deps_escaped+"';"+script;
+                    if(analysis.HasMember("analysis_deps")==true){
+                        rapidjson::Value& analysis_deps=analysis["analysis_deps"];
+                        std::string analysis_deps_escaped=value_to_string(analysis_deps);
+                        find_replace(analysis_deps_escaped,"\"","\\\"");
+                        script="analysis_deps='"+analysis_deps_escaped+"';"+script;
+                    }
                 }
                 else{
 

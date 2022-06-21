@@ -128,8 +128,9 @@ source text,/*user name or any other source of the utterance*/
 timestamp int,/*epoch*/
 sentence text,
 rank smallint,/*nr of constants, the smaller the better*/
+a_counter smallint,
 analysis text,
-PRIMARY KEY(source,timestamp,sentence,rank)
+PRIMARY KEY(source,timestamp,sentence,rank,a_counter)
 );
 
 /*TODO:add language*/
@@ -219,6 +220,7 @@ source text,
 timestamp int,
 sentence text,
 rank smallint,
+a_counter smallint,
 mood text,
 function text,
 counter smallint,
@@ -231,5 +233,5 @@ dependency text,
 ref_d_key smallint,
 tags text,
 c_value text,
-PRIMARY KEY(source,timestamp,sentence,rank,mood,function)/*key contains that of the analyses table to be able to make match*/
+PRIMARY KEY(source,timestamp,sentence,rank,a_counter,mood,function)/*key contains that of the analyses table to be able to make match*/
 );

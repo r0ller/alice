@@ -1,4 +1,3 @@
-#include "hilib.h"
 #include "js_transcriptor.h"
 #include "sh_transcriptor.h"
 
@@ -23,4 +22,3 @@ const char *hi_transcribe(const char *transcriptor,const char *analyses){
     }
     return script_chr;
 }
-

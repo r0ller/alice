@@ -3,6 +3,9 @@ BEGIN;
 
 insert into SETTINGS values('main_symbol','main_verb');
 insert into SETTINGS values('main_verb','V');
+/*insert into SETTINGS values('imperative_mood_tag','imperative');
+insert into SETTINGS values('interrogative_mood_tag','interrogative');
+insert into SETTINGS values('indicative_mood_tag','indicative');*/
 
 insert into ROOT_TYPE values('H');
 insert into ROOT_TYPE values('N');
@@ -180,6 +183,49 @@ insert into SYMBOLS values('ENG_ConjPVP','ENG',NULL);
 insert into SYMBOLS values('ENG_PVPConj','ENG',NULL);
 insert into SYMBOLS values('ENG_PVPbar','ENG',NULL);
 insert into SYMBOLS values('ENG_PNVPbar','ENG',NULL);
+/*
+insert into SYMBOLS values('ENG_Vbar5','ENG','Vbar1 indicative mood');
+insert into SYMBOLS values('FullStop', 'ENG', 'FullStop');
+insert into SYMBOLS values('QuestionMark', 'ENG', 'QuestionMark');
+insert into SYMBOLS values('ExclamationMark', 'ENG', 'ExclamationMark');
+insert into SYMBOLS values('Punct', 'ENG', 'Punctuation');
+insert into SYMBOLS values('ENG_Punct', 'ENG', 'Punctuation');
+insert into SYMBOLS values('ENG_Punct_Stem', 'ENG', 'Punctuation');
+insert into SYMBOLS values('t_ENG_Punct_Stem', 'ENG', 'Punctuation');
+insert into SYMBOLS values('t_ENG_Punct_FullStop', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Punct_FullStop', 'ENG', NULL);
+insert into SYMBOLS values('t_ENG_Punct_QuestionMark', 'ENG', NULL);
+insert into SYMBOLS values('t_ENG_Punct_ExclamationMark', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Punct_QuestionMark', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Punct_ExclamationMark', 'ENG', NULL);
+insert into SYMBOLS values('Pron', 'ENG', 'Pronoun');
+insert into SYMBOLS values('3sg', 'ENG', '3rd person singular');
+insert into SYMBOLS values('wh', 'ENG', 'question word');
+insert into SYMBOLS values('t_ENG_Pron_Stem', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Pron_Stem', 'ENG', NULL);
+insert into SYMBOLS values('t_ENG_Pron_3sg', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Pron_3sg', 'ENG', NULL);
+insert into SYMBOLS values('t_ENG_Pron_wh', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Pron_wh', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Pron_qw', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Pron', 'ENG', NULL);
+insert into SYMBOLS values('ENG_Vbar6','ENG','questioning');
+
+insert into SYMBOLS values('HUN_Vbar5','HUN','Vbar1 indicative mood');
+insert into SYMBOLS values('FullStop', 'HUN', 'FullStop');
+insert into SYMBOLS values('QuestionMark', 'HUN', 'QuestionMark');
+insert into SYMBOLS values('ExclamationMark', 'HUN', 'ExclamationMark');
+insert into SYMBOLS values('Punct', 'HUN', 'Punctuation');
+insert into SYMBOLS values('HUN_Punct', 'HUN', 'Punctuation');
+insert into SYMBOLS values('HUN_Punct_Stem', 'HUN', 'Punctuation');
+insert into SYMBOLS values('t_HUN_Punct_Stem', 'HUN', 'Punctuation');
+insert into SYMBOLS values('t_HUN_Punct_FullStop', 'HUN', NULL);
+insert into SYMBOLS values('HUN_Punct_FullStop', 'HUN', NULL);
+insert into SYMBOLS values('t_HUN_Punct_QuestionMark', 'HUN', NULL);
+insert into SYMBOLS values('t_HUN_Punct_ExclamationMark', 'HUN', NULL);
+insert into SYMBOLS values('HUN_Punct_QuestionMark', 'HUN', NULL);
+insert into SYMBOLS values('HUN_Punct_ExclamationMark', 'HUN', NULL);
+*/
 
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerb','HUN',NULL);
@@ -494,7 +540,12 @@ insert into GCAT values('CON', 'Dat', 'HUN', '178',NULL,NULL);
 insert into GCAT values('Num', 'Dat', 'HUN', '179',NULL,NULL);
 insert into GCAT values('Noun', 'Del', 'HUN', '180',NULL,NULL);
 insert into GCAT values('Num', 'Del', 'HUN', '181',NULL,NULL);
-
+/*
+insert into GCAT values('Punct', 'Stem', 'HUN', '1',NULL,NULL);
+insert into GCAT values('Punct', 'FullStop', 'HUN', '1',NULL,NULL);
+insert into GCAT values('Punct', 'QuestionMark', 'HUN', '1',NULL,NULL);
+insert into GCAT values('Punct', 'ExclamationMark', 'HUN', '1',NULL,NULL);
+*/
 insert into FUNCTOR_DEFS values('LISTENGV_1', 'js', '1', 'listengv_1.js');
 insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', 'contactengn_1.js');
 insert into FUNCTOR_DEFS values('Num_2', 'js', '1', 'numeng_1.js');
@@ -1112,6 +1163,28 @@ insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_PVPConj',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1','ENG_PVPlist',NULL,NULL);
 
 insert into GRAMMAR values('HUN','S','HUN_VP',NULL,NULL,NULL);
+/*insert into GRAMMAR values('HUN','S','HUN_VP','HUN_Punct',NULL,
+'"const node_info& HUN_VP=sparser->get_node_info($1);
+const node_info& HUN_Punct=sparser->get_node_info($2);
+std::vector<unsigned int> nodes;
+sparser->get_nodes_by_symbol(HUN_Punct,"QuestionMark",std::string(),nodes);
+if(nodes.size()==1){
+	const node_info& punct=sparser->get_node_info(nodes[0]);
+	sparser->add_feature_to_leaf(HUN_VP,"main_verb","interrogative",true);
+}
+else{
+	nodes.clear();
+	sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),nodes);
+	if(nodes.size()==1){
+		const node_info& punct=sparser->get_node_info(nodes[0]);
+		sparser->add_feature_to_leaf(HUN_VP,"main_verb","indicative",true);
+	}
+	else{
+		sparser->add_feature_to_leaf(HUN_VP,"main_verb","imperative",true);
+	}
+}
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->HUN_VP HUN_Punct");
+$$=sparser->combine_nodes("S",HUN_VP,HUN_Punct);"');*/
 insert into GRAMMAR values('HUN','HUN_VP','HUN_ImpVerbPfx','HUN_NP',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_ImpVerbPfx','HUN_ImpVerb','HUN_Vbpfx',NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_ImpVerb','HUN_Verb_stem','HUN_Verb_lfea_ConjDefSg2',NULL,

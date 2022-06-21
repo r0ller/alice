@@ -163,7 +163,7 @@ arm32_lib:
 	cat $$arm32libfilepath > ${BUILDDIR}/hi_android/arm32/libhilib.so &\
 	;;\
 	esac;\
-	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm32libfilepath ${ARM32LIBDIR} ${ARM32LDFLAGS};
+	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm32libfilepath ${ARM32LIBDIR} ${ARM32LDFLAGS};
 
 arm64_lib:
 	ndk64toolchaindir=${NDK64BITTOOLCHAINDIR};\
@@ -183,7 +183,7 @@ arm64_lib:
 	cat $$arm64libfilepath > ${BUILDDIR}/hi_android/arm64/libhilib.so &\
 	;;\
 	esac;\
-	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm64libfilepath ${ARM64LIBDIR} ${ARM64LDFLAGS};
+	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm64libfilepath ${ARM64LIBDIR} ${ARM64LDFLAGS};
 
 js_fst:
 	mkdir -p ${BUILDDIR}/hi_js;\
@@ -230,7 +230,7 @@ embedded_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
+	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
 #POSIX breaks here: ${USERSHELL} is necessary as some shells like the default NetBSD sh does not support pushd and popd used in emsdk_env.sh
 
 node_js_lib:
@@ -246,7 +246,7 @@ node_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} -DFS=NODEJS $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/nodejs/hi.js;"
+	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} -DFS=NODEJS $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/nodejs/hi.js;"
 
 parser_generator:
 	mkdir -p ${BUILDDIR};\
@@ -291,7 +291,7 @@ help:
 	@echo;echo;echo Make targets:
 	@grep -v ^\#.* "${PROJECTSRCDIR}/Makefile"|grep -v ^[[:blank:]]|grep -v ^\\.|grep -E [a-zA-Z0-9_-][a-zA-Z0-9_-]*\([[:blank:]][a-zA-Z0-9_-][a-zA-Z0-9_-]*\)*:
 	@echo; echo No dependencies are checked currently. Please, make sure that you have the followings for your targets at least with the versions specified:
-	@echo desktop_client: rapidjson-1.1.0
+	@echo "desktop_client: rapidjson-1.1.0, nodejs (any version that can evaluate your js scripts)"
 	@echo desktop_fst, android_fst, js_fst: foma-0.9.17
 	@echo desktop_parser_db, android_parser_db, js_parser_db: sqlite3-3.8.11
 	@echo desktop_parser, android_parser, js_parser: bison-3.0.4
