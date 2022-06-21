@@ -640,37 +640,39 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                 }
                 if(mood.empty()==false){
                     std::string analyses_deps="\"analysis_deps\":[";
-                    for(unsigned int i=0;i<dependency_path.size();++i){
+                    for(unsigned int j=0;j<dependency_path.size();++j){
                         analyses_deps+="{\"source\":\""+source+"\",";
                         analyses_deps+="\"timestamp\":"+std::to_string(timestamp)+",";
                         analyses_deps+="\"sentence\":\""+transgraph::apply_json_escapes(sentence)+"\",";
                         analyses_deps+="\"rank\":"+std::to_string(nr_of_cons)+",";
+                        analyses_deps+="\"a_counter\":"+std::to_string(i+1)+",";
                         analyses_deps+="\"mood\":\""+mood+"\",";
-                        analyses_deps+="\"function\":\""+std::get<8>(dependency_path[i])+"\",";
-                        analyses_deps+="\"counter\":"+std::to_string(i)+",";
-                        analyses_deps+="\"level\":"+std::to_string(std::get<0>(dependency_path[i]))+",";
-                        analyses_deps+="\"word\":\""+std::get<1>(dependency_path[i])+"\",";
-                        analyses_deps+="\"lexeme\":\""+std::get<2>(dependency_path[i])+"\",";
-                        analyses_deps+="\"d_key\":"+std::to_string(std::get<3>(dependency_path[i]))+",";
-                        analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[i]))+",";
-                        analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[i])+"\",";
-                        analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[i]))+",";
-                        analyses_deps+="\"tags\":\""+transgraph::apply_json_escapes(std::get<7>(dependency_path[i]))+"\"},";
+                        analyses_deps+="\"function\":\""+std::get<8>(dependency_path[j])+"\",";
+                        analyses_deps+="\"counter\":"+std::to_string(j)+",";
+                        analyses_deps+="\"level\":"+std::to_string(std::get<0>(dependency_path[j]))+",";
+                        analyses_deps+="\"word\":\""+std::get<1>(dependency_path[j])+"\",";
+                        analyses_deps+="\"lexeme\":\""+std::get<2>(dependency_path[j])+"\",";
+                        analyses_deps+="\"d_key\":"+std::to_string(std::get<3>(dependency_path[j]))+",";
+                        analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[j]))+",";
+                        analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[j])+"\",";
+                        analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[j]))+",";
+                        analyses_deps+="\"tags\":\""+transgraph::apply_json_escapes(std::get<7>(dependency_path[j]))+"\"},";
                         sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
                             +"','"+std::to_string(timestamp)
                             +"','"+sqlite->escape(sentence)
                             +"','"+std::to_string(nr_of_cons)//rank
+                            +"','"+std::to_string(i+1)//a_counter
                             +"','"+mood
-                            +"','"+std::get<8>(dependency_path[i])//function
-                            +"','"+std::to_string(i)//counter
-                            +"','"+std::to_string(std::get<0>(dependency_path[i]))//level
-                            +"','"+std::get<1>(dependency_path[i])//word
-                            +"','"+std::get<2>(dependency_path[i])//lexeme
-                            +"','"+std::to_string(std::get<3>(dependency_path[i]))//d_key
-                            +"','"+std::to_string(std::get<4>(dependency_path[i]))//d_counter
-                            +"','"+std::get<5>(dependency_path[i])//dependency
-                            +"','"+std::to_string(std::get<6>(dependency_path[i]))//ref_d_key
-                            +"','"+std::get<7>(dependency_path[i])//tags
+                            +"','"+std::get<8>(dependency_path[j])//function
+                            +"','"+std::to_string(j)//counter
+                            +"','"+std::to_string(std::get<0>(dependency_path[j]))//level
+                            +"','"+std::get<1>(dependency_path[j])//word
+                            +"','"+std::get<2>(dependency_path[j])//lexeme
+                            +"','"+std::to_string(std::get<3>(dependency_path[j]))//d_key
+                            +"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
+                            +"','"+std::get<5>(dependency_path[j])//dependency
+                            +"','"+std::to_string(std::get<6>(dependency_path[j]))//ref_d_key
+                            +"','"+std::get<7>(dependency_path[j])//tags
                             +"',''"//c_value: no calculated value can be supplied here
                             +");");
                     }
@@ -682,7 +684,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
             if(analysis.back()==',') analysis.pop_back();
             analysis+="}";
             ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
-            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(nr_of_cons)+"','"+sqlite->escape(analysis)+"');");
+            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(nr_of_cons)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"');");
         }
         analysis="{\"analyses\":[";
         for(auto&& i:ranked_analyses_map){

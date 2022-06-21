@@ -3,6 +3,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include <vector>
+#include <string>
 
 class transcriptor{
     protected:

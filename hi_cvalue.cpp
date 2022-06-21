@@ -1,4 +1,3 @@
-#include "hilib.h"
 #include <iostream>
 #include "db_factory.h"
 #include "rapidjson/document.h"
@@ -16,6 +15,7 @@ int hi_state_cvalue(const char *db_uri,const char *key,const char *c_value){
         +"' and timestamp="+std::to_string(jsonKey["timestamp"].GetUint())
         +" and sentence='"+jsonKey["sentence"].GetString()
         +"' and rank="+std::to_string(jsonKey["rank"].GetUint())
+        +" and a_counter="+std::to_string(jsonKey["a_counter"].GetUint())
         +" and mood='"+jsonKey["mood"].GetString()
         +"' and function='"+jsonKey["function"].GetString()+"';";
     sqlite->exec_sql(sql_stmt);

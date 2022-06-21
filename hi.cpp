@@ -17,6 +17,7 @@ int main(int argc,char **argv){
     if(argc==6&&string(argv[1])=="-q"){
         //In case of interrogative mood each functor should return in its $1_out parameter a table appending such a json object
         //entry like in the example below in order that the main verb functor can modify it and pass the table to hi_query().
+        //Example for 'what is executable ?'
         /*analyses=hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
         "{\"lexeme\":\"WHATENGPRON\",\"c_value\":\"\",\"word\":\"what\",\"is_con\":false,\"is_qword\":true,\"mood\":\"indicative\"},"
         "{\"lexeme\":\"BEENGV\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
@@ -28,13 +29,13 @@ int main(int argc,char **argv){
         }
     }
     else if(argc==5&&string(argv[1])=="-c"){
-        //hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1654702622,\"sentence\":\"file abc is executable .\",\"rank\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","test");
+        //hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1655803024,\"sentence\":\"file abc is executable .\",\"rank\":1,\"a_counter\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","test");
         hi_state_cvalue(argv[2],argv[3],argv[4]);
     }
     else{
         while(true){
             getline(cin,text);
-            //text="list files !\n";
+            //text="hívd fel pétert\n";
             if(text.empty()==false){
                 toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 //crh=HI_VERB;
