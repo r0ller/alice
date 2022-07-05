@@ -7,5 +7,5 @@ for(i=0;i<parameterList.length;++i){
 		}
 	}
 }
-if(contact) Android.fetchContacts(contact);
-else Android.fetchContacts("");
+let result={action:'fetchContacts',params:[contact]};
+return result;
