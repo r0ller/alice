@@ -30,7 +30,7 @@ std::string js_transcriptor::args_to_jsfun_pmlist(std::vector<std::string>& argu
     return arglist;
 }
 
-std::string js_transcriptor::transcribeDependencies(rapidjson::Value& morphology,rapidjson::Value& syntax,rapidjson::Value& dependencies,rapidjson::Value& functors,std::vector<std::string>& argList){
+std::string js_transcriptor::transcribeDependencies(rapidjson::Value& morphology,rapidjson::Value& syntax,rapidjson::Value& dependencies,rapidjson::Value& functors,std::vector<std::string>& argList,bool first_call){
     std::string script;
     std::vector<std::string> arguments;
 
@@ -104,7 +104,12 @@ std::string js_transcriptor::transcribeDependencies(rapidjson::Value& morphology
         else{
             script+=morphologyVarName+"="+"\""+morphologyArg+"\";";
             if(tags.empty()==false) script+=tagsVarName+"="+"\""+tags+"\";";
-            script+=functorDef+functionName+"_out="+functionName+"('"+functionName+"',"+parameterList+","+argStr+");";
+            if(first_call==true){
+                script+=functorDef+"return "+functionName+"_out="+functionName+"('"+functionName+"',"+parameterList+","+argStr+");";
+            }
+            else{
+                script+=functorDef+functionName+"_out="+functionName+"('"+functionName+"',"+parameterList+","+argStr+");";
+            }
         }
         arguments.clear();
     }

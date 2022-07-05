@@ -29,7 +29,7 @@ std::string sh_transcriptor::args_to_shfun_pmlist(std::vector<std::string>& argu
     return arglist;
 }
 
-std::string sh_transcriptor::transcribeDependencies(rapidjson::Value& morphology,rapidjson::Value& syntax,rapidjson::Value& dependencies,rapidjson::Value& functors,std::vector<std::string>& argList){
+std::string sh_transcriptor::transcribeDependencies(rapidjson::Value& morphology,rapidjson::Value& syntax,rapidjson::Value& dependencies,rapidjson::Value& functors,std::vector<std::string>& argList,bool first_call){
     std::string script;
     std::vector<std::string> arguments;
 

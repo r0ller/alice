@@ -1,5 +1,6 @@
 #include "js_transcriptor.h"
 #include "sh_transcriptor.h"
+#include "logger.h"
 
 const char *hi_transcribe(const char *transcriptor,const char *analyses){
     sh_transcriptor *sh_trans=NULL;

@@ -28,7 +28,10 @@ std::string transcriptor::transcribe(){
         if(analysesArray.IsArray()==true&&analysesArray.Size()>0){
             rapidjson::Value& analysis=analysesArray[0];//analyses are ranked, the first is the best
             rapidjson::Value& morphology=analysis["morphology"];
-            rapidjson::Value& syntax=analysis["syntax"];
+            rapidjson::Value syntax;
+            if(analysis.HasMember("syntax")==true){
+                syntax=analysis["syntax"];
+            }
             rapidjson::Value& semantics=analysis["semantics"];
             rapidjson::Value relatedSemantics;
             if(analysis.HasMember("related semantics")==true){
@@ -37,7 +40,7 @@ std::string transcriptor::transcribe(){
             rapidjson::Value& functors=analysis["functors"];
             if(analysis.HasMember("errors")==false){
                 if(semantics.Size()>0){
-                    script=transcribeDependencies(morphology,syntax,semantics,functors,arguments);
+                    script=transcribeDependencies(morphology,syntax,semantics,functors,arguments,true);
                     if(analysis.HasMember("analysis_deps")==true){
                         rapidjson::Value& analysis_deps=analysis["analysis_deps"];
                         std::string analysis_deps_escaped=value_to_string(analysis_deps);
