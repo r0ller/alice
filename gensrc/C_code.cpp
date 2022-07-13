@@ -109,7 +109,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				sparser=NULL;
 				transgraph=NULL;
             }
-            else if(toa&HI_SEMANTICS){
+            else if(toa&HI_MORPHOLOGY&&toa&HI_SEMANTICS){
                 sparser->build_dependency_semantics(toa,crh,language,lex,token_paths);
                 delete sparser;
                 sparser=NULL;
