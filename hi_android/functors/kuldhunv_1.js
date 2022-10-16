@@ -26,4 +26,5 @@ for(i=0;i<parameterList.length;++i){
 		}
 	}
 }
-Android.assertSend(send);
+let result={action:'assertSend',params:[send]};
+return result;

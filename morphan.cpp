@@ -48,7 +48,8 @@ morphan::morphan(const std::string& lid){
 }
 
 morphan::~morphan(){
-	apply_clear(morphan::morphan_handle);
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan");
+    apply_clear(morphan::morphan_handle);
 	fsm_destroy(morphan::fst);
 	morphan::singleton_instance=NULL;
 	if(pfstname!=NULL) delete []pfstname;

@@ -18,7 +18,8 @@ jni_db::jni_db(){
 }
 
 jni_db::~jni_db(){
-	env->DeleteGlobalRef(cl_string);
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing jni db");
+    env->DeleteGlobalRef(cl_string);
 	env->DeleteGlobalRef(dbhelperobj);
 	env->DeleteGlobalRef(cl_dbhelper);
 }
@@ -44,16 +45,13 @@ void jni_db::close(){
 }
 
 const std::string jni_db::error_message(){
-	jstring error=reinterpret_cast<jstring>(env->CallObjectMethod(dbhelperobj,dbhelper_error_message));
+//    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"jni_db::error_message");
+    jstring error=reinterpret_cast<jstring>(env->CallObjectMethod(dbhelperobj,dbhelper_error_message));
 	if(env->ExceptionCheck()==JNI_TRUE){
 		env->ExceptionClear();
 	}
-	//TODO:GetStringUTFChars() uses modified UTF-8 encoding, may need to be replaced
-	//by the byteArray trick used in exec_sql below
-	std::string errmsg=std::string(env->GetStringUTFChars(error,NULL));
-	env->ReleaseStringUTFChars(error,env->GetStringUTFChars(error,NULL));
-	env->DeleteLocalRef(error);
-	return errmsg;
+    std::string errmsg=jstring2string(error);
+    return errmsg;
 }
 
 query_result *jni_db::exec_sql(const std::string& sql){

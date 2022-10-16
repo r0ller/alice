@@ -7,7 +7,7 @@ query_result::query_result(){
 }
 
 query_result::~query_result(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"query result destructor called");
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing query result");
 }
 
 std::multimap<unsigned int,field>::const_iterator query_result::row_at_position(unsigned int rowid) const{

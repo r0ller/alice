@@ -14,13 +14,13 @@ PARSERGENLDFLAGS=-lsqlite3
 NDK32BITTOOLCHAINDIR=
 NDK64BITTOOLCHAINDIR=
 ARM32CXX=armv7a-linux-androideabi23-clang++
-ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include/android -I/usr/pkg/include
-ARM32LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/armeabi-v7a
-ARM32LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
+ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include -I/usr/pkg/include
+ARM32LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/armeabi-v7a -L${NDK32BITTOOLCHAINDIR}/sysroot/usr/lib/arm-linux-androideabi/23
+ARM32LDFLAGS=-v -Wl,-soname,libhilib.so -lfoma -llog
 ARM64CXX=aarch64-linux-android23-clang++
-ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include/android -I/usr/pkg/include
-ARM64LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/arm64-v8a
-ARM64LDFLAGS=-Wl,-soname,libhilib.so -llog -lfoma -lstdc++ -latomic
+ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include -I/usr/pkg/include
+ARM64LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/arm64-v8a -L${NDK64BITTOOLCHAINDIR}/sysroot/usr/lib/aarch64-linux-android/23
+ARM64LDFLAGS=-v -Wl,-soname,libhilib.so -lfoma -llog
 JSINCLUDEDIRS=-I${BUILDDIR}/hi_js -I${PROJECTSRCDIR} -I/usr/pkg/include
 JSLIBDIR=-L${PROJECTSRCDIR}/hi_js
 JSDB=${ABSBUILDDIR}/hi_js/hi.db
@@ -163,7 +163,7 @@ arm32_lib:
 	cat $$arm32libfilepath > ${BUILDDIR}/hi_android/arm32/libhilib.so &\
 	;;\
 	esac;\
-	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm32libfilepath ${ARM32LIBDIR} ${ARM32LDFLAGS};
+	${NDK32BITTOOLCHAINDIR}/bin/${ARM32CXX} ${CXXFLAGS} $$includedirs -shared $$androidsrcfilepath -D__ANDROID__ $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${ARM32LIBDIR} ${ARM32LDFLAGS} -o $$arm32libfilepath;
 
 arm64_lib:
 	ndk64toolchaindir=${NDK64BITTOOLCHAINDIR};\
@@ -183,7 +183,7 @@ arm64_lib:
 	cat $$arm64libfilepath > ${BUILDDIR}/hi_android/arm64/libhilib.so &\
 	;;\
 	esac;\
-	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} $$androidsrcfilepath -D__ANDROID__ $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${CXXFLAGS} $$includedirs -shared -o $$arm64libfilepath ${ARM64LIBDIR} ${ARM64LDFLAGS};
+	${NDK64BITTOOLCHAINDIR}/bin/${ARM64CXX} ${CXXFLAGS} $$includedirs -shared $$androidsrcfilepath -D__ANDROID__ $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/jni_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp ${ARM64LIBDIR} ${ARM64LDFLAGS} -o $$arm64libfilepath;
 
 js_fst:
 	mkdir -p ${BUILDDIR}/hi_js;\

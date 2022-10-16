@@ -34,6 +34,11 @@ hi_android/armlibs/libpanel.a
 hi_android/armlibs/libreadline.a
 hi_android/armlibs/libtinfo.a
 hi_android/armlibs/libz.a
+hi_android/build64_foma.sh
+hi_android/build64_ncurses.sh
+hi_android/build64_readline.sh
+hi_android/build64_termcap.sh
+hi_android/build64_zlib.sh
 hi_android/foma/english.foma
 hi_android/foma/english.fst
 hi_android/foma/english.lexc

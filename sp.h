@@ -11,6 +11,7 @@
 	#include "db_factory.h"
 	#include "transgraph.h"
     #include "rapidjson/document.h"
+    #include "logger.h"
 
 	typedef struct functor_data{
 		std::string functor;
@@ -174,7 +175,7 @@
 			std::string right_node;
 		public:
 			invalid_combination(std::string left, std::string right){
-				left_node=left;
+                left_node=left;
 				right_node=right;
 			}
 			~invalid_combination() throw() {};
@@ -185,10 +186,10 @@
 				return right_node;
 			}
 			virtual const char *what() const throw(){
-				std::string message;
+                std::string message;
 
-				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
-				return message.c_str();
+                message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
+                return message.c_str();
 			}
     };
 

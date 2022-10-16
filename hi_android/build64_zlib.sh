@@ -1,0 +1,19 @@
+export PATH=~/android-ndk-r25/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+export ZLIB_SRC=~/zlib-1.2.12
+export ZLIB_BUILD=${ZLIB_SRC}/build_arm64
+mkdir $ZLIB_BUILD
+mkdir ~/zlib-1.2.12/final_arm64
+cd $ZLIB_SRC
+export TARGETMACH=aarch64-linux-android
+export CROSS=aarch64-linux-android23
+export CC=${CROSS}-clang
+export CXX=${CROSS}-clang++
+export LD=ld
+export AS=llvm-as
+export AR=llvm-ar
+export RANLIB=llvm-ranlib
+export CFLAGS=-fPIC
+cd $ZLIB_BUILD/
+$ZLIB_SRC/./configure --prefix=${ZLIB_SRC}/final_arm64
+make
+make install
