@@ -35,7 +35,7 @@ int main(int argc,char **argv){
     else{
         while(true){
             getline(cin,text);
-            //text="files\n";//"list flies .\n";
+            //text="üzenem Aliznak hogy x\n";
             if(text.empty()==false){
                 toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 //toa=HI_MORPHOLOGY|HI_SEMANTICS;

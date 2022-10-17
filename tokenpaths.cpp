@@ -26,6 +26,7 @@ tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
 }
 
 tokenpaths::~tokenpaths(){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing tokenpaths");
 }
 
 std::vector<unsigned short int> tokenpaths::path_nr_to_indices(const unsigned int path_nr){
@@ -153,12 +154,12 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 					error+="\"last word\":\""+last_word+"\"";
 				}
 				if(exception!=NULL){
-					error+=",\"message\":\""+std::string(exception->what())+"\"";
+                    error+=",\"message\":\""+std::string(exception->what())+"\"";
 				}
 				error+="}";
 			}
 			else if(reason=="invalid combination"){
-				error="{\"source\":\"hi\",";
+                error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";
 				if(validated_words.empty()==false){
                     error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";

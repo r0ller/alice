@@ -13,7 +13,8 @@ interpreter::interpreter(const unsigned char toa){
 }
 
 interpreter::~interpreter(){
-	destroy_node_infos();
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing interpreter");
+    destroy_node_infos();
 }
 
 int interpreter::set_node_info(const std::string& symbol, const lexicon& word){
@@ -1089,7 +1090,7 @@ void interpreter::calculate_longest_matching_dependency_route(const unsigned int
 			&&nodes_to_be_validated.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)==nodes_to_be_validated.end()){
 			nodes_to_be_validated.insert(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
 		}
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"for node id "+std::to_string(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)+" with functor "+get_node_info(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first).expression.lexeme
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"for node id "+std::to_string(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first)+" with functor "+get_node_info(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first).expression.lexeme
 		+" and d_key "+std::to_string(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.second)+" the nr_of_dependencies_found is: "+std::to_string(std::get<1>(node_id_and_d_key_with_nr_of_deps->nr_of_deps)));
 		node_id_with_longest_match_and_d_key=map_of_node_ids_to_total_nr_of_deps_and_d_key.find(node_id_and_d_key_with_nr_of_deps->node_id_and_d_key.first);
 		if(node_id_with_longest_match_and_d_key!=map_of_node_ids_to_total_nr_of_deps_and_d_key.end()){
@@ -1842,15 +1843,20 @@ void interpreter::build_dependency_semantics(const unsigned char& toa,const unsi
             //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
             //the verbs which currently only looks for the first verb having the same gcat set in settings db table
             //for the symbol of the main_symbol.
+            query_result *main_symbol_result=NULL;
+            main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+            std::string main_symbol=*result->field_value_at_row_position(0,"value");
+            delete main_symbol_result;
             query_result *main_verb_result=NULL;
-            main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_verb';");
+            main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
             std::string main_verb=*main_verb_result->field_value_at_row_position(0,"value");
+            delete main_verb_result;
             rapidjson::Value& morphologyArray=jsondoc["morphology"];
             std::string main_verb_word;
             rapidjson::Value morphologyObj;
             for(unsigned int i=0;i<morphologyArray.Size();++i){
                 morphologyObj=morphologyArray[i];
-                if(morphologyObj["gcat"].GetString()==main_verb){
+                if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
                     logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
                     main_verb_word=morphologyObj["word"].GetString();
                     break;

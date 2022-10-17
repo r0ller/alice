@@ -4,9 +4,8 @@ js_transcriptor::js_transcriptor(const char *analyses):transcriptor(analyses){
 
 }
 
-js_transcriptor::~js_transcriptor()
-{
-
+js_transcriptor::~js_transcriptor(){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing js transcriptor");
 }
 
 std::string js_transcriptor::args_to_jsfun_arglist(std::vector<std::string>& arguments){

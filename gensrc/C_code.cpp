@@ -155,9 +155,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 		catch(invalid_combination& exception){
-			token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
-			if(token_paths->is_any_left()==true){
+            token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+            if(token_paths->is_any_left()==true){
 				delete sparser;
 				sparser=NULL;
 				delete lex;

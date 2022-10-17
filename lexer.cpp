@@ -21,7 +21,8 @@ lexer::lexer(const char *input_string,const char *language,std::locale& locale,c
 }
 
 lexer::~lexer(){
-	destroy_words();
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing lexer");
+    destroy_words();
 }
 
 unsigned int lexer::next_token(){
@@ -555,18 +556,29 @@ void lexer::morphology_wo_cons(const std::vector<lexicon>& word_analyses,std::ve
     //2) or if multiple morpheme analyses are available but only with CON gcat, leave the one having the most tags
     for(auto& word_analysis:word_analyses){
         logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking word_analysis:"+word_analysis.word+", gcat:"+word_analysis.gcat+", lexeme:"+word_analysis.lexeme+", morphemes:"+std::to_string(word_analysis.morphalytics->morphemes().size()));
+        bool add_word=false;
+        bool new_word=true;
         for(auto word_wo_con=words_wo_cons.begin();word_wo_con!=words_wo_cons.end();){
             logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking word_wo_con:"+word_wo_con->word+", gcat:"+word_wo_con->gcat+", lexeme:"+word_wo_con->lexeme+", morphemes:"+std::to_string(word_wo_con->morphalytics->morphemes().size()));
-            if(word_analysis.word==word_wo_con->word&&word_analysis.gcat==word_wo_con->gcat&&word_analysis.lexeme==word_wo_con->lexeme
-               &&word_analysis.morphalytics->morphemes().size()>word_wo_con->morphalytics->morphemes().size()){
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"word_analysis word has more morphemes");
-                word_wo_con=words_wo_cons.erase(word_wo_con);
+            std::string word_analysis_word;
+            std::string word_wo_con_word;
+            if(word_analysis.morphalytics==NULL) word_analysis_word=word_analysis.word;
+            else word_analysis_word=word_analysis.morphalytics->word();
+            if(word_wo_con->morphalytics==NULL) word_wo_con_word=word_wo_con->word;
+            else word_wo_con_word=word_wo_con->morphalytics->word();
+            if(word_analysis_word==word_wo_con_word){
+                new_word=false;
+                if(word_analysis.gcat==word_wo_con->gcat&&word_analysis.lexeme==word_wo_con->lexeme&&word_analysis.morphalytics->morphemes().size()>word_wo_con->morphalytics->morphemes().size()||word_analysis.gcat!="CON"&&word_wo_con->gcat=="CON"){
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"word_analysis word has more morphemes");
+                    word_wo_con=words_wo_cons.erase(word_wo_con);
+                    add_word=true;
+                }
             }
             else{
                 ++word_wo_con;
             }
         }
-        words_wo_cons.push_back(word_analysis);
+        if(add_word==true||new_word==true) words_wo_cons.push_back(word_analysis);
     }
     return;
 }
@@ -594,7 +606,7 @@ std::map<unsigned int,lexicon> lexer::find_main_verb(const std::vector<lexicon>&
     std::string main_gcat=*result->field_value_at_row_position(0,"value");
     unsigned int index=0;
     for(auto& word:words){
-        if(word.morphalytics!=NULL&&word.gcat==main_gcat){//"V"
+        if(word.morphalytics!=NULL&&main_gcat.find("<"+word.gcat+">")!=std::string::npos){
             main_verbs.insert(std::make_pair(index,word));
         }
         ++index;

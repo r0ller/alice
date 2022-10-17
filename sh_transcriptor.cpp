@@ -4,9 +4,8 @@ sh_transcriptor::sh_transcriptor(const char *analyses):transcriptor(analyses){
 
 }
 
-sh_transcriptor::~sh_transcriptor()
-{
-
+sh_transcriptor::~sh_transcriptor(){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing sh transcriptor");
 }
 
 std::string sh_transcriptor::args_to_shfun_arglist(std::vector<std::string>& arguments){

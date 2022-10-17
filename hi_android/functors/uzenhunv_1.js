@@ -12,4 +12,5 @@ for(i=0;i<parameterList.length;++i){
 		}
 	}
 }
-Android.sendMessage(contact,message);
+let result={action:'sendMessage',params:[contact,message]};
+return result;

@@ -7,4 +7,5 @@ for(i=0;i<parameterList.length;++i){
 		}
 	}
 }
-Android.openUrl(url);
+let result={action:'openUrl',params:[url]};
+return result;

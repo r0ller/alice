@@ -2,7 +2,7 @@
 	#define LOGGER_H
 
 	#ifdef __ANDROID__
-		#include "log.h"
+        #include <android/log.h>
 	#endif
 	#include <iostream>
 	#include <string>

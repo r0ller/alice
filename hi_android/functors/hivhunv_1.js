@@ -25,4 +25,5 @@ for(i=0;i<parameterList.length;++i){
 		}
 	}
 }
-Android.Call(contact);
+let result={action:'call',params:[contact]};
+return result;

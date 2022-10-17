@@ -23,7 +23,8 @@ transgraph::transgraph(const std::string& id,const std::pair<std::string,unsigne
 }
 
 transgraph::~transgraph(){
-	for(auto&& i:arguments){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing transgraph");
+    for(auto&& i:arguments){
 		if(i.second!=NULL) delete i.second;
 	}
 }

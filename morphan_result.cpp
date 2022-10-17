@@ -96,6 +96,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 }
 
 morphan_result::~morphan_result(){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan result");
 }
 
 const unsigned int& morphan_result::id() const{

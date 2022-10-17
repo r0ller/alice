@@ -10,7 +10,8 @@ sqlite_db::sqlite_db(){
 }
 
 sqlite_db::~sqlite_db(){
-	sqlite=NULL;
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing sqlite");
+    sqlite=NULL;
 }
 
 void sqlite_db::open(const std::string& filename){
