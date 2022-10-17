@@ -573,6 +573,9 @@ void lexer::morphology_wo_cons(const std::vector<lexicon>& word_analyses,std::ve
                     word_wo_con=words_wo_cons.erase(word_wo_con);
                     add_word=true;
                 }
+                else{
+                    ++word_wo_con;
+                }
             }
             else{
                 ++word_wo_con;
