@@ -1845,7 +1845,7 @@ void interpreter::build_dependency_semantics(const unsigned char& toa,const unsi
             //for the symbol of the main_symbol.
             query_result *main_symbol_result=NULL;
             main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
-            std::string main_symbol=*result->field_value_at_row_position(0,"value");
+            std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
             delete main_symbol_result;
             query_result *main_verb_result=NULL;
             main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
