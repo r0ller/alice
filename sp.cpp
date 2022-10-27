@@ -1837,7 +1837,7 @@ void interpreter::build_dependency_semantics(const unsigned char& toa,const unsi
         if(result!=NULL&&result->nr_of_result_rows()==1){
             rapidjson::Document jsondoc;
             std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,previous_analysis);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
             jsondoc.Parse(previous_analysis.c_str());
             //TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
             //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find

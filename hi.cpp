@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc,char **argv){
 
     const char *analyses,*script_chr=NULL;
-    string text,script,language="sh";
+    string text,script,language="js";
 	FILE *fp;
     char line[256];
     unsigned char toa=0,crh=0;
@@ -33,14 +33,14 @@ int main(int argc,char **argv){
         hi_state_cvalue(argv[2],argv[3],argv[4]);
     }
     else{
-        while(true){
-            getline(cin,text);
-            //text="a harmadiknak\n";
+        //while(true){
+            //getline(cin,text);
+            text="a harmadiknak\n";
             if(text.empty()==false){
-                toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-                //toa=HI_MORPHOLOGY|HI_SEMANTICS;
-                //crh=HI_VERB;
-                analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
+                //toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+                toa=HI_MORPHOLOGY|HI_SEMANTICS;
+                crh=HI_VERB;
+                analyses=hi(text.c_str(),"HUN",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
                 if(analyses!=NULL){
                     cout<<analyses<<endl;
                     script_chr=hi_transcribe(language.c_str(),analyses);
@@ -78,7 +78,7 @@ int main(int argc,char **argv){
                 }
                 text.clear();
             }
-            else break;
-        }
+            //else break;
+        //}
     }
 }

@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/llencses/AndroidStudioProjects/hi/app
+# Install script for directory: C:/Users/llencses/AndroidStudioProjects/hi_qml/app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/release/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/llencses/AndroidStudioProjects/hi_qml/app/.cxx/cmake/release/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
