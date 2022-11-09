@@ -741,3 +741,84 @@ void tokenpaths::assign_lexer(lexer *lex){
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);
 }
+
+std::string tokenpaths::add_context_reference_word(const unsigned char& crh){
+    //TODO: Consider moving this and the related methods to the interpreter class.
+    //The current implementation is not token path based which means that we try to figure out the one and only correct
+    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
+    //syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
+    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
+    //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
+    //2. check if the returned analyses has the 'errors' property
+    //3. if there's no error, return the ranked analyses
+    //4. if there's an error but there's a main verb, call build_dependency_semantics()
+    //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
+    //   of the verb finally chosen shall match the MOST of the lexemes of the human input i.e. the verb having the most
+    //   mandatory dependencies matching most of the lexemes wins. Besides that if there are mandatory dependencies that are missing,
+    //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) of the missing dependencies
+    //   together with the verb to construct a new (syntactically incorrect) sentence.
+    //   However, it's not sure if it makes sense to check earlier utterances than the latest one.
+    //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
+    //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
+    //   at the end of the interpretation
+    db *sqlite=NULL;
+    std::string modified_human_input;
+
+    sqlite=db_factory::get_instance();
+    if(crh&HI_VERB){//Currently only looking up verbs in earlier contexts is supported
+        std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+        if(main_verbs.size()==0){//Looking up verbs in earlier contexts makes only sense if there's no verb in the human input
+            //Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
+            query_result *result=NULL;
+            result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
+            if(result!=NULL){//&&result->nr_of_result_rows()==1){
+                rapidjson::Document jsondoc;
+                std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
+                jsondoc.Parse(previous_analysis.c_str());
+                //TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
+                //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
+                //the verbs which currently only looks for the first verb having the same gcat set in settings db table
+                //for the symbol of the main_symbol.
+                query_result *main_symbol_result=NULL;
+                main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+                std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
+                delete main_symbol_result;
+                query_result *main_verb_result=NULL;
+                main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
+                std::string main_verb=*main_verb_result->field_value_at_row_position(0,"value");
+                delete main_verb_result;
+                rapidjson::Value& morphologyArray=jsondoc["morphology"];
+                std::string main_verb_word;
+                rapidjson::Value morphologyObj;
+                for(unsigned int i=0;i<morphologyArray.Size();++i){
+                    morphologyObj=morphologyArray[i];
+                    if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
+                        main_verb_word=morphologyObj["word"].GetString();
+                        //TODO: Consider if the main verb shall be marked by the main verb symbol in the successful analyses when saved
+                        //so that finding the main verb in earlier contexts (analyses) is not done (like here) by comparing their
+                        //grammatical category against the grammatical categories set up for the main verb symbol in the settings table.
+                        //E.g. a setence in an earlier analysis may contain more than one verb and here we just pick the first whose
+                        //grammatical category matches any of the ones set up in the settings table but it may not be the main verb in that
+                        //sentence.
+                        break;
+                    }
+                }
+                std::string human_input=lex->work_string();
+                //In case of dependency semantics (for which this method prepares the human input) the order of words
+                //does not matter as no syntactic analysis is carried out.
+                modified_human_input=main_verb_word+" "+human_input;
+                std::locale locale=std::locale();
+                std::string language=lex->language();
+                delete lex;
+                //lex points to the same instance as ::lex so deletion is fine
+                //but to assign a new lexer the global needs to be updated as well
+                lex=new lexer(modified_human_input.c_str(),language.c_str(),locale,false,this);
+                path_nr_to_stop_at=0;//TODO:This actually reinitializes that counter for assign_lexer() to work properly but could be done nicer. Figure out how.
+                assign_lexer(lex);
+            }
+        }
+    }
+    return modified_human_input;
+}

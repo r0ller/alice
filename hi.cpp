@@ -35,7 +35,9 @@ int main(int argc,char **argv){
     else{
         //while(true){
             //getline(cin,text);
-            text="a harmadiknak\n";
+            //text="a harmadiknak\n";//"küldd\n";
+            //text="hívd fel pétert\n";
+            text="a harmadikat\n";
             if(text.empty()==false){
                 //toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 toa=HI_MORPHOLOGY|HI_SEMANTICS;

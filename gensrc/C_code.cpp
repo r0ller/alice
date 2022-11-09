@@ -25,7 +25,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source,const unsigned char crh){
 #endif
 
-    std::string analyses;
+    std::string analyses,modified_human_input;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
@@ -62,7 +62,12 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				#endif
 			}
 			locale=std::locale();
-			lex=new lexer(human_input,language,locale,false,token_paths);
+            if(modified_human_input.empty()==true){
+                lex=new lexer(human_input,language,locale,false,token_paths);
+            }
+            else{
+                lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
+            }
 			token_paths->assign_lexer(lex);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
             sparser=new interpreter(toa);
@@ -110,13 +115,20 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				transgraph=NULL;
             }
             else if(toa&HI_MORPHOLOGY&&toa&HI_SEMANTICS){
-                sparser->build_dependency_semantics(toa,crh,language,lex,token_paths);
+                if(crh>0&&modified_human_input.empty()==true){
+                    modified_human_input=token_paths->add_context_reference_word(crh);
+                }
+                while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+                    lex->next_token();
+                }
+                sparser->build_dependency_semantics(lex,token_paths);
+                //sparser->build_dependency_semantics(toa,crh,language,lex,token_paths);
                 delete sparser;
                 sparser=NULL;
                 transgraph=NULL;
-                delete lex;
-                lex=NULL;
-                break;
+                //delete lex;
+                //lex=NULL;
+                //break;
             }
             delete lex;
             lex=NULL;

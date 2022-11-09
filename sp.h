@@ -122,7 +122,8 @@
 			std::set<unsigned int> validated_terminals();
             std::vector<node_info> nodes();
             bool is_valid_combination(const unsigned int&,const unsigned int&);
-            void build_dependency_semantics(const unsigned char&,const unsigned char&,const std::string&,lexer*,tokenpaths*);
+            void build_dependency_semantics(lexer*,tokenpaths*);
+            void o_build_dependency_semantics(const unsigned char&,const unsigned char&,const std::string&,lexer*,tokenpaths*);
             void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
     };
 
