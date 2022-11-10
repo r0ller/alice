@@ -17,7 +17,7 @@ Adjust and use the build64_readline.sh script in the hi_android folder.
 4) BUILD ZLIB-1.2.12
 Adjust and use the build64_zlib.sh script in the hi_android folder.
 
-5) BUILD FOMA-0.9.18
+5) BUILD FOMA-0.9.18 or expriment with FOMA-0.10
 
 Copy all STATIC (*.a) libraries created as the output of steps 2-4) into a separate library like ~/hi_arm64libs
 
@@ -80,6 +80,7 @@ else
 	DFLAG = -soname
 endif
 
+To expriment with foma-0.10 instead, use the script build64_foma.sh
 
 After that: make (do not do make install as w/o versioning the so file will be overwritten).
 
