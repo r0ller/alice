@@ -1,1 +1,0 @@
-KULDHUNV_1_1_out="{\"morpheme id\":\"13\",\"word\":\"küldd\",\"lexeme\":\"KULDHUNV\",\"stem\":\"küld\",\"gcat\":\"Verb\",\"tags\":[\"küld[stem]\",\"Verb\",\"ConjDefSg2\"]}";

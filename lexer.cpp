@@ -555,11 +555,11 @@ void lexer::morphology_wo_cons(const std::vector<lexicon>& word_analyses,std::ve
     //different gcat and only leave the one having the most tags
     //2) or if multiple morpheme analyses are available but only with CON gcat, leave the one having the most tags
     for(auto& word_analysis:word_analyses){
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking word_analysis:"+word_analysis.word+", gcat:"+word_analysis.gcat+", lexeme:"+word_analysis.lexeme+", morphemes:"+std::to_string(word_analysis.morphalytics->morphemes().size()));
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"checking word_analysis:"+word_analysis.word+", gcat:"+word_analysis.gcat+", lexeme:"+word_analysis.lexeme+", morphemes:"+std::to_string(word_analysis.morphalytics->morphemes().size()));
         bool add_word=false;
         bool new_word=true;
         for(auto word_wo_con=words_wo_cons.begin();word_wo_con!=words_wo_cons.end();){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking word_wo_con:"+word_wo_con->word+", gcat:"+word_wo_con->gcat+", lexeme:"+word_wo_con->lexeme+", morphemes:"+std::to_string(word_wo_con->morphalytics->morphemes().size()));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"checking word_wo_con:"+word_wo_con->word+", gcat:"+word_wo_con->gcat+", lexeme:"+word_wo_con->lexeme+", morphemes:"+std::to_string(word_wo_con->morphalytics->morphemes().size()));
             std::string word_analysis_word;
             std::string word_wo_con_word;
             if(word_analysis.morphalytics==NULL) word_analysis_word=word_analysis.word;
@@ -569,7 +569,7 @@ void lexer::morphology_wo_cons(const std::vector<lexicon>& word_analyses,std::ve
             if(word_analysis_word==word_wo_con_word){
                 new_word=false;
                 if(word_analysis.gcat==word_wo_con->gcat&&word_analysis.lexeme==word_wo_con->lexeme&&word_analysis.morphalytics->morphemes().size()>word_wo_con->morphalytics->morphemes().size()||word_analysis.gcat!="CON"&&word_wo_con->gcat=="CON"){
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"word_analysis word has more morphemes");
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"word_analysis word has more morphemes");
                     word_wo_con=words_wo_cons.erase(word_wo_con);
                     add_word=true;
                 }

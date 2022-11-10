@@ -1,13 +1,9 @@
 # ninja log v5
-1	1463	631548709	CMakeFiles/jhi.dir/jni/jhi.cpp.o	5838c20bf7b95284
-1465	1625	631548709	libjhi.so	6f3cb56281c5fc56
-1	26	0	clean	44b7c75eaf04bbbf
-2	965	631548828	CMakeFiles/jhi.dir/jni/jhi.cpp.o	5838c20bf7b95284
-965	1075	631548828	libjhi.so	6f3cb56281c5fc56
-15	673	632189971	libjhi.so	6f3cb56281c5fc56
-13	3287	632419172	libjhi.so	6f3cb56281c5fc56
-28	1786	632626118	libjhi.so	6f3cb56281c5fc56
-34	953	633740170	libjhi.so	6f3cb56281c5fc56
-13	230	633748294	libjhi.so	6f3cb56281c5fc56
-18	301	633750003	libjhi.so	6f3cb56281c5fc56
-5	649	634344906	libjhi.so	6f3cb56281c5fc56
+0	3138	646012376	CMakeFiles/jhi.dir/jni/jhi.cpp.o	9f6c17e28cca5b9
+10	2613	646089721	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libjhi.so	c151acf554f45bb7
+10	3559	646089841	CMakeFiles/jhi.dir/jni/jhi.cpp.o	9f6c17e28cca5b9
+3560	5509	646089843	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libjhi.so	c151acf554f45bb7
+0	12	0	clean	44b7c75eaf04bbbf
+1	33	0	clean	44b7c75eaf04bbbf
+11	2926	646790099	CMakeFiles/jhi.dir/jni/jhi.cpp.o	9f6c17e28cca5b9
+2927	5568	646790102	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libjhi.so	c151acf554f45bb7

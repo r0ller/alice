@@ -1,61 +1,106 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
-android {
-    compileSdkVersion 29
-    configurations.all {
-        resolutionStrategy.force 'com.android.support:support-annotations:24.2.1'
+/*ext{
+    geckoviewChannel = "arm64-v8a"
+    geckoviewVersion = "90.0.20210705185941"
+}*/
+android {//set sdk versions in manifest as well!
+    namespace "com.bitroller.hi"
+
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\llencses\\.android\\.keystore\\hi_key.jks')
+            storePassword 'H1_k3y'
+            keyAlias 'Hi_key'
+            keyPassword 'H1_k3y'
+        }
     }
+
+    compileSdkVersion 33
+//    packagingOptions {
+//        jniLibs {
+//            keepDebugSymbols += "**/*.so"
+//        }
+//    }
+
     defaultConfig {
         applicationId "com.bitroller.hi"
         minSdkVersion 23
-        targetSdkVersion 29
-        versionCode 9
+        targetSdkVersion 33
+        versionCode 10
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your APK.
             //abiFilters 'armeabi-v7a', 'arm64-v8a'
+            //abiFilters 'armeabi-v7a'
             abiFilters 'arm64-v8a'
         }
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared", "-DANDROID_TOOLCHAIN=clang"
-                cppFlags "-std=c++11 -frtti -fexceptions"
+                cppFlags "-Wl,--verbose -std=c++17 -frtti -fexceptions"
             }
         }
     }
     buildTypes {
         debug {
+            debuggable true
+            jniDebuggable true
+//          TODO: set some buildConfigField that holds the buildtype value itself based on which it can be determined
+//          in the app which build is running
             buildConfigField "java.util.Date", "buildTime", "new java.util.Date(" + System.currentTimeMillis() + "L)"
         }
         release {
+//          TODO: set some buildConfigField that holds the buildtype value itself based on which it can be determined
+//          in the app which build is running
             buildConfigField "java.util.Date", "buildTime", "new java.util.Date(" + System.currentTimeMillis() + "L)"
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.sign_config
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.sign_config
             debuggable false
             jniDebuggable false
             renderscriptDebuggable false
         }
+//        unlockedDebug{
+//          TODO: set some buildConfigField that holds the buildtype value itself based on which it can be determined
+//          in the app which build is running
+//        }
+//        unlockedRelease{
+//          TODO: set some buildConfigField that holds the buildtype value itself based on which it can be determined
+//          in the app which build is running
+//        }
     }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
     }
+    //specifying ndkVersion matching the standalone version used to compile external native libs
+    //as Android Studio otherwise picks some arbitrary old version
+    ndkVersion '25.1.8937393'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     sourceSets {
         main {
-            assets.srcDirs = ['assets']
-//            jniLibs.srcDirs = 'jni' //don't use for now, put prebuilts in the default app/src/main/jniLibs
+            assets.srcDirs = ['src/main/assets']
+//            jniLibs.srcDirs = ["lib"]
         }
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    //implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
 }

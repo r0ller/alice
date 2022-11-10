@@ -60,6 +60,7 @@
 			void validate_parse_tree(const std::vector<node_info>&);
 			void invalidate_parse_tree(const std::vector<node_info>&);
 			void assign_lexer(lexer *);
+            std::string add_context_reference_word(const unsigned char&);
     };
 
 	class invalid_token_path:public std::exception{

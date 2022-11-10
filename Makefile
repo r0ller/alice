@@ -6,28 +6,28 @@ BUILDDIR=build
 ABSBUILDDIR=$$(readlink -f ${BUILDDIR})
 CXX=clang++
 CXXFLAGS=-std=c++17 -fPIC -pedantic -Wall
-INCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include
-COMMONLIBDIRS=-L/usr/pkg/lib
+INCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/local/include
+COMMONLIBDIRS=-L/usr/pkg/lib -L/usr/local/lib
 NATIVELIBDIR=-L${BUILDDIR}/hi_desktop
 NATIVEEXELDFLAGS=-Wl,-rpath=${ABSBUILDDIR}/hi_desktop -lhilib -lsqlite3 -lfoma -lz
 PARSERGENLDFLAGS=-lsqlite3
 NDK32BITTOOLCHAINDIR=
 NDK64BITTOOLCHAINDIR=
 ARM32CXX=armv7a-linux-androideabi23-clang++
-ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include -I/usr/pkg/include
+ARM32INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK32BITTOOLCHAINDIR}/sysroot/usr/include -I/usr/pkg/include -I/usr/local/include
 ARM32LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/armeabi-v7a -L${NDK32BITTOOLCHAINDIR}/sysroot/usr/lib/arm-linux-androideabi/23
 ARM32LDFLAGS=-v -Wl,-soname,libhilib.so -lfoma -llog
 ARM64CXX=aarch64-linux-android23-clang++
-ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include -I/usr/pkg/include
+ARM64INCLUDEDIRS=-I${BUILDDIR}/hi_android -I${PROJECTSRCDIR} -I${PROJECTSRCDIR}/hi_android/hi/app/jni -I${NDK64BITTOOLCHAINDIR}/sysroot/usr/include -I/usr/pkg/include -I/usr/local/include
 ARM64LIBDIR=-L${PROJECTSRCDIR}/hi_android/hi/app/ndkLibs/arm64-v8a -L${NDK64BITTOOLCHAINDIR}/sysroot/usr/lib/aarch64-linux-android/23
 ARM64LDFLAGS=-v -Wl,-soname,libhilib.so -lfoma -llog
-JSINCLUDEDIRS=-I${BUILDDIR}/hi_js -I${PROJECTSRCDIR} -I/usr/pkg/include
+JSINCLUDEDIRS=-I${BUILDDIR}/hi_js -I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/local/include
 JSLIBDIR=-L${PROJECTSRCDIR}/hi_js
 JSDB=${ABSBUILDDIR}/hi_js/hi.db
 JSFST=${ABSBUILDDIR}/hi_js/english.fst
 EMSCRIPTENDIR=
 USERSHELL=$$(getent passwd $$(whoami)|cut -d: -f7)
-TESTSINCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/pkg/include/python3.7
+TESTSINCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/local/include -I/usr/pkg/include/python3.7
 
 #posix trick for ifdef:if DEBUG is defined on command line (even as empty), the variable with the name of
 #the concatenation of CXXFLAGS_DEBUG and ${DEBUG} will be set and CXXFLAGS_DEBUG retains its preset value

@@ -1,7 +1,7 @@
 [
 {
-  "directory": "C:/Users/llencses/AndroidStudioProjects/hi/app/.cxx/cmake/debug/arm64-v8a",
-  "command": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk-bundle\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android23 --gcc-toolchain=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/llencses/AppData/Local/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Djhi_EXPORTS -I../../../../jni  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\jhi.dir\\jni\\jhi.cpp.o -c C:\\Users\\llencses\\AndroidStudioProjects\\hi\\app\\jni\\jhi.cpp",
-  "file": "C:/Users/llencses/AndroidStudioProjects/hi/app/jni/jhi.cpp"
+  "directory": "C:/Users/llencses/AndroidStudioProjects/hi_qml/app/.cxx/cmake/debug/arm64-v8a",
+  "command": "C:\\Users\\llencses\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android23 --gcc-toolchain=C:/Users/llencses/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/llencses/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Djhi_EXPORTS -I../../../../jni  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\jhi.dir\\jni\\jhi.cpp.o -c C:\\Users\\llencses\\AndroidStudioProjects\\hi_qml\\app\\jni\\jhi.cpp",
+  "file": "C:/Users/llencses/AndroidStudioProjects/hi_qml/app/jni/jhi.cpp"
 }
 ]

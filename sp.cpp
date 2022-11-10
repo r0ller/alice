@@ -1803,8 +1803,12 @@ void interpreter::destroy_node_infos(){
 	return;
 }
 
-void interpreter::build_dependency_semantics(const unsigned char& toa,const unsigned char& crh,const std::string& language,lexer *lex,tokenpaths *tokenpaths){
-    //TODO: Consider moving this and the related methods to the interpreter class
+void interpreter::o_build_dependency_semantics(const unsigned char& toa,const unsigned char& crh,const std::string& language,lexer *lex,tokenpaths *tokenpaths){
+    //TODO: Consider moving this and the related methods to the interpreter class.
+    //The current implementation is not token path based which means that we try to figure out the one and only correct
+    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
+    //syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
+    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
     //2. check if the returned analyses has the 'errors' property
     //3. if there's no error, return the ranked analyses
@@ -1834,10 +1838,10 @@ void interpreter::build_dependency_semantics(const unsigned char& toa,const unsi
         //Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
         query_result *result=NULL;
         result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
-        if(result!=NULL&&result->nr_of_result_rows()==1){
+        if(result!=NULL){//&&result->nr_of_result_rows()==1){
             rapidjson::Document jsondoc;
             std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,previous_analysis);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
             jsondoc.Parse(previous_analysis.c_str());
             //TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
             //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
@@ -1935,6 +1939,75 @@ void interpreter::build_dependency_semantics(const unsigned char& toa,const unsi
         else{
             logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
         }
+    }
+}
+
+void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
+    //TODO: Consider moving this and the related methods to the interpreter class.
+    //The current implementation is not token path based which means that we try to figure out the one and only correct
+    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
+    //syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
+    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
+    //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
+    //2. check if the returned analyses has the 'errors' property
+    //3. if there's no error, return the ranked analyses
+    //4. if there's an error but there's a main verb, call build_dependency_semantics()
+    //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
+    //   of the verb finally chosen shall match the MOST of the lexemes of the human input i.e. the verb having the most
+    //   mandatory dependencies matching most of the lexemes wins. Besides that if there are mandatory dependencies that are missing,
+    //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) of the missing dependencies
+    //   together with the verb to construct a new (syntactically incorrect) sentence.
+    //   However, it's not sure if it makes sense to check earlier utterances than the latest one.
+    //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
+    //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
+    //   at the end of the interpretation
+    std::vector<lexicon> words=lex->word_entries();
+    std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+    if(main_verbs.size()==1){
+        std::set<unsigned int> processed_words;
+        std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
+        std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
+        std::map<unsigned int,unsigned int> word_index_to_node_id_map;
+        std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
+        unsigned int word_index=main_verb_indexed.first;
+        lexicon main_verb=main_verb_indexed.second;
+        main_verb.morphalytics->add_feature("main_verb");
+        processed_words.insert(word_index);
+        unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
+        word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
+//        try{
+            build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
+            const node_info& main_node=get_node_info(main_node_id);
+            unsigned int root_node_id=set_node_info("S",main_node);
+            node_info root_node=get_node_info(root_node_id);
+            transgraph *transgraph=NULL;
+            transgraph=longest_match_for_semantic_rules_found();
+            if(transgraph!=NULL){
+                tokenpaths->validate_parse_tree(nodes());
+                tokenpaths->validate_path(words,transgraph,true);
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
+            }
+            else{
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
+                tokenpaths->invalidate_parse_tree(nodes());
+                tokenpaths->invalidate_path(words,"semantic error",NULL);
+            }
+//        }
+//        catch(...){
+//            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
+//            exit(EXIT_FAILURE);
+//        }
+    }
+    else{
+        if(main_verbs.size()>1){
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
+        }
+        else{
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+        }
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
+        tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
+        tokenpaths->invalidate_path(words,"semantic error",NULL);
     }
 }
 

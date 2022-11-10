@@ -13,9 +13,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+//import android.support.v4.content.ContextCompat;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
@@ -52,83 +54,73 @@ public class jsi {
     private static final int PERMISSION_REQUEST_READ_PHONE_STATE = 4;
     Context mContext;
     Runnable mOneShotTask;
+    String lastCall;
     List<String> callContext;
     String messageText;
+    String mContactName;
+    String mContact;
     String messageContactName;
     String messageContactNumber;
     List<String> simNumbers;
     String dialogStep="0";
     int simId=-1;
+    String mSend;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if ("jsi_permission".equals(intent.getAction())) {
                 if (intent.hasExtra("granted") == true) {
-                    Activity activity = (Activity) mContext;
-                    activity.runOnUiThread(mOneShotTask);
+                    switch(lastCall){
+                        case "fetchContacts":
+                            fetchContacts(mContactName);
+                            break;
+                        case "call":
+                            call(mContact);
+                            break;
+                        case "assertSend":
+                            assertSend(mSend);
+                            break;
+                    }
                 }
             }
         }
     };
 
-    /**
-     * Instantiate the interface and set the context
-     */
     jsi(Context c) {
         mContext = c;
+        mContactName="";
+        mContact="";
         callContext = new ArrayList<String>();
         messageText = "";
         messageContactName = "";
         messageContactNumber = "";
+        mSend="";
     }
 
-    public void registerLocalBroadcastReceiver() {
-        IntentFilter filter = new IntentFilter("jsi_permission");
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mMessageReceiver, filter);
-    }
-
-    public void unregisterLocalBroadcastReceiver() {
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mMessageReceiver);
-    }
-
-    @JavascriptInterface
     public void fetchContacts(String contactName) {
-        class OneShotTask implements Runnable {
-            private String mContactName;
-
-            public OneShotTask(String str) {
-                mContactName = str;
-            }
-
-            @Override
-            public void run() {
-                String message = "";
-                String[] contactName = {mContactName};
-                Map<String, List<String>> Contacts=getContacts(contactName);
-                if (Contacts.isEmpty() == false) {
-                    callContext.clear();
-                    String contactListMsg = convertToContactList(Contacts, callContext);
-                    message+=contactListMsg;
-                } else {
-                    if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                        message = "Nem találtam senkit. Mondd újra a nevet akár egyenként, betűvel.";
-                    else
-                        message = "Sorry, no contact found. Please, repeat the name.";
-                }
-                Intent setText = new Intent("hiBroadcast");
-                setText.putExtra("setText", message);
-                mContext.sendBroadcast(setText);
-            }
-        }
         Activity activity = (Activity) mContext;
+        mContactName=contactName;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            mOneShotTask = new OneShotTask(contactName);
+            lastCall="fetchContacts";
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
         } else {
-            //As JS runs on UI thread, performing any operations on variables
-            //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-            //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-            activity.runOnUiThread(new OneShotTask(contactName));
+            String message = "";
+            String[] contactNames = {mContactName};
+            Map<String, List<String>> Contacts=getContacts(contactNames);
+            if (Contacts.isEmpty() == false) {
+                callContext.clear();
+                String contactListMsg = convertToContactList(Contacts, callContext);
+                message+=contactListMsg;
+            } else {
+                if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+                    message = "Nem találtam senkit. Mondd újra a nevet akár egyenként, betűvel.";
+                else
+                    message = "Sorry, no contact found. Please, repeat the name.";
+            }
+            MainActivity.setText("hi",message);
+            //Intent setText = new Intent("hiBroadcast");
+            //setText.putExtra("setText", message);
+            //mContext.sendBroadcast(setText);
         }
     }
 
@@ -171,140 +163,87 @@ public class jsi {
         return Contacts;
     }
 
-    @JavascriptInterface
-    public void Call(String Contact) {
-        class OneShotTask implements Runnable {
-            private String mContact;
-
-            public OneShotTask(String str) {
-                mContact = str;
-            }
-
-            @Override
-            public void run() {
-                int nrOfDigits = 0;
-                for (int i = 0; i < mContact.length(); ++i)
-                    if (Character.isDigit(mContact.charAt(i)) == true) ++nrOfDigits;
-                mContact=convertToNumber(mContact);
-                if (mContact.matches("^[0-9 ]+$") == true && nrOfDigits > 2) {
+    public void call(String Contact) {
+        Activity activity = (Activity) mContext;
+        mContact=Contact;
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            lastCall="Call";
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
+        } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            lastCall="Call";
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_REQUEST_CALL_PHONE);
+        } else {
+            int nrOfDigits = 0;
+            for (int i = 0; i < mContact.length(); ++i)
+                if (Character.isDigit(mContact.charAt(i)) == true) ++nrOfDigits;
+            mContact=convertToNumber(mContact);
+            if (mContact.matches("^[0-9 ]+$") == true && nrOfDigits > 2) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                callIntent.setData(Uri.parse("tel:" + mContact));
+                mContext.startActivity(callIntent);
+            } else if (mContact.matches("^[0-9]+[.]$") == true || mContact.matches("^[0-9]+$") == true && nrOfDigits < 3) {
+                int index = 0;
+                if (mContact.endsWith(".") == true)
+                    index = Integer.valueOf(mContact.substring(0, mContact.length() - 1));
+                else index = Integer.valueOf(mContact);
+                if (index == 0) {
+                    index = callContext.size();
+                }
+                if (callContext.isEmpty() == false && callContext.size() >= index) {
+                    String phoneNumber = callContext.get(index - 1);
                     Intent callIntent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    callIntent.setData(Uri.parse("tel:" + mContact));
+                    callIntent.setData(Uri.parse("tel:" + phoneNumber));
                     mContext.startActivity(callIntent);
-                } else if (mContact.matches("^[0-9]+[.]$") == true || mContact.matches("^[0-9]+$") == true && nrOfDigits < 3) {
-                    int index = 0;
-                    if (mContact.endsWith(".") == true)
-                        index = Integer.valueOf(mContact.substring(0, mContact.length() - 1));
-                    else index = Integer.valueOf(mContact);
-                    if (index == 0) {
-                        index = callContext.size();
-                    }
-                    if (callContext.isEmpty() == false && callContext.size() >= index) {
-                        String phoneNumber = callContext.get(index - 1);
+                } else {
+                    //Intent setText = new Intent("hiBroadcast");
+                    if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+                        MainActivity.setText("hi",mContact + "-ként nem találtam senkit.");
+                        //setText.putExtra("setText", mContact + "-ként nem találtam senkit.");
+                    else
+                        MainActivity.setText("hi","Sorry, no contact found as " + mContact + " entry.");
+                        //setText.putExtra("setText", "Sorry, no contact found as " + mContact + " entry.");
+                    //mContext.sendBroadcast(setText);
+                }
+            } else {
+                String[] contactName = {mContact};
+                Map<String, List<String>> Contacts=getContacts(contactName);
+                if (Contacts.isEmpty() == false) {
+                    String phoneNumber = getExactContact(Contacts, contactName[0]);
+                    if (phoneNumber.isEmpty() == false) {
                         Intent callIntent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         callIntent.setData(Uri.parse("tel:" + phoneNumber));
                         mContext.startActivity(callIntent);
                     } else {
-                        Intent setText = new Intent("hiBroadcast");
-                        if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                            setText.putExtra("setText", mContact + "-ként nem találtam senkit.");
-                        else
-                            setText.putExtra("setText", "Sorry, no contact found as " + mContact + " entry.");
-                        mContext.sendBroadcast(setText);
+                        String message = "";
+                        callContext.clear();
+                        String contactListMsg = convertToContactList(Contacts, callContext);
+                        message+=contactListMsg;
+                        MainActivity.setText("hi",message);
+                        //Intent setText = new Intent("hiBroadcast");
+                        //setText.putExtra("setText", message);
+                        //mContext.sendBroadcast(setText);
                     }
                 } else {
-                    String[] contactName = {mContact};
-                    Map<String, List<String>> Contacts=getContacts(contactName);
-                    if (Contacts.isEmpty() == false) {
-                        String phoneNumber = getExactContact(Contacts, contactName[0]);
-                        if (phoneNumber.isEmpty() == false) {
-                            Intent callIntent = new Intent(Intent.ACTION_CALL).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            callIntent.setData(Uri.parse("tel:" + phoneNumber));
-                            mContext.startActivity(callIntent);
-                        } else {
-                            String message = "";
-                            callContext.clear();
-                            String contactListMsg = convertToContactList(Contacts, callContext);
-                            message+=contactListMsg;
-                            Intent setText = new Intent("hiBroadcast");
-                            setText.putExtra("setText", message);
-                            mContext.sendBroadcast(setText);
-                        }
-                    } else {
-                        Intent setText = new Intent("hiBroadcast");
-                        if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                            setText.putExtra("setText", "Nem találtam senkit. Mondd újra a nevet akár egyenként, betűvel.");
-                        else
-                            setText.putExtra("setText", "Sorry, no contact found. Please, repeat the name.");
-                        mContext.sendBroadcast(setText);
-                        Intent callingIntent = new Intent(MainActivity.getContext(), MainActivity.class);
-                        callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        callingIntent.putExtra("tryagain", "true");
-                        callingIntent.putExtra("nextAnalysis", "true");
-                        MainActivity.getContext().startActivity(callingIntent);
-                    }
+                    //Intent setText = new Intent("hiBroadcast");
+                    if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+                        MainActivity.setText("hi","Nem találtam senkit. Mondd újra a nevet akár egyenként, betűvel.");
+                        //setText.putExtra("setText", "Nem találtam senkit. Mondd újra a nevet akár egyenként, betűvel.");
+                    else
+                        MainActivity.setText("hi","Sorry, no contact found. Please, repeat the name.");
+                        //setText.putExtra("setText", "Sorry, no contact found. Please, repeat the name.");
+                    //mContext.sendBroadcast(setText);
+                    //TODO: set something here (dialogstep?) to indicate that dependency semantics needs to be triggered when only a name is repeated
+                    /*Intent callingIntent = new Intent(MainActivity.getContext(), MainActivity.class);
+                    callingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    callingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    callingIntent.putExtra("tryagain", "true");
+                    callingIntent.putExtra("nextAnalysis", "true");
+                    MainActivity.getContext().startActivity(callingIntent);*/
                 }
             }
         }
-        Activity activity = (Activity) mContext;
-
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            mOneShotTask = new OneShotTask(Contact);
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
-        } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            mOneShotTask = new OneShotTask(Contact);
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_REQUEST_CALL_PHONE);
-        } else {
-            //As JS runs on UI thread, performing any operations on variables
-            //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-            //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-            activity.runOnUiThread(new OneShotTask(Contact));
-        }
     }
 
-    @JavascriptInterface
-    public void Toast(String text) {
-        class OneShotTask implements Runnable {
-            private String mText;
-
-            public OneShotTask(String str) {
-                mText = str;
-            }
-
-            @Override
-            public void run() {
-                Toast.makeText(mContext, mText, Toast.LENGTH_LONG).show();
-            }
-        }
-        Activity activity = (Activity) mContext;
-        //As JS runs on UI thread, performing any operations on variables
-        //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-        //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-        activity.runOnUiThread(new OneShotTask(text));
-    }
-
-    @JavascriptInterface
-    public void Log(String text) {
-        class OneShotTask implements Runnable {
-            private String mText;
-
-            public OneShotTask(String str) {
-                mText = str;
-            }
-
-            @Override
-            public void run() {
-                Log.i("hi", mText);
-            }
-        }
-        Activity activity = (Activity) mContext;
-        //As JS runs on UI thread, performing any operations on variables
-        //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-        //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-        activity.runOnUiThread(new OneShotTask(text));
-    }
-
-    @JavascriptInterface
     public void openUrl(String text) {
         WebView webView = MainActivity.getWebView();
         webView.setWebViewClient(new WebViewClient() {
@@ -356,9 +295,10 @@ public class jsi {
 //								// NOOP
 //							}
 //						}
-                        Intent setText = new Intent("hiBroadcast");
-                        setText.putExtra("setText", s);
-                        mContext.sendBroadcast(setText);
+                        MainActivity.setText("hi",s);
+                        //Intent setText = new Intent("hiBroadcast");
+                        //setText.putExtra("setText", s);
+                        //mContext.sendBroadcast(setText);
                     }
                 });
 //				view.loadUrl(js);
@@ -367,117 +307,89 @@ public class jsi {
         webView.loadUrl("http://freemail.hu");
     }
 
-    @JavascriptInterface
     public void sendMessage(String contact, String text) {
-        class OneShotTask implements Runnable {
-            private String mContact;
-            private String mText;
-
-            public OneShotTask(String contact, String text) {
-                messageContactName = contact;
-                messageContactNumber="";
-                messageText = text;
-                simId=-1;
-            }
-
-            @Override
-            public void run() {
-                dialogStep="0";
-                if(messageContactName.contentEquals(MainActivity.getRecognisedText())) messageContactName="";
-                String originalText=MainActivity.getOriginalSendMsgText();
-                if(originalText.indexOf(" hogy ")>0) {
-                    messageText = originalText.substring(MainActivity.getRecognisedText().length() - 1);
-                }
-                else{
-                    Intent setText = new Intent("hiBroadcast");
-                    if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") setText.putExtra("setText","Bocs, ezt nem tudtam értelmezni.");
-                    else setText.putExtra("setText","Sorry, couldn't interpret it.");
-                    mContext.sendBroadcast(setText);
-                    return;
-                }
-                callContext.clear();
-                Intent setText = new Intent("hiBroadcast");
-                if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                    setText.putExtra("setText", messageText + "\n\nEzt értettem. Üzenetküldés jóváhagyásához, mondd: küldd");
-                else
-                    setText.putExtra("setText", messageText + "\nThat's how I got it. Confirm sending by saying: send");
-                mContext.sendBroadcast(setText);
-            }
+        String message="";
+        dialogStep="0";
+        messageContactName=contact;
+        String originalText=MainActivity.getOriginalSendMsgText();
+        if(originalText.indexOf(" hogy ")>0) {
+            messageText = originalText.substring(MainActivity.getRecognisedText().length() - 1);
         }
-        Activity activity = (Activity) mContext;
-        //As JS runs on UI thread, performing any operations on variables
-        //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-        //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-        activity.runOnUiThread(new OneShotTask(contact, text));
+        else{
+            //Intent setText = new Intent("hiBroadcast");
+            //if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") setText.putExtra("setText","Bocs, ezt nem tudtam értelmezni.");
+            //else setText.putExtra("setText","Sorry, couldn't interpret it.");
+            //mContext.sendBroadcast(setText);
+            if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") message="Bocs, ezt nem tudtam értelmezni.";
+            else message="Sorry, couldn't interpret it.";
+            MainActivity.setText("hi",message);
+            return;
+        }
+        callContext.clear();
+        //Intent setText = new Intent("hiBroadcast");
+        //if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+            //setText.putExtra("setText", messageText + "\n\nEzt értettem. Üzenetküldés jóváhagyásához, mondd: küldd");
+        //else
+            //setText.putExtra("setText", messageText + "\nThat's how I got it. Confirm sending by saying: send");
+        //mContext.sendBroadcast(setText);
+        if(LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") message=messageText+"\n\nEzt értettem. Üzenetküldés jóváhagyásához, mondd: küldd";
+        else message=messageText+"\nThat's how I got it. Confirm sending by saying: send";
+        MainActivity.setText("hi",message);
     }
 
-    @JavascriptInterface
     public void assertSend(String send) {
-        class OneShotTask implements Runnable {
-            private String mSend;
-
-            public OneShotTask(String send) {
-                mSend = send;
-            }
-
-            @Override
-            public void run() {
-                if(dialogStep=="0"){
-                    if (mSend.contentEquals("false")) messageText = "";
-                    else if(mSend.contentEquals("true")&&messageContactName.isEmpty()==true){
-                        dialogStep="1";
-                        Intent setText = new Intent("hiBroadcast");
-                        if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                            setText.putExtra("setText", "Nem értettem, hogy kinek küldenéd. Mondd újra a nevet akár egyenként, betűvel.");
-                        else
-                            setText.putExtra("setText", "Sorry, couldn't get who you would send it. Please, repeat the name.");
-                        mContext.sendBroadcast(setText);
-                    }
-                    else if (mSend.contentEquals("true") && messageText.isEmpty() == false) {
-                        assertSendNext();
-                    }
-                    else{
-                        //Shall never happen.
-                    }
+        Activity activity = (Activity) mContext;
+        String message="";
+        mSend = send;
+        /*if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            lastCall="assertSend";
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_READ_PHONE_STATE);
+        } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            lastCall="assertSend";
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_REQUEST_SEND_SMS);
+        }
+        else {*/
+            if(dialogStep=="0"){
+                if (mSend.contentEquals("false")) messageText = "";
+                else if(mSend.contentEquals("true")&&messageContactName.isEmpty()==true){
+                    dialogStep="1";
+                    //Intent setText = new Intent("hiBroadcast");
+                    //if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+                        //setText.putExtra("setText", "Nem értettem, hogy kinek küldenéd. Mondd újra a nevet akár egyenként, betűvel.");
+                    //else
+                        //setText.putExtra("setText", "Sorry, couldn't get who you would send it. Please, repeat the name.");
+                    //mContext.sendBroadcast(setText);
+                    if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") message="Nem értettem, hogy kinek küldenéd. Mondd újra a nevet akár egyenként, betűvel.";
+                    else message="Sorry, couldn't get who you would send it. Please, repeat the name.";
+                    MainActivity.setText("hi",message);
                 }
-                else if(dialogStep=="1"){
-                    if(mSend.contentEquals("false")==false&&mSend.contentEquals("true")==false){
-                        messageContactName=mSend;
-                        mSend="true";
-                        assertSendNext();
-                    }
-                }
-                else if(dialogStep=="2.1"){
-                    String simIdToConvert=mSend;
-                    mSend="true";
-                    simId=convertToSimId(simIdToConvert);
+                else if (mSend.contentEquals("true") && messageText.isEmpty() == false) {
                     assertSendNext();
-                }
-                else if(dialogStep=="2.2"){
-                    assertSend_2_2(mSend);
                 }
                 else{
                     //Shall never happen.
                 }
             }
-        }
-        Activity activity = (Activity) mContext;
-        //As JS runs on UI thread, performing any operations on variables
-        //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-        //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            mOneShotTask = new OneShotTask(send);
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_READ_PHONE_STATE);
-        } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            mOneShotTask = new OneShotTask(send);
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_REQUEST_SEND_SMS);
-        }
-        else {
-            //As JS runs on UI thread, performing any operations on variables
-            //coming from JS or calling any method on them results in exception: Error calling method on NPObject.
-            //The only workaround seems to be to do such things on UIthread and store results in private attributes.
-            activity.runOnUiThread(new OneShotTask(send));
-        }
+            else if(dialogStep=="1"){
+                if(mSend.contentEquals("false")==false&&mSend.contentEquals("true")==false){
+                    messageContactName=mSend;
+                    mSend="true";
+                    assertSendNext();
+                }
+            }
+            else if(dialogStep=="2.1"){
+                String simIdToConvert=mSend;
+                mSend="true";
+                simId=convertToSimId(simIdToConvert);
+                assertSendNext();
+            }
+            else if(dialogStep=="2.2"){
+                assertSend_2_2(mSend);
+            }
+            else{
+                //Shall never happen.
+            }
+        //}
     }
 
     public Map<String, List<String>> getContacts(String[] contactName) {
@@ -620,6 +532,7 @@ public class jsi {
     }
 
     public void assertSendNext(){
+        String message="";
         String phoneNumber=messageContactNumber;
         Map<String, List<String>> Contacts = null;
         String[] contactName = {messageContactName};
@@ -630,22 +543,40 @@ public class jsi {
             }
             else{
                 dialogStep="1";
-                Intent setText = new Intent("hiBroadcast");
-                if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                    setText.putExtra("setText", "Nem értettem, hogy kinek küldenéd. Mondd újra a nevet akár egyenként, betűvel.");
-                else
-                    setText.putExtra("setText", "Sorry, couldn't get who you would send it. Please, repeat the name.");
-                mContext.sendBroadcast(setText);
+                //Intent setText = new Intent("hiBroadcast");
+                //if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+                    //setText.putExtra("setText", "Nem értettem, hogy kinek küldenéd. Mondd újra a nevet akár egyenként, betűvel.");
+                //else
+                    //setText.putExtra("setText", "Sorry, couldn't get who you would send it. Please, repeat the name.");
+                //mContext.sendBroadcast(setText);
+                if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") message="Nem értettem, hogy kinek küldenéd. Mondd újra a nevet akár egyenként, betűvel.";
+                else message="Sorry, couldn't get who you would send it. Please, repeat the name.";
+                MainActivity.setText("hi",message);
                 return;
             }
         }
         if (phoneNumber.isEmpty() == false) {
             messageContactNumber = phoneNumber;
-            List<SubscriptionInfo> subscriptionInfoList;
+            //Instead of directly sending sms (as SEND_SMS permission is prohibited to use) send intent
+            Intent intent = new Intent(Intent.ACTION_SENDTO);//ACTION_VIEW?
+            //intent.setDataAndType(Uri.parse("smsto:"+phoneNumber),"text/plain");
+            intent.setData(Uri.parse("smsto:"+phoneNumber));
+            //intent.setType("text/plain");
+            intent.putExtra("sms_body", messageText);
+            if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                mContext.startActivity(intent);
+                if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") message="Elküldtem.";
+                else message="Sent.";
+                MainActivity.setText("hi",message);
+            }
+            messageContactName="";
+            messageContactNumber="";
+            //Commented out since SEND_SMS permission is not allowed to use any more
+            /*List<SubscriptionInfo> subscriptionInfoList;
             subscriptionInfoList = getSimId();
             if (simId == -1){
                 simNumbers = new ArrayList<String>();
-                String message = "";
+                message = "";
                 if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
                     message = "Melyik SIMről küldjem?\n";
                 else
@@ -658,9 +589,10 @@ public class jsi {
                 }
                 if (simNumbers.size() > 1) {
                     dialogStep = "2.1";
-                    Intent setText = new Intent("hiBroadcast");
-                    setText.putExtra("setText", message);
-                    mContext.sendBroadcast(setText);
+                    //Intent setText = new Intent("hiBroadcast");
+                    //setText.putExtra("setText", message);
+                    //mContext.sendBroadcast(setText);
+                    MainActivity.setText("hi",message);
                     return;
                 }
             }
@@ -674,16 +606,19 @@ public class jsi {
             else {
                 smsManager.sendTextMessage(phoneNumber, null, messageText, null, null);
             }
-            Intent setText = new Intent("hiBroadcast");
-            if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
-                setText.putExtra("setText", "Elküldtem.");
-            else
-                setText.putExtra("setText", "Sent.");
-            mContext.sendBroadcast(setText);
+            //Intent setText = new Intent("hiBroadcast");
+            //if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
+                //setText.putExtra("setText", "Elküldtem.");
+            //else
+                //setText.putExtra("setText", "Sent.");
+            //mContext.sendBroadcast(setText);
+            if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU") message="Elküldtem.";
+            else message="Sent.";
+            MainActivity.setText("hi",message);*/
         }
         else{
             dialogStep="2.2";
-            String message = "";
+            message = "";
             if (LanguageChecker.getInstance().getDefaultLanguage() == "hu-HU")
                 message = "Többet találtam. Kinek küldjem?\n";
             else
@@ -691,19 +626,20 @@ public class jsi {
             callContext.clear();
             String contactListMsg = convertToContactList(Contacts, callContext);
             message+=contactListMsg;
-            Intent setText = new Intent("hiBroadcast");
-            setText.putExtra("setText", message);
-            mContext.sendBroadcast(setText);
+            //Intent setText = new Intent("hiBroadcast");
+            //setText.putExtra("setText", message);
+            //mContext.sendBroadcast(setText);
+            MainActivity.setText("hi",message);
         }
     }
 
-    public List<SubscriptionInfo> getSimId(){
+    /*public List<SubscriptionInfo> getSimId(){
         //https://stackoverflow.com/questions/55391153/app-crashes-while-sending-sms-via-smsmanager
         //SubscriptionManager subscriptionManager = SubscriptionManager.from(mContext);
         SubscriptionManager subscriptionManager = (SubscriptionManager) mContext.getSystemService("telephony_subscription_service");
         List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
         return subscriptionInfoList;
-    }
+    }*/
 
     public void assertSend_2_2(String number){
         //TODO: handle in the langugae model:

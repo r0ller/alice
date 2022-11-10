@@ -299,10 +299,10 @@ public class AnalysisParser {
         for(int i=0;i<dependencies.length();++i){
             JSONObject functorObj=dependencies.optJSONObject(i);
             if(functorObj.getString("functor").contentEquals(functor)
-                &&functorObj.getString("d_key").contentEquals(d_key)){
-                   functorFound=functorObj;
-                   index.set(i);
-                   break;
+                    &&functorObj.getString("d_key").contentEquals(d_key)){
+                functorFound=functorObj;
+                index.set(i);
+                break;
             }
         }
         return functorFound;
@@ -313,7 +313,7 @@ public class AnalysisParser {
         for(int index=0;index<dependencies.length();++index){
             JSONObject functorObj=dependencies.optJSONObject(index);
             if(functorObj.getString("functor").contentEquals(functor)
-                &&functorObj.getString("d_key").contentEquals(d_key)){
+                    &&functorObj.getString("d_key").contentEquals(d_key)){
                 functorsFound.put(functorObj);
             }
         }
@@ -504,7 +504,7 @@ public class AnalysisParser {
             }
             else{
             }
-            }
+        }
         catch(org.json.JSONException e){
 
         }
