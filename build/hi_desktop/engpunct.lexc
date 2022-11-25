@@ -1,0 +1,13 @@
+!!!engpunct.lexc!!!
+
+Multichar_Symbols [stem] +Punct +FullStop +QuestionMark +ExclamationMark
+
+LEXICON Root
+
+Punctuation ;
+
+LEXICON Punctuation
+
+.[stem]+Punct+FullStop:. #;
+?[stem]+Punct+QuestionMark:? #;
+%![stem]+Punct+ExclamationMark:%! #;

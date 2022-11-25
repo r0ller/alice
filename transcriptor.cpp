@@ -32,13 +32,16 @@ std::string transcriptor::transcribe(){
             if(analysis.HasMember("syntax")==true){
                 syntax=analysis["syntax"];
             }
-            rapidjson::Value& semantics=analysis["semantics"];
             rapidjson::Value relatedSemantics;
             if(analysis.HasMember("related semantics")==true){
                 relatedSemantics=analysis["related semantics"];
             }
-            rapidjson::Value& functors=analysis["functors"];
-            if(analysis.HasMember("errors")==false){
+            rapidjson::Value functors;
+            if(analysis.HasMember("functors")==true){
+                functors=analysis["functors"];
+            }
+            if(analysis.HasMember("semantics")==true&&analysis.HasMember("errors")==false){
+                rapidjson::Value& semantics=analysis["semantics"];
                 if(semantics.Size()>0){
                     script=transcribeDependencies(morphology,syntax,semantics,functors,arguments,true);
                     if(analysis.HasMember("analysis_deps")==true){

@@ -1,0 +1,82 @@
+!!!engnum.lexc!!!
+
+Multichar_Symbols [stem] +Num +Npref+
++Npref1+ +Npref2+ +Npref3+ +Npref4+
++Npref5+ +Npref6+ +Npref7+ +Npref8+
++Npref9+ +Npref1nn+ +Npref1nnn+
++Npref1n+ +Npref2n+ +Npref3n+ +Npref4n+
++Npref5n+ +Npref6n+ +Npref7n+ +Npref8n+
++Npref9n+ +Nom +Ord
+
+LEXICON Root
+
+NumPref;
+
+LEXICON Num
+one	NumSuffix;
+two	NumSuffix;
+three	NumSuffix;
+four	NumSuffix;
+five	NumSuffix;
+six	NumSuffix;
+seven	NumSuffix;
+eight	NumSuffix;
+nine	NumSuffix;
+one[stem]+Num+Ord:first #;
+two[stem]+Num+Ord:second #;
+three[stem]+Num+Ord:third #;
+four[stem]+Num+Ord:fourth #;
+five[stem]+Num+Ord:fifth #;
+six[stem]+Num+Ord:sixth #;
+seven[stem]+Num+Ord:seventh #;
+eight[stem]+Num+Ord:eighth #;
+nine[stem]+Num+Ord:ninth #;
+
+LEXICON Num1
+ten 		Num1Suffix;
+one:eleven	Num1Suffix;
+two:twelve	Num1Suffix;
+three:thirteen	Num1Suffix;
+four:fourteen	Num1Suffix;
+five:fifteen	Num1Suffix;
+six:sixteen	Num1Suffix;
+seven:seventeen	Num1Suffix;
+eight:eighteen	Num1Suffix;
+nine:nineteen	Num1Suffix;
+Num1Suffix;
+
+LEXICON NumPref
+
+zero:zero Num1Suffix;
+Num;
++Npref1n+:0 Num1;
++Npref2n+:twenty- Num;
++Npref3n+:thirty- Num;
++Npref4n+:fourty Num;
++Npref5n+:fifty- Num;
++Npref6n+:sixty- Num;
++Npref7n+:seventy- Num;
++Npref8n+:eighty- Num;
++Npref9n+:ninety- Num;
++Npref2n+twenty:twenty Num1Suffix;
++Npref3n+thirty:thirty Num1Suffix;
++Npref4n+fourty:fourty Num1Suffix;
++Npref5n+fifty:fifty Num1Suffix;
++Npref6n+sixty:sixty Num1Suffix;
++Npref7n+seventy:seventy Num1Suffix;
++Npref8n+eighty:eighty Num1Suffix;
++Npref9n+ninety:ninety Num1Suffix;
+
+Lexicon NumSuffix
+[stem]+Num:0 Nom;
+
+Lexicon Num1Suffix
+two[stem]+Num+Ord:twelfth #;
+[stem]+Num:^th Ord;
+[stem]+Num:0 Nom;
+
+Lexicon Nom
++Nom:0 #;
+
+Lexicon Ord
++Ord:0 #;

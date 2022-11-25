@@ -1,0 +1,40 @@
+!!!english.lexc!!!
+
+Multichar_Symbols [stem] +V +Sg +Pl +PREP +DET +PRON +3sg +Aux +wh
+
+LEXICON Root
+
+Verb ;
+Preposition ;
+Determiner ;
+Pronoun ;
+
+LEXICON Verb
+
+call Vinf;
+list Vinf;
+be[stem]+V+3sg+Aux:is #;
+
+LEXICON Vinf
+
+[stem]+V:0 #;
+
+LEXICON Preposition
+
+with Pinf;
+
+LEXICON Pinf
+
+[stem]+PREP:0 #;
+
+LEXICON Determiner
+
+the[stem]+DET:the #;
+
+LEXICON Pronoun
+
+when Pron;
+
+LEXICON Pron
+
+[stem]+PRON+wh:0 #;

@@ -667,7 +667,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                             +"','"+std::get<8>(dependency_path[j])//function
                             +"','"+std::to_string(j)//counter
                             +"','"+std::to_string(std::get<0>(dependency_path[j]))//level
-                            +"','"+std::get<1>(dependency_path[j])//word
+                            +"','"+sqlite->escape(std::get<1>(dependency_path[j]))//word
                             +"','"+std::get<2>(dependency_path[j])//lexeme
                             +"','"+std::to_string(std::get<3>(dependency_path[j]))//d_key
                             +"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
