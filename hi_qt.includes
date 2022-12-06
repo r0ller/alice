@@ -5,3 +5,4 @@ hi_desktop/functors
 build/hi_desktop
 /usr/pkg/include
 hi_android
+build/hi_desktop/functors

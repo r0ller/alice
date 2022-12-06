@@ -48,7 +48,8 @@ std::string transcriptor::transcribe(){
                         rapidjson::Value& analysis_deps=analysis["analysis_deps"];
                         std::string analysis_deps_escaped=value_to_string(analysis_deps);
                         find_replace(analysis_deps_escaped,"\"","\\\"");
-                        script="analysis_deps='"+analysis_deps_escaped+"';"+script;
+                        find_replace(analysis_deps_escaped,"\'","\\\'");
+                        script="analysis_deps='{\\\"analysis_deps\\\":"+analysis_deps_escaped+"}';"+script;
                     }
                 }
                 else{

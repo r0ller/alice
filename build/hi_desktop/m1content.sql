@@ -150,18 +150,29 @@ insert into GCAT values('Punct', 'FullStop', 'ENG', '1',NULL,NULL);
 insert into GCAT values('Punct', 'QuestionMark', 'ENG', '1',NULL,NULL);
 insert into GCAT values('Punct', 'ExclamationMark', 'ENG', '1',NULL,NULL);
 
+insert into FUNCTOR_DEFS values('LISTENGV_1', 'js', '1', 'listengv_1.js');
+insert into FUNCTOR_DEFS values('CONTACTENGN_1', 'js', '1', 'contactengn_1.js');
+insert into FUNCTOR_DEFS values('WITHENGPREP_1', 'js', '1', 'withengprep_1.js');
+insert into FUNCTOR_DEFS values('CALLENGV_1', 'js', '1', 'callengv_1.js');
+insert into FUNCTOR_DEFS values('Num_1', 'js', '1', 'numeng_1.js');
+insert into FUNCTOR_DEFS values('FIRSTLASTENGN_1', 'js', '1', 'firstlastengn_1.js');
+insert into FUNCTOR_DEFS values('TODAYENGN_1', 'js', '1', 'todayengn_1.js');
+insert into FUNCTOR_DEFS values('BEENGV_1', 'js', '1', 'beengv_1.js');
+
 insert into FUNCTORS values('CON', '1', NULL);
-insert into FUNCTORS values('CALLENGV', '1', NULL);
-insert into FUNCTORS values('LISTENGV', '1', NULL);
-insert into FUNCTORS values('CONTACTENGN', '1', NULL);
-insert into FUNCTORS values('Num', '1', NULL);
-insert into FUNCTORS values('FIRSTLASTENGN', '1', NULL);
-insert into FUNCTORS values('WITHENGPREP', '1', NULL);
-insert into FUNCTORS values('TODAYENGN', '1', NULL);
+insert into FUNCTORS values('CALLENGV', '1', 'CALLENGV_1');
+insert into FUNCTORS values('LISTENGV', '1', 'LISTENGV_1');
+insert into FUNCTORS values('CONTACTENGN', '1', 'CONTACTENGN_1');
+insert into FUNCTORS values('Num', '1', 'Num_1');
+insert into FUNCTORS values('FIRSTLASTENGN', '1', 'FIRSTLASTENGN_1');
+insert into FUNCTORS values('WITHENGPREP', '1', 'WITHENGPREP_1');
+insert into FUNCTORS values('TODAYENGN', '1', 'TODAYENGN_1');
 insert into FUNCTORS values('BIRTHDAYENGN', '1', NULL);
-insert into FUNCTORS values('BEENGV', '1', NULL);
+insert into FUNCTORS values('BEENGV', '1', 'BEENGV_1');
 insert into FUNCTORS values('WHENENGPRON', '1', NULL);/*its functor shall return the question word 'when' which BEENGV uses in the query*/
 insert into FUNCTORS values('DATEENGN', '1', NULL);
+
+insert into FUNCTOR_TAGS values('BEENGV', '1', 'indicative', '1', 'mood', 'indicative');
 
 insert into LEXICON values('call', 'ENG', 'V', 'CALLENGV');
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -281,7 +292,6 @@ $$=sparser->combine_nodes(parent_symbol,main_node,dependent_node);"');
 insert into GRAMMAR values('ENG','ENG_VP_Int','ENG_Vbar3','ENG_NP',NULL,NULL);
 /*}Questions related rules*/
 
-
 insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'CONTACTENGN', '1');
 insert into DEPOLEX values('CONTACTENGN', '1', '1', NULL, '1', NULL, '0', 'WITHENGPREP', '1');
 insert into DEPOLEX values('WITHENGPREP', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
@@ -320,7 +330,3 @@ insert into RULE_TO_RULE_MAP values( 'ENG_VP_Int', 'ENG_Vbar3', 'ENG_NP', '1', N
 /*end rules for questions*/
 
 COMMIT;
-/*insert into SYMBOLS values('ENG_nCON','ENG',NULL);*/
-/*insert into GRAMMAR values('ENG','ENG_nCON','ENG_1CON','ENG_CON',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_nCON','ENG_nCON','ENG_CON',NULL,NULL);*/
-/*insert into GRAMMAR values('ENG','ENG_N_Pl','ENG_nCON',NULL,NULL,NULL);*/

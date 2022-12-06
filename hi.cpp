@@ -28,9 +28,9 @@ int main(int argc,char **argv){
             cout<<analyses<<endl;
         }
     }
-    else if(argc==5&&string(argv[1])=="-c"){
-        //hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1655803024,\"sentence\":\"file abc is executable .\",\"rank\":1,\"a_counter\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","test");
-        hi_state_cvalue(argv[2],argv[3],argv[4]);
+    else if(argc==6&&string(argv[1])=="-c"){
+        //hi_state_cvalue("hi_desktop/hi.db","{\"source\":\"test\",\"timestamp\":1655803024,\"sentence\":\"file abc is executable .\",\"rank\":1,\"a_counter\":1,\"mood\":\"indicative\",\"function\":\"CON_6\"}","CON_6","test");
+        hi_state_cvalue(argv[2],argv[3],argv[4],argv[5]);
     }
     else{
         while(true){
@@ -62,6 +62,7 @@ int main(int argc,char **argv){
                                 }
                             }
                             else if(language=="js"){
+                                script="console.log((function(){"+script+"})())";
                                 ofstream *js_file=new std::ofstream("script.js");
                                 *js_file << script;
                                 js_file->close();
