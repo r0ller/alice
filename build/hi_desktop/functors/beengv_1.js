@@ -1,6 +1,6 @@
-const {exec}=require('node:child_process');
+const {execFile}=require('node:child_process');
 let tags="";
-for(i=0;i<parameterList.length;++i){
+for(let i=0;i<parameterList.length;++i){
     if(parameterList[i].indexOf('_tags')>-1){
         if(typeof arguments[i+2]!=='undefined'&&arguments[i+2].length>0){
             tags=JSON.parse(arguments[i+2]);
@@ -10,7 +10,15 @@ for(i=0;i<parameterList.length;++i){
 }
 if(tags.mood=='interrogative'){
     /*Call hi_query() as wasm exported function or node.js system call*/
-    exec('./hi -q hi_desktop/m1.db BEENGV 1 {}');
+    jsonDoc=JSON.parse(analysis_deps);
+    execFile('./hi',['-q','hi_desktop/m1.db','indicative',analysis_deps],(error, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`);
+        if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+        }
+        console.error(`stderr: ${stderr}`);
+    });
 }
 else if(tags.mood=='indicative'){
     /*Do nothing*/

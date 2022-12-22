@@ -170,11 +170,12 @@ $$=sparser->set_node_info("ENG_N",ENG_N_Sg);
 ENG_NP:
 ENG_CON_GEN ENG_N
 {
-const node_info& ENG_CON_GEN=sparser->get_node_info($1);
-const node_info& ENG_N=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CON_GEN ENG_N");
-$$=sparser->combine_nodes("ENG_NP",ENG_CON_GEN,ENG_N);
-
+const node_info& main_node=sparser->get_node_info($1);
+const node_info& dependent_node=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(dependent_node,"N",std::string("qword"));
+std::string parent_symbol="ENG_NP";
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
+$$=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
 |ENG_N 
 {
@@ -605,6 +606,7 @@ ENG_PRON_qw ENG_V_Aux
 const node_info& main_node=sparser->get_node_info($1);
 const node_info& dependent_node=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(dependent_node,"main_verb");
+sparser->add_feature_to_leaf(main_node,"PRON",std::string("qword"));
 std::string parent_symbol="ENG_Vbar3";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 $$=sparser->combine_nodes(parent_symbol,main_node,dependent_node);

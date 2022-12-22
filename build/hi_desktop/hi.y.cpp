@@ -1567,28 +1567,29 @@ yylhs.value=sparser->set_node_info("ENG_N",ENG_N_Sg);
   case 14: // ENG_NP: ENG_CON_GEN ENG_N
 #line 172 "build/hi_desktop/hi.y"
 {
-const node_info& ENG_CON_GEN=sparser->get_node_info(yystack_[1].value);
-const node_info& ENG_N=sparser->get_node_info(yystack_[0].value);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CON_GEN ENG_N");
-yylhs.value=sparser->combine_nodes("ENG_NP",ENG_CON_GEN,ENG_N);
-
+const node_info& main_node=sparser->get_node_info(yystack_[1].value);
+const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
+sparser->add_feature_to_leaf(dependent_node,"N",std::string("qword"));
+std::string parent_symbol="ENG_NP";
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
+yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 1577 "build/hi_desktop/hi.y.cpp"
+#line 1578 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 15: // ENG_NP: ENG_N
-#line 180 "build/hi_desktop/hi.y"
+#line 181 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_N");
 yylhs.value=sparser->set_node_info("ENG_NP",ENG_N);
 
 }
-#line 1588 "build/hi_desktop/hi.y.cpp"
+#line 1589 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 16: // ENG_N_Pl: ENG_N_Stem ENG_N_lfea_Pl
-#line 188 "build/hi_desktop/hi.y"
+#line 189 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_lfea_Pl=sparser->get_node_info(yystack_[0].value);
@@ -1596,22 +1597,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_St
 yylhs.value=sparser->combine_nodes("ENG_N_Pl",ENG_N_Stem,ENG_N_lfea_Pl);
 
 }
-#line 1600 "build/hi_desktop/hi.y.cpp"
+#line 1601 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 17: // ENG_N_Sg: ENG_1CON
-#line 197 "build/hi_desktop/hi.y"
+#line 198 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_1CON=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_1CON");
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_1CON);
 
 }
-#line 1611 "build/hi_desktop/hi.y.cpp"
+#line 1612 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 18: // ENG_N_Sg: ENG_N_Stem ENG_N_lfea_Sg
-#line 204 "build/hi_desktop/hi.y"
+#line 205 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_N_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_N_lfea_Sg=sparser->get_node_info(yystack_[0].value);
@@ -1619,11 +1620,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_St
 yylhs.value=sparser->combine_nodes("ENG_N_Sg",ENG_N_Stem,ENG_N_lfea_Sg);
 
 }
-#line 1623 "build/hi_desktop/hi.y.cpp"
+#line 1624 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 19: // ENG_N_Stem: t_ENG_N_Stem
-#line 213 "build/hi_desktop/hi.y"
+#line 214 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_Stem);
@@ -1631,11 +1632,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_Stem",word);
 
 }
-#line 1635 "build/hi_desktop/hi.y.cpp"
+#line 1636 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 20: // ENG_N_lfea_Pl: t_ENG_N_Pl
-#line 222 "build/hi_desktop/hi.y"
+#line 223 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_Pl);
@@ -1643,11 +1644,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_lfea_Pl",word);
 
 }
-#line 1647 "build/hi_desktop/hi.y.cpp"
+#line 1648 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 21: // ENG_N_lfea_Sg: t_ENG_N_Sg
-#line 231 "build/hi_desktop/hi.y"
+#line 232 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_N_Sg);
@@ -1655,11 +1656,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_lfea_Sg",word);
 
 }
-#line 1659 "build/hi_desktop/hi.y.cpp"
+#line 1660 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 22: // ENG_Num: ENG_Num_Pref ENG_Num
-#line 240 "build/hi_desktop/hi.y"
+#line 241 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Num_Pref=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Num=sparser->get_node_info(yystack_[0].value);
@@ -1667,22 +1668,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num->ENG_Num_P
 yylhs.value=sparser->combine_nodes("ENG_Num",ENG_Num_Pref,ENG_Num);
 
 }
-#line 1671 "build/hi_desktop/hi.y.cpp"
+#line 1672 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 23: // ENG_Num: ENG_Num_Stem
-#line 248 "build/hi_desktop/hi.y"
+#line 249 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Num_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num->ENG_Num_Stem");
 yylhs.value=sparser->set_node_info("ENG_Num",ENG_Num_Stem);
 
 }
-#line 1682 "build/hi_desktop/hi.y.cpp"
+#line 1683 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 24: // ENG_Num_Nom: ENG_Num ENG_Num_lfea_Nom
-#line 256 "build/hi_desktop/hi.y"
+#line 257 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Num=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Num_lfea_Nom=sparser->get_node_info(yystack_[0].value);
@@ -1690,11 +1691,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num_Nom->ENG_N
 yylhs.value=sparser->combine_nodes("ENG_Num_Nom",ENG_Num,ENG_Num_lfea_Nom);
 
 }
-#line 1694 "build/hi_desktop/hi.y.cpp"
+#line 1695 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 25: // ENG_Num_Ord: ENG_Num ENG_Num_lfea_Ord
-#line 265 "build/hi_desktop/hi.y"
+#line 266 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Num=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Num_lfea_Ord=sparser->get_node_info(yystack_[0].value);
@@ -1702,11 +1703,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num_Ord->ENG_N
 yylhs.value=sparser->combine_nodes("ENG_Num_Ord",ENG_Num,ENG_Num_lfea_Ord);
 
 }
-#line 1706 "build/hi_desktop/hi.y.cpp"
+#line 1707 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 26: // ENG_Num_Pref: t_ENG_Num_Npref1n
-#line 274 "build/hi_desktop/hi.y"
+#line 275 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref1n);
@@ -1714,11 +1715,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1718 "build/hi_desktop/hi.y.cpp"
+#line 1719 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 27: // ENG_Num_Pref: t_ENG_Num_Npref2n
-#line 282 "build/hi_desktop/hi.y"
+#line 283 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref2n);
@@ -1726,11 +1727,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1730 "build/hi_desktop/hi.y.cpp"
+#line 1731 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 28: // ENG_Num_Pref: t_ENG_Num_Npref3n
-#line 290 "build/hi_desktop/hi.y"
+#line 291 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref3n);
@@ -1738,11 +1739,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1742 "build/hi_desktop/hi.y.cpp"
+#line 1743 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 29: // ENG_Num_Pref: t_ENG_Num_Npref4n
-#line 298 "build/hi_desktop/hi.y"
+#line 299 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref4n);
@@ -1750,11 +1751,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1754 "build/hi_desktop/hi.y.cpp"
+#line 1755 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 30: // ENG_Num_Pref: t_ENG_Num_Npref5n
-#line 306 "build/hi_desktop/hi.y"
+#line 307 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref5n);
@@ -1762,11 +1763,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1766 "build/hi_desktop/hi.y.cpp"
+#line 1767 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 31: // ENG_Num_Pref: t_ENG_Num_Npref6n
-#line 314 "build/hi_desktop/hi.y"
+#line 315 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref6n);
@@ -1774,11 +1775,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1778 "build/hi_desktop/hi.y.cpp"
+#line 1779 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 32: // ENG_Num_Pref: t_ENG_Num_Npref7n
-#line 322 "build/hi_desktop/hi.y"
+#line 323 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref7n);
@@ -1786,11 +1787,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1790 "build/hi_desktop/hi.y.cpp"
+#line 1791 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 33: // ENG_Num_Pref: t_ENG_Num_Npref8n
-#line 330 "build/hi_desktop/hi.y"
+#line 331 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref8n);
@@ -1798,11 +1799,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1802 "build/hi_desktop/hi.y.cpp"
+#line 1803 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 34: // ENG_Num_Pref: t_ENG_Num_Npref9n
-#line 338 "build/hi_desktop/hi.y"
+#line 339 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Npref9n);
@@ -1810,11 +1811,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 1814 "build/hi_desktop/hi.y.cpp"
+#line 1815 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 35: // ENG_Num_Stem: t_ENG_Num_Stem
-#line 347 "build/hi_desktop/hi.y"
+#line 348 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Stem);
@@ -1822,11 +1823,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Stem",word);
 
 }
-#line 1826 "build/hi_desktop/hi.y.cpp"
+#line 1827 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 36: // ENG_Num_lfea_Nom: t_ENG_Num_Nom
-#line 356 "build/hi_desktop/hi.y"
+#line 357 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Nom);
@@ -1834,11 +1835,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_lfea_Nom",word);
 
 }
-#line 1838 "build/hi_desktop/hi.y.cpp"
+#line 1839 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 37: // ENG_Num_lfea_Ord: t_ENG_Num_Ord
-#line 365 "build/hi_desktop/hi.y"
+#line 366 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Num_Ord);
@@ -1846,11 +1847,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_lfea_Ord",word);
 
 }
-#line 1850 "build/hi_desktop/hi.y.cpp"
+#line 1851 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 38: // ENG_PP: ENG_PREP ENG_NP
-#line 374 "build/hi_desktop/hi.y"
+#line 375 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_PREP=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -1858,22 +1859,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PP->ENG_PREP E
 yylhs.value=sparser->combine_nodes("ENG_PP",ENG_PREP,ENG_NP);
 
 }
-#line 1862 "build/hi_desktop/hi.y.cpp"
+#line 1863 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 39: // ENG_PREP: ENG_PREP_Stem
-#line 383 "build/hi_desktop/hi.y"
+#line 384 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_PREP_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PREP->ENG_PREP_Stem");
 yylhs.value=sparser->set_node_info("ENG_PREP",ENG_PREP_Stem);
 
 }
-#line 1873 "build/hi_desktop/hi.y.cpp"
+#line 1874 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 40: // ENG_PREP_Stem: t_ENG_PREP_Stem
-#line 391 "build/hi_desktop/hi.y"
+#line 392 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_PREP_Stem);
@@ -1881,11 +1882,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_PREP_Stem",word);
 
 }
-#line 1885 "build/hi_desktop/hi.y.cpp"
+#line 1886 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 41: // ENG_PRON_Stem: t_ENG_PRON_Stem
-#line 400 "build/hi_desktop/hi.y"
+#line 401 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_PRON_Stem);
@@ -1893,11 +1894,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_PRON_Stem",word);
 
 }
-#line 1897 "build/hi_desktop/hi.y.cpp"
+#line 1898 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 42: // ENG_PRON_lfea_wh: t_ENG_PRON_wh
-#line 409 "build/hi_desktop/hi.y"
+#line 410 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_PRON_wh);
@@ -1905,11 +1906,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_PRON_lfea_wh",word);
 
 }
-#line 1909 "build/hi_desktop/hi.y.cpp"
+#line 1910 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 43: // ENG_PRON_qw: ENG_PRON_Stem ENG_PRON_lfea_wh
-#line 418 "build/hi_desktop/hi.y"
+#line 419 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_PRON_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_PRON_lfea_wh=sparser->get_node_info(yystack_[0].value);
@@ -1917,11 +1918,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PRON_qw->ENG_P
 yylhs.value=sparser->combine_nodes("ENG_PRON_qw",ENG_PRON_Stem,ENG_PRON_lfea_wh);
 
 }
-#line 1921 "build/hi_desktop/hi.y.cpp"
+#line 1922 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 44: // ENG_Punct_ExclamationMark: t_ENG_Punct_ExclamationMark
-#line 427 "build/hi_desktop/hi.y"
+#line 428 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Punct_ExclamationMark);
@@ -1929,11 +1930,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Punct_ExclamationMark",word);
 
 }
-#line 1933 "build/hi_desktop/hi.y.cpp"
+#line 1934 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 45: // ENG_Punct_FullStop: t_ENG_Punct_FullStop
-#line 436 "build/hi_desktop/hi.y"
+#line 437 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Punct_FullStop);
@@ -1941,11 +1942,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Punct_FullStop",word);
 
 }
-#line 1945 "build/hi_desktop/hi.y.cpp"
+#line 1946 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 46: // ENG_Punct_Imp: ENG_Punct_Stem ENG_Punct_ExclamationMark
-#line 445 "build/hi_desktop/hi.y"
+#line 446 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Punct_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Punct_ExclamationMark=sparser->get_node_info(yystack_[0].value);
@@ -1953,11 +1954,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Punct_Imp->ENG
 yylhs.value=sparser->combine_nodes("ENG_Punct_Imp",ENG_Punct_Stem,ENG_Punct_ExclamationMark);
 
 }
-#line 1957 "build/hi_desktop/hi.y.cpp"
+#line 1958 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 47: // ENG_Punct_Ind: ENG_Punct_Stem ENG_Punct_FullStop
-#line 454 "build/hi_desktop/hi.y"
+#line 455 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Punct_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Punct_FullStop=sparser->get_node_info(yystack_[0].value);
@@ -1965,11 +1966,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Punct_Ind->ENG
 yylhs.value=sparser->combine_nodes("ENG_Punct_Ind",ENG_Punct_Stem,ENG_Punct_FullStop);
 
 }
-#line 1969 "build/hi_desktop/hi.y.cpp"
+#line 1970 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 48: // ENG_Punct_Int: ENG_Punct_Stem ENG_Punct_QuestionMark
-#line 463 "build/hi_desktop/hi.y"
+#line 464 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Punct_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_Punct_QuestionMark=sparser->get_node_info(yystack_[0].value);
@@ -1977,11 +1978,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Punct_Int->ENG
 yylhs.value=sparser->combine_nodes("ENG_Punct_Int",ENG_Punct_Stem,ENG_Punct_QuestionMark);
 
 }
-#line 1981 "build/hi_desktop/hi.y.cpp"
+#line 1982 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 49: // ENG_Punct_QuestionMark: t_ENG_Punct_QuestionMark
-#line 472 "build/hi_desktop/hi.y"
+#line 473 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Punct_QuestionMark);
@@ -1989,11 +1990,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Punct_QuestionMark",word);
 
 }
-#line 1993 "build/hi_desktop/hi.y.cpp"
+#line 1994 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 50: // ENG_Punct_Stem: t_ENG_Punct_Stem
-#line 481 "build/hi_desktop/hi.y"
+#line 482 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_Punct_Stem);
@@ -2001,22 +2002,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Punct_Stem",word);
 
 }
-#line 2005 "build/hi_desktop/hi.y.cpp"
+#line 2006 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 51: // ENG_V: ENG_V_Stem
-#line 490 "build/hi_desktop/hi.y"
+#line 491 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V_Stem=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem");
 yylhs.value=sparser->set_node_info("ENG_V",ENG_V_Stem);
 
 }
-#line 2016 "build/hi_desktop/hi.y.cpp"
+#line 2017 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 52: // ENG_V: ENG_V_Stem ENG_V_lfea_3sg
-#line 497 "build/hi_desktop/hi.y"
+#line 498 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V_lfea_3sg=sparser->get_node_info(yystack_[0].value);
@@ -2024,11 +2025,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem 
 yylhs.value=sparser->combine_nodes("ENG_V",ENG_V_Stem,ENG_V_lfea_3sg);
 
 }
-#line 2028 "build/hi_desktop/hi.y.cpp"
+#line 2029 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 53: // ENG_VP_Imp: ENG_V ENG_DP
-#line 506 "build/hi_desktop/hi.y"
+#line 507 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_DP=sparser->get_node_info(yystack_[0].value);
@@ -2036,22 +2037,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Imp->ENG_V 
 yylhs.value=sparser->combine_nodes("ENG_VP_Imp",ENG_V,ENG_DP);
 
 }
-#line 2040 "build/hi_desktop/hi.y.cpp"
+#line 2041 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 54: // ENG_VP_Imp: ENG_Vbar1
-#line 514 "build/hi_desktop/hi.y"
+#line 515 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Imp->ENG_Vbar1");
 yylhs.value=sparser->set_node_info("ENG_VP_Imp",ENG_Vbar1);
 
 }
-#line 2051 "build/hi_desktop/hi.y.cpp"
+#line 2052 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 55: // ENG_VP_Imp: ENG_Vbar1 ENG_PP
-#line 521 "build/hi_desktop/hi.y"
+#line 522 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar1=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_PP=sparser->get_node_info(yystack_[0].value);
@@ -2059,11 +2060,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Imp->ENG_Vb
 yylhs.value=sparser->combine_nodes("ENG_VP_Imp",ENG_Vbar1,ENG_PP);
 
 }
-#line 2063 "build/hi_desktop/hi.y.cpp"
+#line 2064 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 56: // ENG_VP_Ind: ENG_Vbar2 ENG_NP
-#line 530 "build/hi_desktop/hi.y"
+#line 531 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar2=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -2071,11 +2072,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Ind->ENG_Vb
 yylhs.value=sparser->combine_nodes("ENG_VP_Ind",ENG_Vbar2,ENG_NP);
 
 }
-#line 2075 "build/hi_desktop/hi.y.cpp"
+#line 2076 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 57: // ENG_VP_Int: ENG_Vbar3 ENG_NP
-#line 539 "build/hi_desktop/hi.y"
+#line 540 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_Vbar3=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
@@ -2083,11 +2084,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP_Int->ENG_Vb
 yylhs.value=sparser->combine_nodes("ENG_VP_Int",ENG_Vbar3,ENG_NP);
 
 }
-#line 2087 "build/hi_desktop/hi.y.cpp"
+#line 2088 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 58: // ENG_V_Aux: ENG_V ENG_V_lfea_Aux
-#line 548 "build/hi_desktop/hi.y"
+#line 549 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_V=sparser->get_node_info(yystack_[1].value);
 const node_info& ENG_V_lfea_Aux=sparser->get_node_info(yystack_[0].value);
@@ -2095,11 +2096,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V_Aux->ENG_V E
 yylhs.value=sparser->combine_nodes("ENG_V_Aux",ENG_V,ENG_V_lfea_Aux);
 
 }
-#line 2099 "build/hi_desktop/hi.y.cpp"
+#line 2100 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 59: // ENG_V_Stem: t_ENG_V_Stem
-#line 557 "build/hi_desktop/hi.y"
+#line 558 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_V_Stem);
@@ -2107,11 +2108,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_Stem",word);
 
 }
-#line 2111 "build/hi_desktop/hi.y.cpp"
+#line 2112 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 60: // ENG_V_lfea_3sg: t_ENG_V_3sg
-#line 566 "build/hi_desktop/hi.y"
+#line 567 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_V_3sg);
@@ -2119,11 +2120,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_lfea_3sg",word);
 
 }
-#line 2123 "build/hi_desktop/hi.y.cpp"
+#line 2124 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 61: // ENG_V_lfea_Aux: t_ENG_V_Aux
-#line 575 "build/hi_desktop/hi.y"
+#line 576 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_ENG_V_Aux);
@@ -2131,11 +2132,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_lfea_Aux",word);
 
 }
-#line 2135 "build/hi_desktop/hi.y.cpp"
+#line 2136 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 62: // ENG_Vbar1: ENG_V ENG_NP
-#line 584 "build/hi_desktop/hi.y"
+#line 585 "build/hi_desktop/hi.y"
 {
 const node_info& main_node=sparser->get_node_info(yystack_[1].value);
 const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
@@ -2144,11 +2145,11 @@ std::string parent_symbol="ENG_Vbar1";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 2148 "build/hi_desktop/hi.y.cpp"
+#line 2149 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 63: // ENG_Vbar2: ENG_N_Sg ENG_V_Aux
-#line 594 "build/hi_desktop/hi.y"
+#line 595 "build/hi_desktop/hi.y"
 {
 const node_info& main_node=sparser->get_node_info(yystack_[1].value);
 const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
@@ -2157,24 +2158,25 @@ std::string parent_symbol="ENG_Vbar2";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 2161 "build/hi_desktop/hi.y.cpp"
+#line 2162 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 64: // ENG_Vbar3: ENG_PRON_qw ENG_V_Aux
-#line 604 "build/hi_desktop/hi.y"
+#line 605 "build/hi_desktop/hi.y"
 {
 const node_info& main_node=sparser->get_node_info(yystack_[1].value);
 const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
 sparser->add_feature_to_leaf(dependent_node,"main_verb");
+sparser->add_feature_to_leaf(main_node,"PRON",std::string("qword"));
 std::string parent_symbol="ENG_Vbar3";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 2174 "build/hi_desktop/hi.y.cpp"
+#line 2176 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 65: // S: ENG_VP_Imp ENG_Punct_Imp
-#line 614 "build/hi_desktop/hi.y"
+#line 616 "build/hi_desktop/hi.y"
 {
 const node_info& main_node=sparser->get_node_info(yystack_[1].value);
 const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
@@ -2183,11 +2185,11 @@ std::string parent_symbol="S";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 2187 "build/hi_desktop/hi.y.cpp"
+#line 2189 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 66: // S: ENG_VP_Ind ENG_Punct_Ind
-#line 623 "build/hi_desktop/hi.y"
+#line 625 "build/hi_desktop/hi.y"
 {
 const node_info& main_node=sparser->get_node_info(yystack_[1].value);
 const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
@@ -2196,11 +2198,11 @@ std::string parent_symbol="S";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 2200 "build/hi_desktop/hi.y.cpp"
+#line 2202 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 67: // S: ENG_VP_Int ENG_Punct_Int
-#line 632 "build/hi_desktop/hi.y"
+#line 634 "build/hi_desktop/hi.y"
 {
 const node_info& main_node=sparser->get_node_info(yystack_[1].value);
 const node_info& dependent_node=sparser->get_node_info(yystack_[0].value);
@@ -2209,11 +2211,11 @@ std::string parent_symbol="S";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
 }
-#line 2213 "build/hi_desktop/hi.y.cpp"
+#line 2215 "build/hi_desktop/hi.y.cpp"
     break;
 
 
-#line 2217 "build/hi_desktop/hi.y.cpp"
+#line 2219 "build/hi_desktop/hi.y.cpp"
 
             default:
               break;
@@ -2715,12 +2717,12 @@ yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
   parser::yyrline_[] =
   {
        0,    69,    69,    77,    86,    95,   104,   113,   122,   131,
-     139,   147,   156,   163,   171,   179,   187,   196,   203,   212,
-     221,   230,   239,   247,   255,   264,   273,   281,   289,   297,
-     305,   313,   321,   329,   337,   346,   355,   364,   373,   382,
-     390,   399,   408,   417,   426,   435,   444,   453,   462,   471,
-     480,   489,   496,   505,   513,   520,   529,   538,   547,   556,
-     565,   574,   583,   593,   603,   613,   622,   631
+     139,   147,   156,   163,   171,   180,   188,   197,   204,   213,
+     222,   231,   240,   248,   256,   265,   274,   282,   290,   298,
+     306,   314,   322,   330,   338,   347,   356,   365,   374,   383,
+     391,   400,   409,   418,   427,   436,   445,   454,   463,   472,
+     481,   490,   497,   506,   514,   521,   530,   539,   548,   557,
+     566,   575,   584,   594,   604,   615,   624,   633
   };
 
   void
@@ -2801,9 +2803,9 @@ yylhs.value=sparser->combine_nodes(parent_symbol,main_node,dependent_node);
   }
 
 } // yy
-#line 2805 "build/hi_desktop/hi.y.cpp"
+#line 2807 "build/hi_desktop/hi.y.cpp"
 
-#line 640 "build/hi_desktop/hi.y"
+#line 642 "build/hi_desktop/hi.y"
 
 int yylex(yy::parser::semantic_type* yylval){
 	int token;

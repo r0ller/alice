@@ -387,7 +387,7 @@ const char *hi_query_original(const char *db_uri, const char* p_root_lexeme, con
     return p_analyses_found;
 }
 
-const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsigned int root_d_key, const char* p_dependencies){
+const char *hi_query(const char *db_uri, const char* p_mood, const char* p_dependencies){
 //TESTS:
 //hi_query("hi_desktop/hi.db","BEENGV",1,"{\"dependencies\":["
 //"{\"lexeme\":\"EXECUTABLEENGA\",\"c_value\":\"\",\"word\":\"\",\"is_con\":false,\"is_qword\":false,\"mood\":\"indicative\"},"
@@ -399,9 +399,11 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
     query_result *result=NULL;
     std::string analyses_found;
     char *p_analyses_found=NULL;
+    std::string root_lexeme;
+    unsigned int root_d_key=0;
     //std::vector<std::tuple<unsigned int, std::string, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, std::string, unsigned int>> dependencies;
 
-    std::string root_lexeme=std::string(p_root_lexeme);
+    std::string mood=std::string(p_mood);
     rapidjson::Document jsondoc;
     jsondoc.Parse(p_dependencies);
     if(jsondoc.HasMember("dependencies")==true){
@@ -411,28 +413,42 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
             sqlite->open(db_uri);
             std::map<std::string,std::pair<std::string,std::string>> lexemes_to_cvalues_cons;
             std::set<std::string> qwords;
-            std::string mood;
             for(auto& dependencyObject:dependenciesArray.GetArray()){
-                if(dependencyObject.HasMember("lexeme")==true
+                if(dependencyObject.HasMember("dependency")==true
+                    &&dependencyObject.HasMember("ref_d_key")==true
                     &&dependencyObject.HasMember("c_value")==true
                     &&dependencyObject.HasMember("word")==true
-                    &&dependencyObject.HasMember("is_con")==true
-                    &&dependencyObject.HasMember("is_qword")==true
-                    &&dependencyObject.HasMember("mood")==true){
-                    if(mood.empty()==true) mood=dependencyObject["mood"].GetString();
-                    if(dependencyObject["is_qword"].GetBool()==true){
-                        qwords.insert(dependencyObject["word"].GetString());
+                    &&dependencyObject.HasMember("tags")==true){
+                    auto& tags=dependencyObject["tags"];
+                    if(tags.HasMember("is_root")==true){
+                        if(tags["is_root"].GetString()==std::string("true")){
+                            root_lexeme=dependencyObject["dependency"].GetString();
+                            root_d_key=dependencyObject["ref_d_key"].GetUint();
+                        }
                     }
-                    else{
-                        if(dependencyObject["is_con"].GetBool()==true){
+                    if(tags.HasMember("is_qword")==true){
+                        if(tags["is_qword"].GetString()==std::string("true")){
+                            qwords.insert(dependencyObject["word"].GetString());
+                        }
+                    }
+                    //It is only possible to do it this way if transgraph::transcript() is modified in a way that it read FUNCTOR_TAGS for CONs as well
+                    //and then FUNCTOR_TAGS can have unconditional entries (with empty trigger_tag) for the CON functor.
+                    /*if(tags.HasMember("is_con")==true){
+                        if(tags["is_con"].GetString()==std::string("true")){
                             lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
                         }
-                        else{
-                            lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
-                        }
+                    }
+                    else{
+                        lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
+                    }*/
+                    if(dependencyObject["dependency"].GetString()==std::string("CON")){
+                        lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["dependency"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
+                    }
+                    else{
+                        lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["dependency"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
                     }
                 }
-                else {
+                else{
                     //TODO: error handling
                     std::cout<<"exiting: not all json parameters found"<<std::endl;
                     exit(EXIT_FAILURE);
@@ -445,7 +461,10 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
             }
             else{
                 for(auto&& qword:qwords){
-                    tag_conditions+="tags like '%"+qword+"%' or ";
+                    //to handle more than one qwords no matter how they are stored
+                    //(as an array e.g. {"qword":["when","what",...]} or as multiple tags like {"qword":"when","qword":"what",...})
+                    //this seems to be able to catch all
+                    tag_conditions+="tags like '\"qword\":%\""+qword+"\"%' or ";
                 }
                 tag_conditions=tag_conditions.substr(0,tag_conditions.length()-4);
             }
@@ -453,14 +472,14 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
             for(auto&& lexeme_cvalue_con:lexemes_to_cvalues_cons){
                 if(lexeme_cvalue_con.second.first.empty()==true){//cvalue empty
                     if(lexeme_cvalue_con.second.second.empty()==true){//con empty
-                        lexeme_conditions+="lexeme='"+lexeme_cvalue_con.first+"' or ";
+                        lexeme_conditions+="dependency='"+lexeme_cvalue_con.first+"' or ";
                     }
                     else{
-                        lexeme_conditions+="lexeme='"+lexeme_cvalue_con.first+"' and word='"+lexeme_cvalue_con.second.second+"' or ";
+                        lexeme_conditions+="dependency='"+lexeme_cvalue_con.first+"' and word='"+sqlite->escape(lexeme_cvalue_con.second.second)+"' or ";
                     }
                 }
                 else{
-                    lexeme_conditions+="lexeme='"+lexeme_cvalue_con.first+"' and c_value='"+lexeme_cvalue_con.second.first+"' or ";
+                    lexeme_conditions+="dependency='"+lexeme_cvalue_con.first+"' and c_value='"+sqlite->escape(lexeme_cvalue_con.second.first)+"' or ";
                 }
             }
             lexeme_conditions=lexeme_conditions.substr(0,lexeme_conditions.length()-4);
@@ -496,7 +515,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
             for(auto&& key:andeps_keys){
                 std::string query="select * from analyses_deps where source='"+std::get<0>(key)
                     +"' and timestamp='"+std::get<1>(key)
-                    +"' and sentence='"+std::get<2>(key)
+                    +"' and sentence='"+sqlite->escape(std::get<2>(key))
                     +"' and rank='"+std::get<3>(key)
                     +"' and a_counter='"+std::get<4>(key)
                     +"' and mood='"+std::get<5>(key)+"' order by counter;";
@@ -509,6 +528,21 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                 }
                 std::string lexeme=*result->field_value_at_row_position(0,"dependency");//first entry does not have parent, so no lexeme
                 std::string d_key=*result->field_value_at_row_position(0,"ref_d_key");//first entry does not have parent, so no d_key
+                //This below should achieve the same but if the two rows above prove to work, they're definitely faster.
+                /*std::string lexeme;
+                std::string d_key;
+                std::string tags=*result->field_value_at_row_position(0,"tags");
+                if(tags.empty()==false){
+                    tags="{"+tags+"}";
+                    rapidjson::Document json_tags;
+                    json_tags.Parse(tags.c_str());
+                    if(json_tags.HasMember("is_root")==true){
+                        if(json_tags["is_root"].GetBool()==true){
+                            lexeme=json_tags["dependency"].GetString();
+                            d_key=json_tags["ref_d_key"].GetUint();
+                        }
+                    }
+                }*/
                 if(root_lexeme==lexeme&&root_d_key==std::atoi(d_key.c_str())){
                     for(unsigned int i=0;i<result->nr_of_result_rows();++i){
                         std::string source=*result->field_value_at_row_position(i,"source");
@@ -542,7 +576,7 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
                         std::string ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
                         analyses_found+="\"ref_d_key\":\""+ref_d_key+"\",";
                         std::string tags=*result->field_value_at_row_position(i,"tags");
-                        analyses_found+="\"tags\":\""+tags+"\",";
+                        analyses_found+="\"tags\":"+tags+",";
                         std::string c_value=*result->field_value_at_row_position(i,"c_value");
                         analyses_found+="\"c_value\":\""+c_value+"\"},";
                     }
@@ -554,9 +588,9 @@ const char *hi_query(const char *db_uri, const char* p_root_lexeme, const unsign
         }
     }
     if(analyses_found.empty()==false){
-        std::cout<<analyses_found<<std::endl;
         analyses_found.pop_back();
         analyses_found="{\"analyses\":["+analyses_found+"]}";
+        //std::cout<<"analyses found:"<<analyses_found<<std::endl;
         p_analyses_found=new char[analyses_found.length()+1];
         analyses_found.copy(p_analyses_found,analyses_found.length(),0);
         p_analyses_found[analyses_found.length()]='\0';

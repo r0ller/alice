@@ -8,7 +8,7 @@ int hi_state_cvalue(const char *db_uri,const char *deps,const char *function, co
 
     rapidjson::Document jsonDeps;
     jsonDeps.Parse(deps);
-    rapidjson::Value& dependencies=jsonDeps["analysis_deps"];
+    rapidjson::Value& dependencies=jsonDeps["dependencies"];
     if(dependencies.IsArray()==true&&dependencies.Size()>0){
         rapidjson::Value dependency;
         bool function_found=false;

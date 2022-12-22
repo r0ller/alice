@@ -158,6 +158,8 @@ insert into FUNCTOR_DEFS values('Num_1', 'js', '1', 'numeng_1.js');
 insert into FUNCTOR_DEFS values('FIRSTLASTENGN_1', 'js', '1', 'firstlastengn_1.js');
 insert into FUNCTOR_DEFS values('TODAYENGN_1', 'js', '1', 'todayengn_1.js');
 insert into FUNCTOR_DEFS values('BEENGV_1', 'js', '1', 'beengv_1.js');
+insert into FUNCTOR_DEFS values('DATEENGN_1', 'js', '1', 'dateengn_1.js');
+insert into FUNCTOR_DEFS values('BIRTHDAYENGN_1', 'js', '1', 'birthdayengn_1.js');
 
 insert into FUNCTORS values('CON', '1', NULL);
 insert into FUNCTORS values('CALLENGV', '1', 'CALLENGV_1');
@@ -167,12 +169,16 @@ insert into FUNCTORS values('Num', '1', 'Num_1');
 insert into FUNCTORS values('FIRSTLASTENGN', '1', 'FIRSTLASTENGN_1');
 insert into FUNCTORS values('WITHENGPREP', '1', 'WITHENGPREP_1');
 insert into FUNCTORS values('TODAYENGN', '1', 'TODAYENGN_1');
-insert into FUNCTORS values('BIRTHDAYENGN', '1', NULL);
+insert into FUNCTORS values('BIRTHDAYENGN', '1', 'BIRTHDAYENGN_1');
 insert into FUNCTORS values('BEENGV', '1', 'BEENGV_1');
-insert into FUNCTORS values('WHENENGPRON', '1', NULL);/*its functor shall return the question word 'when' which BEENGV uses in the query*/
-insert into FUNCTORS values('DATEENGN', '1', NULL);
+insert into FUNCTORS values('WHENENGPRON', '1', NULL);
+insert into FUNCTORS values('DATEENGN', '1', 'DATEENGN_1');
 
+insert into FUNCTOR_TAGS values('BEENGV', '1', 'main_verb', '1', 'is_root', 'true');
 insert into FUNCTOR_TAGS values('BEENGV', '1', 'indicative', '1', 'mood', 'indicative');
+insert into FUNCTOR_TAGS values('BEENGV', '1', 'interrogative', '1', 'mood', 'interrogative');
+insert into FUNCTOR_TAGS values('BIRTHDAYENGN', '1', 'qword', '1', 'qword', 'when');
+insert into FUNCTOR_TAGS values('WHENENGPRON', '1', 'qword', '1', 'is_qword', 'true');
 
 insert into LEXICON values('call', 'ENG', 'V', 'CALLENGV');
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -265,7 +271,13 @@ std::string parent_symbol="ENG_Vbar2";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 $$=sparser->combine_nodes(parent_symbol,main_node,dependent_node);"');
 insert into GRAMMAR values('ENG','ENG_VP_Ind','ENG_Vbar2','ENG_NP',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_NP','ENG_CON_GEN','ENG_N',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_NP','ENG_CON_GEN','ENG_N',NULL,
+'"const node_info& main_node=sparser->get_node_info($1);
+const node_info& dependent_node=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(dependent_node,"N",std::string("qword"));
+std::string parent_symbol="ENG_NP";
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
+$$=sparser->combine_nodes(parent_symbol,main_node,dependent_node);"');
 insert into GRAMMAR values('ENG','ENG_Punct_FullStop','t_ENG_Punct_FullStop',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Punct_Ind','ENG_Punct_Stem','ENG_Punct_FullStop',NULL,NULL);
 /*}Statements related rules*/
@@ -286,6 +298,7 @@ insert into GRAMMAR values('ENG','ENG_Vbar3','ENG_PRON_qw','ENG_V_Aux',NULL,
 '"const node_info& main_node=sparser->get_node_info($1);
 const node_info& dependent_node=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(dependent_node,"main_verb");
+sparser->add_feature_to_leaf(main_node,"PRON",std::string("qword"));
 std::string parent_symbol="ENG_Vbar3";
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,parent_symbol+"->"+main_node.symbol+" "+dependent_node.symbol);
 $$=sparser->combine_nodes(parent_symbol,main_node,dependent_node);"');
@@ -303,10 +316,11 @@ insert into DEPOLEX values('Num', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('FIRSTLASTENGN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('TODAYENGN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('DATEENGN', '1', '1', '1', NULL, NULL, '0', 'TODAYENGN', '1');
-insert into DEPOLEX values('BEENGV', '1', '1', NULL, '2', '3', '0', 'WHENENGPRON', '1');
-insert into DEPOLEX values('BEENGV', '1', '2', NULL, '3', '3', '0', 'DATEENGN', '1');
-insert into DEPOLEX values('BEENGV', '1', '3', NULL, NULL, NULL, '0', 'BIRTHDAYENGN', '1');
-insert into DEPOLEX values('BIRTHDAYENGN', '1', '1', NULL, NULL, NULL, '0', 'CON', '1');
+insert into DEPOLEX values('BEENGV', '1', '1', NULL, '2', '2', '0', 'WHENENGPRON', '1');
+/*insert into DEPOLEX values('BEENGV', '1', '2', NULL, '3', '3', '0', 'DATEENGN', '1');*/
+insert into DEPOLEX values('BEENGV', '1', '2', NULL, NULL, NULL, '0', 'BIRTHDAYENGN', '1');
+insert into DEPOLEX values('BIRTHDAYENGN', '1', '1', NULL, '2', '2', '0', 'DATEENGN', '1');
+insert into DEPOLEX values('BIRTHDAYENGN', '1', '2', NULL, NULL, NULL, '0', 'CON', '1');
 insert into DEPOLEX values('WHENENGPRON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'V',  NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
@@ -319,9 +333,10 @@ insert into RULE_TO_RULE_MAP values( 'ENG_VP_Imp', 'ENG_V', 'ENG_DP', '2', '3', 
 insert into RULE_TO_RULE_MAP values( 'ENG_VP_Imp', 'ENG_V', 'ENG_DP', '3', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
 
 /*begin rules for statements*/
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_N_Sg', 'ENG_V_Aux', '1', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'ENG');
+/*insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_N_Sg', 'ENG_V_Aux', '1', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'ENG');*/
 insert into RULE_TO_RULE_MAP values( 'ENG_NP', 'ENG_CON_GEN', 'ENG_N', '1', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP_Ind', 'ENG_Vbar2', 'ENG_NP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP_Ind', 'ENG_Vbar2', 'ENG_NP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP_Ind', 'ENG_Vbar2', 'ENG_NP', '2', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'ENG');
 /*end rules for statements*/
 
 /*begin rules for questions*/

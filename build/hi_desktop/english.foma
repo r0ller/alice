@@ -18,14 +18,14 @@ define YthReplacement y -> i e || _ "^" t h ;
 # Cleanup: remove morpheme boundaries
 define Cleanup "^" -> 0;
 
-read lexc engnum.lexc 
+read lexc engnum.lexc
 define	LexiconNum
 
 define	GrammarNum LexiconNum .o.
-		YthReplacement        .o.
-		Cleanup;
+                YthReplacement        .o.
+                Cleanup;
 
-read lexc engnoun.lexc 
+read lexc engnoun.lexc
 substitute defined PotentialWord for "[Guess]"
 define LexiconN
 
@@ -43,7 +43,7 @@ define Grammar Lexicon           .o.
 read lexc engpunct.lexc
 define LexiconPunct
 
-define GrammarPunct LexiconPunct      .o. 
+define GrammarPunct LexiconPunct      .o.
                 Cleanup;
 
 regex GrammarN | GrammarNum | Grammar | GrammarPunct;
