@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
 
     const char *analyses,*script_chr=NULL;
-    string text,script,language="js";
+    string text,script,language="sh";
 	FILE *fp;
     char line[256];
     unsigned char toa=0,crh=0;
@@ -34,7 +34,9 @@ int main(int argc,char **argv){
             if(jsondoc.HasMember("analyses")==true){
                 rapidjson::Value& analysesArray=jsondoc["analyses"];
                 if(analysesArray.IsArray()==true&&analysesArray.Size()>0){
-                    for(auto& analysisObject:analysesArray.GetArray()){
+                    rapidjson::SizeType i=analysesArray.Size()-1;
+                    for(i;i>0;--i){
+                        auto analysisObject=analysesArray[i].GetObject();
                         //look for the first analysis having the qword tag and c_calue then stop
                         string c_value=analysisObject["c_value"].GetString();
                         if(analysisObject["tags"].HasMember("qword")==true&&c_value.empty()==false){
@@ -61,7 +63,7 @@ int main(int argc,char **argv){
                 toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 //toa=HI_MORPHOLOGY|HI_SEMANTICS;
                 //crh=HI_VERB;
-                analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/m1.db","test",crh);
+                analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
                 if(analyses!=NULL){
                     cout<<analyses<<endl;
                     script_chr=hi_transcribe(language.c_str(),analyses);

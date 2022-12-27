@@ -61,9 +61,7 @@ std::string transcriptor::transcribe(){
                     if(analysis.HasMember("analysis_deps")==true){
                         rapidjson::Value& analysis_deps=analysis["analysis_deps"];
                         std::string analysis_deps_escaped=value_to_string(analysis_deps);
-                        std::cout<<"debug1:"<<analysis_deps_escaped<<std::endl;
                         find_replace(analysis_deps_escaped,"\"","\\\"");
-                        std::cout<<"debug2:"<<analysis_deps_escaped<<std::endl;
                         find_replace(analysis_deps_escaped,"\'","\\\'");
                         script="analysis_deps='{\\\"dependencies\\\":"+analysis_deps_escaped+"}';"+script;
                     }
