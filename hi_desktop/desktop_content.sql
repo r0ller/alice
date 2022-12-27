@@ -638,9 +638,7 @@ insert into GRAMMAR values('ENG','ENG_Vbar5','ENG_N_Sg','ENG_V',NULL,
 '"const node_info& ENG_N_Sg=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-std::cout<<"debug1"<<std::endl;
 sparser->add_feature_to_leaf(ENG_N_Sg,"N",std::string("qw_what"));
-std::cout<<"debug3"<<std::endl;
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar5->ENG_N_Sg ENG_V");
 $$=sparser->combine_nodes("ENG_Vbar5",ENG_V,ENG_N_Sg);"');
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar5','ENG_DP',NULL,NULL);

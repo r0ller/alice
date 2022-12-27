@@ -1,6 +1,13 @@
 Makefile
 README.md
 build/hi_desktop/corpus
+build/hi_desktop/functors/callengv_1.js
+build/hi_desktop/functors/contactengn_1.js
+build/hi_desktop/functors/firstlastengn_1.js
+build/hi_desktop/functors/listengv_1.js
+build/hi_desktop/functors/numeng_1.js
+build/hi_desktop/functors/todayengn_1.js
+build/hi_desktop/functors/withengprep_1.js
 build/hi_desktop/main_verb
 db.h
 db_factory.h

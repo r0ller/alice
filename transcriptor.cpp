@@ -5,10 +5,24 @@ transcriptor::transcriptor(const char *analyses){
 }
 
 void transcriptor::find_replace(std::string& findrep,const std::string& search_for,const std::string& replace_with){
+//Avoiding replacement of substrings equal to replace_with works only if search_for is not present more than once in replace_with
     size_t pos=findrep.find(search_for);
+    size_t pos_substr=replace_with.find(search_for);
     while(pos!=std::string::npos){
-        findrep.replace(pos,search_for.size(),replace_with);
-        pos=findrep.find(search_for,pos+replace_with.size());
+        if(pos_substr!=std::string::npos&&pos>=pos_substr){
+            std::string substr=findrep.substr(pos-pos_substr,pos_substr+1);
+            if(substr==replace_with){
+                pos=findrep.find(search_for,++pos);
+            }
+            else{
+                findrep.replace(pos,search_for.size(),replace_with);
+                pos=findrep.find(search_for,pos+replace_with.size());
+            }
+        }
+        else{
+            findrep.replace(pos,search_for.size(),replace_with);
+            pos=findrep.find(search_for,pos+replace_with.size());
+        }
     }
 }
 
@@ -32,20 +46,24 @@ std::string transcriptor::transcribe(){
             if(analysis.HasMember("syntax")==true){
                 syntax=analysis["syntax"];
             }
-            rapidjson::Value& semantics=analysis["semantics"];
             rapidjson::Value relatedSemantics;
             if(analysis.HasMember("related semantics")==true){
                 relatedSemantics=analysis["related semantics"];
             }
-            rapidjson::Value& functors=analysis["functors"];
-            if(analysis.HasMember("errors")==false){
+            rapidjson::Value functors;
+            if(analysis.HasMember("functors")==true){
+                functors=analysis["functors"];
+            }
+            if(analysis.HasMember("semantics")==true&&analysis.HasMember("errors")==false){
+                rapidjson::Value& semantics=analysis["semantics"];
                 if(semantics.Size()>0){
                     script=transcribeDependencies(morphology,syntax,semantics,functors,arguments,true);
                     if(analysis.HasMember("analysis_deps")==true){
                         rapidjson::Value& analysis_deps=analysis["analysis_deps"];
                         std::string analysis_deps_escaped=value_to_string(analysis_deps);
                         find_replace(analysis_deps_escaped,"\"","\\\"");
-                        script="analysis_deps='"+analysis_deps_escaped+"';"+script;
+                        find_replace(analysis_deps_escaped,"\'","\\\'");
+                        script="analysis_deps='{\\\"dependencies\\\":"+analysis_deps_escaped+"}';"+script;
                     }
                 }
                 else{

@@ -276,12 +276,12 @@ int main(int argc, char* argv[]){
 					}
 					else if(definition.empty()==false&&definition.front()!='\"'){
 						filestream=new std::ifstream(functor_defs_dir+definition);
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"reading file "+functor_defs_dir+definition);
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"reading file "+functor_defs_dir+definition);
 						if(filestream!=NULL){
 							stringstream=new std::stringstream();
-							*stringstream<<filestream->rdbuf();
+                            *stringstream<<filestream->rdbuf();
 							definition=stringstream->str();
-							filestream->close();
+                            filestream->close();
 							delete filestream;
 							delete stringstream;
 							std::string::size_type pos=definition.find('\'');
