@@ -395,163 +395,165 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 	std::set<unsigned int> unique_optional_dependency_paths;
 
 	const node_info& node=get_node_info(node_id);
-	depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
-	while(depolex_entry!=NULL&&node.expression.lexeme==*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
-			&&d_key!=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
-		d_key=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
-		d_counter=std::atoi(node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")->c_str());
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking top level entry for functor "+node.expression.lexeme+" d_key "+d_key);
-		if(node_dependency_traversal_stack.empty()==false){
-			parent_node=node_dependency_traversal_stack.top();
-			auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
-			if(traversal_node!=node_dependency_traversal_stack_tree.end()&&node.node_links.find(parent_node.first)!=node.node_links.end()){
-				traversal_node->second.push_back(std::make_pair(node_id,std::atoi(d_key.c_str())));
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"push_back to vector of node_id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second)+" the node_id "+std::to_string(node_id)+" with d_key "+d_key);
-			}
-			if(dependencies_found.empty()==false){
-				auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
-				if(traversal_node_dependencies==node_dependency_traversals.end()){
-					node_dependency_traversals.insert(std::make_pair(parent_node,dependencies_found));
-				}
-				else{
-					traversal_node_dependencies->second.clear();
-					traversal_node_dependencies->second.insert(dependencies_found.begin(),dependencies_found.end());
-				}
-			}
-			if(optional_dependencies_checked.empty()==false){
-				auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
-				if(traversal_node_odependencies==node_odependency_traversals.end()){
-					node_odependency_traversals.insert(std::make_pair(parent_node,optional_dependencies_checked));
-				}
-				else{
-					traversal_node_odependencies->second.clear();
-					traversal_node_odependencies->second.insert(optional_dependencies_checked.begin(),optional_dependencies_checked.end());
-				}
-			}
-		}
-		dependencies_found.clear();
-		optional_dependencies_checked.clear();
-		node_dependency_traversal_stack.push(std::make_pair(node_id,std::atoi(d_key.c_str())));
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"pushed to stack node_id "+std::to_string(node_id)+" with d_key "+d_key);
-		auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))));
-		if(traversal_node==node_dependency_traversal_stack_tree.end()){
-			node_d_key_route.clear();
-			node_dependency_traversal_stack_tree.insert(std::make_pair(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))),node_d_key_route));
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in traversal tree at level "+std::to_string(node_dependency_traversal_stack.size())+": node_id "+std::to_string(node_id)+" with d_key "+d_key+" the node_d_key_route");
-		}
-		else{
-			throw std::runtime_error("What shall I do in this case? A previously processed node with its functor/d_key gets processed again. There may be a conflict in the rule_to_rule_map table.");
-		}
-		find_dependencies_for_functor(std::to_string(node.node_id),d_key,d_counter,node.node_id,d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
-		unique_optional_dependency_paths.clear();
-		for(auto&& i:dependencies_found_via_optional_paths){
-			//if there are more than one optional dependency paths leading to the same real dependency,
-			//select the first one and collect them in a set
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking uniqueness of optional dependency with path nr "+std::to_string(i.first)
-			+" and node id "+std::to_string(std::get<0>(i.second))
-			+" d_key "+std::to_string(std::get<1>(i.second))
-			+" dependent node id "+std::to_string(std::get<2>(i.second))
-			+" odep level "+std::to_string(std::get<3>(i.second)));
-			bool duplicate_found=false;
-			for(auto&& j:unique_optional_dependency_paths){
-				auto optional_dependency_path=dependencies_found_via_optional_paths.find(j);
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"against optional dependency with path nr "+std::to_string(j)
-				+" and node id "+std::to_string(std::get<0>(optional_dependency_path->second))
-				+" d_key "+std::to_string(std::get<1>(optional_dependency_path->second))
-				+" dependent node id "+std::to_string(std::get<2>(optional_dependency_path->second))
-				+" odep level "+std::to_string(std::get<3>(optional_dependency_path->second)));
-				if(i.first!=j&&std::get<0>(i.second)==std::get<0>(optional_dependency_path->second)
-					&&std::get<1>(i.second)==std::get<1>(optional_dependency_path->second)
-					&&std::get<2>(i.second)==std::get<2>(optional_dependency_path->second)){
-					duplicate_found=true;
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"duplicate found");
-				}
-			}
-			if(duplicate_found==false){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting optional dependency in unique optional dependency paths");
-				unique_optional_dependency_paths.insert(i.first);
-			}
-		}
-		for(std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >::iterator j=optional_dependencies_checked.begin();j!=optional_dependencies_checked.end();){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for optional dependency in unique odep paths with path nr "+std::to_string(std::get<3>(j->second))
-			+" and functor "+j->first.first
-			+" d_key "+std::to_string(j->first.second)
-			+" d_counter "+std::to_string(std::get<5>(j->second))
-			+" parent node id "+std::get<0>(j->second)
-			+" parent d_key "+std::to_string(std::get<1>(j->second))
-			+" parent d_counter "+std::to_string(std::get<2>(j->second))
-			+" odep level "+std::to_string(std::get<4>(j->second)));
-			auto unique_optional_dependency_path=unique_optional_dependency_paths.find(std::get<3>(j->second));
-			if(unique_optional_dependency_path==unique_optional_dependency_paths.end()){
-				//if there are more than one optional dependency paths leading to the same real dependency,
-				//keep only the first ones selected into unique_optional_dependency_paths, delete all others
-				j=optional_dependencies_checked.erase(j);
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"deleting optional dependency: no unique optional dependency path found");
-			}
-			else if(std::get<4>(j->second)>std::get<3>(dependencies_found_via_optional_paths.find(*unique_optional_dependency_path)->second)){
-				//Cut off optional dependencies checked out that stem from a real dependency but lead to no other real dependency
-				//TODO: if there are more than one entries with the same path nr in dependencies_found_via_optional_paths
-				//find the entry with the greatest odep level and carry out the comparison with that.
-				//That will mean that the optional dependency being iterated over was inserted in its container AFTER
-				//finding the last real dependency that was registered in dependencies_found_via_optional_paths.
-				j=optional_dependencies_checked.erase(j);
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"deleting optional dependency: odep level in optional_dependencies_checked is greater for this functor than in dependencies_found_via_optional_paths");
-			}
-			else{
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"optional dependency path is unique: leave it as it is");
-				++j;
-			}
-		}
-		parent_node=node_dependency_traversal_stack.top();
-		if(dependencies_found.empty()==false){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting dependencies found into dependency traversals of parent node id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second));
-			auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
-			if(traversal_node_dependencies==node_dependency_traversals.end()){
-				node_dependency_traversals.insert(std::make_pair(parent_node,dependencies_found));
-			}
-			else{
-				traversal_node_dependencies->second.clear();
-				traversal_node_dependencies->second.insert(dependencies_found.begin(),dependencies_found.end());
-			}
-		}
-		else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"there are no dependencies found to insert into dependency traversals");
-		}
-		dependencies_found.clear();
-		if(optional_dependencies_checked.empty()==false){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting optional dependencies checked into optional dependency traversals of parent node id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second));
-			auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
-			if(traversal_node_odependencies==node_odependency_traversals.end()){
-				node_odependency_traversals.insert(std::make_pair(parent_node,optional_dependencies_checked));
-			}
-			else{
-				traversal_node_odependencies->second.clear();
-				traversal_node_odependencies->second.insert(optional_dependencies_checked.begin(),optional_dependencies_checked.end());
-			}
-		}
-		else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"there are no optional dependencies checked to insert into optional dependency traversals");
-		}
-		optional_dependencies_checked.clear();
-		node_dependency_traversal_stack.pop();
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"popped dependency traversal stack");
-		if(node_dependency_traversal_stack.empty()==false){//restore dependencies_found and optional_dependencies_checked using node_dependency_traversal_stack.top()
-			parent_node=node_dependency_traversal_stack.top();
-			auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
-			auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
-			dependencies_found.clear();
-			if(traversal_node_dependencies!=node_dependency_traversals.end()){
-				dependencies_found.insert(traversal_node_dependencies->second.begin(),traversal_node_dependencies->second.end());
-			}
-			optional_dependencies_checked.clear();
-			if(traversal_node_odependencies!=node_odependency_traversals.end()){
-				optional_dependencies_checked.insert(traversal_node_odependencies->second.begin(),traversal_node_odependencies->second.end());
-			}
-		}
-		while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")==d_key){
-			depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.lexeme);
-		}
-	}
+    if(node.expression.dependencies!=NULL){
+        depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
+        while(depolex_entry!=NULL&&node.expression.lexeme==*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
+                &&d_key!=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
+            d_key=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+            d_counter=std::atoi(node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")->c_str());
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking top level entry for functor "+node.expression.lexeme+" d_key "+d_key);
+            if(node_dependency_traversal_stack.empty()==false){
+                parent_node=node_dependency_traversal_stack.top();
+                auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
+                if(traversal_node!=node_dependency_traversal_stack_tree.end()&&node.node_links.find(parent_node.first)!=node.node_links.end()){
+                    traversal_node->second.push_back(std::make_pair(node_id,std::atoi(d_key.c_str())));
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"push_back to vector of node_id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second)+" the node_id "+std::to_string(node_id)+" with d_key "+d_key);
+                }
+                if(dependencies_found.empty()==false){
+                    auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
+                    if(traversal_node_dependencies==node_dependency_traversals.end()){
+                        node_dependency_traversals.insert(std::make_pair(parent_node,dependencies_found));
+                    }
+                    else{
+                        traversal_node_dependencies->second.clear();
+                        traversal_node_dependencies->second.insert(dependencies_found.begin(),dependencies_found.end());
+                    }
+                }
+                if(optional_dependencies_checked.empty()==false){
+                    auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
+                    if(traversal_node_odependencies==node_odependency_traversals.end()){
+                        node_odependency_traversals.insert(std::make_pair(parent_node,optional_dependencies_checked));
+                    }
+                    else{
+                        traversal_node_odependencies->second.clear();
+                        traversal_node_odependencies->second.insert(optional_dependencies_checked.begin(),optional_dependencies_checked.end());
+                    }
+                }
+            }
+            dependencies_found.clear();
+            optional_dependencies_checked.clear();
+            node_dependency_traversal_stack.push(std::make_pair(node_id,std::atoi(d_key.c_str())));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"pushed to stack node_id "+std::to_string(node_id)+" with d_key "+d_key);
+            auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))));
+            if(traversal_node==node_dependency_traversal_stack_tree.end()){
+                node_d_key_route.clear();
+                node_dependency_traversal_stack_tree.insert(std::make_pair(std::make_pair(node_dependency_traversal_stack.size(),std::make_pair(node_id,std::atoi(d_key.c_str()))),node_d_key_route));
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in traversal tree at level "+std::to_string(node_dependency_traversal_stack.size())+": node_id "+std::to_string(node_id)+" with d_key "+d_key+" the node_d_key_route");
+            }
+            else{
+                throw std::runtime_error("What shall I do in this case? A previously processed node with its functor/d_key gets processed again. There may be a conflict in the rule_to_rule_map table.");
+            }
+            find_dependencies_for_functor(std::to_string(node.node_id),d_key,d_counter,node.node_id,d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
+            unique_optional_dependency_paths.clear();
+            for(auto&& i:dependencies_found_via_optional_paths){
+                //if there are more than one optional dependency paths leading to the same real dependency,
+                //select the first one and collect them in a set
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking uniqueness of optional dependency with path nr "+std::to_string(i.first)
+                +" and node id "+std::to_string(std::get<0>(i.second))
+                +" d_key "+std::to_string(std::get<1>(i.second))
+                +" dependent node id "+std::to_string(std::get<2>(i.second))
+                +" odep level "+std::to_string(std::get<3>(i.second)));
+                bool duplicate_found=false;
+                for(auto&& j:unique_optional_dependency_paths){
+                    auto optional_dependency_path=dependencies_found_via_optional_paths.find(j);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"against optional dependency with path nr "+std::to_string(j)
+                    +" and node id "+std::to_string(std::get<0>(optional_dependency_path->second))
+                    +" d_key "+std::to_string(std::get<1>(optional_dependency_path->second))
+                    +" dependent node id "+std::to_string(std::get<2>(optional_dependency_path->second))
+                    +" odep level "+std::to_string(std::get<3>(optional_dependency_path->second)));
+                    if(i.first!=j&&std::get<0>(i.second)==std::get<0>(optional_dependency_path->second)
+                        &&std::get<1>(i.second)==std::get<1>(optional_dependency_path->second)
+                        &&std::get<2>(i.second)==std::get<2>(optional_dependency_path->second)){
+                        duplicate_found=true;
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"duplicate found");
+                    }
+                }
+                if(duplicate_found==false){
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting optional dependency in unique optional dependency paths");
+                    unique_optional_dependency_paths.insert(i.first);
+                }
+            }
+            for(std::map<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >::iterator j=optional_dependencies_checked.begin();j!=optional_dependencies_checked.end();){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for optional dependency in unique odep paths with path nr "+std::to_string(std::get<3>(j->second))
+                +" and functor "+j->first.first
+                +" d_key "+std::to_string(j->first.second)
+                +" d_counter "+std::to_string(std::get<5>(j->second))
+                +" parent node id "+std::get<0>(j->second)
+                +" parent d_key "+std::to_string(std::get<1>(j->second))
+                +" parent d_counter "+std::to_string(std::get<2>(j->second))
+                +" odep level "+std::to_string(std::get<4>(j->second)));
+                auto unique_optional_dependency_path=unique_optional_dependency_paths.find(std::get<3>(j->second));
+                if(unique_optional_dependency_path==unique_optional_dependency_paths.end()){
+                    //if there are more than one optional dependency paths leading to the same real dependency,
+                    //keep only the first ones selected into unique_optional_dependency_paths, delete all others
+                    j=optional_dependencies_checked.erase(j);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"deleting optional dependency: no unique optional dependency path found");
+                }
+                else if(std::get<4>(j->second)>std::get<3>(dependencies_found_via_optional_paths.find(*unique_optional_dependency_path)->second)){
+                    //Cut off optional dependencies checked out that stem from a real dependency but lead to no other real dependency
+                    //TODO: if there are more than one entries with the same path nr in dependencies_found_via_optional_paths
+                    //find the entry with the greatest odep level and carry out the comparison with that.
+                    //That will mean that the optional dependency being iterated over was inserted in its container AFTER
+                    //finding the last real dependency that was registered in dependencies_found_via_optional_paths.
+                    j=optional_dependencies_checked.erase(j);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"deleting optional dependency: odep level in optional_dependencies_checked is greater for this functor than in dependencies_found_via_optional_paths");
+                }
+                else{
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"optional dependency path is unique: leave it as it is");
+                    ++j;
+                }
+            }
+            parent_node=node_dependency_traversal_stack.top();
+            if(dependencies_found.empty()==false){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting dependencies found into dependency traversals of parent node id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second));
+                auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
+                if(traversal_node_dependencies==node_dependency_traversals.end()){
+                    node_dependency_traversals.insert(std::make_pair(parent_node,dependencies_found));
+                }
+                else{
+                    traversal_node_dependencies->second.clear();
+                    traversal_node_dependencies->second.insert(dependencies_found.begin(),dependencies_found.end());
+                }
+            }
+            else{
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"there are no dependencies found to insert into dependency traversals");
+            }
+            dependencies_found.clear();
+            if(optional_dependencies_checked.empty()==false){
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting optional dependencies checked into optional dependency traversals of parent node id "+std::to_string(parent_node.first)+" with d_key "+std::to_string(parent_node.second));
+                auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
+                if(traversal_node_odependencies==node_odependency_traversals.end()){
+                    node_odependency_traversals.insert(std::make_pair(parent_node,optional_dependencies_checked));
+                }
+                else{
+                    traversal_node_odependencies->second.clear();
+                    traversal_node_odependencies->second.insert(optional_dependencies_checked.begin(),optional_dependencies_checked.end());
+                }
+            }
+            else{
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"there are no optional dependencies checked to insert into optional dependency traversals");
+            }
+            optional_dependencies_checked.clear();
+            node_dependency_traversal_stack.pop();
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"popped dependency traversal stack");
+            if(node_dependency_traversal_stack.empty()==false){//restore dependencies_found and optional_dependencies_checked using node_dependency_traversal_stack.top()
+                parent_node=node_dependency_traversal_stack.top();
+                auto traversal_node_dependencies=node_dependency_traversals.find(parent_node);
+                auto traversal_node_odependencies=node_odependency_traversals.find(parent_node);
+                dependencies_found.clear();
+                if(traversal_node_dependencies!=node_dependency_traversals.end()){
+                    dependencies_found.insert(traversal_node_dependencies->second.begin(),traversal_node_dependencies->second.end());
+                }
+                optional_dependencies_checked.clear();
+                if(traversal_node_odependencies!=node_odependency_traversals.end()){
+                    optional_dependencies_checked.insert(traversal_node_odependencies->second.begin(),traversal_node_odependencies->second.end());
+                }
+            }
+            while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")==d_key){
+                depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.lexeme);
+            }
+        }
+    }
 }
 
 const std::pair<const unsigned int,field>* interpreter::followup_dependency(const unsigned int previous_dependency_row_index,const std::string& lexeme,const std::string& d_key,const bool previous_dependency_found,const query_result& dependencies){
@@ -985,31 +987,31 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
     std::string main_symbol=*result->field_value_at_row_position(0,"value");
     const node_info& root_node=get_node_info(nr_of_nodes_);
     get_nodes_by_symbol(root_node,main_symbol,std::string(),verbs_found);
-	if(verbs_found.size()==1){
+    if(verbs_found.size()==1){
 		const node_info& node=get_node_info(*verbs_found.begin());
         find_dependencies_for_node(node.node_id,dependencies_found,optional_dependencies_checked);
-		functor_found=calculate_longest_matching_dependency_route(longest_traversals);
-		d_key=functor_found.first.second;
-		//TODO: min nr of deps is shown differently here than in calculate_longest_matching_dependency_route
-		//in case of e.g. the first dependency is not found as in "list peter" instead of "list contacts" on android
-		min_nr_of_deps=std::get<2>(functor_found.second);
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Minimum number of dependencies to match:"+std::to_string(min_nr_of_deps));
-		nr_of_dependencies_found=std::get<1>(functor_found.second);
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Matching nr of dependencies found for functor "+node.expression.lexeme+" with d_key "+std::to_string(d_key)+":"+std::to_string(nr_of_dependencies_found));
-		total_nr_of_dependencies=nr_of_dependencies_to_be_found()-1;
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Total number of dependencies:"+std::to_string(total_nr_of_dependencies));
-		if(nr_of_dependencies_found>=min_nr_of_deps){
-			//The original condition if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps)
-			//seems to be too strict as it requires that all dependencies need to be found.
-			//Made it looser due to enabling partial analysis to experiment with this condition and see if it fits the bill.
-			if(nr_of_dependencies_found!=total_nr_of_dependencies||nr_of_dependencies_found<min_nr_of_deps)
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Not all dependencies have been found for functor "+node.expression.lexeme);
-			return build_transgraph(functor_found.first,std::make_pair(std::to_string(functor_found.first.first),functor_found.first.second),longest_traversals);
-		}
-		else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No matching nr of dependencies found for functor "+node.expression.lexeme+" with any d_key");
-			return NULL;
-		}
+        functor_found=calculate_longest_matching_dependency_route(longest_traversals);
+        d_key=functor_found.first.second;
+        //TODO: min nr of deps is shown differently here than in calculate_longest_matching_dependency_route
+        //in case of e.g. the first dependency is not found as in "list peter" instead of "list contacts" on android
+        min_nr_of_deps=std::get<2>(functor_found.second);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Minimum number of dependencies to match:"+std::to_string(min_nr_of_deps));
+        nr_of_dependencies_found=std::get<1>(functor_found.second);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Matching nr of dependencies found for functor "+node.expression.lexeme+" with d_key "+std::to_string(d_key)+":"+std::to_string(nr_of_dependencies_found));
+        total_nr_of_dependencies=nr_of_dependencies_to_be_found()-1;
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Total number of dependencies:"+std::to_string(total_nr_of_dependencies));
+        if(node.expression.dependencies!=NULL&&nr_of_dependencies_found>=min_nr_of_deps){
+            //The original condition if(nr_of_dependencies_found==total_nr_of_dependencies&&nr_of_dependencies_found>=min_nr_of_deps)
+            //seems to be too strict as it requires that all dependencies need to be found.
+            //Made it looser due to enabling partial analysis to experiment with this condition and see if it fits the bill.
+            if(nr_of_dependencies_found!=total_nr_of_dependencies||nr_of_dependencies_found<min_nr_of_deps)
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Not all dependencies have been found for functor "+node.expression.lexeme);
+            return build_transgraph(functor_found.first,std::make_pair(std::to_string(functor_found.first.first),functor_found.first.second),longest_traversals);
+        }
+        else{
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No matching nr of dependencies found for functor "+node.expression.lexeme+" with any d_key");
+            return NULL;
+        }
 	}
 	else{
 		if(verbs_found.size()==0)
@@ -2020,8 +2022,8 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
     if(optional_dependency.empty()==false){
         lexeme=optional_dependency;
     }
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme:"+lexeme+", word:"+main_word.word);
-    if(main_word.gcat!="CON"){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme:"+lexeme+", word:"+main_word.word+", gcat:"+main_word.gcat);
+    if(main_word.gcat!="CON"&&main_word.dependencies!=NULL){
         depolex_entry=main_word.dependencies->first_value_for_field_name_found("lexeme",lexeme);
         while(depolex_entry!=NULL&&lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")){
             std::string d_key=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
