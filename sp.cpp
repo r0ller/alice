@@ -170,6 +170,8 @@ unsigned int interpreter::check_prerequisite_symbols(const node_info& parent_nod
 }
 
 const node_info& interpreter::get_node_info(unsigned int node_id){
+    //TODO: consider returning a copy instead of reference even though it's a performance penalty
+    //but references become invalid if the node_infos vector grows and gets reallocated
 	if(node_id>0) return node_infos.at(node_id-1);//Make use of out_of_range exception
 }
 
@@ -1946,10 +1948,7 @@ void interpreter::o_build_dependency_semantics(const unsigned char& toa,const un
 
 void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
     //TODO: Consider moving this and the related methods to the interpreter class.
-    //The current implementation is not token path based which means that we try to figure out the one and only correct
-    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
-    //syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
-    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
+    //The dependency semantics algorithm gets executed for each token paths.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
     //2. check if the returned analyses has the 'errors' property
     //3. if there's no error, return the ranked analyses
@@ -2016,8 +2015,8 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
 void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::set<unsigned int>& processed_words,std::map<unsigned int,unsigned int>& words2nodes,const unsigned int& main_node_id,const std::string& optional_dependency,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex_by_row_nr,lexer *lex){
     const std::pair<const unsigned int,field> *depolex_entry=NULL;
 
-    const node_info& main_node=get_node_info(main_node_id);
-    const lexicon& main_word=main_node.expression;
+    const node_info main_node=get_node_info(main_node_id);
+    const lexicon main_word=main_node.expression;
     std::string lexeme=main_word.lexeme;
     if(optional_dependency.empty()==false){
         lexeme=optional_dependency;

@@ -7,7 +7,7 @@
 	#include <deque>
 	#include "morphan_result.h"
 
-	typedef struct{
+    typedef struct lexicon{
 		unsigned int token;
 		std::string word;
 		std::string lid;
