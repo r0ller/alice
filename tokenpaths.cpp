@@ -510,7 +510,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
-    std::multimap<unsigned int,std::string> ranked_analyses_map;
+    std::multimap<float,std::string> ranked_analyses_map;
     db *sqlite=NULL;
     std::string analysis;
     unsigned int nr_of_cons=0;
@@ -572,17 +572,24 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(analysis.back()==',') analysis.pop_back();
 		analysis+="}";
-        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+sqlite->escape(analysis)+"');");
+        unsigned int a_counter=1;
+        query_result *result=sqlite->exec_sql("SELECT * FROM FAILED_ANALYSES WHERE source='"+source+"' AND timestamp='"+std::to_string(timestamp)+"' AND sentence='"+sqlite->escape(sentence)+"';");
+        if(result!=NULL){
+            a_counter=result->nr_of_result_rows()+1;
+            delete result;
+        }
+        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+sqlite->escape(analysis)+"','"+std::to_string(a_counter)+"');");
     }
     else{
 		for(unsigned int i=0;i<nr_of_analyses;++i){
 			related_functors.clear();
             analysis="{";
+            float rank=0;
 			if(toa&HI_MORPHOLOGY){
                 analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
-			}
+            }
 			if(toa&HI_SYNTAX){
 				//TODO: features added at syntactic level (like main_verb) do not appear in the analyses.
 				//Features added at syntactic level should be recorded in the corresponding node which
@@ -600,6 +607,10 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			}
             std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
 			if(toa&HI_SEMANTICS){
+                //TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
+                //nr of nodes but none of them having constants. Figure out if there are better
+                //ways of ranking than this.
+                rank=(nr_of_cons+1)/valid_graphs_node_functor_maps[i].size();
                 analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
@@ -645,7 +656,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                         analyses_deps+="{\"source\":\""+source+"\",";
                         analyses_deps+="\"timestamp\":"+std::to_string(timestamp)+",";
                         analyses_deps+="\"sentence\":\""+transgraph::apply_json_escapes(sentence)+"\",";
-                        analyses_deps+="\"rank\":"+std::to_string(nr_of_cons)+",";
+                        analyses_deps+="\"rank\":"+std::to_string(rank)+",";
                         analyses_deps+="\"a_counter\":"+std::to_string(i+1)+",";
                         analyses_deps+="\"mood\":\""+mood+"\",";
                         analyses_deps+="\"function\":\""+std::get<8>(dependency_path[j])+"\",";
@@ -663,7 +674,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                         sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
                             +"','"+std::to_string(timestamp)
                             +"','"+sqlite->escape(sentence)
-                            +"','"+std::to_string(nr_of_cons)//rank
+                            +"','"+std::to_string(rank)//rank
                             +"','"+std::to_string(i+1)//a_counter
                             +"','"+mood
                             +"','"+std::get<8>(dependency_path[j])//function
@@ -683,11 +694,12 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                     analyses_deps+="]";
                     analysis+=analyses_deps;
                 }
+                delete result;
             }
             if(analysis.back()==',') analysis.pop_back();
             analysis+="}";
-            ranked_analyses_map.insert(std::make_pair(nr_of_cons,analysis));
-            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(nr_of_cons)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"');");
+            ranked_analyses_map.insert(std::make_pair(rank,analysis));
+            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(rank)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"');");
         }
         analysis="{\"analyses\":[";
         for(auto&& i:ranked_analyses_map){
