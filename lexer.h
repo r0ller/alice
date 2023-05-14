@@ -28,7 +28,6 @@
 			unsigned int token;
 			std::locale locale;
 			static std::map<std::string,std::vector<lexicon> > cache;
-			std::vector<std::string> analyze_and_cache(std::string&);
 			std::string next_word();
 			bool generate_tokens_;
 			tokenpaths *token_paths;
@@ -91,6 +90,7 @@
             std::map<unsigned int,lexicon> find_main_verb(const std::vector<lexicon>&) const;
             lexicon find_word_by_lexeme(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
             lexicon find_word_by_gcat(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
+            std::vector<std::string> analyze_and_cache(std::string&);
     };
 
 	class lexer_error:public std::exception{

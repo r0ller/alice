@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <functional>
 #include "lexer.h"
+#include <numeric>
 
 /*PUBLIC*/
 interpreter::interpreter(const unsigned char toa){
@@ -277,13 +278,13 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor to be found for dependency "+dependent_node.expression.lexeme+":"+functor);
 	functors_found=new std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >();
 	if(dependent_node.expression.gcat=="CON"){
-		find_functors_for_dependency("CON","",*main_node.expression.dependencies,*functors_found,dependency_stack);
+        find_functors_for_dependency("CON","",main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	else if(dependent_node.expression.lexicon_entry==false){
-		find_functors_for_dependency(dependent_node.expression.gcat,"",*main_node.expression.dependencies,*functors_found,dependency_stack);
+        find_functors_for_dependency(dependent_node.expression.gcat,"",main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	else{
-		find_functors_for_dependency(dependent_node.expression.lexeme,"",*main_node.expression.dependencies,*functors_found,dependency_stack);
+        find_functors_for_dependency(dependent_node.expression.lexeme,"",main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	if(functors_found->empty()==true){
 		return NULL;
@@ -319,27 +320,27 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	return functors_found;
 }
 
-void interpreter::find_functors_for_dependency(const std::string& dependency, const std::string& d_key, const query_result& dependencies,
+void interpreter::find_functors_for_dependency(const std::string& dependency, const std::string& d_key, const query_result* dependencies,
 		std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >& functors_found,
 		std::vector<std::pair<unsigned int,std::string> >& dependency_stack){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string lexeme,lexeme_d_key;
 	std::vector<std::pair<unsigned int,std::string> >::const_iterator j;
 
-	if(&dependencies!=NULL){//c++ battlefield: null object reference is possible, check it
-		depolex_entry=dependencies.first_value_for_field_name_found("semantic_dependency",dependency);
+    if(dependencies!=NULL){
+        depolex_entry=dependencies->first_value_for_field_name_found("semantic_dependency",dependency);
 		if(d_key.empty()==false){
-			while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
-					&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
-				depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+            while(depolex_entry!=NULL&&*dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
+                    &&*dependencies->field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
+                depolex_entry=dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 			}
 		}
 		while(depolex_entry!=NULL){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for functor with dependency "
-			+*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")+" with d_key "
-			+*dependencies.field_value_at_row_position(depolex_entry->first,"d_key"));
-			lexeme=*dependencies.field_value_at_row_position(depolex_entry->first,"lexeme");
-			lexeme_d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"d_key");
+            +*dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency")+" with d_key "
+            +*dependencies->field_value_at_row_position(depolex_entry->first,"d_key"));
+            lexeme=*dependencies->field_value_at_row_position(depolex_entry->first,"lexeme");
+            lexeme_d_key=*dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
 			for(j=dependency_stack.begin();j!=dependency_stack.end();++j){
 				if(j->first==depolex_entry->first&&j->second==depolex_entry->second.field_value) break;
 			}
@@ -352,11 +353,11 @@ void interpreter::find_functors_for_dependency(const std::string& dependency, co
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"pop from dependency stack the row index:"+std::to_string(depolex_entry->first)+" and semantic dependency:"+depolex_entry->second.field_value);
 				dependency_stack.pop_back();
 			}
-			depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+            depolex_entry=dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 			if(d_key.empty()==false){
-				while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
-						&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
-					depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+                while(depolex_entry!=NULL&&*dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
+                        &&*dependencies->field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
+                    depolex_entry=dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 				}
 			}
 		}
@@ -1946,7 +1947,50 @@ void interpreter::o_build_dependency_semantics(const unsigned char& toa,const un
     }
 }
 
+void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>& words, const std::string& dependency,const std::string& d_key,const std::string& lid,const std::string& gcats,std::set<std::pair<std::string,unsigned int>>& functors_found,std::set<std::pair<std::string,unsigned int>>& lexemes_processed){
+    db *sqlite=NULL;
+    query_result *depolex_entries=NULL;
+
+    auto processed_entry=lexemes_processed.find(std::make_pair(dependency,std::atoi(d_key.c_str())));
+    if(processed_entry==lexemes_processed.end()){
+        lexemes_processed.insert(std::make_pair(dependency,std::atoi(d_key.c_str())));
+        sqlite=db_factory::get_instance();
+        if(d_key.empty()==true){
+            depolex_entries=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE SEMANTIC_DEPENDENCY='"+dependency+"';");
+        }
+        else{
+            depolex_entries=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE SEMANTIC_DEPENDENCY='"+dependency+"' AND REF_D_KEY='"+d_key+"';");
+        }
+        if(depolex_entries!=NULL){
+            unsigned int nr_of_entries=depolex_entries->nr_of_result_rows();
+            for(unsigned int i=0; i<nr_of_entries; ++i){
+                std::string lexeme=*depolex_entries->field_value_at_row_position(i,"lexeme");
+                std::string lexeme_d_key=*depolex_entries->field_value_at_row_position(i,"d_key");
+                query_result *lexicon_entries=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LID='"+lid+"' AND GCAT IN ("+gcats+") AND LEXEME='"+lexeme+"';");
+                if(lexicon_entries!=NULL){
+                    auto functor_found=std::make_pair(lexeme,std::atoi(lexeme_d_key.c_str()));
+                    functors_found.insert(functor_found);
+                    delete lexicon_entries;
+                }
+                unsigned int opa=std::atoi(depolex_entries->field_value_at_row_position(i,"optional_parent_allowed")->c_str());
+                bool lexeme_found=false;
+                for(auto& word:words){
+                    if(word.lexeme==lexeme){
+                        lexeme_found=true;
+                        break;
+                    }
+                }
+                if(opa!=0||opa==0&&lexeme_found==true){//TODO:extend with checking manner as well
+                    find_functors_for_dependency_with_gcat_in_db(words,lexeme,lexeme_d_key,lid,gcats,functors_found,lexemes_processed);
+                }
+            }
+            delete depolex_entries;
+        }
+    }
+}
+
 void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
+    //TODO: How to handle mood?
     //TODO: Consider moving this and the related methods to the interpreter class.
     //The dependency semantics algorithm gets executed for each token paths.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
@@ -1964,6 +2008,63 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
     //   at the end of the interpretation
     std::vector<lexicon> words=lex->word_entries();
     std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+    /*if(main_verbs.size()==0){
+        //1. Find functor(s) with gcat set in settings
+        //2. Determine the intersection of functors_found of each iteration
+        //3. If there are >1 functors in the intersection, they must be ranked according to
+        //   a) the distance of the dependencies from the corresponding functor found,
+        //   b) the most frequent functor found for the dependencies,
+        //   c) the number of dependencies found for the most frequent functor.
+        //4. Choose the best based on the ranking. If there are >1 with the same
+        //   ranking, return error about ambiguity.
+        //5. Let the rest of the code run: if there's >1 it's an error, if only one, then it's fine
+        std::map<std::pair<std::string,unsigned int>,std::vector<unsigned int>> functors_found_with_deps_distances;
+        for(auto& word: words){
+            std::set<std::pair<std::string,unsigned int>> lexemes_processed;
+            std::map<std::pair<std::string,unsigned int>,unsigned int> functors_found;
+            //TODO:read main verb settings
+            std::string lexeme=word.lexeme;
+            if(word.lexicon_entry==false) lexeme=word.gcat;
+            find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,"'V'",functors_found,lexemes_processed);
+            //Collecting the dependencies belonging to the same functor found together
+            //with their distances so that later the functors can be ranked according to that.
+            for(auto& functor_with_dep_distance: functors_found){
+                auto&& functor_with_deps_distances=functors_found_with_deps_distances.find(functor_with_dep_distance.first);
+                if(functor_with_deps_distances==functors_found_with_deps_distances.end()){
+                    std::vector<unsigned int> distances{functor_with_dep_distance.second};
+                    functors_found_with_deps_distances.insert(std::make_pair(functor_with_dep_distance.first,distances));
+                }
+                else{
+                    functor_with_deps_distances->second.push_back(functor_with_dep_distance.second);
+                }
+            }
+        }
+        std::multimap<unsigned int,std::pair<std::string,unsigned int>> nr_of_deps_of_functors;
+        for(auto& functor: functors_found_with_deps_distances){
+            nr_of_deps_of_functors.insert(std::make_pair(functor.second.size(),functor.first));
+        }
+        auto functor_with_most_deps=nr_of_deps_of_functors.rbegin();
+        std::multimap<float,std::pair<std::string,unsigned int>> ranked_functors;
+        //Instead of picking rbegin, check if there are >1 entries with the same
+        //nr of deps. If yes, rank them based on the distances of their dependencies.
+        for(auto&& i=nr_of_deps_of_functors.lower_bound(functor_with_most_deps->first);i!=nr_of_deps_of_functors.upper_bound(functor_with_most_deps->first);++i){
+            auto&& functor_with_deps_distances=functors_found_with_deps_distances.find(i->second);
+            std::vector distances=functor_with_deps_distances->second;
+            unsigned int sum=std::accumulate(distances.begin(),distances.end(),0);
+            float rank=(float)sum/(float)i->first;
+            ranked_functors.insert(std::make_pair(rank,i->second));
+        }
+        auto best_ranked_functor_with_deps_distances=functors_found_with_deps_distances.find(ranked_functors.begin()->second);
+        if(best_ranked_functor_with_deps_distances->second.size()==words.size()){
+            std::string lexeme=best_ranked_functor_with_deps_distances->first.first;
+            lex->analyze_and_cache(lexeme);
+            words=lex->word_entries();
+            main_verbs=lex->find_main_verb(words);
+        }
+        else{
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No functor found for all dependencies.");
+        }
+    }*/
     if(main_verbs.size()==1){
         std::set<unsigned int> processed_words;
         std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
