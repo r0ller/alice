@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 BEGIN;
 
 insert into SETTINGS values('main_symbol','main_verb');
-insert into SETTINGS values('main_verb','V');
+insert into SETTINGS values('main_verb','<V>');
 insert into SETTINGS values('imperative_mood_tag','imperative');
 insert into SETTINGS values('interrogative_mood_tag','interrogative');
 insert into SETTINGS values('indicative_mood_tag','indicative');

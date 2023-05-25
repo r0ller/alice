@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <functional>
 #include "lexer.h"
+#include <numeric>
 
 /*PUBLIC*/
 interpreter::interpreter(const unsigned char toa){
@@ -277,13 +278,13 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor to be found for dependency "+dependent_node.expression.lexeme+":"+functor);
 	functors_found=new std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >();
 	if(dependent_node.expression.gcat=="CON"){
-		find_functors_for_dependency("CON","",*main_node.expression.dependencies,*functors_found,dependency_stack);
+        find_functors_for_dependency("CON","",main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	else if(dependent_node.expression.lexicon_entry==false){
-		find_functors_for_dependency(dependent_node.expression.gcat,"",*main_node.expression.dependencies,*functors_found,dependency_stack);
+        find_functors_for_dependency(dependent_node.expression.gcat,"",main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	else{
-		find_functors_for_dependency(dependent_node.expression.lexeme,"",*main_node.expression.dependencies,*functors_found,dependency_stack);
+        find_functors_for_dependency(dependent_node.expression.lexeme,"",main_node.expression.dependencies,*functors_found,dependency_stack);
 	}
 	if(functors_found->empty()==true){
 		return NULL;
@@ -319,27 +320,27 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	return functors_found;
 }
 
-void interpreter::find_functors_for_dependency(const std::string& dependency, const std::string& d_key, const query_result& dependencies,
+void interpreter::find_functors_for_dependency(const std::string& dependency, const std::string& d_key, const query_result* dependencies,
 		std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >& functors_found,
 		std::vector<std::pair<unsigned int,std::string> >& dependency_stack){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string lexeme,lexeme_d_key;
 	std::vector<std::pair<unsigned int,std::string> >::const_iterator j;
 
-	if(&dependencies!=NULL){//c++ battlefield: null object reference is possible, check it
-		depolex_entry=dependencies.first_value_for_field_name_found("semantic_dependency",dependency);
+    if(dependencies!=NULL){
+        depolex_entry=dependencies->first_value_for_field_name_found("semantic_dependency",dependency);
 		if(d_key.empty()==false){
-			while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
-					&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
-				depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+            while(depolex_entry!=NULL&&*dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
+                    &&*dependencies->field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
+                depolex_entry=dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 			}
 		}
 		while(depolex_entry!=NULL){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for functor with dependency "
-			+*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")+" with d_key "
-			+*dependencies.field_value_at_row_position(depolex_entry->first,"d_key"));
-			lexeme=*dependencies.field_value_at_row_position(depolex_entry->first,"lexeme");
-			lexeme_d_key=*dependencies.field_value_at_row_position(depolex_entry->first,"d_key");
+            +*dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency")+" with d_key "
+            +*dependencies->field_value_at_row_position(depolex_entry->first,"d_key"));
+            lexeme=*dependencies->field_value_at_row_position(depolex_entry->first,"lexeme");
+            lexeme_d_key=*dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
 			for(j=dependency_stack.begin();j!=dependency_stack.end();++j){
 				if(j->first==depolex_entry->first&&j->second==depolex_entry->second.field_value) break;
 			}
@@ -352,11 +353,11 @@ void interpreter::find_functors_for_dependency(const std::string& dependency, co
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"pop from dependency stack the row index:"+std::to_string(depolex_entry->first)+" and semantic dependency:"+depolex_entry->second.field_value);
 				dependency_stack.pop_back();
 			}
-			depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+            depolex_entry=dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 			if(d_key.empty()==false){
-				while(depolex_entry!=NULL&&*dependencies.field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
-						&&*dependencies.field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
-					depolex_entry=dependencies.value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
+                while(depolex_entry!=NULL&&*dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency")==dependency
+                        &&*dependencies->field_value_at_row_position(depolex_entry->first,"ref_d_key")!=d_key){
+                    depolex_entry=dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"semantic_dependency",dependency);
 				}
 			}
 		}
@@ -1946,7 +1947,50 @@ void interpreter::o_build_dependency_semantics(const unsigned char& toa,const un
     }
 }
 
+void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>& words, const std::string& dependency,const std::string& d_key,const std::string& lid,const std::string& gcats,std::set<std::pair<std::string,unsigned int>>& functors_found,std::set<std::pair<std::string,unsigned int>>& lexemes_processed){
+    db *sqlite=NULL;
+    query_result *depolex_entries=NULL;
+
+    auto processed_entry=lexemes_processed.find(std::make_pair(dependency,std::atoi(d_key.c_str())));
+    if(processed_entry==lexemes_processed.end()){
+        lexemes_processed.insert(std::make_pair(dependency,std::atoi(d_key.c_str())));
+        sqlite=db_factory::get_instance();
+        if(d_key.empty()==true){
+            depolex_entries=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE SEMANTIC_DEPENDENCY='"+dependency+"';");
+        }
+        else{
+            depolex_entries=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE SEMANTIC_DEPENDENCY='"+dependency+"' AND REF_D_KEY='"+d_key+"';");
+        }
+        if(depolex_entries!=NULL){
+            unsigned int nr_of_entries=depolex_entries->nr_of_result_rows();
+            for(unsigned int i=0; i<nr_of_entries; ++i){
+                std::string lexeme=*depolex_entries->field_value_at_row_position(i,"lexeme");
+                std::string lexeme_d_key=*depolex_entries->field_value_at_row_position(i,"d_key");
+                query_result *lexicon_entries=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LID='"+lid+"' AND GCAT IN ("+gcats+") AND LEXEME='"+lexeme+"';");
+                if(lexicon_entries!=NULL){
+                    auto functor_found=std::make_pair(lexeme,std::atoi(lexeme_d_key.c_str()));
+                    functors_found.insert(functor_found);
+                    delete lexicon_entries;
+                }
+                unsigned int opa=std::atoi(depolex_entries->field_value_at_row_position(i,"optional_parent_allowed")->c_str());
+                bool lexeme_found=false;
+                for(auto& word:words){
+                    if(word.lexeme==lexeme){
+                        lexeme_found=true;
+                        break;
+                    }
+                }
+                if(opa!=0||opa==0&&lexeme_found==true){//TODO:extend with checking manner as well
+                    find_functors_for_dependency_with_gcat_in_db(words,lexeme,lexeme_d_key,lid,gcats,functors_found,lexemes_processed);
+                }
+            }
+            delete depolex_entries;
+        }
+    }
+}
+
 void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
+    //TODO: How to handle mood?
     //TODO: Consider moving this and the related methods to the interpreter class.
     //The dependency semantics algorithm gets executed for each token paths.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables

@@ -610,7 +610,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
                 //TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
                 //nr of nodes but none of them having constants. Figure out if there are better
                 //ways of ranking than this.
-                rank=(nr_of_cons+1)/valid_graphs_node_functor_maps[i].size();
+                rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
                 analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
@@ -749,14 +749,18 @@ void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
 	invalid_parse_trees.push_back(nodes);
 }
 
-void tokenpaths::assign_lexer(lexer *lex){
+void tokenpaths::assign_lexer(class lexer *lex){
     this->lex=lex;
-	if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
+    if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);
 }
 
-std::string tokenpaths::add_context_reference_word(const unsigned char& crh){
+lexer* tokenpaths::lexer(){
+    return lex;
+}
+
+std::string tokenpaths::add_context_reference_word(const unsigned char& crh,const std::string& human_input){
     //TODO: Consider moving this and the related methods to the interpreter class.
     //The current implementation is not token path based which means that we try to figure out the one and only correct
     //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
@@ -819,20 +823,26 @@ std::string tokenpaths::add_context_reference_word(const unsigned char& crh){
                         break;
                     }
                 }
-                std::string human_input=lex->work_string();
-                //In case of dependency semantics (for which this method prepares the human input) the order of words
-                //does not matter as no syntactic analysis is carried out.
-                modified_human_input=main_verb_word+" "+human_input;
-                std::locale locale=std::locale();
-                std::string language=lex->language();
-                delete lex;
-                //lex points to the same instance as ::lex so deletion is fine
-                //but to assign a new lexer the global needs to be updated as well
-                lex=new lexer(modified_human_input.c_str(),language.c_str(),locale,false,this);
-                path_nr_to_stop_at=0;//TODO:This actually reinitializes that counter for assign_lexer() to work properly but could be done nicer. Figure out how.
-                assign_lexer(lex);
+                modified_human_input=modify_human_input(main_verb_word,human_input);
             }
         }
     }
+    return modified_human_input;
+}
+
+std::string tokenpaths::modify_human_input(const std::string& word,const std::string& human_input){
+    //In case of dependency semantics (for which this method prepares the human input) the order of words
+    //does not matter as no syntactic analysis is carried out.
+    std::string modified_human_input=word+" "+human_input;
+    std::locale locale=std::locale();
+    std::string language=lex->language();
+    delete lex;
+    //lex points to the same instance as ::lex so deletion is fine
+    //but to assign a new lexer the global needs to be updated as well
+    lex=new class lexer(modified_human_input.c_str(),language.c_str(),locale,false,this);
+    path_nr_to_stop_at=0;//TODO:This actually reinitializes that counter for assign_lexer() to work properly but could be done nicer. Figure out how.
+    current_path_nr=0;
+    is_any_path_left=true;
+    assign_lexer(lex);
     return modified_human_input;
 }

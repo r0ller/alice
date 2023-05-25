@@ -1,6 +1,7 @@
 int yylex(yy::parser::semantic_type* yylval);
 #include <iostream>
 #include <locale>
+#include <algorithm>
 #ifdef __ANDROID__
 	#include "jni.h"
 	JavaVM *jvm=NULL;
