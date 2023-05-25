@@ -25,7 +25,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source,const unsigned char crh){
 #endif
 
-    std::string analyses,modified_human_input;
+	std::string analyses,modified_human_input,main_verb_symbols;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
@@ -37,7 +37,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 
     logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
-    token_paths=new tokenpaths(toa);
+	token_paths=new tokenpaths(toa);
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
 		try{
@@ -62,6 +62,16 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				#else
 				sqlite->open(db_uri);
 				#endif
+				query_result *main_symbol_result=NULL;
+				main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+				std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
+				delete main_symbol_result;
+				query_result *main_verb_result=NULL;
+				main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
+				main_verb_symbols=*main_verb_result->field_value_at_row_position(0,"value");
+				std::replace(main_verb_symbols.begin(),main_verb_symbols.end(),'<','\'');
+				std::replace(main_verb_symbols.begin(),main_verb_symbols.end(),'>','\'');
+				delete main_verb_result;
 			}
 			locale=std::locale();
             if(modified_human_input.empty()==true){
@@ -75,7 +85,8 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
             sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
-            if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
+			bool delete_lexer=true;
+			if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
 				int parse_error=parser.parse();
 				if(parse_error==0){
 					if(toa&HI_SEMANTICS){
@@ -124,21 +135,26 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
                 if(crh>0&&modified_human_input.empty()==true){
                     modified_human_input=token_paths->add_context_reference_word(crh,human_input);
                     lex=token_paths->lexer();
+					delete_lexer=false;
                 }
                 else{
-                    if(functors_with_matching_nr_of_deps.empty()==true){
+					//1. Find functor(s) with gcat set in settings
+					//2. Determine the intersection of functors_found of each iteration
+					//3. If there are >1 functors in the intersection, select those that
+					//   have the highest number of dependencies found.
+					//4. If there are >1, make as many turns as necessary to return analysis for each.
+					if(functors_with_matching_nr_of_deps.empty()==true){
                         std::vector<lexicon> words=lex->word_entries();
                         std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
                         if(main_verbs.size()==0){
                             std::multiset<std::pair<std::string,unsigned int>> functors_found_union;
                             std::map<std::pair<std::string,unsigned int>,unsigned int> functors_found_with_nr_of_deps;
-                            for(auto& word: words){
+							for(auto& word: words){
                                 std::set<std::pair<std::string,unsigned int>> lexemes_processed;
                                 std::set<std::pair<std::string,unsigned int>> functors_found;
-                                //TODO:read main verb settings
                                 std::string lexeme=word.lexeme;
                                 if(word.lexicon_entry==false) lexeme=word.gcat;
-                                    sparser->find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,"'V'",functors_found,lexemes_processed);
+								sparser->find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
                                 for(auto& functor_found: functors_found){
                                     functors_found_union.insert(functor_found);
                                 }
@@ -159,12 +175,13 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
                     }
                     if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()&&modified_human_input.empty()==true){
                         query_result *result=NULL;
-                        result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in('V');");
+						result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
                         if(result!=NULL){
                             std::string word=*result->field_value_at_row_position(0,"word");
                             modified_human_input=token_paths->modify_human_input(word,human_input);
                             lex=token_paths->lexer();
-                            delete result;
+							delete_lexer=false;
+							delete result;
                             while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
                                 lex->next_token();
                             }
@@ -180,12 +197,13 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
                     //Do the same as in line 37-56 (without checking for modified_human_input.empty()==true) to fill again modified_human_input
                     if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
                         query_result *result=NULL;
-                        result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in('V');");
+						result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
                         if(result!=NULL){
                             std::string word=*result->field_value_at_row_position(0,"word");
                             modified_human_input=token_paths->modify_human_input(word,human_input);
                             lex=token_paths->lexer();
-                            delete result;
+							delete_lexer=false;
+							delete result;
                             while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
                                 lex->next_token();
                             }
@@ -193,8 +211,10 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
                     }
                 }
             }
-            //delete lex;
-            //lex=NULL;
+			if(delete_lexer==true){
+				delete lex;
+				lex=NULL;
+			}
 			if(toa==HI_MORPHOLOGY) break;
 		}
 		catch(sql_execution_error& exception){

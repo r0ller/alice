@@ -53,13 +53,13 @@ int main(int argc,char **argv){
         hi_state_cvalue(argv[2],argv[3],argv[4],argv[5]);
     }
     else{
-        //while(true){
-            //getline(cin,text);
+		while(true){
+			getline(cin,text);
             //text="a harmadiknak\n";//"küldd\n";
             //text="hívd fel pétert\n";
             //text="a harmadikat\n";
             //text="today is peter's birthday .\n";
-            text="files in abc\n";
+			//text="files in abc\n";
             if(text.empty()==false){
                 //toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
                 toa=HI_MORPHOLOGY|HI_SEMANTICS;
@@ -103,7 +103,7 @@ int main(int argc,char **argv){
                 }
                 text.clear();
             }
-            //else break;
-        //}
+			else break;
+		}
     }
 }

@@ -2008,63 +2008,6 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
     //   at the end of the interpretation
     std::vector<lexicon> words=lex->word_entries();
     std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-    /*if(main_verbs.size()==0){
-        //1. Find functor(s) with gcat set in settings
-        //2. Determine the intersection of functors_found of each iteration
-        //3. If there are >1 functors in the intersection, they must be ranked according to
-        //   a) the distance of the dependencies from the corresponding functor found,
-        //   b) the most frequent functor found for the dependencies,
-        //   c) the number of dependencies found for the most frequent functor.
-        //4. Choose the best based on the ranking. If there are >1 with the same
-        //   ranking, return error about ambiguity.
-        //5. Let the rest of the code run: if there's >1 it's an error, if only one, then it's fine
-        std::map<std::pair<std::string,unsigned int>,std::vector<unsigned int>> functors_found_with_deps_distances;
-        for(auto& word: words){
-            std::set<std::pair<std::string,unsigned int>> lexemes_processed;
-            std::map<std::pair<std::string,unsigned int>,unsigned int> functors_found;
-            //TODO:read main verb settings
-            std::string lexeme=word.lexeme;
-            if(word.lexicon_entry==false) lexeme=word.gcat;
-            find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,"'V'",functors_found,lexemes_processed);
-            //Collecting the dependencies belonging to the same functor found together
-            //with their distances so that later the functors can be ranked according to that.
-            for(auto& functor_with_dep_distance: functors_found){
-                auto&& functor_with_deps_distances=functors_found_with_deps_distances.find(functor_with_dep_distance.first);
-                if(functor_with_deps_distances==functors_found_with_deps_distances.end()){
-                    std::vector<unsigned int> distances{functor_with_dep_distance.second};
-                    functors_found_with_deps_distances.insert(std::make_pair(functor_with_dep_distance.first,distances));
-                }
-                else{
-                    functor_with_deps_distances->second.push_back(functor_with_dep_distance.second);
-                }
-            }
-        }
-        std::multimap<unsigned int,std::pair<std::string,unsigned int>> nr_of_deps_of_functors;
-        for(auto& functor: functors_found_with_deps_distances){
-            nr_of_deps_of_functors.insert(std::make_pair(functor.second.size(),functor.first));
-        }
-        auto functor_with_most_deps=nr_of_deps_of_functors.rbegin();
-        std::multimap<float,std::pair<std::string,unsigned int>> ranked_functors;
-        //Instead of picking rbegin, check if there are >1 entries with the same
-        //nr of deps. If yes, rank them based on the distances of their dependencies.
-        for(auto&& i=nr_of_deps_of_functors.lower_bound(functor_with_most_deps->first);i!=nr_of_deps_of_functors.upper_bound(functor_with_most_deps->first);++i){
-            auto&& functor_with_deps_distances=functors_found_with_deps_distances.find(i->second);
-            std::vector distances=functor_with_deps_distances->second;
-            unsigned int sum=std::accumulate(distances.begin(),distances.end(),0);
-            float rank=(float)sum/(float)i->first;
-            ranked_functors.insert(std::make_pair(rank,i->second));
-        }
-        auto best_ranked_functor_with_deps_distances=functors_found_with_deps_distances.find(ranked_functors.begin()->second);
-        if(best_ranked_functor_with_deps_distances->second.size()==words.size()){
-            std::string lexeme=best_ranked_functor_with_deps_distances->first.first;
-            lex->analyze_and_cache(lexeme);
-            words=lex->word_entries();
-            main_verbs=lex->find_main_verb(words);
-        }
-        else{
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No functor found for all dependencies.");
-        }
-    }*/
     if(main_verbs.size()==1){
         std::set<unsigned int> processed_words;
         std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
