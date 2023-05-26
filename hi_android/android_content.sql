@@ -579,6 +579,10 @@ insert into FUNCTOR_DEFS values('CONTACT_1', 'js', '1', 'contact_1.js');
 insert into FUNCTOR_DEFS values('HOGYHUNCONJ_1', 'js', '1', 'hogyhunconj_1.js');
 insert into FUNCTOR_DEFS values('KULDHUNV_1', 'js', '1', 'kuldhunv_1.js');
 insert into FUNCTOR_DEFS values('NEHUNNEG_1', 'js', '1', 'nehunneg_1.js');
+insert into FUNCTOR_DEFS values('KAPCSOLHUNV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('BEHUNVBPFX_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('KIHUNVBPFX_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('FELOLVASASHUNN_1', 'js', '1', NULL);
 
 insert into FUNCTOR_DEFS values('KEZDODHUNAR_1', 'js', '1', NULL);
 insert into FUNCTOR_DEFS values('VEGZODHUNAR_1', 'js', '1', NULL);
@@ -640,6 +644,10 @@ insert into FUNCTORS values('CONTACT', '1', 'CONTACT_1');
 insert into FUNCTORS values('HOGYHUNCONJ', '1', 'HOGYHUNCONJ_1');
 insert into FUNCTORS values('KULDHUNV', '1', 'KULDHUNV_1');
 insert into FUNCTORS values('NEHUNNEG', '1', 'NEHUNNEG_1');
+insert into FUNCTORS values('KAPCSOLHUNV', '1', 'KAPCSOLHUNV_1');
+insert into FUNCTORS values('BEHUNVBPFX', '1', 'BEHUNVBPFX_1');
+insert into FUNCTORS values('KIHUNVBPFX', '1', 'KIHUNVBPFX_1');
+insert into FUNCTORS values('FELOLVASASHUNN', '1', 'FELOLVASASHUNN_1');
 
 insert into FUNCTOR_TAGS values('CALLENGV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('CALLENGV', '1', NULL, '2', 'type', 'action');
@@ -692,6 +700,10 @@ insert into LEXICON values('üzen', 'HUN', 'Verb', 'UZENHUNV');
 insert into LEXICON values('hogy', 'HUN', 'Conj', 'HOGYHUNCONJ');
 insert into LEXICON values('küld', 'HUN', 'Verb', 'KULDHUNV');
 insert into LEXICON values('ne', 'HUN', 'Neg', 'NEHUNNEG');
+insert into LEXICON values('kapcsol', 'HUN', 'Verb', 'KAPCSOLHUNV');
+insert into LEXICON values('be', 'HUN', 'Vbpfx', 'BEHUNVBPFX');
+insert into LEXICON values('ki', 'HUN', 'Vbpfx', 'KIHUNVBPFX');
+insert into LEXICON values('felolvasás', 'HUN', 'Noun', 'FELOLVASASHUNN');
 
 /*
 insert into LEXICON values('kezdőd', 'HUN', 'Adj', 'KEZDODHUNAR');*//*AR:adjective, reflexive; current foma fst does not break it down to this level*/
