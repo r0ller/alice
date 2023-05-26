@@ -61,8 +61,8 @@ int main(int argc,char **argv){
             //text="today is peter's birthday .\n";
 			//text="files in abc\n";
             if(text.empty()==false){
-                //toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-                toa=HI_MORPHOLOGY|HI_SEMANTICS;
+				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+				//toa=HI_MORPHOLOGY|HI_SEMANTICS;
                 //crh=HI_VERB;
                 analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
                 if(analyses!=NULL){
