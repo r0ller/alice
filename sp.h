@@ -126,6 +126,7 @@
             void o_build_dependency_semantics(const unsigned char&,const unsigned char&,const std::string&,lexer*,tokenpaths*);
             void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
             void find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>&, const std::string&,const std::string&,const std::string&,const std::string&,std::set<std::pair<std::string,unsigned int>>&,std::set<std::pair<std::string,unsigned int>>&);
+			std::set<std::pair<std::string,unsigned int>> find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& words,const std::string& main_verb_symbols);
     };
 
 	class semper_error:public std::exception{
