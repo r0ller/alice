@@ -831,10 +831,11 @@ std::string tokenpaths::add_context_reference_word(const unsigned char& crh,cons
 }
 
 std::string tokenpaths::modify_human_input(const std::string& word,const std::string& human_input){
-    //In case of dependency semantics (for which this method prepares the human input) the order of words
+	//In case of dependency semantics (for which this method prepares the human input) the order of words
     //does not matter as no syntactic analysis is carried out.
-    std::string modified_human_input=word+" "+human_input;
-    std::locale locale=std::locale();
+	std::string modified_human_input=word+" "+human_input;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"modifying human input to:"+modified_human_input);
+	std::locale locale=std::locale();
     std::string language=lex->language();
     delete lex;
     //lex points to the same instance as ::lex so deletion is fine
@@ -843,6 +844,7 @@ std::string tokenpaths::modify_human_input(const std::string& word,const std::st
     path_nr_to_stop_at=0;//TODO:This actually reinitializes that counter for assign_lexer() to work properly but could be done nicer. Figure out how.
     current_path_nr=0;
     is_any_path_left=true;
+	reset();
     assign_lexer(lex);
-    return modified_human_input;
+	return modified_human_input;
 }

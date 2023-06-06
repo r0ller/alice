@@ -438,6 +438,10 @@ insert into SYMBOLS values('HUN_Noun_lfea_Del','HUN',NULL);
 insert into SYMBOLS values('HUN_Num_lfea_Del','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Num_Del','HUN',NULL);
 
+insert into SYMBOLS values('Pref','HUN',NULL);
+insert into SYMBOLS values('t_HUN_Noun_Pref','HUN',NULL);
+insert into SYMBOLS values('HUN_Noun_Pref','HUN',NULL);
+
 /*Entries with NULL value for token are not to be generated in the yacc source.*/
 insert into GCAT values('CON', 'Stem', 'ENG', '1',NULL,NULL);
 insert into GCAT values('A', 'Stem', 'ENG', '1',NULL,NULL);
@@ -540,6 +544,9 @@ insert into GCAT values('CON', 'Dat', 'HUN', '178',NULL,NULL);
 insert into GCAT values('Num', 'Dat', 'HUN', '179',NULL,NULL);
 insert into GCAT values('Noun', 'Del', 'HUN', '180',NULL,NULL);
 insert into GCAT values('Num', 'Del', 'HUN', '181',NULL,NULL);
+
+insert into GCAT values('Noun', 'Pref', 'HUN', '182',NULL,NULL);
+
 /*
 insert into GCAT values('Punct', 'Stem', 'HUN', '1',NULL,NULL);
 insert into GCAT values('Punct', 'FullStop', 'HUN', '1',NULL,NULL);
@@ -579,6 +586,10 @@ insert into FUNCTOR_DEFS values('CONTACT_1', 'js', '1', 'contact_1.js');
 insert into FUNCTOR_DEFS values('HOGYHUNCONJ_1', 'js', '1', 'hogyhunconj_1.js');
 insert into FUNCTOR_DEFS values('KULDHUNV_1', 'js', '1', 'kuldhunv_1.js');
 insert into FUNCTOR_DEFS values('NEHUNNEG_1', 'js', '1', 'nehunneg_1.js');
+insert into FUNCTOR_DEFS values('KAPCSOLHUNV_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('BEHUNVBPFX_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('KIHUNVBPFX_1', 'js', '1', NULL);
+insert into FUNCTOR_DEFS values('FELOLVASASHUNN_1', 'js', '1', NULL);
 
 insert into FUNCTOR_DEFS values('KEZDODHUNAR_1', 'js', '1', NULL);
 insert into FUNCTOR_DEFS values('VEGZODHUNAR_1', 'js', '1', NULL);
@@ -640,6 +651,10 @@ insert into FUNCTORS values('CONTACT', '1', 'CONTACT_1');
 insert into FUNCTORS values('HOGYHUNCONJ', '1', 'HOGYHUNCONJ_1');
 insert into FUNCTORS values('KULDHUNV', '1', 'KULDHUNV_1');
 insert into FUNCTORS values('NEHUNNEG', '1', 'NEHUNNEG_1');
+insert into FUNCTORS values('KAPCSOLHUNV', '1', 'KAPCSOLHUNV_1');
+insert into FUNCTORS values('BEHUNVBPFX', '1', 'BEHUNVBPFX_1');
+insert into FUNCTORS values('KIHUNVBPFX', '1', 'KIHUNVBPFX_1');
+insert into FUNCTORS values('OLVASASHUNN', '1', 'FELOLVASASHUNN_1');
 
 insert into FUNCTOR_TAGS values('CALLENGV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('CALLENGV', '1', NULL, '2', 'type', 'action');
@@ -657,6 +672,8 @@ insert into FUNCTOR_TAGS values('UZENHUNV', '1', 'main_verb', '1', 'type', 'acti
 insert into FUNCTOR_TAGS values('UZENHUNV', '1', NULL, '2', 'type', 'action');
 insert into FUNCTOR_TAGS values('KULDHUNV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('KULDHUNV', '1', NULL, '2', 'type', 'action');
+insert into FUNCTOR_TAGS values('KAPCSOLHUNV', '1', 'main_verb', '1', 'type', 'action');
+insert into FUNCTOR_TAGS values('KAPCSOLHUNV', '1', NULL, '2', 'type', 'action');
 
 insert into LEXICON values('call', 'ENG', 'V', 'CALLENGV');
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -692,6 +709,10 @@ insert into LEXICON values('üzen', 'HUN', 'Verb', 'UZENHUNV');
 insert into LEXICON values('hogy', 'HUN', 'Conj', 'HOGYHUNCONJ');
 insert into LEXICON values('küld', 'HUN', 'Verb', 'KULDHUNV');
 insert into LEXICON values('ne', 'HUN', 'Neg', 'NEHUNNEG');
+insert into LEXICON values('kapcsol', 'HUN', 'Verb', 'KAPCSOLHUNV');
+insert into LEXICON values('be', 'HUN', 'Vbpfx', 'BEHUNVBPFX');
+insert into LEXICON values('ki', 'HUN', 'Vbpfx', 'KIHUNVBPFX');
+insert into LEXICON values('olvasás', 'HUN', 'Noun', 'OLVASASHUNN');/*Felolvasás is stemmed by the small hunmorph analyser to Pref+olvasás so different meanings may be differentiated by its dkey later*/
 
 /*
 insert into LEXICON values('kezdőd', 'HUN', 'Adj', 'KEZDODHUNAR');*//*AR:adjective, reflexive; current foma fst does not break it down to this level*/
@@ -946,6 +967,13 @@ insert into DEPOLEX values('KULDHUNV', '1', '2', NULL, '3', NULL, '0', 'Num', '1
 insert into DEPOLEX values('KULDHUNV', '1', '3', NULL, '4', NULL, '0', 'ELSOUTSOHUNNOUN', '1');
 insert into DEPOLEX values('KULDHUNV', '1', '4', NULL, '4', NULL, '1', 'CON', '1');
 insert into DEPOLEX values('NEHUNNEG', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+
+insert into DEPOLEX values('KAPCSOLHUNV', '1', '1', NULL, '2', '3', '0', 'BEHUNVBPFX', '1');
+insert into DEPOLEX values('KAPCSOLHUNV', '1', '2', NULL, NULL, '3', '0', 'KIHUNVBPFX', '1');
+insert into DEPOLEX values('KAPCSOLHUNV', '1', '3', NULL, NULL, NULL, '0', 'OLVASASHUNN', '1');
+insert into DEPOLEX values('BEHUNVBPFX', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('KIHUNVBPFX', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
+insert into DEPOLEX values('OLVASASHUNN', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar1',NULL,NULL,NULL);
@@ -1443,5 +1471,8 @@ insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_Num','HUN_Num_lfea_Del',NULL,N
 insert into GRAMMAR values('HUN','HUN_Num_lfea_Del','t_HUN_Num_Del',NULL,NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_Noun_lfea_Del','t_HUN_Noun_Del',NULL,NULL,NULL);
 insert into GRAMMAR values('HUN','HUN_N_Dat','HUN_N_Sg','HUN_Noun_lfea_Del',NULL,NULL);
+
+insert into GRAMMAR values('HUN','HUN_Noun_Pref','t_HUN_Noun_Pref',NULL,NULL,NULL);
+insert into GRAMMAR values('HUN','HUN_N_Sg','HUN_Noun_Pref','HUN_Noun_Stem',NULL,NULL);
 
 COMMIT;

@@ -1812,7 +1812,8 @@ void interpreter::o_build_dependency_semantics(const unsigned char& toa,const un
     //TODO: Consider moving this and the related methods to the interpreter class.
     //The current implementation is not token path based which means that we try to figure out the one and only correct
     //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
-    //syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
+	//syntactic and semantic analyses does not always provide the best result in case of morphological analyses since
+	//not always the word having the most morphemes is the best choice.
     //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
     //2. check if the returned analyses has the 'errors' property
@@ -2006,7 +2007,7 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
     //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
     //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
     //   at the end of the interpretation
-    std::vector<lexicon> words=lex->word_entries();
+	std::vector<lexicon> words=lex->word_entries();//Get words of the current token path.
     std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
     if(main_verbs.size()==1){
         std::set<unsigned int> processed_words;
@@ -2148,12 +2149,41 @@ unsigned int interpreter::combine_nodes(std::vector<lexicon>& words,std::set<uns
             logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main word:"+main_node.expression.word+", dvm size:"+std::to_string(main_node.dependency_validation_matrix.size()));
             combined_node_id=combine_nodes(main_word.gcat+"_"+dependent_node.expression.gcat+"_"+std::to_string(main_node_id)+"_"+std::to_string(dependent_node_id),main_node,dependent_node);
             logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"combined_node_id:"+std::to_string(combined_node_id));
-            processed_words.insert(dependency_word_index);
-            processed_depolex.insert(std::make_pair(main_node_id,dependent_node_id));
         }
+		processed_words.insert(dependency_word_index);//TODO: processed_words and processed_depolex must be set together -> wrap them in a method
+		processed_depolex.insert(std::make_pair(main_node_id,dependent_node_id));
     }
     catch(invalid_combination& exception){
         logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception in tokenpaths::combine_nodes().");
     }
     return combined_node_id;
+}
+
+std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& words,const std::string& main_verb_symbols){
+	std::multiset<std::pair<std::string,unsigned int>> functors_found_union;
+	std::map<std::pair<std::string,unsigned int>,unsigned int> functors_found_with_nr_of_deps;
+	std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
+
+	for(auto& word: words){
+		std::set<std::pair<std::string,unsigned int>> lexemes_processed;
+		std::set<std::pair<std::string,unsigned int>> functors_found;
+		std::string lexeme=word.lexeme;
+		if(word.lexicon_entry==false) lexeme=word.gcat;
+		find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
+		for(auto& functor_found: functors_found){
+			functors_found_union.insert(functor_found);
+		}
+	}
+	for(auto& functor:functors_found_union){
+		auto functor_found=functors_found_with_nr_of_deps.find(functor);
+		if(functor_found==functors_found_with_nr_of_deps.end()){
+			functors_found_with_nr_of_deps.insert(std::make_pair(functor,functors_found_union.count(functor)));
+		}
+	}
+	for(auto& functor:functors_found_with_nr_of_deps){
+		if(functor.second==words.size()){
+			functors_with_matching_nr_of_deps.insert(functor.first);
+		}
+	}
+	return functors_with_matching_nr_of_deps;
 }

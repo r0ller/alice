@@ -815,6 +815,7 @@ substitute defined PotentialWord for "[Guess]"
 define Lexiconfnevek
 
 define Grammarfnevek Lexiconfnevek           .o. 
+				AddTag           .o.
 	            Etoee             .o. 
                Atoaa             .o. 
                EetoeAcc          .o. # é
