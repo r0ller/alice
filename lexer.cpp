@@ -112,7 +112,7 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 	nr_of_words=words.size();
 	if(lexeme.empty()==false){
 		for(i=0;i<nr_of_words;i++){
-			if(lexeme==words[i].lexeme+words[i].lid+words[i].gcat){
+			if(lexeme==words[i].lexeme){
 				word.token=words[i].token;
 				word.word=words[i].word;
 				word.lid=words[i].lid;
@@ -122,6 +122,7 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 				word.morphalytics=words[i].morphalytics;
 				word.lexicon_entry=words[i].lexicon_entry;
 				word.tokens=words[i].tokens;
+				break;
 			}
 		}
 	}
@@ -467,7 +468,7 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 				auto cache_hit=cache.find(last_word);
 				if(cache_hit==cache.end()){
 					if(generate_tokens_==true) morphalytics=stemmer->analyze(last_word,false);
-					else morphalytics=stemmer->analyze(last_word,true);
+					else morphalytics=stemmer->analyze(last_word,false);
 					if(morphalytics!=NULL&&morphalytics->empty()==false){
 						if(morphalytics->size()==1&&morphalytics->front().is_mocked()==true){//The word could not be analysed -> treat it as constant
 							std::string symbol="t_"+language()+"_CON_Stem";
@@ -547,54 +548,6 @@ std::string lexer::work_string(){
 	return human_input;
 }
 
-void lexer::morphology_wo_cons(const std::vector<lexicon>& word_analyses,std::vector<lexicon>& words_wo_cons) const{
-    lexicon con;
-    unsigned int most_con_tags=0,nr_of_non_cons=0;
-
-    //1) remove morphemes having CON gcat if multiple morpheme analyses are available for the same word form with
-    //different gcat and only leave the one having the most tags
-    //2) or if multiple morpheme analyses are available but only with CON gcat, leave the one having the most tags
-    for(auto& word_analysis:word_analyses){
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"checking word_analysis:"+word_analysis.word+", gcat:"+word_analysis.gcat+", lexeme:"+word_analysis.lexeme+", morphemes:"+std::to_string(word_analysis.morphalytics->morphemes().size()));
-        bool add_word=false;
-        bool new_word=true;
-        for(auto word_wo_con=words_wo_cons.begin();word_wo_con!=words_wo_cons.end();){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"checking word_wo_con:"+word_wo_con->word+", gcat:"+word_wo_con->gcat+", lexeme:"+word_wo_con->lexeme+", morphemes:"+std::to_string(word_wo_con->morphalytics->morphemes().size()));
-            std::string word_analysis_word;
-            std::string word_wo_con_word;
-            if(word_analysis.morphalytics==NULL) word_analysis_word=word_analysis.word;
-            else word_analysis_word=word_analysis.morphalytics->word();
-            if(word_wo_con->morphalytics==NULL) word_wo_con_word=word_wo_con->word;
-            else word_wo_con_word=word_wo_con->morphalytics->word();
-            if(word_analysis_word==word_wo_con_word){
-                new_word=false;
-                if(word_analysis.gcat==word_wo_con->gcat&&word_analysis.lexeme==word_wo_con->lexeme&&word_analysis.morphalytics->morphemes().size()>word_wo_con->morphalytics->morphemes().size()||word_analysis.gcat!="CON"&&word_wo_con->gcat=="CON"){
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"word_analysis word has more morphemes");
-                    word_wo_con=words_wo_cons.erase(word_wo_con);
-                    add_word=true;
-                }
-                else{
-                    ++word_wo_con;
-                }
-            }
-            else{
-                ++word_wo_con;
-            }
-        }
-        if(add_word==true||new_word==true) words_wo_cons.push_back(word_analysis);
-    }
-    return;
-}
-
-std::vector<lexicon> lexer::words_wo_cons() const{
-    std::vector<lexicon> words_wo_cons;
-
-    for(auto&& word_analyses:cache){
-        morphology_wo_cons(word_analyses.second,words_wo_cons);
-    }
-    return words_wo_cons;
-}
-
 std::map<unsigned int,lexicon> lexer::find_main_verb(const std::vector<lexicon>& words) const{
     std::map<unsigned int,lexicon> main_verbs;
     db *sqlite=NULL;
@@ -643,4 +596,15 @@ lexicon lexer::find_word_by_gcat(const std::vector<lexicon>& words,const std::se
         ++index;
     }
     return word_found;
+}
+
+std::vector<lexicon> lexer::all_word_entries(){
+	std::vector<lexicon> words;
+
+	for(auto&& word_analyses:cache){
+		for(auto&& word_analysis:word_analyses.second){
+			words.push_back(word_analysis);
+		}
+	}
+	return words;
 }

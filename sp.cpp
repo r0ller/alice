@@ -988,7 +988,8 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
     result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
     if(result==NULL) throw std::runtime_error("No main symbol is set up in settings table.");
     std::string main_symbol=*result->field_value_at_row_position(0,"value");
-    const node_info& root_node=get_node_info(nr_of_nodes_);
+	delete result;
+	const node_info& root_node=get_node_info(nr_of_nodes_);
     get_nodes_by_symbol(root_node,main_symbol,std::string(),verbs_found);
     if(verbs_found.size()==1){
 		const node_info& node=get_node_info(*verbs_found.begin());
@@ -1018,7 +1019,7 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	}
 	else{
 		if(verbs_found.size()==0)
-            throw std::runtime_error("No main verb found.");
+			throw std::runtime_error("No main verb found.");
 		else
 			throw std::runtime_error("More than one main verb found.");
 	}
@@ -1767,7 +1768,7 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 
 unsigned int interpreter::direct_descendant_of(const node_info& root_node){
 	if(root_node.left_child==0&&root_node.right_child==0){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"direct descendant found: "+std::to_string(root_node.node_id));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"direct descendant found: "+std::to_string(root_node.node_id));
 		return root_node.node_id;
 	}
 	if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
@@ -1808,153 +1809,15 @@ void interpreter::destroy_node_infos(){
 	return;
 }
 
-void interpreter::o_build_dependency_semantics(const unsigned char& toa,const unsigned char& crh,const std::string& language,lexer *lex,tokenpaths *tokenpaths){
-    //TODO: Consider moving this and the related methods to the interpreter class.
-    //The current implementation is not token path based which means that we try to figure out the one and only correct
-    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
-	//syntactic and semantic analyses does not always provide the best result in case of morphological analyses since
-	//not always the word having the most morphemes is the best choice.
-    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
-    //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
-    //2. check if the returned analyses has the 'errors' property
-    //3. if there's no error, return the ranked analyses
-    //4. if there's an error but there's a main verb, call build_dependency_semantics()
-    //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
-    //   of the verb finally chosen shall match the MOST of the lexemes of the human input i.e. the verb having the most
-    //   mandatory dependencies matching most of the lexemes wins. Besides that if there are mandatory dependencies that are missing,
-    //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) of the missing dependencies
-    //   together with the verb to construct a new (syntactically incorrect) sentence.
-    //   However, it's not sure if it makes sense to check earlier utterances than the latest one.
-    //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
-    //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
-    //   at the end of the interpretation
-    db *sqlite=NULL;
-
-    //is_any_path_left=false;//dependency semantics is not token path based, set it false to quit outer loop
-    sqlite=db_factory::get_instance();
-    //unsigned int nr_of_analyses=valid_paths.size();
-    //std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
-    std::vector<lexicon> words_wo_cons=lex->words_wo_cons();
-    //for(auto&& word_analyses:words_analyses){
-        //morphology_wo_cons(word_analyses.second,words_wo_cons);
-    //}
-    //std::map<unsigned int,lexicon> main_verbs=find_main_verb(words_wo_cons);
-    std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words_wo_cons);
-    if(crh&HI_VERB&&main_verbs.size()==0){
-        //Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
-        query_result *result=NULL;
-        result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
-        if(result!=NULL){//&&result->nr_of_result_rows()==1){
-            rapidjson::Document jsondoc;
-            std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
-            jsondoc.Parse(previous_analysis.c_str());
-            //TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
-            //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
-            //the verbs which currently only looks for the first verb having the same gcat set in settings db table
-            //for the symbol of the main_symbol.
-            query_result *main_symbol_result=NULL;
-            main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
-            std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
-            delete main_symbol_result;
-            query_result *main_verb_result=NULL;
-            main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
-            std::string main_verb=*main_verb_result->field_value_at_row_position(0,"value");
-            delete main_verb_result;
-            rapidjson::Value& morphologyArray=jsondoc["morphology"];
-            std::string main_verb_word;
-            rapidjson::Value morphologyObj;
-            for(unsigned int i=0;i<morphologyArray.Size();++i){
-                morphologyObj=morphologyArray[i];
-                if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
-                    main_verb_word=morphologyObj["word"].GetString();
-                    break;
-                }
-            }
-            std::locale locale=std::locale();
-            delete lex;
-            //lex points to the same instance as ::lex so deletion is fine
-            //but to assign a new lexer the global needs to be updated as well
-            lex=new lexer(main_verb_word.c_str(),language.c_str(),locale,false,tokenpaths);
-            tokenpaths->assign_lexer(lex);
-            //words_analyses=lexer::words_analyses();
-            words_wo_cons.clear();
-            words_wo_cons=lex->words_wo_cons();
-            //for(auto&& word_analyses:words_analyses){
-                //morphology_wo_cons(word_analyses.second,words_wo_cons);
-            //}
-            main_verbs.clear();
-            main_verbs=lex->find_main_verb(words_wo_cons);
-        }
-    }
-    if(main_verbs.size()==1){
-        std::set<unsigned int> processed_words;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
-        std::map<unsigned int,unsigned int> word_index_to_node_id_map;
-        std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
-        unsigned int word_index=main_verb_indexed.first;
-        lexicon main_verb=main_verb_indexed.second;
-        main_verb.morphalytics->add_feature("main_verb");
-        processed_words.insert(word_index);
-        unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
-        word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
-        //TODO: check what else may need to be cleaned up so that
-        //in case of success the json analysis is not affected by
-        //previously failed runs.
-        //valid_parse_trees.clear();
-        //valid_graphs.clear();
-        //valid_paths.clear();
-        //invalid_parse_trees.clear();
-        //invalid_paths.clear();
-        //invalid_path_errors.clear();
-//        try{
-            build_dependency_semantics(words_wo_cons,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
-            const node_info& main_node=get_node_info(main_node_id);
-            unsigned int root_node_id=set_node_info("S",main_node);
-            node_info root_node=get_node_info(root_node_id);
-            transgraph *transgraph=NULL;
-            transgraph=longest_match_for_semantic_rules_found();
-            if(transgraph!=NULL){
-                tokenpaths->validate_parse_tree(nodes());
-                tokenpaths->validate_path_wo_checks(words_wo_cons,transgraph);
-                //calling validate_path(words_wo_cons,transgraph,true) doesn't work
-                //as it does checks for different token paths which does not make sense
-                //in dependency semantics so let's do the necessary part manually
-                //valid_paths.push_back(words_wo_cons);
-                //valid_graphs.push_back(transgraph);
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
-                //nr_of_analyses=valid_paths.size();
-            }
-            else{
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-                tokenpaths->invalidate_parse_tree(nodes());
-                tokenpaths->invalidate_path(words_wo_cons,"semantic error",NULL);
-            }
-//        }
-//        catch(...){
-//            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
-//            exit(EXIT_FAILURE);
-//        }
-    }
-    else{
-        if(main_verbs.size()>1){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
-        }
-        else{
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
-        }
-    }
-}
-
 void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>& words, const std::string& dependency,const std::string& d_key,const std::string& lid,const std::string& gcats,std::set<std::pair<std::string,unsigned int>>& functors_found,std::set<std::pair<std::string,unsigned int>>& lexemes_processed){
     db *sqlite=NULL;
     query_result *depolex_entries=NULL;
 
     auto processed_entry=lexemes_processed.find(std::make_pair(dependency,std::atoi(d_key.c_str())));
-    if(processed_entry==lexemes_processed.end()){
-        lexemes_processed.insert(std::make_pair(dependency,std::atoi(d_key.c_str())));
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"checking if lexeme is already processed:"+dependency+" with d_key:"+d_key);
+	if(processed_entry==lexemes_processed.end()){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processing lexeme:"+dependency+" with d_key:"+d_key);
+		lexemes_processed.insert(std::make_pair(dependency,std::atoi(d_key.c_str())));
         sqlite=db_factory::get_instance();
         if(d_key.empty()==true){
             depolex_entries=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE SEMANTIC_DEPENDENCY='"+dependency+"';");
@@ -1967,7 +1830,8 @@ void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector
             for(unsigned int i=0; i<nr_of_entries; ++i){
                 std::string lexeme=*depolex_entries->field_value_at_row_position(i,"lexeme");
                 std::string lexeme_d_key=*depolex_entries->field_value_at_row_position(i,"d_key");
-                query_result *lexicon_entries=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LID='"+lid+"' AND GCAT IN ("+gcats+") AND LEXEME='"+lexeme+"';");
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme:"+lexeme+" with d_key:"+lexeme_d_key+" found for dependency:"+dependency+" with d_key:"+d_key);
+				query_result *lexicon_entries=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LID='"+lid+"' AND GCAT IN ("+gcats+") AND LEXEME='"+lexeme+"';");
                 if(lexicon_entries!=NULL){
                     auto functor_found=std::make_pair(lexeme,std::atoi(lexeme_d_key.c_str()));
                     functors_found.insert(functor_found);
@@ -1982,18 +1846,21 @@ void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector
                     }
                 }
                 if(opa!=0||opa==0&&lexeme_found==true){//TODO:extend with checking manner as well
-                    find_functors_for_dependency_with_gcat_in_db(words,lexeme,lexeme_d_key,lid,gcats,functors_found,lexemes_processed);
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"recursive call to find_functors_for_dependency_with_gcat_in_db with dependency:"+lexeme+" and d_key:"+lexeme_d_key);
+					find_functors_for_dependency_with_gcat_in_db(words,lexeme,lexeme_d_key,lid,gcats,functors_found,lexemes_processed);
                 }
             }
             delete depolex_entries;
         }
+		else{
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme is not used as semantic dependency:"+dependency+" with d_key:"+d_key);
+		}
     }
 }
 
-void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
+void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths,lexicon& intended_main_verb){
     //TODO: How to handle mood?
-    //TODO: Consider moving this and the related methods to the interpreter class.
-    //The dependency semantics algorithm gets executed for each token paths.
+	//The dependency semantics algorithm gets executed for each token path.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
     //2. check if the returned analyses has the 'errors' property
     //3. if there's no error, return the ranked analyses
@@ -2008,53 +1875,57 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
     //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
     //   at the end of the interpretation
 	std::vector<lexicon> words=lex->word_entries();//Get words of the current token path.
-    std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-    if(main_verbs.size()==1){
+	std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+	//if(main_verbs.size()==1){
         std::set<unsigned int> processed_words;
         std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
         std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
         std::map<unsigned int,unsigned int> word_index_to_node_id_map;
-        std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
+		//std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
+		std::pair<unsigned int,lexicon> main_verb_indexed;
+		std::cout<<"intended_main_verb.lexeme:"<<intended_main_verb.lexeme<<std::endl;
+		for(auto&& main_verb_iterator:main_verbs){//TODO:This will always find only the first if there are more
+			std::cout<<"main_verb.lexeme:"<<main_verb_iterator.second.lexeme<<std::endl;
+			if(main_verb_iterator.second.lexeme==intended_main_verb.lexeme){//Check if this should be stricter
+				main_verb_indexed=main_verb_iterator;
+				break;
+			}
+		}
         unsigned int word_index=main_verb_indexed.first;
         lexicon main_verb=main_verb_indexed.second;
+		std::cout<<"main_verb.lexeme:"<<main_verb.lexeme<<std::endl;
         main_verb.morphalytics->add_feature("main_verb");
         processed_words.insert(word_index);
         unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
         word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
-//        try{
-            build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
-            const node_info& main_node=get_node_info(main_node_id);
-            unsigned int root_node_id=set_node_info("S",main_node);
-            node_info root_node=get_node_info(root_node_id);
-            transgraph *transgraph=NULL;
-            transgraph=longest_match_for_semantic_rules_found();
-            if(transgraph!=NULL){
-                tokenpaths->validate_parse_tree(nodes());
-                tokenpaths->validate_path(words,transgraph,true);
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
-            }
-            else{
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-                tokenpaths->invalidate_parse_tree(nodes());
-                tokenpaths->invalidate_path(words,"semantic error",NULL);
-            }
-//        }
-//        catch(...){
-//            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
-//            exit(EXIT_FAILURE);
-//        }
-    }
-    else{
+		build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
+		const node_info& main_node=get_node_info(main_node_id);
+		unsigned int root_node_id=set_node_info("S",main_node);
+		node_info root_node=get_node_info(root_node_id);
+		transgraph *transgraph=NULL;
+		transgraph=longest_match_for_semantic_rules_found();
+		if(transgraph!=NULL){
+			tokenpaths->validate_parse_tree(nodes());
+			tokenpaths->validate_path(words,transgraph,true);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
+		}
+		else{
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
+			tokenpaths->invalidate_parse_tree(nodes());
+			tokenpaths->invalidate_path(words,"semantic error",NULL);
+		}
+	//}
+	/*else{
         if(main_verbs.size()>1){
             logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
         }
         else{
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
         }
         logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
         tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
         tokenpaths->invalidate_path(words,"semantic error",NULL);
-    }
+	}*/
 }
 
 void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::set<unsigned int>& processed_words,std::map<unsigned int,unsigned int>& words2nodes,const unsigned int& main_node_id,const std::string& optional_dependency,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex_by_row_nr,lexer *lex){
@@ -2165,24 +2036,29 @@ std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_ma
 	std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
 
 	for(auto& word: words){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"looking up functors for word:"+word.word);
 		std::set<std::pair<std::string,unsigned int>> lexemes_processed;
 		std::set<std::pair<std::string,unsigned int>> functors_found;
 		std::string lexeme=word.lexeme;
 		if(word.lexicon_entry==false) lexeme=word.gcat;
 		find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
 		for(auto& functor_found: functors_found){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting functor in union:"+functor_found.first+" with d_key:"+std::to_string(functor_found.second));
 			functors_found_union.insert(functor_found);
 		}
 	}
 	for(auto& functor:functors_found_union){
 		auto functor_found=functors_found_with_nr_of_deps.find(functor);
 		if(functor_found==functors_found_with_nr_of_deps.end()){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting functor in functors_found_with_nr_of_deps:"+functor.first+" with d_key:"+std::to_string(functor.second));
 			functors_found_with_nr_of_deps.insert(std::make_pair(functor,functors_found_union.count(functor)));
 		}
 	}
 	for(auto& functor:functors_found_with_nr_of_deps){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has "+std::to_string(functor.second)+" dependencies");
 		if(functor.second==words.size()){
 			functors_with_matching_nr_of_deps.insert(functor.first);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has matching nr of dependencies");
 		}
 	}
 	return functors_with_matching_nr_of_deps;

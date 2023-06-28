@@ -55,14 +55,14 @@ morphan::~morphan(){
 	if(pfstname!=NULL) delete []pfstname;
 }
 
-std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool all_cons){
+std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool with_cons){
 	char *result=NULL;
 	std::vector<char> c_word;
 	std::vector<std::string> morphemes_vector;
 	size_t separator_position=0, length=0, start_position=0;
-	std::string morphemes,con_morphemes;
-	morphan_result *analysis=NULL,*con_morphan=NULL;
-	std::vector<morphan_result> *analyses=NULL;
+	std::string morphemes;
+	morphan_result *analysis=NULL;
+	std::vector<morphan_result> *analyses=NULL,cons;
 
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"analyzing word "+word);
 	c_word.assign(word.begin(),word.end());
@@ -89,17 +89,12 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morpheme:"+morphemes_vector.back());
 			analysis=new morphan_result(word,morphemes_vector,lid_);
 			if(analysis->is_erroneous()==false){
-				if(analysis->gcat()=="CON"&&all_cons==false){
-					//TODO: figure out a logic according to which it can be influenced
-					//what kind of constant analyses/analysis are/is taken into account.
-					//This logic here stores the latest analysis which gets pushed later
-					//below resulting in adding the last analysis stored.
-					con_morphan=analysis;
-					con_morphemes=morphemes;
-				}
-				else{
+				if(with_cons==true){
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+morphemes);
 					analyses->push_back(*analysis);
+				}
+				else if(analysis->gcat()=="CON"&&with_cons==false){
+					cons.push_back(*analysis);
 				}
 			}
 			else{
@@ -110,14 +105,11 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			start_position=0;
 			result=apply_up(morphan::morphan_handle, NULL);
 		}
-		if(all_cons==true){
-			//All constants already added above in the while loop -> do nothing.
-		}
-		else{
-			if(con_morphan!=NULL&&analyses->empty()==true){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+con_morphemes);
-				analyses->push_back(*con_morphan);
+		if(with_cons==false&&analyses->empty()==true){//Add only cons if no other analysis is found
+			for(auto&& con:cons){
+				analyses->push_back(con);
 			}
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"cons pushed");
 		}
 	}
 	else{
