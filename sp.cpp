@@ -1876,56 +1876,53 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths,l
     //   at the end of the interpretation
 	std::vector<lexicon> words=lex->word_entries();//Get words of the current token path.
 	std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-	//if(main_verbs.size()==1){
-        std::set<unsigned int> processed_words;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
-        std::map<unsigned int,unsigned int> word_index_to_node_id_map;
-		//std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
-		std::pair<unsigned int,lexicon> main_verb_indexed;
-		std::cout<<"intended_main_verb.lexeme:"<<intended_main_verb.lexeme<<std::endl;
+  if(main_verbs.size()>0&&intended_main_verb.lexeme.empty()==false){
+    std::set<unsigned int> processed_words;
+    std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
+    std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
+    std::map<unsigned int,unsigned int> word_index_to_node_id_map;
+    std::pair<unsigned int,lexicon> main_verb_indexed;
 		for(auto&& main_verb_iterator:main_verbs){//TODO:This will always find only the first if there are more
-			std::cout<<"main_verb.lexeme:"<<main_verb_iterator.second.lexeme<<std::endl;
-			if(main_verb_iterator.second.lexeme==intended_main_verb.lexeme){//Check if this should be stricter
+      if(main_verb_iterator.second.lexeme==intended_main_verb.lexeme){//Check if this should be stricter
 				main_verb_indexed=main_verb_iterator;
 				break;
 			}
 		}
-        unsigned int word_index=main_verb_indexed.first;
-        lexicon main_verb=main_verb_indexed.second;
-		std::cout<<"main_verb.lexeme:"<<main_verb.lexeme<<std::endl;
-        main_verb.morphalytics->add_feature("main_verb");
-        processed_words.insert(word_index);
-        unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
-        word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
-		build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
-		const node_info& main_node=get_node_info(main_node_id);
-		unsigned int root_node_id=set_node_info("S",main_node);
-		node_info root_node=get_node_info(root_node_id);
-		transgraph *transgraph=NULL;
-		transgraph=longest_match_for_semantic_rules_found();
-		if(transgraph!=NULL){
-			tokenpaths->validate_parse_tree(nodes());
-			tokenpaths->validate_path(words,transgraph,true);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
-		}
-		else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-			tokenpaths->invalidate_parse_tree(nodes());
-			tokenpaths->invalidate_path(words,"semantic error",NULL);
-		}
-	//}
-	/*else{
-        if(main_verbs.size()>1){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
-        }
-        else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
-        }
+    if(main_verb_indexed.second.lexeme==intended_main_verb.lexeme){
+      unsigned int word_index=main_verb_indexed.first;
+      lexicon main_verb=main_verb_indexed.second;
+      main_verb.morphalytics->add_feature("main_verb");
+      processed_words.insert(word_index);
+      unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
+      word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
+      build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
+      const node_info& main_node=get_node_info(main_node_id);
+      unsigned int root_node_id=set_node_info("S",main_node);
+      node_info root_node=get_node_info(root_node_id);
+      transgraph *transgraph=NULL;
+      transgraph=longest_match_for_semantic_rules_found();
+      if(transgraph!=NULL){
+        tokenpaths->validate_parse_tree(nodes());
+        tokenpaths->validate_path(words,transgraph,true);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
+      }
+      else{
         logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-        tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
+        tokenpaths->invalidate_parse_tree(nodes());
         tokenpaths->invalidate_path(words,"semantic error",NULL);
-	}*/
+      }
+    }
+    else{
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+      tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
+      tokenpaths->invalidate_path(words,"semantic error",NULL);
+    }
+  }
+  else{
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+      tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
+      tokenpaths->invalidate_path(words,"semantic error",NULL);
+  }
 }
 
 void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::set<unsigned int>& processed_words,std::map<unsigned int,unsigned int>& words2nodes,const unsigned int& main_node_id,const std::string& optional_dependency,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex_by_row_nr,lexer *lex){
@@ -2030,18 +2027,18 @@ unsigned int interpreter::combine_nodes(std::vector<lexicon>& words,std::set<uns
     return combined_node_id;
 }
 
-std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& words,const std::string& main_verb_symbols){
+std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& all_words,const std::vector<lexicon>& words,const std::string& main_verb_symbols){
 	std::multiset<std::pair<std::string,unsigned int>> functors_found_union;
 	std::map<std::pair<std::string,unsigned int>,unsigned int> functors_found_with_nr_of_deps;
 	std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
 
-	for(auto& word: words){
+  for(auto& word: all_words){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"looking up functors for word:"+word.word);
 		std::set<std::pair<std::string,unsigned int>> lexemes_processed;
 		std::set<std::pair<std::string,unsigned int>> functors_found;
 		std::string lexeme=word.lexeme;
 		if(word.lexicon_entry==false) lexeme=word.gcat;
-		find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
+    find_functors_for_dependency_with_gcat_in_db(all_words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
 		for(auto& functor_found: functors_found){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting functor in union:"+functor_found.first+" with d_key:"+std::to_string(functor_found.second));
 			functors_found_union.insert(functor_found);
@@ -2056,7 +2053,14 @@ std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_ma
 	}
 	for(auto& functor:functors_found_with_nr_of_deps){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has "+std::to_string(functor.second)+" dependencies");
-		if(functor.second==words.size()){
+    bool word_lexeme_matches=false;
+    for(auto& word:all_words){
+      if(word.lexeme==functor.first.first){
+        word_lexeme_matches=true;
+        break;
+      }
+    }
+    if(word_lexeme_matches==true&&functor.second==words.size()-1||word_lexeme_matches==false&&functor.second==words.size()){
 			functors_with_matching_nr_of_deps.insert(functor.first);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has matching nr of dependencies");
 		}

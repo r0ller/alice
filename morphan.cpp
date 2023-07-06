@@ -89,11 +89,11 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morpheme:"+morphemes_vector.back());
 			analysis=new morphan_result(word,morphemes_vector,lid_);
 			if(analysis->is_erroneous()==false){
-				if(with_cons==true){
+        if(with_cons==true||with_cons==false&&analysis->gcat()!="CON"){
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+morphemes);
 					analyses->push_back(*analysis);
 				}
-				else if(analysis->gcat()=="CON"&&with_cons==false){
+        else if(with_cons==false&&analysis->gcat()=="CON"){
 					cons.push_back(*analysis);
 				}
 			}

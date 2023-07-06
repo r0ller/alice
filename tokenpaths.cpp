@@ -760,7 +760,7 @@ lexer* tokenpaths::lexer(){
     return lex;
 }
 
-std::string tokenpaths::add_context_reference_word(const unsigned char& crh,const std::string& human_input){
+std::string tokenpaths::add_context_reference_word(const unsigned char& crh,const std::string& human_input, std::string& lexeme){
     //TODO: Consider moving this and the related methods to the interpreter class.
     //The current implementation is not token path based which means that we try to figure out the one and only correct
     //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
@@ -785,7 +785,7 @@ std::string tokenpaths::add_context_reference_word(const unsigned char& crh,cons
     sqlite=db_factory::get_instance();
     if(crh&HI_VERB){//Currently only looking up verbs in earlier contexts is supported
         std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-        if(main_verbs.size()==0){//Looking up verbs in earlier contexts makes only sense if there's no verb in the human input
+        if(main_verbs.size()==0){//TODO: Think over if looking up verbs in earlier contexts makes only sense if there's no verb in the human input
             //Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
             query_result *result=NULL;
             result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
@@ -814,6 +814,7 @@ std::string tokenpaths::add_context_reference_word(const unsigned char& crh,cons
                     if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
                         logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
                         main_verb_word=morphologyObj["word"].GetString();
+                        lexeme=morphologyObj["lexeme"].GetString();
                         //TODO: Consider if the main verb shall be marked by the main verb symbol in the successful analyses when saved
                         //so that finding the main verb in earlier contexts (analyses) is not done (like here) by comparing their
                         //grammatical category against the grammatical categories set up for the main verb symbol in the settings table.
