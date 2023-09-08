@@ -80,7 +80,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
                 token_paths->assign_lexer(lex);
             }
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
-            sparser=new interpreter(toa);
+      sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
 			bool delete_lexer=true;
 			if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
@@ -194,6 +194,41 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
             }
             if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
               sparser->build_dependency_semantics(lex,token_paths,main_verb);
+              if(token_paths->is_any_left()==true){
+                delete lex;
+                lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
+                token_paths->assign_lexer(lex);
+                while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+                  lex->next_token();
+                }
+                main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+                delete_lexer=false;
+              }
+              else{
+                ++functor_with_matching_nr_of_deps;
+                if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
+                  query_result *result=NULL;
+                  main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+                  if(main_verb.lexeme.empty()==true){
+                    result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
+                    if(result!=NULL){
+                      std::string word=*result->field_value_at_row_position(0,"word");
+                      modified_human_input=token_paths->modify_human_input(word,human_input);
+                      lex=token_paths->lexer();
+                      delete_lexer=false;
+                      delete result;
+                      while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+                        lex->next_token();
+                      }
+                      main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+                    }
+                  }
+                  else{
+                    modified_human_input=human_input;
+                    delete_lexer=false;
+                  }
+                }
+              }
             }
             else{
               token_paths->invalidate_parse_tree(sparser->nodes());
@@ -202,41 +237,6 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
             delete sparser;
             sparser=NULL;
             transgraph=NULL;
-            if(token_paths->is_any_left()==true){
-              delete lex;
-              lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
-              token_paths->assign_lexer(lex);
-              while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                lex->next_token();
-              }
-              main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-              delete_lexer=false;
-            }
-            else{
-              if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()) ++functor_with_matching_nr_of_deps;
-              if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
-                query_result *result=NULL;
-                main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                if(main_verb.lexeme.empty()==true){
-                  result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
-                  if(result!=NULL){
-                    std::string word=*result->field_value_at_row_position(0,"word");
-                    modified_human_input=token_paths->modify_human_input(word,human_input);
-                    lex=token_paths->lexer();
-                    delete_lexer=false;
-                    delete result;
-                    while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                      lex->next_token();
-                    }
-                    main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                  }
-                }
-                else{
-                  modified_human_input=human_input;
-                  delete_lexer=false;
-                }
-              }
-            }
           }
         }
 			if(delete_lexer==true){

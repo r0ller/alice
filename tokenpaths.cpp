@@ -578,7 +578,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
             a_counter=result->nr_of_result_rows()+1;
             delete result;
         }
-        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+sqlite->escape(analysis)+"','"+std::to_string(a_counter)+"');");
+        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(a_counter)+"','"+sqlite->escape(analysis)+"');");
     }
     else{
 		for(unsigned int i=0;i<nr_of_analyses;++i){
@@ -742,7 +742,8 @@ void tokenpaths::log_yyerror(const std::string& error){
 }
 
 void tokenpaths::validate_parse_tree(const std::vector<node_info>& nodes){
-	valid_parse_trees.push_back(nodes);
+  logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"validating parse tree with "+std::to_string(nodes.size())+" nodes");
+  valid_parse_trees.push_back(nodes);
 }
 
 void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){

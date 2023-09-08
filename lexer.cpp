@@ -575,7 +575,7 @@ lexicon lexer::find_word_by_lexeme(const std::vector<lexicon>& words,const std::
 
     index=0;
     for(auto& word:words){
-        if(word.lexeme==lexeme&&processed_words.find(index)==processed_words.end()){
+        if(word.lexeme==lexeme){//&&processed_words.find(index)==processed_words.end()){
             word_found=word;
             break;
         }
@@ -589,7 +589,7 @@ lexicon lexer::find_word_by_gcat(const std::vector<lexicon>& words,const std::se
 
     index=0;
     for(auto& word:words){
-        if(word.gcat==gcat&&processed_words.find(index)==processed_words.end()){
+        if(word.gcat==gcat){//&&processed_words.find(index)==processed_words.end()){
             word_found=word;
             break;
         }

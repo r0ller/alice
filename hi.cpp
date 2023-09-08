@@ -10,8 +10,8 @@ using namespace std;
 int main(int argc,char **argv){
 
     const char *analyses,*script_chr=NULL;
-  string text,script,language="js";
-	FILE *fp;
+    string text,script,language="sh";
+    FILE *fp;
     char line[256];
     unsigned char toa=0,crh=0;
 
@@ -53,66 +53,65 @@ int main(int argc,char **argv){
         hi_state_cvalue(argv[2],argv[3],argv[4],argv[5]);
     }
     else{
-    //while(true){
-      //getline(cin,text);
-      text="wrong speed-limit report\n";
-			//Test sms scenario:
-				//text="√ºzenem p√©ternek hogy hello\n";
-				//text="a harmadiknak\n";
-				//text="k√ºldd\n";
-			//Test context ref handling for verb:
-				//text="h√≠vd fel p√©tert\n";
-				//text="a harmadikat\n";
-			//Test interpreting statement (see question test above at -q):
-				//text="today is peter's birthday .\n";
-			//Test sentence without verb and no context ref handling:
-				//text="files in abc\n";
-				//text="felolvas√°s be\n";
-			if(text.empty()==false){
-        //toa=HI_MORPHOLOGY|HI_SYNTAX;
-        //toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-        toa=HI_MORPHOLOGY|HI_SEMANTICS;
-        //crh=HI_VERB;
-				analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
-                if(analyses!=NULL){
-                    cout<<analyses<<endl;
-                    script_chr=hi_transcribe(language.c_str(),analyses);
-                    if(script_chr!=NULL){
-                        script=string(script_chr);
-                        if(script.length()>0){
-                            cout<<script<<endl;
-                            if(language=="sh"){
-                                if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
-                                fp=popen(script.c_str(),"r");
-                                if(fp!=NULL){
-                                    while(fgets(line,sizeof line,fp))
-                                    {
-                                        cout<<line<<endl;
+        while(true){
+          getline(cin,text);
+          //Test sms scenario:
+            //text="¸zenem pÈternek hogy hello\n";
+            //text="a harmadiknak\n";
+            //text="k¸ldd\n";
+          //Test context ref handling for verb:
+            //text="hÌ≠vd fel pÈtert\n";
+            //text="a harmadikat\n";
+          //Test interpreting statement (see question test above at -q):
+            //text="today is peter's birthday .\n";
+          //Test sentence without verb and no context ref handling:
+            //text="files in abc\n";
+            //text="felolvas·s be\n";
+          if(text.empty()==false){
+            //toa=HI_MORPHOLOGY|HI_SYNTAX;
+            toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+            //toa=HI_MORPHOLOGY|HI_SEMANTICS;
+            //crh=HI_VERB;
+            analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
+                    if(analyses!=NULL){
+                        cout<<analyses<<endl;
+                        script_chr=hi_transcribe(language.c_str(),analyses);
+                        if(script_chr!=NULL){
+                            script=string(script_chr);
+                            if(script.length()>0){
+                                cout<<script<<endl;
+                                if(language=="sh"){
+                                    if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
+                                    fp=popen(script.c_str(),"r");
+                                    if(fp!=NULL){
+                                        while(fgets(line,sizeof line,fp))
+                                        {
+                                            cout<<line<<endl;
+                                        }
+                                        pclose(fp);
                                     }
-                                    pclose(fp);
                                 }
-                            }
-                            else if(language=="js"){
-                                script="console.log((function(){"+script+"})())";
-                                ofstream *js_file=new std::ofstream("script.js");
-                                *js_file << script;
-                                js_file->close();
-                                delete js_file;
-                                fp=popen("node -e \"$(cat script.js)\"","r");
-                                if(fp!=NULL){
-                                    while(fgets(line,sizeof line,fp))
-                                    {
-                                        cout<<line<<endl;
+                                else if(language=="js"){
+                                    script="console.log((function(){"+script+"})())";
+                                    ofstream *js_file=new std::ofstream("script.js");
+                                    *js_file << script;
+                                    js_file->close();
+                                    delete js_file;
+                                    fp=popen("node -e \"$(cat script.js)\"","r");
+                                    if(fp!=NULL){
+                                        while(fgets(line,sizeof line,fp))
+                                        {
+                                            cout<<line<<endl;
+                                        }
+                                        pclose(fp);
                                     }
-                                    pclose(fp);
                                 }
                             }
                         }
                     }
+                    text.clear();
                 }
-                text.clear();
-            }
-      //else break;
-    //}
+          else break;
+        }
     }
 }
