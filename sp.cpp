@@ -368,13 +368,13 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 	//root_node: root node of the subtree in which the node should be found by the symbol
 	//symbol: symbol of the node by which the node should be found
 	//nodes_found: node ids of the nodes found
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"get nodes by symbol: "+symbol);
+  logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"get nodes by symbol: "+symbol);
 	if(symbol.empty()==false){
 		if(root_node.symbol==symbol&&lexeme.empty()==true
 			||lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->gcat()==symbol
 			||lexeme.empty()==true&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->is_mocked()==false&&root_node.expression.morphalytics->has_feature(symbol)==true
 			||lexeme.empty()==false&&root_node.expression.morphalytics!=NULL&&root_node.expression.morphalytics->gcat()==symbol&&root_node.expression.lexeme==lexeme){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"node_found_by_symbol '"+symbol+"':"+std::to_string(root_node.node_id));
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"node_found_by_symbol '"+symbol+"':"+std::to_string(root_node.node_id));
 			nodes_found.push_back(root_node.node_id);
 		}
 		if(root_node.left_child!=0)get_nodes_by_symbol(get_node_info(root_node.left_child),symbol,lexeme,nodes_found);
@@ -386,7 +386,7 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 }
 
 void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
-		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked){
+    std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked){
 	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
 	std::string d_key="0";
 	unsigned int d_counter=0;
@@ -394,8 +394,8 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 	std::vector<p_m1_node_id_m2_d_key> node_d_key_route;
 	p_m1_node_id_m2_d_key parent_node;
 	//TODO: shall dependencies_found_via_optional_paths be a map instead of multimap?
-	std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> > dependencies_found_via_optional_paths;
-	std::set<unsigned int> unique_optional_dependency_paths;
+  std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> > dependencies_found_via_optional_paths;
+  std::set<unsigned int> unique_optional_dependency_paths;
 
 	const node_info& node=get_node_info(node_id);
     if(node.expression.dependencies!=NULL){
@@ -583,8 +583,8 @@ const std::pair<const unsigned int,field>* interpreter::followup_dependency(cons
 void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key, const unsigned int parent_d_counter,
 		const unsigned int node_id, const std::string& d_key,
 		t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
-		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked,
-		std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >& dependencies_found_via_optional_paths){
+    std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked,
+    std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >& dependencies_found_via_optional_paths){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string semantic_dependency,ref_d_key,d_counter="0",manner,d_failover,d_successor;
 	std::multimap<unsigned int,unsigned int>::const_iterator dependency_matrix_entry;
@@ -626,16 +626,16 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		manner=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"manner");
 		d_failover=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 		d_successor=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_successor");
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency entry "+semantic_dependency+" ref_d_key "+ref_d_key+" for functor "+node.expression.lexeme+" d_key "+d_key+" d_counter "+d_counter);
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency entry "+semantic_dependency+" ref_d_key "+ref_d_key+" for functor "+node.expression.lexeme+" d_key "+d_key+" d_counter "+d_counter);
 		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up depolex entry with row id "+std::to_string(depolex_entry->first)+" in dep.val.matrix");
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up depolex entry with row id "+std::to_string(depolex_entry->first)+" in dep.val.matrix");
 			d_counter_validated_dependencies.clear();
 			//Insert the corresponding entry into dependencies_found to indicate that the node id is already being checked
 			dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,0,0,std::atoi(parent_d_key.c_str()),parent_d_counter)));
             for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 					dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 					++dependency_matrix_entry){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dvm entry row index:"+std::to_string(dependency_matrix_entry->first)+", dep.node id:"+std::to_string(dependency_matrix_entry->second));
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dvm entry row index:"+std::to_string(dependency_matrix_entry->first)+", dep.node id:"+std::to_string(dependency_matrix_entry->second));
 				//If the row_id of the depolex_entry is found among the row_ids stored in the dep.vld.matrix
 				//then the field values match as well since both row_ids refer to the corresponding
 				//field in the node.expression.dependencies attribute.
@@ -648,13 +648,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
 					||manner=="1"&&d_counter_validated_dependencies.size()>=1
 					||manner=="2"&&d_counter_validated_dependencies.size()>1){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+node.expression.lexeme);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+node.expression.lexeme);
 				dependency_found_for_functor=true;
 			}
 			else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==0
 					||manner=="1"&&d_counter_validated_dependencies.size()<1
 					||manner=="2"&&d_counter_validated_dependencies.size()<=1){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency check for "+semantic_dependency+" returned FALSE for functor "+node.expression.lexeme+" with d_key "+d_key);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency check for "+semantic_dependency+" returned FALSE for functor "+node.expression.lexeme+" with d_key "+d_key);
 				if(std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str())){
 					find_dependencies_for_functor(std::to_string(node_id),d_key,std::atoi(d_counter.c_str()),node_id,d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 				}
@@ -699,7 +699,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		else if(semantic_dependency.empty()==true&&ref_d_key.empty()==true){
 			//A leaf in the dependency tree is found so the semantic dependency is empty. As such, there's no
 			//functor-dependency pair to be checked in the dep.vld.matrix so let's go on with the next dependency.
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"leaf dependency "+semantic_dependency+" checked for functor "+node.expression.lexeme+" and has no further dependency");
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"leaf dependency "+semantic_dependency+" checked for functor "+node.expression.lexeme+" and has no further dependency");
 			dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(d_key.c_str())));
 			if(dependencies_found_entry!=dependencies_found.end()){
 				//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
@@ -755,8 +755,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 void interpreter::find_dependencies_for_functor(const std::string& parent_node_id, const std::string& parent_d_key,const unsigned int parent_d_counter,
 		const unsigned int node_id, const std::string& node_d_key, const std::string& functor, const std::string& d_key,
 		t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
-		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked,
-		std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >& dependencies_found_via_optional_paths){
+    std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked,
+    std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >& dependencies_found_via_optional_paths){
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::string semantic_dependency,ref_d_key,d_counter="0",manner,d_failover,d_successor;
 	std::multimap<unsigned int,unsigned int>::const_iterator dependency_matrix_entry;
@@ -764,7 +764,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 	t_map_of_node_ids_and_d_keys_to_nr_of_deps::iterator dependencies_found_entry;
 	std::set<unsigned int> d_counter_validated_dependencies,d_key_validated_dependencies,checked_d_counters;
 	bool dependency_found_for_functor=false;
-	unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0,path_nr=0,odep_level=0;
+  unsigned int nr_of_skipped_opa_rules=0,nr_of_rules=0,path_nr=0,odep_level=0;
 
 	const node_info& node=get_node_info(node_id);
     logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency for optional functor "+functor+" d_key "+d_key);
@@ -785,16 +785,16 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			manner=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"manner");
 			d_failover=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 			d_successor=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_successor");
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency entry "+semantic_dependency+" ref_d_key "+ref_d_key+" for functor "+functor+" d_key "+d_key+" d_counter "+d_counter);
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking dependency entry "+semantic_dependency+" ref_d_key "+ref_d_key+" for functor "+functor+" d_key "+d_key+" d_counter "+d_counter);
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false&&(manner.empty()==true||manner=="0"||manner=="1"||manner=="2")){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up depolex entry with row id "+std::to_string(depolex_entry->first)+" in dep.val.matrix");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up depolex entry with row id "+std::to_string(depolex_entry->first)+" in dep.val.matrix");
 				d_counter_validated_dependencies.clear();
 				//Insert the corresponding entry into optional_dependencies_checked to indicate that the node id is already being checked
-				if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
-				else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
+        if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
+        else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
 				odep_level=optional_dependencies_checked.size()+1;
-				optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,std::atoi(parent_d_key.c_str()),parent_d_counter,path_nr,odep_level,std::atoi(d_counter.c_str()))));
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"optional dependency level:"+std::to_string(odep_level)+"path_nr:"+std::to_string(path_nr));
+        optional_dependencies_checked.insert(std::make_pair(std::make_pair(functor,std::atoi(d_key.c_str())),std::make_tuple(parent_node_id,std::atoi(parent_d_key.c_str()),parent_d_counter,path_nr,odep_level,std::atoi(d_counter.c_str()))));
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"optional dependency level:"+std::to_string(odep_level)+", path_nr "+std::to_string(path_nr));
 				for(dependency_matrix_entry=node.dependency_validation_matrix.lower_bound(depolex_entry->first);
 					dependency_matrix_entry!=node.dependency_validation_matrix.upper_bound(depolex_entry->first);
 					++dependency_matrix_entry){
@@ -802,7 +802,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					//then the field values match as well since both row_ids refer to the corresponding
 					//field in the node.expression.dependencies attribute.
 					if(d_key_validated_dependencies.find(dependency_matrix_entry->second)==d_key_validated_dependencies.end()){
-						d_counter_validated_dependencies.insert(dependency_matrix_entry->second);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting dependency node id "+std::to_string(dependency_matrix_entry->second)+" of dependency "+get_node_info(dependency_matrix_entry->second).expression.lexeme+" d_counter_validated_dependencies");
+            d_counter_validated_dependencies.insert(dependency_matrix_entry->second);
 						d_key_validated_dependencies.insert(dependency_matrix_entry->second);
 						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),get_node_info(dependency_matrix_entry->second).node_id,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 					}
@@ -810,13 +811,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 				if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==1
 						||manner=="1"&&d_counter_validated_dependencies.size()>=1
 						||manner=="2"&&d_counter_validated_dependencies.size()>1){
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+functor);
+          logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+functor);
 					dependency_found_for_functor=true;
 				}
 				else if((manner.empty()==true||manner=="0")&&d_counter_validated_dependencies.size()==0
 						||manner=="1"&&d_counter_validated_dependencies.size()<1
 						||manner=="2"&&d_counter_validated_dependencies.size()<=1){
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency check for "+semantic_dependency+" returned FALSE for functor "+functor+" with d_key "+d_key);
+          logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency check for "+semantic_dependency+" returned FALSE for functor "+functor+" with d_key "+d_key);
 					if((std::atoi(d_failover.c_str())>=std::atoi(d_counter.c_str()))){
 						find_dependencies_for_functor(functor,d_key,std::atoi(d_counter.c_str()),node_id,node_d_key,semantic_dependency,ref_d_key,dependencies_found,optional_dependencies_checked,dependencies_found_via_optional_paths);
 					}
@@ -830,12 +831,14 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					unsigned int nr_of_deps_to_add=0;
 					if(dependencies_found_entry!=dependencies_found.end()){
 						//shall path_nr be recalculated here or the previously calculated value should be used?
-						if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
-						else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
-						for(auto&& i:d_counter_validated_dependencies){
+            if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
+            else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"path nr "+std::to_string(path_nr)+" when dependency found");
+            for(auto&& i:d_counter_validated_dependencies){
 							bool dependency_already_found_for_node_id=false;
 							for(auto&& j:dependencies_found_via_optional_paths){
-								if(std::get<0>(j.second)==node_id
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking if dependency "+semantic_dependency+", ref_d_key "+ref_d_key+" with node_id "+std::to_string(i)+" for functor "+get_node_info(node_id).expression.lexeme+" node_id "+std::to_string(node_id)+", d_key "+node_d_key+" is registered");
+                if(std::get<0>(j.second)==node_id
 									&&std::get<1>(j.second)==std::atoi(node_d_key.c_str())
 									&&std::get<2>(j.second)==i){
 									dependency_already_found_for_node_id=true;
@@ -843,9 +846,9 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 								}
 							}
 							if(dependency_already_found_for_node_id==false){
-								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"register dependency "+semantic_dependency+" for functor "+get_node_info(node_id).expression.lexeme+" node_id "+std::to_string(node_id)+" with optional functor "+functor
-								+"optional dependency level:"+std::to_string(odep_level));
-								dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"register dependency "+semantic_dependency+", ref_d_key "+ref_d_key+" with node_id "+std::to_string(i)+" for functor "+get_node_info(node_id).expression.lexeme+" node_id "+std::to_string(node_id)+", d_key "+node_d_key
+                +" with optional functor "+functor+" and optional dependency level:"+std::to_string(odep_level)+" on path nr "+std::to_string(path_nr));
+                dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
 								++nr_of_deps_to_add;
 							}
 						}
@@ -861,12 +864,13 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 					}
 					else{
 						//shall path_nr be recalculated here or the previously calculated value should be used?
-						if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
-						else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
-						for(auto&& i:d_counter_validated_dependencies){
+            if(dependencies_found_via_optional_paths.empty()==true) path_nr=1;
+            else path_nr=dependencies_found_via_optional_paths.rbegin()->first+1;
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"path nr "+std::to_string(path_nr)+" when dependency not found");
+            for(auto&& i:d_counter_validated_dependencies){
 							bool dependency_already_found_for_node_id=false;
 							for(auto&& j:dependencies_found_via_optional_paths){
-								if(std::get<0>(j.second)==node_id
+                if(std::get<0>(j.second)==node_id
 									&&std::get<1>(j.second)==std::atoi(node_d_key.c_str())
 									&&std::get<2>(j.second)==i){
 									dependency_already_found_for_node_id=true;
@@ -874,7 +878,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 								}
 							}
 							if(dependency_already_found_for_node_id==false){
-								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"register dependency "+semantic_dependency+" for functor "+get_node_info(node_id).expression.lexeme+" node_id "+std::to_string(node_id)+" with optional functor "+functor
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"register dependency "+semantic_dependency+" for functor "+get_node_info(node_id).expression.lexeme+" node_id "+std::to_string(node_id)+" with optional functor "+functor
 								+"optional dependency level:"+std::to_string(odep_level));
 								dependencies_found_via_optional_paths.insert(std::make_pair(path_nr,std::make_tuple(node_id,std::atoi(node_d_key.c_str()),i,odep_level)));
 								++nr_of_deps_to_add;
@@ -893,14 +897,14 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 						dependencies_found.insert(std::make_pair(std::make_pair(node_id,std::atoi(node_d_key.c_str())),std::make_tuple(std::string(),0,0,0,0)));
 					}
 				}
-				if(dependencies_found_via_optional_paths.empty()==true||path_nr>dependencies_found_via_optional_paths.rbegin()->first){
+        if(dependencies_found_via_optional_paths.empty()==true||path_nr>dependencies_found_via_optional_paths.rbegin()->first){
 					//If no real dependency was found on the path branching from this optional dependency,
 					//delete this optional dependency from the list of odeps that are part of a path
 					//that leads to a real dependency.
 					for(auto&& i=optional_dependencies_checked.lower_bound(std::make_pair(functor,std::atoi(d_key.c_str())));
 							i!=optional_dependencies_checked.upper_bound(std::make_pair(functor,std::atoi(d_key.c_str())));){
-						if(std::get<4>(i->second)==odep_level){
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"deleting optional dependency with functor "+i->first.first+" and d_key "+std::to_string(i->first.second));
+            if(std::get<4>(i->second)==odep_level){
+              logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"deleting optional dependency with functor "+i->first.first+" and d_key "+std::to_string(i->first.second));
 							i=optional_dependencies_checked.erase(i);
 						}
 						else{
@@ -912,7 +916,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 			else if(semantic_dependency.empty()==true&&ref_d_key.empty()==true){
 				//A leaf in the dependency tree is found so the semantic dependency is empty. As such, there's no
 				//functor-dependency pair to be checked in the dep.vld.matrix so let's go on with the next dependency.
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"leaf dependency "+semantic_dependency+" checked for functor "+functor+" and has no further dependency");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"leaf dependency "+semantic_dependency+" checked for functor "+functor+" and has no further dependency");
 				dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 				if(dependencies_found_entry!=dependencies_found.end()){
 					//Don't increase the number of dependencies (++dependencies_found_entry->second;), NULL dependency is considered as found but not counted
@@ -934,7 +938,7 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		depolex_entry=followup_dependency(depolex_entry->first,functor,d_key,dependency_found_for_functor,*node.expression.dependencies);
 	}
 	if(nr_of_rules>0&&nr_of_rules==nr_of_skipped_opa_rules){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+functor+" but has no further dependency");
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+semantic_dependency+" checked for functor "+functor+" but has no further dependency");
 		dependencies_found_entry=dependencies_found.find(std::make_pair(node_id,std::atoi(node_d_key.c_str())));
 		if(dependencies_found_entry!=dependencies_found.end()){
 			//Don't increase the number of dependencies as earlier:
@@ -969,7 +973,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 
 transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	t_map_of_node_ids_and_d_keys_to_nr_of_deps dependencies_found;
-	std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> > optional_dependencies_checked;
+  std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> > optional_dependencies_checked;
 	std::vector<unsigned int> verbs_found;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> > map_of_node_ids_to_total_nr_of_deps_and_d_key;
 	std::map<unsigned int,std::pair<unsigned int,unsigned int> >::iterator node_id_with_longest_match_and_d_key;
@@ -988,7 +992,8 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
     result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
     if(result==NULL) throw std::runtime_error("No main symbol is set up in settings table.");
     std::string main_symbol=*result->field_value_at_row_position(0,"value");
-    const node_info& root_node=get_node_info(nr_of_nodes_);
+	delete result;
+	const node_info& root_node=get_node_info(nr_of_nodes_);
     get_nodes_by_symbol(root_node,main_symbol,std::string(),verbs_found);
     if(verbs_found.size()==1){
 		const node_info& node=get_node_info(*verbs_found.begin());
@@ -1018,7 +1023,7 @@ transgraph* interpreter::longest_match_for_semantic_rules_found(){
 	}
 	else{
 		if(verbs_found.size()==0)
-            throw std::runtime_error("No main verb found.");
+			throw std::runtime_error("No main verb found.");
 		else
 			throw std::runtime_error("More than one main verb found.");
 	}
@@ -1319,9 +1324,9 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 											}
 											delete functors_found;
 										}
-										else{
-											if(failover==0||failover<current_step) valid_combination=false;
-										}
+                    /*else{//This seems to enforce that a combination is only valid if functors are found for each combination of main/dependent nodes found.
+                      if(failover==0||failover<current_step) valid_combination=false;
+                    }*/
 									}
 								}
 								if(dep_node_id!=*k&&++dep_ref_node_id!=dependent_node->ref_node_ids.end())
@@ -1550,7 +1555,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	std::set<std::pair<std::string,unsigned int> > functors_processed;
 	transgraph *functor_transgraph=NULL;
 
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"parent.first:"+parent.first+", parent.second:"+std::to_string(parent.second));
+  logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"parent.first:"+parent.first+", parent.second:"+std::to_string(parent.second));
 	auto root_found=longest_traversals.find(root);
 	if(root_found==longest_traversals.end()){
 		throw std::runtime_error("Root node not found.");
@@ -1558,16 +1563,16 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 	if(std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true){
 		const node_info& nodeinfo=get_node_info(std::atoi(parent.first.c_str()));
 		if(nodeinfo.expression.lexicon_entry==true){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,nodeinfo.expression.lexeme+"_"+std::to_string(parent.second));
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,nodeinfo.expression.lexeme+"_"+std::to_string(parent.second));
 			functor_transgraph=new transgraph(std::to_string(nodeinfo.node_id),std::make_pair(nodeinfo.expression.lexeme,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 		}
 		else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,nodeinfo.expression.gcat+"_"+std::to_string(parent.second));
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,nodeinfo.expression.gcat+"_"+std::to_string(parent.second));
 			functor_transgraph=new transgraph(std::to_string(nodeinfo.node_id),std::make_pair(nodeinfo.expression.gcat,parent.second),get_node_info(std::atoi(parent.first.c_str())).expression.morphalytics);
 		}
 	}
 	else{
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,parent.first+"_"+std::to_string(parent.second));
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,parent.first+"_"+std::to_string(parent.second));
 		functor_transgraph=new transgraph(std::to_string(prev_parent_node_id),std::make_pair(parent.first,parent.second),NULL);
 	}
 	for(auto&& i:root_found->second.second){
@@ -1577,7 +1582,7 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 		//it cannot be forseen that a path leads to a dependency node that was already reached via another path.
 
 		const node_info& dep_node=get_node_info(i.first);
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transgraph lexeme:"+dep_node.expression.lexeme+", d_key (i.second.second):"+std::to_string(i.second.second)
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transgraph lexeme:"+dep_node.expression.lexeme+", d_key (i.second.second):"+std::to_string(i.second.second)
 		+" lexeme node id (i.first):"+std::to_string(i.first)
 		+" parent node:"+std::get<0>(i.second.first)
 		+" parent d_key:"+std::to_string(std::get<3>(i.second.first))
@@ -1600,15 +1605,15 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 			if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true) top_parent_node_id=std::atoi(parent.first.c_str());
 			else top_parent_node_id=prev_parent_node_id;
 			node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second.first),std::get<3>(i.second.first),std::get<4>(i.second.first),functor_node_odependencies->second,root_found->second.second);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"parent_node_found_via_optional_path:"+node_found.first+" with d_key:"+std::to_string(node_found.second));
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"parent_node_found_via_optional_path:"+node_found.first+" with d_key:"+std::to_string(node_found.second));
 			if(node_found.first.empty()==false&&node_found.second>0&&dep_node.node_links.find(top_parent_node_id)!=dep_node.node_links.end()) odep_parent_found=true;
 		}
 		if(std::get<0>(i.second.first)==parent.first&&std::get<3>(i.second.first)==parent.second
 		&&(i.first!=std::atoi(parent.first.c_str())||i.first==std::atoi(parent.first.c_str())&&i.second.second!=parent.second)
 		&&(std::atoi(std::get<0>(i.second.first).c_str())==0&&odep_parent_found==true||std::atoi(std::get<0>(i.second.first).c_str())>0)){
 			if(functors_processed.find(std::make_pair(std::to_string(i.first),i.second.second))==functors_processed.end()){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call 1");
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transgraph lexeme:"+get_node_info(i.first).expression.lexeme
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call 1");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transgraph lexeme:"+get_node_info(i.first).expression.lexeme
 				+", d_key (i.second.second):"+std::to_string(i.second.second)
 				+", lexeme node id (i.first):"+std::to_string(i.first)
 				+", parent node:"+std::get<0>(i.second.first)
@@ -1620,22 +1625,22 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 					functor_transgraph->insert(std::get<4>(i.second.first),child_transgraph);
 					functors_processed.insert(std::make_pair(std::to_string(i.first),i.second.second));
 				}
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive return 1");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive return 1");
 			}
 			else{
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor already processed");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor already processed");
 			}
 		}
 		else if(std::any_of(std::get<0>(i.second.first).begin(),std::get<0>(i.second.first).end(),::isdigit)==false){//checking for parent being optional dependency
 			for(auto&& j:functor_node_odependencies->second){
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking for optional dependency with functor "+j.first.first+" d_key "+std::to_string(j.first.second)+" d_counter "+std::to_string(std::get<5>(j.second))+" parent node "+std::get<0>(j.second)+" d_key "+std::to_string(std::get<1>(j.second))+" d_counter "+std::to_string(std::get<2>(j.second))+" and path nr "+std::to_string(std::get<3>(j.second)));
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking for optional dependency with functor "+j.first.first+" d_key "+std::to_string(j.first.second)+" d_counter "+std::to_string(std::get<5>(j.second))+" parent node "+std::get<0>(j.second)+" d_key "+std::to_string(std::get<1>(j.second))+" d_counter "+std::to_string(std::get<2>(j.second))+" and path_nr "+std::to_string(std::get<3>(j.second)));
 				if(std::get<0>(j.second)==parent.first&&std::get<1>(j.second)==parent.second&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==false
 					||std::get<0>(j.second)==parent.first&&std::get<1>(j.second)==parent.second&&j.first.first==node_found.first&&j.first.second==node_found.second){
 					if(functors_processed.find(std::make_pair(j.first.first,j.first.second))==functors_processed.end()){
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call 2");
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transgraph lexeme:"+j.first.first+", d_key:"+std::to_string(j.first.second)
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call 2");
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transgraph lexeme:"+j.first.first+", d_key:"+std::to_string(j.first.second)
 						+", parent node:"+std::get<0>(j.second)+", parent d_key:"+std::to_string(std::get<1>(j.second))
-						+", odep_level:"+std::to_string(std::get<4>(j.second)));
+            +", odep_level:"+std::to_string(std::get<4>(j.second)));
 						transgraph *child_transgraph=NULL;
 						if(prev_parent_node_id==0&&std::all_of(parent.first.begin(),parent.first.end(),::isdigit)==true){
 							child_transgraph=build_transgraph(root,std::make_pair(j.first.first,j.first.second),longest_traversals,node_level,std::atoi(parent.first.c_str()));
@@ -1647,10 +1652,10 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 							functor_transgraph->insert(std::get<2>(j.second),child_transgraph);
 							functors_processed.insert(std::make_pair(j.first.first,j.first.second));
 						}
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive return 2");
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive return 2");
 					}
 					else{
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor already processed");
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor already processed");
 					}
 				}
 			}
@@ -1664,20 +1669,20 @@ transgraph* interpreter::build_transgraph(const p_m1_node_id_m2_d_key& root, con
 }
 
 std::pair<std::string,unsigned int> interpreter::find_child_for_parent_bottom_up_via_optional_path(const unsigned int top_parent_node_id, const std::string& node_to_track, const unsigned int dkey_to_track, const unsigned int dcounter_to_track,
-		std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& odeps,
+    std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& odeps,
 		std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >& deps){
 
 	std::pair<std::string,unsigned int> node_found=std::make_pair("",0);
 	if(std::all_of(node_to_track.begin(),node_to_track.end(),::isdigit)==false){
 		for(auto&& i:odeps){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking optional path via node:"+i.first.first
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking optional path via node:"+i.first.first
 			+", d_key:"+std::to_string(i.first.second)
-			+", d_counter:"+std::to_string(std::get<5>(i.second))
+      +", d_counter:"+std::to_string(std::get<5>(i.second))
 			+", parent node:"+std::get<0>(i.second)
 			+" for top parent node:"+std::to_string(top_parent_node_id));
 			if(i.first.first==node_to_track
 				&&i.first.second==dkey_to_track
-				&&std::get<5>(i.second)==dcounter_to_track
+        &&std::get<5>(i.second)==dcounter_to_track
 				&&std::atoi(std::get<0>(i.second).c_str())==top_parent_node_id){
 				node_found.first=i.first.first;
 				node_found.second=i.first.second;
@@ -1688,7 +1693,7 @@ std::pair<std::string,unsigned int> interpreter::find_child_for_parent_bottom_up
 			for(auto&& i:odeps){
 				if(i.first.first==node_to_track
 					&&i.first.second==dkey_to_track
-					&&std::get<5>(i.second)==dcounter_to_track
+          &&std::get<5>(i.second)==dcounter_to_track
 					&&std::atoi(std::get<0>(i.second).c_str())!=top_parent_node_id){
 					node_found=find_child_for_parent_bottom_up_via_optional_path(top_parent_node_id,std::get<0>(i.second),std::get<1>(i.second),std::get<2>(i.second),odeps,deps);
 					if(node_found.first.empty()==false&&node_found.second>0) break;
@@ -1697,7 +1702,7 @@ std::pair<std::string,unsigned int> interpreter::find_child_for_parent_bottom_up
 		}
 	}
 	else{//TODO:handle intermediate real dependency node in the path leading to top parent node once such "cross binding" is supported
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Cannot yet handle intermediate real dependency node in the path leading to top parent node.");
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Cannot yet handle intermediate real dependency node in the path leading to top parent node.");
 	}
 	return node_found;
 }
@@ -1767,7 +1772,7 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 
 unsigned int interpreter::direct_descendant_of(const node_info& root_node){
 	if(root_node.left_child==0&&root_node.right_child==0){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"direct descendant found: "+std::to_string(root_node.node_id));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"direct descendant found: "+std::to_string(root_node.node_id));
 		return root_node.node_id;
 	}
 	if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
@@ -1808,153 +1813,15 @@ void interpreter::destroy_node_infos(){
 	return;
 }
 
-void interpreter::o_build_dependency_semantics(const unsigned char& toa,const unsigned char& crh,const std::string& language,lexer *lex,tokenpaths *tokenpaths){
-    //TODO: Consider moving this and the related methods to the interpreter class.
-    //The current implementation is not token path based which means that we try to figure out the one and only correct
-    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
-	//syntactic and semantic analyses does not always provide the best result in case of morphological analyses since
-	//not always the word having the most morphemes is the best choice.
-    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
-    //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
-    //2. check if the returned analyses has the 'errors' property
-    //3. if there's no error, return the ranked analyses
-    //4. if there's an error but there's a main verb, call build_dependency_semantics()
-    //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
-    //   of the verb finally chosen shall match the MOST of the lexemes of the human input i.e. the verb having the most
-    //   mandatory dependencies matching most of the lexemes wins. Besides that if there are mandatory dependencies that are missing,
-    //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) of the missing dependencies
-    //   together with the verb to construct a new (syntactically incorrect) sentence.
-    //   However, it's not sure if it makes sense to check earlier utterances than the latest one.
-    //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
-    //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
-    //   at the end of the interpretation
-    db *sqlite=NULL;
-
-    //is_any_path_left=false;//dependency semantics is not token path based, set it false to quit outer loop
-    sqlite=db_factory::get_instance();
-    //unsigned int nr_of_analyses=valid_paths.size();
-    //std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
-    std::vector<lexicon> words_wo_cons=lex->words_wo_cons();
-    //for(auto&& word_analyses:words_analyses){
-        //morphology_wo_cons(word_analyses.second,words_wo_cons);
-    //}
-    //std::map<unsigned int,lexicon> main_verbs=find_main_verb(words_wo_cons);
-    std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words_wo_cons);
-    if(crh&HI_VERB&&main_verbs.size()==0){
-        //Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
-        query_result *result=NULL;
-        result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
-        if(result!=NULL){//&&result->nr_of_result_rows()==1){
-            rapidjson::Document jsondoc;
-            std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
-            jsondoc.Parse(previous_analysis.c_str());
-            //TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
-            //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
-            //the verbs which currently only looks for the first verb having the same gcat set in settings db table
-            //for the symbol of the main_symbol.
-            query_result *main_symbol_result=NULL;
-            main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
-            std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
-            delete main_symbol_result;
-            query_result *main_verb_result=NULL;
-            main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
-            std::string main_verb=*main_verb_result->field_value_at_row_position(0,"value");
-            delete main_verb_result;
-            rapidjson::Value& morphologyArray=jsondoc["morphology"];
-            std::string main_verb_word;
-            rapidjson::Value morphologyObj;
-            for(unsigned int i=0;i<morphologyArray.Size();++i){
-                morphologyObj=morphologyArray[i];
-                if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
-                    main_verb_word=morphologyObj["word"].GetString();
-                    break;
-                }
-            }
-            std::locale locale=std::locale();
-            delete lex;
-            //lex points to the same instance as ::lex so deletion is fine
-            //but to assign a new lexer the global needs to be updated as well
-            lex=new lexer(main_verb_word.c_str(),language.c_str(),locale,false,tokenpaths);
-            tokenpaths->assign_lexer(lex);
-            //words_analyses=lexer::words_analyses();
-            words_wo_cons.clear();
-            words_wo_cons=lex->words_wo_cons();
-            //for(auto&& word_analyses:words_analyses){
-                //morphology_wo_cons(word_analyses.second,words_wo_cons);
-            //}
-            main_verbs.clear();
-            main_verbs=lex->find_main_verb(words_wo_cons);
-        }
-    }
-    if(main_verbs.size()==1){
-        std::set<unsigned int> processed_words;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
-        std::map<unsigned int,unsigned int> word_index_to_node_id_map;
-        std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
-        unsigned int word_index=main_verb_indexed.first;
-        lexicon main_verb=main_verb_indexed.second;
-        main_verb.morphalytics->add_feature("main_verb");
-        processed_words.insert(word_index);
-        unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
-        word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
-        //TODO: check what else may need to be cleaned up so that
-        //in case of success the json analysis is not affected by
-        //previously failed runs.
-        //valid_parse_trees.clear();
-        //valid_graphs.clear();
-        //valid_paths.clear();
-        //invalid_parse_trees.clear();
-        //invalid_paths.clear();
-        //invalid_path_errors.clear();
-//        try{
-            build_dependency_semantics(words_wo_cons,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
-            const node_info& main_node=get_node_info(main_node_id);
-            unsigned int root_node_id=set_node_info("S",main_node);
-            node_info root_node=get_node_info(root_node_id);
-            transgraph *transgraph=NULL;
-            transgraph=longest_match_for_semantic_rules_found();
-            if(transgraph!=NULL){
-                tokenpaths->validate_parse_tree(nodes());
-                tokenpaths->validate_path_wo_checks(words_wo_cons,transgraph);
-                //calling validate_path(words_wo_cons,transgraph,true) doesn't work
-                //as it does checks for different token paths which does not make sense
-                //in dependency semantics so let's do the necessary part manually
-                //valid_paths.push_back(words_wo_cons);
-                //valid_graphs.push_back(transgraph);
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
-                //nr_of_analyses=valid_paths.size();
-            }
-            else{
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-                tokenpaths->invalidate_parse_tree(nodes());
-                tokenpaths->invalidate_path(words_wo_cons,"semantic error",NULL);
-            }
-//        }
-//        catch(...){
-//            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
-//            exit(EXIT_FAILURE);
-//        }
-    }
-    else{
-        if(main_verbs.size()>1){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
-        }
-        else{
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
-        }
-    }
-}
-
 void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>& words, const std::string& dependency,const std::string& d_key,const std::string& lid,const std::string& gcats,std::set<std::pair<std::string,unsigned int>>& functors_found,std::set<std::pair<std::string,unsigned int>>& lexemes_processed){
     db *sqlite=NULL;
     query_result *depolex_entries=NULL;
 
     auto processed_entry=lexemes_processed.find(std::make_pair(dependency,std::atoi(d_key.c_str())));
-    if(processed_entry==lexemes_processed.end()){
-        lexemes_processed.insert(std::make_pair(dependency,std::atoi(d_key.c_str())));
+  logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking if lexeme is already processed:"+dependency+" with d_key:"+d_key);
+	if(processed_entry==lexemes_processed.end()){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"processing lexeme:"+dependency+" with d_key:"+d_key);
+		lexemes_processed.insert(std::make_pair(dependency,std::atoi(d_key.c_str())));
         sqlite=db_factory::get_instance();
         if(d_key.empty()==true){
             depolex_entries=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE SEMANTIC_DEPENDENCY='"+dependency+"';");
@@ -1967,7 +1834,8 @@ void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector
             for(unsigned int i=0; i<nr_of_entries; ++i){
                 std::string lexeme=*depolex_entries->field_value_at_row_position(i,"lexeme");
                 std::string lexeme_d_key=*depolex_entries->field_value_at_row_position(i,"d_key");
-                query_result *lexicon_entries=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LID='"+lid+"' AND GCAT IN ("+gcats+") AND LEXEME='"+lexeme+"';");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lexeme:"+lexeme+" with d_key:"+lexeme_d_key+" found for dependency:"+dependency+" with d_key:"+d_key);
+				query_result *lexicon_entries=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LID='"+lid+"' AND GCAT IN ("+gcats+") AND LEXEME='"+lexeme+"';");
                 if(lexicon_entries!=NULL){
                     auto functor_found=std::make_pair(lexeme,std::atoi(lexeme_d_key.c_str()));
                     functors_found.insert(functor_found);
@@ -1982,18 +1850,21 @@ void interpreter::find_functors_for_dependency_with_gcat_in_db(const std::vector
                     }
                 }
                 if(opa!=0||opa==0&&lexeme_found==true){//TODO:extend with checking manner as well
-                    find_functors_for_dependency_with_gcat_in_db(words,lexeme,lexeme_d_key,lid,gcats,functors_found,lexemes_processed);
+          logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call to find_functors_for_dependency_with_gcat_in_db with dependency:"+lexeme+" and d_key:"+lexeme_d_key);
+					find_functors_for_dependency_with_gcat_in_db(words,lexeme,lexeme_d_key,lid,gcats,functors_found,lexemes_processed);
                 }
             }
             delete depolex_entries;
         }
+      else{
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lexeme is not used as semantic dependency:"+dependency+" with d_key:"+d_key);
+      }
     }
 }
 
-void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
+void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths,lexicon& intended_main_verb){
     //TODO: How to handle mood?
-    //TODO: Consider moving this and the related methods to the interpreter class.
-    //The dependency semantics algorithm gets executed for each token paths.
+	//The dependency semantics algorithm gets executed for each token path.
     //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
     //2. check if the returned analyses has the 'errors' property
     //3. if there's no error, return the ranked analyses
@@ -2008,53 +1879,54 @@ void interpreter::build_dependency_semantics(lexer *lex,tokenpaths *tokenpaths){
     //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
     //   at the end of the interpretation
 	std::vector<lexicon> words=lex->word_entries();//Get words of the current token path.
-    std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-    if(main_verbs.size()==1){
-        std::set<unsigned int> processed_words;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
-        std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
-        std::map<unsigned int,unsigned int> word_index_to_node_id_map;
-        std::pair<unsigned int,lexicon> main_verb_indexed=*main_verbs.begin();
-        unsigned int word_index=main_verb_indexed.first;
-        lexicon main_verb=main_verb_indexed.second;
-        main_verb.morphalytics->add_feature("main_verb");
-        processed_words.insert(word_index);
-        unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
-        word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
-//        try{
-            build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
-            const node_info& main_node=get_node_info(main_node_id);
-            unsigned int root_node_id=set_node_info("S",main_node);
-            node_info root_node=get_node_info(root_node_id);
-            transgraph *transgraph=NULL;
-            transgraph=longest_match_for_semantic_rules_found();
-            if(transgraph!=NULL){
-                tokenpaths->validate_parse_tree(nodes());
-                tokenpaths->validate_path(words,transgraph,true);
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
-            }
-            else{
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-                tokenpaths->invalidate_parse_tree(nodes());
-                tokenpaths->invalidate_path(words,"semantic error",NULL);
-            }
-//        }
-//        catch(...){
-//            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception when building dependency semantics.");
-//            exit(EXIT_FAILURE);
-//        }
+	std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+  if(main_verbs.size()>0&&intended_main_verb.lexeme.empty()==false){
+    std::set<unsigned int> processed_words;
+    std::set<std::pair<unsigned int,unsigned int>> processed_depolex;
+    std::set<std::pair<unsigned int,unsigned int>> processed_depolex_by_row_nr;
+    std::map<unsigned int,unsigned int> word_index_to_node_id_map;
+    std::pair<unsigned int,lexicon> main_verb_indexed;
+		for(auto&& main_verb_iterator:main_verbs){//TODO:This will always find only the first if there are more
+      if(main_verb_iterator.second.lexeme==intended_main_verb.lexeme){//Check if this should be stricter
+				main_verb_indexed=main_verb_iterator;
+				break;
+			}
+		}
+    if(main_verb_indexed.second.lexeme==intended_main_verb.lexeme){
+      unsigned int word_index=main_verb_indexed.first;
+      lexicon main_verb=main_verb_indexed.second;
+      main_verb.morphalytics->add_feature("main_verb");
+      processed_words.insert(word_index);
+      unsigned int main_node_id=set_node_info(main_verb.gcat,main_verb);
+      word_index_to_node_id_map.insert(std::make_pair(word_index,main_node_id));
+      build_dependency_semantics(words,processed_words,word_index_to_node_id_map,main_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
+      const node_info& main_node=get_node_info(main_node_id);
+      unsigned int root_node_id=set_node_info("S",main_node);
+      node_info root_node=get_node_info(root_node_id);
+      transgraph *transgraph=NULL;
+      transgraph=longest_match_for_semantic_rules_found();
+      if(transgraph!=NULL){
+        tokenpaths->validate_parse_tree(nodes());
+        tokenpaths->validate_path(words,transgraph,true);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
+      }
+      else{
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
+        tokenpaths->invalidate_parse_tree(nodes());
+        tokenpaths->invalidate_path(words,"semantic error",NULL);
+      }
     }
     else{
-        if(main_verbs.size()>1){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"More than one main verb found.");
-        }
-        else{
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
-        }
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
-        tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
-        tokenpaths->invalidate_path(words,"semantic error",NULL);
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+      tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
+      tokenpaths->invalidate_path(words,"semantic error",NULL);
     }
+  }
+  else{
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"No main verb found.");
+      tokenpaths->invalidate_parse_tree(nodes());//No nodes created so far but as in case of valid parse trees this should also contain as many (invalid) parse trees as many analyses are carried out.
+      tokenpaths->invalidate_path(words,"semantic error",NULL);
+  }
 }
 
 void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::set<unsigned int>& processed_words,std::map<unsigned int,unsigned int>& words2nodes,const unsigned int& main_node_id,const std::string& optional_dependency,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex,std::set<std::pair<unsigned int,unsigned int>>& processed_depolex_by_row_nr,lexer *lex){
@@ -2066,19 +1938,19 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
     if(optional_dependency.empty()==false){
         lexeme=optional_dependency;
     }
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme:"+lexeme+", word:"+main_word.word+", gcat:"+main_word.gcat);
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lexeme:"+lexeme+", word:"+main_word.word+", gcat:"+main_word.gcat);
     if(main_word.gcat!="CON"&&main_word.dependencies!=NULL){
         depolex_entry=main_word.dependencies->first_value_for_field_name_found("lexeme",lexeme);
         while(depolex_entry!=NULL&&lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")){
             std::string d_key=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lexeme:"+lexeme+", d_key:"+d_key);
             while(depolex_entry!=NULL&&lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
                   &&d_key==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
                 std::string dependency_lexeme=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency");
                 std::string ref_d_key=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"ref_d_key");
                 std::string manner=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"manner");
-                //find_word_by_lexeme() returns the first hit but there may be more than one word with the same lexeme
-                //so when recording which word has already been combined as dependency then the word entry (lexicon) itself
-                //is recorded not only the lexeme
+                //find_word_by_lexeme() returns currently only the first hit but there may be more than one word with the same lexeme
+                //so when recording which word has already been combined as dependency then the dependent_mode_id is recorded not only the lexeme
                 bool all_possibilities_checked=false;
                 std::set<unsigned int> dependencies_found;
                 while(all_possibilities_checked==false&&(dependencies_found.empty()==true
@@ -2089,7 +1961,7 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                     if(dependency.lexeme.empty()==true){
                         dependency=lex->find_word_by_gcat(words,processed_words,dependency_lexeme,dependency_word_index);
                     }
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"dependency.lexeme:"+dependency.lexeme+", dependency.gcat:"+dependency.gcat);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency.lexeme:"+dependency.lexeme+", dependency.gcat:"+dependency.gcat);
                     unsigned int combined_node_id=0;
                     unsigned int dependent_node_id=0;
                     if(dependency.lexeme.empty()==false||dependency.lexeme.empty()==true&&dependency.gcat=="CON"){
@@ -2105,6 +1977,9 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                             combined_node_id=combine_nodes(words,processed_words,words2nodes,main_node_id,dependent_node_id,dependency_word_index,processed_depolex,ref_d_key);
                             dependencies_found.insert(dependent_node_id);
                         }
+                        else{//This is currently ok only since find_word_by_lexeme() returns always the first hit so there won't be more than one possibility
+                            all_possibilities_checked=true;
+                        }
                     }
                     else{
                         all_possibilities_checked=true;
@@ -2113,12 +1988,16 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                 std::string dependency_counter=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter");
                 std::string dependency_failover=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
                 //check if the current depolex entry has already been processed for the main_node_id (which may be the dependent_node_id if already in recursion)
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"searching in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
                 if(processed_depolex_by_row_nr.find(std::make_pair(main_node_id,depolex_entry->first))==processed_depolex_by_row_nr.end()){
                     if((manner.empty()==true||manner=="0")&&dependencies_found.size()==1
                             ||manner=="1"&&dependencies_found.size()>=1
                             ||manner=="2"&&dependencies_found.size()>1){
                         for(auto& dependent_node_id:dependencies_found){
                             processed_depolex_by_row_nr.insert(std::make_pair(main_node_id,depolex_entry->first));
+                            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in processed_depolex_by_row_nr main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
+                            auto dependency=get_node_info(dependent_node_id);
+                            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call to build_dependency_semantics with main node lexeme:"+dependency.expression.lexeme+", gcat:"+dependency.expression.gcat);
                             build_dependency_semantics(words,processed_words,words2nodes,dependent_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
                         }
                     }
@@ -2127,8 +2006,13 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                             ||manner=="2"&&dependencies_found.size()<=1)
                             &&std::atoi(dependency_failover.c_str())>=std::atoi(dependency_counter.c_str())){
                         processed_depolex_by_row_nr.insert(std::make_pair(main_node_id,depolex_entry->first));
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in processed_depolex_by_row_nr main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call to build_dependency_semantics with main node lexeme:"+main_word.lexeme+", gcat:"+main_word.gcat+" and optional dependency:"+dependency_lexeme);
                         build_dependency_semantics(words,processed_words,words2nodes,main_node_id,dependency_lexeme,processed_depolex,processed_depolex_by_row_nr,lex);
                     }
+                }
+                else{
+                  logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"nothing found in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
                 }
                 depolex_entry=main_word.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",lexeme);
             }
@@ -2146,44 +2030,66 @@ unsigned int interpreter::combine_nodes(std::vector<lexicon>& words,std::set<uns
     try{
         bool valid_combination=is_valid_combination(main_node_id,dependent_node_id);
         if(valid_combination==true){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main word:"+main_node.expression.word+", dvm size:"+std::to_string(main_node.dependency_validation_matrix.size()));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"main word:"+main_node.expression.word+", dvm size:"+std::to_string(main_node.dependency_validation_matrix.size()));
             combined_node_id=combine_nodes(main_word.gcat+"_"+dependent_node.expression.gcat+"_"+std::to_string(main_node_id)+"_"+std::to_string(dependent_node_id),main_node,dependent_node);
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"combined_node_id:"+std::to_string(combined_node_id));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"combined_node_id:"+std::to_string(combined_node_id));
         }
 		processed_words.insert(dependency_word_index);//TODO: processed_words and processed_depolex must be set together -> wrap them in a method
 		processed_depolex.insert(std::make_pair(main_node_id,dependent_node_id));
     }
     catch(invalid_combination& exception){
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception in tokenpaths::combine_nodes().");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Unhandled exception in tokenpaths::combine_nodes().");
     }
     return combined_node_id;
 }
 
-std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& words,const std::string& main_verb_symbols){
+std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& all_words,const std::vector<lexicon>& words,const std::string& main_verb_symbols){
 	std::multiset<std::pair<std::string,unsigned int>> functors_found_union;
 	std::map<std::pair<std::string,unsigned int>,unsigned int> functors_found_with_nr_of_deps;
 	std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
 
-	for(auto& word: words){
+  for(auto& word: all_words){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking up functors for word:"+word.word);
 		std::set<std::pair<std::string,unsigned int>> lexemes_processed;
 		std::set<std::pair<std::string,unsigned int>> functors_found;
 		std::string lexeme=word.lexeme;
 		if(word.lexicon_entry==false) lexeme=word.gcat;
-		find_functors_for_dependency_with_gcat_in_db(words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
+    find_functors_for_dependency_with_gcat_in_db(all_words,lexeme,"",word.lid,main_verb_symbols,functors_found,lexemes_processed);
 		for(auto& functor_found: functors_found){
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting functor in union:"+functor_found.first+" with d_key:"+std::to_string(functor_found.second));
 			functors_found_union.insert(functor_found);
 		}
 	}
 	for(auto& functor:functors_found_union){
 		auto functor_found=functors_found_with_nr_of_deps.find(functor);
 		if(functor_found==functors_found_with_nr_of_deps.end()){
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting functor in functors_found_with_nr_of_deps:"+functor.first+" with d_key:"+std::to_string(functor.second));
 			functors_found_with_nr_of_deps.insert(std::make_pair(functor,functors_found_union.count(functor)));
 		}
 	}
+  unsigned int max_deps=0;
 	for(auto& functor:functors_found_with_nr_of_deps){
-		if(functor.second==words.size()){
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has "+std::to_string(functor.second)+" dependencies");
+    if(functor.second>max_deps) max_deps=functor.second;
+    bool word_lexeme_matches=false;
+    for(auto& word:all_words){
+      if(word.lexeme==functor.first.first){
+        word_lexeme_matches=true;
+        break;
+      }
+    }
+    if(word_lexeme_matches==true&&functor.second==words.size()-1||word_lexeme_matches==false&&functor.second==words.size()){
 			functors_with_matching_nr_of_deps.insert(functor.first);
+      logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has matching nr of dependencies");
 		}
 	}
+  if(functors_with_matching_nr_of_deps.empty()==true){
+    for(auto& functor:functors_found_with_nr_of_deps){
+      if(functor.second==max_deps){
+        functors_with_matching_nr_of_deps.insert(functor.first);
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has the highest nr of dependencies found");
+      }
+    }
+ }
 	return functors_with_matching_nr_of_deps;
 }

@@ -31,7 +31,6 @@
 			std::string next_word();
 			bool generate_tokens_;
 			tokenpaths *token_paths;
-            void morphology_wo_cons(const std::vector<lexicon>&,std::vector<lexicon>&) const;
         public:
 			lexer(const char *,const char *,std::locale&,const bool,tokenpaths *);
 			~lexer();
@@ -86,11 +85,11 @@
 				}
 				return paths;
 			}
-            std::vector<lexicon> words_wo_cons() const;
             std::map<unsigned int,lexicon> find_main_verb(const std::vector<lexicon>&) const;
             lexicon find_word_by_lexeme(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
             lexicon find_word_by_gcat(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
             std::vector<std::string> analyze_and_cache(std::string&);
+			std::vector<lexicon> all_word_entries();
     };
 
 	class lexer_error:public std::exception{

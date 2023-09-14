@@ -137,8 +137,8 @@ PRIMARY KEY(source,timestamp,sentence,rank,a_counter)
 create table FAILED_ANALYSES(
 source text,/*user name or any other source of the utterance*/
 timestamp int,/*epoch*/
-a_counter smallint,
 sentence text,
+a_counter smallint,
 analysis text,
 PRIMARY KEY(source,timestamp,sentence,a_counter)
 );
