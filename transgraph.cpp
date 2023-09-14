@@ -50,7 +50,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
     sqlite=db_factory::get_instance();
     std::string functor_lexeme=sqlite->escape(functor.first);
     dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor_lexeme+"' AND D_KEY ='"+std::to_string(functor.second)+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
+  logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"transcripting:"+functor.first+"_"+std::to_string(functor.second));
 	if(morphan!=NULL){
         std::map<unsigned int,std::string> global_features=morphan->global_features_copy();
         //TODO: This is not really efficient as we are trying to add the entries all the time
