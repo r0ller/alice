@@ -1938,12 +1938,12 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
     if(optional_dependency.empty()==false){
         lexeme=optional_dependency;
     }
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lexeme:"+lexeme+", word:"+main_word.word+", gcat:"+main_word.gcat);
+    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme:"+lexeme+", word:"+main_word.word+", gcat:"+main_word.gcat);
     if(main_word.gcat!="CON"&&main_word.dependencies!=NULL){
         depolex_entry=main_word.dependencies->first_value_for_field_name_found("lexeme",lexeme);
         while(depolex_entry!=NULL&&lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")){
             std::string d_key=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lexeme:"+lexeme+", d_key:"+d_key);
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexeme:"+lexeme+", d_key:"+d_key);
             while(depolex_entry!=NULL&&lexeme==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
                   &&d_key==*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
                 std::string dependency_lexeme=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"semantic_dependency");
@@ -1961,7 +1961,7 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                     if(dependency.lexeme.empty()==true){
                         dependency=lex->find_word_by_gcat(words,processed_words,dependency_lexeme,dependency_word_index);
                     }
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency.lexeme:"+dependency.lexeme+", dependency.gcat:"+dependency.gcat);
+                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"dependency.lexeme:"+dependency.lexeme+", dependency.gcat:"+dependency.gcat);
                     unsigned int combined_node_id=0;
                     unsigned int dependent_node_id=0;
                     if(dependency.lexeme.empty()==false||dependency.lexeme.empty()==true&&dependency.gcat=="CON"){
@@ -1988,16 +1988,16 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                 std::string dependency_counter=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter");
                 std::string dependency_failover=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
                 //check if the current depolex entry has already been processed for the main_node_id (which may be the dependent_node_id if already in recursion)
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"searching in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
+                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"searching in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
                 if(processed_depolex_by_row_nr.find(std::make_pair(main_node_id,depolex_entry->first))==processed_depolex_by_row_nr.end()){
                     if((manner.empty()==true||manner=="0")&&dependencies_found.size()==1
                             ||manner=="1"&&dependencies_found.size()>=1
                             ||manner=="2"&&dependencies_found.size()>1){
                         for(auto& dependent_node_id:dependencies_found){
                             processed_depolex_by_row_nr.insert(std::make_pair(main_node_id,depolex_entry->first));
-                            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in processed_depolex_by_row_nr main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
+                            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in processed_depolex_by_row_nr main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
                             auto dependency=get_node_info(dependent_node_id);
-                            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call to build_dependency_semantics with main node lexeme:"+dependency.expression.lexeme+", gcat:"+dependency.expression.gcat);
+                            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"recursive call to build_dependency_semantics with main node lexeme:"+dependency.expression.lexeme+", gcat:"+dependency.expression.gcat);
                             build_dependency_semantics(words,processed_words,words2nodes,dependent_node_id,"",processed_depolex,processed_depolex_by_row_nr,lex);
                         }
                     }
@@ -2006,13 +2006,13 @@ void interpreter::build_dependency_semantics(std::vector<lexicon>& words,std::se
                             ||manner=="2"&&dependencies_found.size()<=1)
                             &&std::atoi(dependency_failover.c_str())>=std::atoi(dependency_counter.c_str())){
                         processed_depolex_by_row_nr.insert(std::make_pair(main_node_id,depolex_entry->first));
-                        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting in processed_depolex_by_row_nr main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
-                        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"recursive call to build_dependency_semantics with main node lexeme:"+main_word.lexeme+", gcat:"+main_word.gcat+" and optional dependency:"+dependency_lexeme);
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"inserting in processed_depolex_by_row_nr main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
+                        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"recursive call to build_dependency_semantics with main node lexeme:"+main_word.lexeme+", gcat:"+main_word.gcat+" and optional dependency:"+dependency_lexeme);
                         build_dependency_semantics(words,processed_words,words2nodes,main_node_id,dependency_lexeme,processed_depolex,processed_depolex_by_row_nr,lex);
                     }
                 }
                 else{
-                  logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"nothing found in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
+                  logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nothing found in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
                 }
                 depolex_entry=main_word.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",lexeme);
             }
@@ -2030,15 +2030,15 @@ unsigned int interpreter::combine_nodes(std::vector<lexicon>& words,std::set<uns
     try{
         bool valid_combination=is_valid_combination(main_node_id,dependent_node_id);
         if(valid_combination==true){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"main word:"+main_node.expression.word+", dvm size:"+std::to_string(main_node.dependency_validation_matrix.size()));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main word:"+main_node.expression.word+", dvm size:"+std::to_string(main_node.dependency_validation_matrix.size()));
             combined_node_id=combine_nodes(main_word.gcat+"_"+dependent_node.expression.gcat+"_"+std::to_string(main_node_id)+"_"+std::to_string(dependent_node_id),main_node,dependent_node);
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"combined_node_id:"+std::to_string(combined_node_id));
+            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"combined_node_id:"+std::to_string(combined_node_id));
         }
 		processed_words.insert(dependency_word_index);//TODO: processed_words and processed_depolex must be set together -> wrap them in a method
 		processed_depolex.insert(std::make_pair(main_node_id,dependent_node_id));
     }
     catch(invalid_combination& exception){
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Unhandled exception in tokenpaths::combine_nodes().");
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"Unhandled exception in tokenpaths::combine_nodes().");
     }
     return combined_node_id;
 }
@@ -2078,7 +2078,8 @@ std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_ma
         break;
       }
     }
-    if(word_lexeme_matches==true&&functor.second==words.size()-1||word_lexeme_matches==false&&functor.second==words.size()){
+    //if(word_lexeme_matches==true&&functor.second==words.size()-1||word_lexeme_matches==false&&functor.second==words.size()){
+    if(word_lexeme_matches==true){
 			functors_with_matching_nr_of_deps.insert(functor.first);
       logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has matching nr of dependencies");
 		}

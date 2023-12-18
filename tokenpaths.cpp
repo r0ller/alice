@@ -605,15 +605,17 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+=syntax(valid_parse_trees.at(i));
 				analysis+="],";
 			}
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
+      std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
 			if(toa&HI_SEMANTICS){
-                //TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
-                //nr of nodes but none of them having constants. Figure out if there are better
-                //ways of ranking than this.
-                rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
-                analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
+        //TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
+        //nr of nodes but none of them having constants. Figure out if there are better
+        //ways of ranking than this.
+        rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
+        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank));
+        analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
+        analysis+="\"rank\":"+std::to_string(rank)+",";
 				analysis+="\"functors\":[";
 				for(auto&& functor:related_functors){
 					analysis+="{";
@@ -703,7 +705,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
         }
         analysis="{\"analyses\":[";
         for(auto&& i:ranked_analyses_map){
-            analysis+=i.second+",";
+          analysis+=i.second+",";
         }
         if(analysis.back()==',') analysis.pop_back();
         analysis+="]}";

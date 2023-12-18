@@ -56,17 +56,19 @@ int main(int argc,char **argv){
         while(true){
           getline(cin,text);
           //Test sms scenario:
-            //text="üzenem péternek hogy hello\n";
-            //text="a harmadiknak\n";
-            //text="küldd\n";
+            //text="Ã¼zenem pÃ©ternek hogy hello\n";
+            //text="a mÃ¡sodiknak\n";
+            //text="kÃ¼ldd\n";
           //Test context ref handling for verb:
-            //text="hí­vd fel pétert\n";
+            //text="hÃ­Â­vd fel pÃ©tert\n";
             //text="a harmadikat\n";
           //Test interpreting statement (see question test above at -q):
             //text="today is peter's birthday .\n";
           //Test sentence without verb and no context ref handling:
             //text="files in abc\n";
-            //text="felolvasás be\n";
+            //text="felolvasÃ¡s be\n";
+          //text="vazze kapcsold be a felolvasÃ¡st";
+          //text="keress a nÃ©vjegyzÃ©kben alizt";
           if(text.empty()==false){
             //toa=HI_MORPHOLOGY|HI_SYNTAX;
             toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
