@@ -21,8 +21,8 @@ lexer::lexer(const char *input_string,const char *language,std::locale& locale,c
 }
 
 lexer::~lexer(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing lexer");
-    destroy_words();
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing lexer");
+	destroy_words();
 }
 
 unsigned int lexer::next_token(){
@@ -338,13 +338,13 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 	sqlite=db_factory::get_instance();
 	dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
 	if(dependencies==NULL){
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(2,"If this gets combined with another node, you'll get a dump as no dependency entries found for "+functor);
 		//Don't throw anything, see comment in tokenize_word() when calling this function for lexemes not being found in the lexicon
 		//throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
 	}
 	else{
 		for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
 			semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
 			ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
@@ -549,53 +549,53 @@ std::string lexer::work_string(){
 }
 
 std::map<unsigned int,lexicon> lexer::find_main_verb(const std::vector<lexicon>& words) const{
-    std::map<unsigned int,lexicon> main_verbs;
-    db *sqlite=NULL;
-    query_result *result=NULL;
-    const std::pair<const unsigned int,field> *result_entry=NULL;
+	std::map<unsigned int,lexicon> main_verbs;
+	db *sqlite=NULL;
+	query_result *result=NULL;
+	const std::pair<const unsigned int,field> *result_entry=NULL;
 
-    sqlite=db_factory::get_instance();
-    result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
-    std::string main_symbol=*result->field_value_at_row_position(0,"value");
-    delete result;
-    result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
-    std::string main_gcat=*result->field_value_at_row_position(0,"value");
-    unsigned int index=0;
-    for(auto& word:words){
-        if(word.morphalytics!=NULL&&main_gcat.find("<"+word.gcat+">")!=std::string::npos){
-            main_verbs.insert(std::make_pair(index,word));
-        }
-        ++index;
-    }
-    return main_verbs;
+	sqlite=db_factory::get_instance();
+	result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+	std::string main_symbol=*result->field_value_at_row_position(0,"value");
+	delete result;
+	result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
+	std::string main_gcat=*result->field_value_at_row_position(0,"value");
+	unsigned int index=0;
+	for(auto& word:words){
+		if(word.morphalytics!=NULL&&main_gcat.find("<"+word.gcat+">")!=std::string::npos){
+			main_verbs.insert(std::make_pair(index,word));
+		}
+		++index;
+	}
+	return main_verbs;
 }
 
 lexicon lexer::find_word_by_lexeme(const std::vector<lexicon>& words,const std::set<unsigned int>& processed_words,const std::string& lexeme,unsigned int& index){
-    lexicon word_found;
+	lexicon word_found;
 
-    index=0;
-    for(auto& word:words){
-        if(word.lexeme==lexeme){//&&processed_words.find(index)==processed_words.end()){
-            word_found=word;
-            break;
-        }
-        ++index;
-    }
-    return word_found;
+	index=0;
+	for(auto& word:words){
+		if(word.lexeme==lexeme){//&&processed_words.find(index)==processed_words.end()){
+			word_found=word;
+			break;
+		}
+		++index;
+	}
+	return word_found;
 }
 
 lexicon lexer::find_word_by_gcat(const std::vector<lexicon>& words,const std::set<unsigned int>& processed_words,const std::string& gcat,unsigned int& index){
-    lexicon word_found;
+	lexicon word_found;
 
-    index=0;
-    for(auto& word:words){
-        if(word.gcat==gcat){//&&processed_words.find(index)==processed_words.end()){
-            word_found=word;
-            break;
-        }
-        ++index;
-    }
-    return word_found;
+	index=0;
+	for(auto& word:words){
+		if(word.gcat==gcat){//&&processed_words.find(index)==processed_words.end()){
+			word_found=word;
+			break;
+		}
+		++index;
+	}
+	return word_found;
 }
 
 std::vector<lexicon> lexer::all_word_entries(){

@@ -3,7 +3,7 @@
 When using the EM_ASM macro, ensure that you only use single quotes(‘) like alert('hello world!').
 Double quotes(”) will cause a syntax error that is not detected by the compiler
 and is only shown when looking at a JavaScript console while running the offending code.
- */
+*/
 js_db::js_db(){
 	std::cout<<"jsdebug1"<<std::endl;
 	//something like these may help:
@@ -31,24 +31,24 @@ js_db::js_db(){
 				this.open = function (uri){
 					console.log('Mongomery opening '+uri);
 					self.Mongomery(function*(mongo) {
-					    var db          = yield mongo.connect(uri);
+						var db = yield mongo.connect(uri);
 						console.log('db yielded');
-					    var collection  = db.collection('entries');
+						var collection  = db.collection('entries');
 						console.log('collection got');
-					    var docs        = yield collection.find({}).toArray();
+						var docs = yield collection.find({}).toArray();
 						console.log('docs yielded');
-					    docs.forEach(function(item) {
+						docs.forEach(function(item) {
 							console.log(item);
 						});
-					    db.close();
+						db.close();
 					}).on('error', function(error) {
-					    console.log(error.message);
+						console.log(error.message);
 					});
 				};
 			}
-		    if(typeof mongoinst === 'undefined') {
+			if(typeof mongoinst === 'undefined') {
 				mongoinst=[];
-		    }
+			}
 			mongoinst[objid] = new mongodb();
 			mongoinst[objid].init();
 		});
@@ -70,16 +70,16 @@ void js_db::open(const std::string& db_uri){
 //		var addr = mongoinst[$0].open(uri);
 		var mongomery = require('mongomery');
 		mongomery(function*(mongo) {
-			var url         = uri,
-			db          = yield mongo.connect(url),
-			collection  = db.collection('entries'),
-			docs        = yield collection.find({}).toArray();
+			var url = uri,
+			db = yield mongo.connect(url),
+			collection = db.collection('entries'),
+			docs = yield collection.find({}).toArray();
 
 			docs.forEach(function(item) {
-				 console.log(item);
-			 });
-		 console.log(db);
-		 db.close();
+				console.log(item);
+			});
+			console.log(db);
+			db.close();
 		}).on('error', function(error) {
 		 console.log(error.message);
 		});

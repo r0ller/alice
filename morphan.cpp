@@ -48,8 +48,8 @@ morphan::morphan(const std::string& lid){
 }
 
 morphan::~morphan(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan");
-    apply_clear(morphan::morphan_handle);
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan");
+	apply_clear(morphan::morphan_handle);
 	fsm_destroy(morphan::fst);
 	morphan::singleton_instance=NULL;
 	if(pfstname!=NULL) delete []pfstname;
@@ -89,11 +89,11 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morpheme:"+morphemes_vector.back());
 			analysis=new morphan_result(word,morphemes_vector,lid_);
 			if(analysis->is_erroneous()==false){
-        if(with_cons==true||with_cons==false&&analysis->gcat()!="CON"){
+				if(with_cons==true||with_cons==false&&analysis->gcat()!="CON"){
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed:"+morphemes);
 					analyses->push_back(*analysis);
 				}
-        else if(with_cons==false&&analysis->gcat()=="CON"){
+				else if(with_cons==false&&analysis->gcat()=="CON"){
 					cons.push_back(*analysis);
 				}
 			}
@@ -113,7 +113,7 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 		}
 	}
 	else{
-        analysis=new morphan_result(word,lid_,"");
+		analysis=new morphan_result(word,lid_,"");
 		if(analysis->is_erroneous()==false){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"morphan pushed without analysis");
 			analyses->push_back(*analysis);

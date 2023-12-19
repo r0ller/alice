@@ -25,8 +25,8 @@
 			const std::string* field_value_at_row_position(const unsigned int, const std::string&) const;
 			const std::multimap<unsigned int,field>& result_set() const;
 			unsigned int nr_of_result_rows() const;
-            void insert(const std::pair<unsigned int, field>&);
-            void append(const std::pair<unsigned int, field>&);
+			void insert(const std::pair<unsigned int, field>&);
+			void append(const std::pair<unsigned int, field>&);
 			const std::pair<const unsigned int,field>* first_value_for_field_name_found(const std::string&, const std::string&) const;
 			const std::pair<const unsigned int,field>* value_for_field_name_found_after_row_position(const unsigned int, const std::string&, const std::string&) const;
 			void keep(const std::set<unsigned int>&);

@@ -75,10 +75,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				delete main_verb_result;
 			}
 			locale=std::locale();
-            if(modified_human_input.empty()==true){
-                lex=new lexer(human_input,language,locale,false,token_paths);
-                token_paths->assign_lexer(lex);
-            }
+      transgraph::clear_node_functor_map();
+      if(modified_human_input.empty()==true){
+          lex=new lexer(human_input,language,locale,false,token_paths);
+          token_paths->assign_lexer(lex);
+      }
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
       sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
