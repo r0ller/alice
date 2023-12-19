@@ -25,18 +25,18 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source,const unsigned char crh){
 #endif
 
-  std::string analyses,modified_human_input,main_verb_symbols,main_verb_lexeme;
+	std::string analyses,modified_human_input,main_verb_symbols,main_verb_lexeme;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
 	std::locale locale;
 	yy::parser parser;
-    std::time_t timestamp=std::time(nullptr);
-    std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
-    std::set<std::pair<std::string,unsigned int>>::const_iterator functor_with_matching_nr_of_deps;
-  lexicon main_verb;
+	std::time_t timestamp=std::time(nullptr);
+	std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
+	std::set<std::pair<std::string,unsigned int>>::const_iterator functor_with_matching_nr_of_deps;
+	lexicon main_verb;
 
-    logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
+	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
 	token_paths=new tokenpaths(toa);
 	while(human_input!=NULL&&toa!=0&&token_paths->is_any_left()==true){
@@ -75,13 +75,13 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				delete main_verb_result;
 			}
 			locale=std::locale();
-      transgraph::clear_node_functor_map();
-      if(modified_human_input.empty()==true){
-          lex=new lexer(human_input,language,locale,false,token_paths);
-          token_paths->assign_lexer(lex);
-      }
+			transgraph::clear_node_functor_map();
+			if(modified_human_input.empty()==true){
+				lex=new lexer(human_input,language,locale,false,token_paths);
+				token_paths->assign_lexer(lex);
+			}
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
-      sparser=new interpreter(toa);
+			sparser=new interpreter(toa);
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
 			bool delete_lexer=true;
 			if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
@@ -125,121 +125,121 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				delete sparser;
 				sparser=NULL;
 				transgraph=NULL;
-        }
-        else if(toa&HI_MORPHOLOGY&&toa&HI_SEMANTICS){
-					if(crh>0){
-            if(modified_human_input.empty()==true){
-              modified_human_input=token_paths->add_context_reference_word(crh,human_input,main_verb_lexeme);
-              lex=token_paths->lexer();
-              delete_lexer=false;
-              while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                lex->next_token();
-              }
-              main_verb=lex->get_word_by_lexeme(main_verb_lexeme);
-            }
-            sparser->build_dependency_semantics(lex,token_paths,main_verb);
-            delete sparser;
-            sparser=NULL;
-            transgraph=NULL;
-            if(token_paths->is_any_left()==true){
-              delete lex;
-              lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
-              token_paths->assign_lexer(lex);
-              while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                lex->next_token();
-              }
-              main_verb=lex->get_word_by_lexeme(main_verb_lexeme);
-              delete_lexer=false;
-            }
-          }
+			}
+			else if(toa&HI_MORPHOLOGY&&toa&HI_SEMANTICS){
+				if(crh>0){
+					if(modified_human_input.empty()==true){
+						modified_human_input=token_paths->add_context_reference_word(crh,human_input,main_verb_lexeme);
+						lex=token_paths->lexer();
+						delete_lexer=false;
+						while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+							lex->next_token();
+						}
+						main_verb=lex->get_word_by_lexeme(main_verb_lexeme);
+					}
+					sparser->build_dependency_semantics(lex,token_paths,main_verb);
+					delete sparser;
+					sparser=NULL;
+					transgraph=NULL;
+					if(token_paths->is_any_left()==true){
+						delete lex;
+						lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
+						token_paths->assign_lexer(lex);
+						while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+							lex->next_token();
+						}
+						main_verb=lex->get_word_by_lexeme(main_verb_lexeme);
+						delete_lexer=false;
+					}
+				}
+				else{
+					//1. Find functor(s) with gcat set in settings
+					//2. Determine the intersection of functors_found of each iteration
+					//3. If there are >1 functors in the intersection, select those that
+					//   have the highest number of dependencies found.
+					//4. If there are >1, make as many turns as necessary to return analysis for each.
+					if(modified_human_input.empty()==true){
+						while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+							lex->next_token();
+						}
+						if(functors_with_matching_nr_of_deps.empty()==true){//Run only once, not for each token path
+							//Get every possible word analysis from lexer cache to be able to look up all possible functors
+							std::vector<lexicon> words=lex->word_entries();
+							std::vector<lexicon> all_words=lex->all_word_entries();
+							//std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+							functors_with_matching_nr_of_deps=sparser->find_functors_with_matching_nr_of_deps(all_words,words,main_verb_symbols);
+							functor_with_matching_nr_of_deps=functors_with_matching_nr_of_deps.begin();
+						}
+						if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
+							query_result *result=NULL;
+							main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+							if(main_verb.lexeme.empty()==true){
+								result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
+								if(result!=NULL){
+									std::string word=*result->field_value_at_row_position(0,"word");
+									modified_human_input=token_paths->modify_human_input(word,human_input);
+									lex=token_paths->lexer();
+									delete_lexer=false;
+									delete result;
+									while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+										lex->next_token();
+									}
+									main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+								}
+							}
+							else{
+								modified_human_input=human_input;
+								delete_lexer=false;
+							}
+						}
+					}
+					if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
+						sparser->build_dependency_semantics(lex,token_paths,main_verb);
+						if(token_paths->is_any_left()==true){
+							delete lex;
+							lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
+							token_paths->assign_lexer(lex);
+							while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+								lex->next_token();
+							}
+							main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+							delete_lexer=false;
+						}
+						else{
+							++functor_with_matching_nr_of_deps;
+							if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
+								query_result *result=NULL;
+								main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+								if(main_verb.lexeme.empty()==true){
+									result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
+									if(result!=NULL){
+										std::string word=*result->field_value_at_row_position(0,"word");
+										modified_human_input=token_paths->modify_human_input(word,human_input);
+										lex=token_paths->lexer();
+										delete_lexer=false;
+										delete result;
+										while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+											lex->next_token();
+										}
+										main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+									}
+								}
+								else{
+									modified_human_input=human_input;
+									delete_lexer=false;
+								}
+							}
+						}
+					}
 					else{
-						//1. Find functor(s) with gcat set in settings
-						//2. Determine the intersection of functors_found of each iteration
-						//3. If there are >1 functors in the intersection, select those that
-						//   have the highest number of dependencies found.
-						//4. If there are >1, make as many turns as necessary to return analysis for each.
-            if(modified_human_input.empty()==true){
-              while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                lex->next_token();
-              }
-              if(functors_with_matching_nr_of_deps.empty()==true){//Run only once, not for each token path
-                //Get every possible word analysis from lexer cache to be able to look up all possible functors
-                std::vector<lexicon> words=lex->word_entries();
-                std::vector<lexicon> all_words=lex->all_word_entries();
-                //std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-                functors_with_matching_nr_of_deps=sparser->find_functors_with_matching_nr_of_deps(all_words,words,main_verb_symbols);
-                functor_with_matching_nr_of_deps=functors_with_matching_nr_of_deps.begin();
-              }
-              if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
-                query_result *result=NULL;
-                main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                if(main_verb.lexeme.empty()==true){
-                  result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
-                  if(result!=NULL){
-                    std::string word=*result->field_value_at_row_position(0,"word");
-                    modified_human_input=token_paths->modify_human_input(word,human_input);
-                    lex=token_paths->lexer();
-                    delete_lexer=false;
-                    delete result;
-                    while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                      lex->next_token();
-                    }
-                    main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                  }
-                }
-                else{
-                  modified_human_input=human_input;
-                  delete_lexer=false;
-                }
-              }
-            }
-            if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
-              sparser->build_dependency_semantics(lex,token_paths,main_verb);
-              if(token_paths->is_any_left()==true){
-                delete lex;
-                lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
-                token_paths->assign_lexer(lex);
-                while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                  lex->next_token();
-                }
-                main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                delete_lexer=false;
-              }
-              else{
-                ++functor_with_matching_nr_of_deps;
-                if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
-                  query_result *result=NULL;
-                  main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                  if(main_verb.lexeme.empty()==true){
-                    result=sqlite->exec_sql("SELECT * FROM LEXICON WHERE LEXEME='"+functor_with_matching_nr_of_deps->first+"' AND LID='"+lex->language()+"' AND GCAT in("+main_verb_symbols+");");
-                    if(result!=NULL){
-                      std::string word=*result->field_value_at_row_position(0,"word");
-                      modified_human_input=token_paths->modify_human_input(word,human_input);
-                      lex=token_paths->lexer();
-                      delete_lexer=false;
-                      delete result;
-                      while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
-                        lex->next_token();
-                      }
-                      main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
-                    }
-                  }
-                  else{
-                    modified_human_input=human_input;
-                    delete_lexer=false;
-                  }
-                }
-              }
-            }
-            else{
-              token_paths->invalidate_parse_tree(sparser->nodes());
-              token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
-            }
-            delete sparser;
-            sparser=NULL;
-            transgraph=NULL;
-          }
-        }
+						token_paths->invalidate_parse_tree(sparser->nodes());
+						token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+					}
+					delete sparser;
+					sparser=NULL;
+					transgraph=NULL;
+				}
+			}
 			if(delete_lexer==true){
 				delete lex;
 				lex=NULL;
@@ -279,9 +279,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 		catch(invalid_combination& exception){
-            token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
-            logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
-            if(token_paths->is_any_left()==true){
+			token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
+			if(token_paths->is_any_left()==true){
 				delete sparser;
 				sparser=NULL;
 				delete lex;
@@ -319,14 +319,14 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"unexpected error ...");
 			return NULL;
 		}
-    morphan_result::clear_global_features();
-    transgraph::clear_node_functor_map();
-    }
-    analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
-    if(analyses.empty()==false){
-        analysischr=new char[analyses.length()+1];
-        analyses.copy(analysischr,analyses.length(),0);
-        analysischr[analyses.length()]='\0';
+	morphan_result::clear_global_features();
+	transgraph::clear_node_functor_map();
+	}
+	analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
+	if(analyses.empty()==false){
+		analysischr=new char[analyses.length()+1];
+		analyses.copy(analysischr,analyses.length(),0);
+		analysischr[analyses.length()]='\0';
 	}
 	lexer::delete_cache();
 	delete token_paths;
