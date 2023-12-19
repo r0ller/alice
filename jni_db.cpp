@@ -18,8 +18,8 @@ jni_db::jni_db(){
 }
 
 jni_db::~jni_db(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing jni db");
-    env->DeleteGlobalRef(cl_string);
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing jni db");
+	env->DeleteGlobalRef(cl_string);
 	env->DeleteGlobalRef(dbhelperobj);
 	env->DeleteGlobalRef(cl_dbhelper);
 }
@@ -45,13 +45,13 @@ void jni_db::close(){
 }
 
 const std::string jni_db::error_message(){
-//    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"jni_db::error_message");
-    jstring error=reinterpret_cast<jstring>(env->CallObjectMethod(dbhelperobj,dbhelper_error_message));
+	//logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"jni_db::error_message");
+	jstring error=reinterpret_cast<jstring>(env->CallObjectMethod(dbhelperobj,dbhelper_error_message));
 	if(env->ExceptionCheck()==JNI_TRUE){
 		env->ExceptionClear();
 	}
-    std::string errmsg=jstring2string(error);
-    return errmsg;
+	std::string errmsg=jstring2string(error);
+	return errmsg;
 }
 
 query_result *jni_db::exec_sql(const std::string& sql){
@@ -79,7 +79,7 @@ query_result *jni_db::exec_sql(const std::string& sql){
 				jobject column_name_jobj=env->GetObjectArrayElement(column_names,i);
 				jstring column_name=reinterpret_cast<jstring>(column_name_jobj);
 				std::string colname=jstring2string(column_name);
-                env->DeleteLocalRef(column_name_jobj);
+				env->DeleteLocalRef(column_name_jobj);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"execsql:"+colname);
 				fields[i]=new char[colname.length()+1];
 				fields[i][colname.length()]='\0';
@@ -116,9 +116,9 @@ query_result *jni_db::exec_sql(const std::string& sql){
 		}
 		env->DeleteLocalRef(raw_sqlite_result);
 	}
-    else{
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Result set empty.");
-    }
+	else{
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Result set empty.");
+	}
 	return result;
 }
 
@@ -127,24 +127,24 @@ JNIEnv *jni_db::jnienv(){
 	if(jvm->GetEnv(reinterpret_cast<void**>(&jnienv),JNI_VERSION_1_6)!=JNI_OK) {
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"exiting: jvm->GetEnv() error");
 		exit(EXIT_FAILURE);
-    }
-//	jvm->AttachCurrentThread(&jnienv, NULL);
+	}
+	//jvm->AttachCurrentThread(&jnienv, NULL);
 	return jnienv;
 }
 
 std::string jni_db::jstring2string(const jstring& jtext){
 	std::string text;
 
-    if(jtext!=NULL){
+	if(jtext!=NULL){
 		const auto stringJbytes=(jbyteArray) env->CallObjectMethod(jtext,getBytes);
-        const auto length=env->GetArrayLength(stringJbytes);
-        const auto pBytes=env->GetByteArrayElements(stringJbytes,NULL);
-        text=std::string((char *)pBytes,length);
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"jstring2string:"+text);
+		const auto length=env->GetArrayLength(stringJbytes);
+		const auto pBytes=env->GetByteArrayElements(stringJbytes,NULL);
+		text=std::string((char *)pBytes,length);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"jstring2string:"+text);
 		env->ReleaseByteArrayElements(stringJbytes,pBytes,JNI_ABORT);
 		env->DeleteLocalRef(stringJbytes);
-    }
-    return text;
+	}
+	return text;
 }
 
 std::string jni_db::db_uri(){

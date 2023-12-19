@@ -13,8 +13,8 @@ morphan_result::morphan_result(const std::string& word, const std::string& lid, 
 	my_id=++morphan_result::global_id;
 	word_form=word;
 	word_stem=word;
-    if(gcat.empty()==true) word_gcat="CON";
-    else word_gcat=gcat;
+	if(gcat.empty()==true) word_gcat="CON";
+	else word_gcat=gcat;
 }
 
 morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes, const std::string& lid){
@@ -96,7 +96,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 }
 
 morphan_result::~morphan_result(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan result");
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan result");
 }
 
 const unsigned int& morphan_result::id() const{
@@ -141,9 +141,9 @@ bool morphan_result::is_mocked() const{
 }
 
 void morphan_result::copy_global_features(){
-    global_features_copy_=global_features_;
+	global_features_copy_=global_features_;
 }
 
 std::map<unsigned int,std::string> morphan_result::global_features_copy(){
-    return global_features_copy_;
+	return global_features_copy_;
 }

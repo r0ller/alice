@@ -4,7 +4,7 @@
 	#include <string>
 	#include <vector>
 	#include <set>
-    #include <map>
+	#include <map>
 
 	class morphan_result{
 		private:
@@ -17,11 +17,11 @@
 			static unsigned int global_id;//TODO:figure out when to reset or change it to instance level
 			unsigned int my_id;
 			std::string lid;
-            static std::map<unsigned int,std::string> global_features_;
-            std::map<unsigned int,std::string> global_features_copy_;
-        public:
+			static std::map<unsigned int,std::string> global_features_;
+			std::map<unsigned int,std::string> global_features_copy_;
+		public:
 			morphan_result(const std::string&, const std::vector<std::string>&, const std::string&);
-            morphan_result(const std::string&, const std::string&, const std::string&);
+			morphan_result(const std::string&, const std::string&, const std::string&);
 			~morphan_result();
 			const unsigned int& id() const;
 			const std::string& word() const;
@@ -33,18 +33,18 @@
 			const std::set<std::string>& lfeas() const;
 			bool is_erroneous() const;
 			bool is_mocked() const;
-            static void add_global_feature(const unsigned int node_id,const std::string& feature){
-                global_features_.insert(std::make_pair(node_id,feature));
-            }
-            std::map<unsigned int,std::string> global_features_copy();
-            static std::map<unsigned int,std::string> global_features(){
-                return global_features_;
-            }
-            static void clear_global_features(){
-                global_features_.clear();
-            }
-            void copy_global_features();
-            //prefix();
+			static void add_global_feature(const unsigned int node_id,const std::string& feature){
+				global_features_.insert(std::make_pair(node_id,feature));
+			}
+			std::map<unsigned int,std::string> global_features_copy();
+			static std::map<unsigned int,std::string> global_features(){
+				return global_features_;
+			}
+			static void clear_global_features(){
+				global_features_.clear();
+			}
+			void copy_global_features();
+			//prefix();
 			//suffix();
 			//infix();
 	};

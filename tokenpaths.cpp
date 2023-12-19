@@ -8,7 +8,7 @@ extern std::map<std::string, unsigned int> symbol_token_map;
 extern std::map<unsigned int,std::string> token_symbol_map;
 
 tokenpaths::tokenpaths(const unsigned char toa){
-    this->toa=toa;
+	this->toa=toa;
 	lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=0;
@@ -17,8 +17,8 @@ tokenpaths::tokenpaths(const unsigned char toa){
 }
 
 tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
-    toa=0;
-    lex=NULL;
+	toa=0;
+	lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=start;
 	current_path_nr=start;
@@ -26,7 +26,7 @@ tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
 }
 
 tokenpaths::~tokenpaths(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing tokenpaths");
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing tokenpaths");
 }
 
 std::vector<unsigned short int> tokenpaths::path_nr_to_indices(const unsigned int path_nr){
@@ -86,7 +86,7 @@ void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgra
 			if(store==true){
 				valid_paths.push_back(words);
 				valid_graphs.push_back(transgraph);
-                valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
+				valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
 			}
 			reset();
 		}
@@ -94,11 +94,11 @@ void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgra
 }
 
 void tokenpaths::validate_path_wo_checks(const std::vector<lexicon>& words, const transgraph* transgraph){
-    //TODO:check why words are accepted from outside when the instance anyway has its own words attribute
-    valid_paths.push_back(words);
-    valid_graphs.push_back(transgraph);
-    valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
-    reset();
+	//TODO:check why words are accepted from outside when the instance anyway has its own words attribute
+	valid_paths.push_back(words);
+	valid_graphs.push_back(transgraph);
+	valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
+	reset();
 }
 
 void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::string& reason,std::exception *exception){
@@ -134,16 +134,16 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 		//	followup_token(lex->last_token_returned());
 
 			if(reason=="syntax error"||reason=="semantic error"){
-                if(toa&HI_SYNTAX){
-                    validated_words=lex->validated_words();
-                    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
-                    if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
-                        last_word=lex->last_word_scanned().morphalytics->word();
-                    else last_word=lex->last_word_scanned().word;
-                }
-                else if(toa&HI_SEMANTICS){
-                    last_word=words[0].word;
-                }
+				if(toa&HI_SYNTAX){
+					validated_words=lex->validated_words();
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
+					if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
+						last_word=lex->last_word_scanned().morphalytics->word();
+					else last_word=lex->last_word_scanned().word;
+				}
+				else if(toa&HI_SEMANTICS){
+					last_word=words[0].word;
+				}
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
 				error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";
@@ -154,18 +154,18 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 					error+="\"last word\":\""+last_word+"\"";
 				}
 				if(exception!=NULL){
-                    error+=",\"message\":\""+std::string(exception->what())+"\"";
+					error+=",\"message\":\""+std::string(exception->what())+"\"";
 				}
 				error+="}";
 			}
 			else if(reason=="invalid combination"){
-                error="{\"source\":\"hi\",";
+				error="{\"source\":\"hi\",";
 				error+="\"type\":\""+reason+"\",";
 				if(validated_words.empty()==false){
-                    error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+					error+="\"processed\":\""+validated_words+"\","+"\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
 				}
 				else{
-                    error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
+					error+="\"failed\":\""+static_cast<invalid_combination *>(exception)->get_left()+" "+static_cast<invalid_combination *>(exception)->get_right()+"\"";
 				}
 				error+="}";
 			}
@@ -339,8 +339,8 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"transpiling functor "+functor);
 			unsigned int prev_dkey=0;
 			rowid_field=word.dependencies->first_value_for_field_name_found("lexeme",functor);
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
-            while(rowid_field!=NULL){
+			std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
+			while(rowid_field!=NULL){
 				unsigned int d_key=std::atoi(word.dependencies->field_value_at_row_position(rowid_field->first,"d_key")->c_str());
 				if(d_key!=prev_dkey){
 					prev_dkey=d_key;
@@ -348,15 +348,15 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(word.lexeme,d_key);
 						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 						id_index=std::atoi(graph->id().c_str());
-                        std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
-                        transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
+						std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
+						transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
 					}
 					else{
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 						id_index=std::atoi(graph->id().c_str());
-                        std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
-                        transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
+						std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
+						transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
 					}
 				}
 				rowid_field=word.dependencies->value_for_field_name_found_after_row_position(rowid_field->first,"lexeme",functor);
@@ -368,9 +368,9 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 			transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 			id_index=std::atoi(graph->id().c_str());
-            std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
-            std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
-            transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
+			std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
+			std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
+			transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
 		}
 	}
 	return transcript;
@@ -379,14 +379,14 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned int& nr_of_cons){
 	std::string morphology;
 
-    nr_of_cons=0;
+	nr_of_cons=0;
 	for(auto&& word:word_analyses){
 		morphology+="{\"morpheme id\":\""+std::to_string(word.morphalytics->id())+"\",";
 		morphology+="\"word\":\""+word.morphalytics->word()+"\",";
-        morphology+="\"lexeme\":\""+word.lexeme+"\",";
-        morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
+		morphology+="\"lexeme\":\""+word.lexeme+"\",";
+		morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
 		morphology+="\"gcat\":\""+word.morphalytics->gcat()+"\"";
-        if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
+		if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
 		if(word.morphalytics->is_mocked()==false){
 			morphology+=",\"tags\":[";
 			unsigned int morphan_index=0;
@@ -510,26 +510,26 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
-    std::multimap<float,std::string> ranked_analyses_map;
-    db *sqlite=NULL;
-    std::string analysis;
-    unsigned int nr_of_cons=0;
+	std::multimap<float,std::string> ranked_analyses_map;
+	db *sqlite=NULL;
+	std::string analysis;
+	unsigned int nr_of_cons=0;
 
-    sqlite=db_factory::get_instance();
-    unsigned int nr_of_analyses=valid_paths.size();
+	sqlite=db_factory::get_instance();
+	unsigned int nr_of_analyses=valid_paths.size();
 	if(nr_of_analyses==0&&toa==HI_MORPHOLOGY){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There is 1 analysis.");
 	}
 	else{
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"There are "+std::to_string(nr_of_analyses)+" analyses.");
 	}
-    if(nr_of_analyses==0){
-        analysis="{";
-        std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
-        if(toa&HI_MORPHOLOGY){
+	if(nr_of_analyses==0){
+		analysis="{";
+		std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
+		if(toa&HI_MORPHOLOGY){
 			analysis+="\"morphology\":[";
 			for(auto&& word_analyses:words_analyses){
-                analysis+=morphology(word_analyses.second,nr_of_cons);
+				analysis+=morphology(word_analyses.second,nr_of_cons);
 			}
 			if(analysis.back()==',') analysis.pop_back();
 			analysis+="],";
@@ -572,24 +572,24 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		}
 		if(analysis.back()==',') analysis.pop_back();
 		analysis+="}";
-        unsigned int a_counter=1;
-        query_result *result=sqlite->exec_sql("SELECT * FROM FAILED_ANALYSES WHERE source='"+source+"' AND timestamp='"+std::to_string(timestamp)+"' AND sentence='"+sqlite->escape(sentence)+"';");
-        if(result!=NULL){
-            a_counter=result->nr_of_result_rows()+1;
-            delete result;
-        }
-        sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(a_counter)+"','"+sqlite->escape(analysis)+"');");
-    }
-    else{
+		unsigned int a_counter=1;
+		query_result *result=sqlite->exec_sql("SELECT * FROM FAILED_ANALYSES WHERE source='"+source+"' AND timestamp='"+std::to_string(timestamp)+"' AND sentence='"+sqlite->escape(sentence)+"';");
+		if(result!=NULL){
+			a_counter=result->nr_of_result_rows()+1;
+			delete result;
+		}
+		sqlite->exec_sql("INSERT INTO FAILED_ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(a_counter)+"','"+sqlite->escape(analysis)+"');");
+	}
+	else{
 		for(unsigned int i=0;i<nr_of_analyses;++i){
 			related_functors.clear();
-            analysis="{";
-            float rank=0;
+			analysis="{";
+			float rank=0;
 			if(toa&HI_MORPHOLOGY){
-                analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons);
+				analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
-            }
+			}
 			if(toa&HI_SYNTAX){
 				//TODO: features added at syntactic level (like main_verb) do not appear in the analyses.
 				//Features added at syntactic level should be recorded in the corresponding node which
@@ -605,17 +605,17 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				analysis+=syntax(valid_parse_trees.at(i));
 				analysis+="],";
 			}
-      std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
+			std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
 			if(toa&HI_SEMANTICS){
-        //TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
-        //nr of nodes but none of them having constants. Figure out if there are better
-        //ways of ranking than this.
-        rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank));
-        analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
+				//TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
+				//nr of nodes but none of them having constants. Figure out if there are better
+				//ways of ranking than this.
+				rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank));
+				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
-        analysis+="\"rank\":"+std::to_string(rank)+",";
+				analysis+="\"rank\":"+std::to_string(rank)+",";
 				analysis+="\"functors\":[";
 				for(auto&& functor:related_functors){
 					analysis+="{";
@@ -624,91 +624,91 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 					analysis+="},";
 				}
 				if(analysis.back()==',') analysis.pop_back();
-                analysis+="],";
+				analysis+="],";
 			}
-            //preparing to collect data for jsemantics
-            std::map<unsigned int,std::string> global_features=morphan_result::global_features();
-            query_result *result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='indicative_mood_tag' OR key='interrogative_mood_tag' OR key='imperative_mood_tag';");
-            if(result!=NULL){
-                std::string indicative_mood_tag;
-                const std::pair<const unsigned int,field> *mood_tag=result->first_value_for_field_name_found("key","indicative_mood_tag");
-                if(mood_tag!=NULL){
-                    indicative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
-                }
-                std::string interrogative_mood_tag;
-                mood_tag=result->first_value_for_field_name_found("key","interrogative_mood_tag");
-                if(mood_tag!=NULL){
-                    interrogative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
-                }
-                std::string imperative_mood_tag;
-                mood_tag=result->first_value_for_field_name_found("key","imperative_mood_tag");
-                if(mood_tag!=NULL){
-                    imperative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
-                }
-                std::string mood;
-                for(auto&& feature:global_features){
-                    if(feature.second==indicative_mood_tag||feature.second==interrogative_mood_tag||feature.second==imperative_mood_tag){
-                        mood=feature.second;
-                        break;
-                    }
-                }
-                if(mood.empty()==false){
-                    std::string analyses_deps="\"analysis_deps\":[";
-                    for(unsigned int j=0;j<dependency_path.size();++j){
-                        analyses_deps+="{\"source\":\""+source+"\",";
-                        analyses_deps+="\"timestamp\":"+std::to_string(timestamp)+",";
-                        analyses_deps+="\"sentence\":\""+transgraph::apply_json_escapes(sentence)+"\",";
-                        analyses_deps+="\"rank\":"+std::to_string(rank)+",";
-                        analyses_deps+="\"a_counter\":"+std::to_string(i+1)+",";
-                        analyses_deps+="\"mood\":\""+mood+"\",";
-                        analyses_deps+="\"function\":\""+std::get<8>(dependency_path[j])+"\",";
-                        analyses_deps+="\"counter\":"+std::to_string(j)+",";
-                        analyses_deps+="\"level\":"+std::to_string(std::get<0>(dependency_path[j]))+",";
-                        analyses_deps+="\"word\":\""+std::get<1>(dependency_path[j])+"\",";
-                        analyses_deps+="\"lexeme\":\""+std::get<2>(dependency_path[j])+"\",";
-                        analyses_deps+="\"d_key\":"+std::to_string(std::get<3>(dependency_path[j]))+",";
-                        analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[j]))+",";
-                        analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[j])+"\",";
-                        analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[j]))+",";
-                        analyses_deps+="\"tags\":{"+std::get<7>(dependency_path[j])+"},";
-                        analyses_deps+="\"c_value\":\"\"},";//c_value: no calculated value can be supplied here
-                        //analyses_deps+="\"tags\":\""+transgraph::apply_json_escapes(std::get<7>(dependency_path[j]))+"\"},";
-                        sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
-                            +"','"+std::to_string(timestamp)
-                            +"','"+sqlite->escape(sentence)
-                            +"','"+std::to_string(rank)//rank
-                            +"','"+std::to_string(i+1)//a_counter
-                            +"','"+mood
-                            +"','"+std::get<8>(dependency_path[j])//function
-                            +"','"+std::to_string(j)//counter
-                            +"','"+std::to_string(std::get<0>(dependency_path[j]))//level
-                            +"','"+sqlite->escape(std::get<1>(dependency_path[j]))//word
-                            +"','"+std::get<2>(dependency_path[j])//lexeme
-                            +"','"+std::to_string(std::get<3>(dependency_path[j]))//d_key
-                            +"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
-                            +"','"+std::get<5>(dependency_path[j])//dependency
-                            +"','"+std::to_string(std::get<6>(dependency_path[j]))//ref_d_key
-                            +"','{"+std::get<7>(dependency_path[j])//tags
-                            +"}',''"//c_value: no calculated value can be supplied here
-                            +");");
-                    }
-                    if(analyses_deps.back()==',') analyses_deps.pop_back();
-                    analyses_deps+="]";
-                    analysis+=analyses_deps;
-                }
-                delete result;
-            }
-            if(analysis.back()==',') analysis.pop_back();
-            analysis+="}";
-            ranked_analyses_map.insert(std::make_pair(rank,analysis));
-            sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(rank)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"');");
-        }
-        analysis="{\"analyses\":[";
-        for(auto&& i:ranked_analyses_map){
-          analysis+=i.second+",";
-        }
-        if(analysis.back()==',') analysis.pop_back();
-        analysis+="]}";
+			//preparing to collect data for jsemantics
+			std::map<unsigned int,std::string> global_features=morphan_result::global_features();
+			query_result *result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='indicative_mood_tag' OR key='interrogative_mood_tag' OR key='imperative_mood_tag';");
+			if(result!=NULL){
+				std::string indicative_mood_tag;
+				const std::pair<const unsigned int,field> *mood_tag=result->first_value_for_field_name_found("key","indicative_mood_tag");
+				if(mood_tag!=NULL){
+					indicative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
+				}
+				std::string interrogative_mood_tag;
+				mood_tag=result->first_value_for_field_name_found("key","interrogative_mood_tag");
+				if(mood_tag!=NULL){
+					interrogative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
+				}
+				std::string imperative_mood_tag;
+				mood_tag=result->first_value_for_field_name_found("key","imperative_mood_tag");
+				if(mood_tag!=NULL){
+					imperative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
+				}
+				std::string mood;
+				for(auto&& feature:global_features){
+					if(feature.second==indicative_mood_tag||feature.second==interrogative_mood_tag||feature.second==imperative_mood_tag){
+						mood=feature.second;
+						break;
+					}
+				}
+				if(mood.empty()==false){
+					std::string analyses_deps="\"analysis_deps\":[";
+					for(unsigned int j=0;j<dependency_path.size();++j){
+						analyses_deps+="{\"source\":\""+source+"\",";
+						analyses_deps+="\"timestamp\":"+std::to_string(timestamp)+",";
+						analyses_deps+="\"sentence\":\""+transgraph::apply_json_escapes(sentence)+"\",";
+						analyses_deps+="\"rank\":"+std::to_string(rank)+",";
+						analyses_deps+="\"a_counter\":"+std::to_string(i+1)+",";
+						analyses_deps+="\"mood\":\""+mood+"\",";
+						analyses_deps+="\"function\":\""+std::get<8>(dependency_path[j])+"\",";
+						analyses_deps+="\"counter\":"+std::to_string(j)+",";
+						analyses_deps+="\"level\":"+std::to_string(std::get<0>(dependency_path[j]))+",";
+						analyses_deps+="\"word\":\""+std::get<1>(dependency_path[j])+"\",";
+						analyses_deps+="\"lexeme\":\""+std::get<2>(dependency_path[j])+"\",";
+						analyses_deps+="\"d_key\":"+std::to_string(std::get<3>(dependency_path[j]))+",";
+						analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[j]))+",";
+						analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[j])+"\",";
+						analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[j]))+",";
+						analyses_deps+="\"tags\":{"+std::get<7>(dependency_path[j])+"},";
+						analyses_deps+="\"c_value\":\"\"},";//c_value: no calculated value can be supplied here
+						//analyses_deps+="\"tags\":\""+transgraph::apply_json_escapes(std::get<7>(dependency_path[j]))+"\"},";
+						sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
+							+"','"+std::to_string(timestamp)
+							+"','"+sqlite->escape(sentence)
+							+"','"+std::to_string(rank)//rank
+							+"','"+std::to_string(i+1)//a_counter
+							+"','"+mood
+							+"','"+std::get<8>(dependency_path[j])//function
+							+"','"+std::to_string(j)//counter
+							+"','"+std::to_string(std::get<0>(dependency_path[j]))//level
+							+"','"+sqlite->escape(std::get<1>(dependency_path[j]))//word
+							+"','"+std::get<2>(dependency_path[j])//lexeme
+							+"','"+std::to_string(std::get<3>(dependency_path[j]))//d_key
+							+"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
+							+"','"+std::get<5>(dependency_path[j])//dependency
+							+"','"+std::to_string(std::get<6>(dependency_path[j]))//ref_d_key
+							+"','{"+std::get<7>(dependency_path[j])//tags
+							+"}',''"//c_value: no calculated value can be supplied here
+							+");");
+					}
+					if(analyses_deps.back()==',') analyses_deps.pop_back();
+					analyses_deps+="]";
+					analysis+=analyses_deps;
+				}
+				delete result;
+			}
+			if(analysis.back()==',') analysis.pop_back();
+			analysis+="}";
+			ranked_analyses_map.insert(std::make_pair(rank,analysis));
+			sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(rank)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"');");
+		}
+		analysis="{\"analyses\":[";
+		for(auto&& i:ranked_analyses_map){
+			analysis+=i.second+",";
+		}
+		if(analysis.back()==',') analysis.pop_back();
+		analysis+="]}";
 	}
 	return analysis;
 }
@@ -744,8 +744,8 @@ void tokenpaths::log_yyerror(const std::string& error){
 }
 
 void tokenpaths::validate_parse_tree(const std::vector<node_info>& nodes){
-  logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"validating parse tree with "+std::to_string(nodes.size())+" nodes");
-  valid_parse_trees.push_back(nodes);
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"validating parse tree with "+std::to_string(nodes.size())+" nodes");
+	valid_parse_trees.push_back(nodes);
 }
 
 void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
@@ -753,102 +753,102 @@ void tokenpaths::invalidate_parse_tree(const std::vector<node_info>& nodes){
 }
 
 void tokenpaths::assign_lexer(class lexer *lex){
-    this->lex=lex;
-    if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
+	this->lex=lex;
+	if(path_nr_to_stop_at==0) path_nr_to_stop_at=lexer::nr_of_paths(lex->work_string());
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"current_path_nr:"+std::to_string(current_path_nr));
 	path_indices=path_nr_to_indices(current_path_nr);
 }
 
 lexer* tokenpaths::lexer(){
-    return lex;
+	return lex;
 }
 
 std::string tokenpaths::add_context_reference_word(const unsigned char& crh,const std::string& human_input, std::string& lexeme){
-    //TODO: Consider moving this and the related methods to the interpreter class.
-    //The current implementation is not token path based which means that we try to figure out the one and only correct
-    //morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
-    //syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
-    //So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
-    //1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
-    //2. check if the returned analyses has the 'errors' property
-    //3. if there's no error, return the ranked analyses
-    //4. if there's an error but there's a main verb, call build_dependency_semantics()
-    //5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
-    //   of the verb finally chosen shall match the MOST of the lexemes of the human input i.e. the verb having the most
-    //   mandatory dependencies matching most of the lexemes wins. Besides that if there are mandatory dependencies that are missing,
-    //   check if they belong to the verb (like a prefix) and copy the corresponding word(s) of the missing dependencies
-    //   together with the verb to construct a new (syntactically incorrect) sentence.
-    //   However, it's not sure if it makes sense to check earlier utterances than the latest one.
-    //6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
-    //   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
-    //   at the end of the interpretation
-    db *sqlite=NULL;
-    std::string modified_human_input;
+	//TODO: Consider moving this and the related methods to the interpreter class.
+	//The current implementation is not token path based which means that we try to figure out the one and only correct
+	//morphological analysis for the verb which is impossible. At least, the "longest match" algorithm used in case of
+	//syntactic and semantic analyses does not always provide the correct result in case of morphological analyses.
+	//So it should be changed in a way that the dependency semantics algorithm gets executed for each token paths.
+	//1. rank analyses in create_analysis(), store the successful and the failed analyses in different db tables
+	//2. check if the returned analyses has the 'errors' property
+	//3. if there's no error, return the ranked analyses
+	//4. if there's an error but there's a main verb, call build_dependency_semantics()
+	//5. if there's an error and no verb, look up the main verbs in the previous analyses. The mandatory dependencies
+	//   of the verb finally chosen shall match the MOST of the lexemes of the human input i.e. the verb having the most
+	//   mandatory dependencies matching most of the lexemes wins. Besides that if there are mandatory dependencies that are missing,
+	//   check if they belong to the verb (like a prefix) and copy the corresponding word(s) of the missing dependencies
+	//   together with the verb to construct a new (syntactically incorrect) sentence.
+	//   However, it's not sure if it makes sense to check earlier utterances than the latest one.
+	//6. start over the interpreter with the newly constructed sentence but this newly triggered interpretation
+	//   shall be marked as autocorrected sentence interpretation in order that it can be stored in the db
+	//   at the end of the interpretation
+	db *sqlite=NULL;
+	std::string modified_human_input;
 
-    sqlite=db_factory::get_instance();
-    if(crh&HI_VERB){//Currently only looking up verbs in earlier contexts is supported
-        std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
-        if(main_verbs.size()==0){//TODO: Think over if looking up verbs in earlier contexts makes only sense if there's no verb in the human input
-            //Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
-            query_result *result=NULL;
-            result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
-            if(result!=NULL){//&&result->nr_of_result_rows()==1){
-                rapidjson::Document jsondoc;
-                std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
-                logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
-                jsondoc.Parse(previous_analysis.c_str());
-                //TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
-                //at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
-                //the verbs which currently only looks for the first verb having the same gcat set in settings db table
-                //for the symbol of the main_symbol.
-                query_result *main_symbol_result=NULL;
-                main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
-                std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
-                delete main_symbol_result;
-                query_result *main_verb_result=NULL;
-                main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
-                std::string main_verb=*main_verb_result->field_value_at_row_position(0,"value");
-                delete main_verb_result;
-                rapidjson::Value& morphologyArray=jsondoc["morphology"];
-                std::string main_verb_word;
-                rapidjson::Value morphologyObj;
-                for(unsigned int i=0;i<morphologyArray.Size();++i){
-                    morphologyObj=morphologyArray[i];
-                    if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
-                        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
-                        main_verb_word=morphologyObj["word"].GetString();
-                        lexeme=morphologyObj["lexeme"].GetString();
-                        //TODO: Consider if the main verb shall be marked by the main verb symbol in the successful analyses when saved
-                        //so that finding the main verb in earlier contexts (analyses) is not done (like here) by comparing their
-                        //grammatical category against the grammatical categories set up for the main verb symbol in the settings table.
-                        //E.g. a setence in an earlier analysis may contain more than one verb and here we just pick the first whose
-                        //grammatical category matches any of the ones set up in the settings table but it may not be the main verb in that
-                        //sentence.
-                        break;
-                    }
-                }
-                modified_human_input=modify_human_input(main_verb_word,human_input);
-            }
-        }
-    }
-    return modified_human_input;
+	sqlite=db_factory::get_instance();
+	if(crh&HI_VERB){//Currently only looking up verbs in earlier contexts is supported
+		std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
+		if(main_verbs.size()==0){//TODO: Think over if looking up verbs in earlier contexts makes only sense if there's no verb in the human input
+			//Check only the latest utterance, as it's not sure if it makes sense to check earlier ones.
+			query_result *result=NULL;
+			result=sqlite->exec_sql("SELECT * FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES) AND RANK=(SELECT MIN(RANK) FROM ANALYSES WHERE TIMESTAMP=(SELECT MAX(TIMESTAMP) FROM ANALYSES));");
+			if(result!=NULL){//&&result->nr_of_result_rows()==1){
+				rapidjson::Document jsondoc;
+				std::string previous_analysis=*result->field_value_at_row_position(0,"analysis");
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,previous_analysis);
+				jsondoc.Parse(previous_analysis.c_str());
+				//TODO:Check for the value of main_symbol first once that's added. See todo comment below about features added
+				//at syntactic level. If nothing is found by main_symbol, the logic below shall be used to find
+				//the verbs which currently only looks for the first verb having the same gcat set in settings db table
+				//for the symbol of the main_symbol.
+				query_result *main_symbol_result=NULL;
+				main_symbol_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='main_symbol';");
+				std::string main_symbol=*main_symbol_result->field_value_at_row_position(0,"value");
+				delete main_symbol_result;
+				query_result *main_verb_result=NULL;
+				main_verb_result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='"+main_symbol+"';");
+				std::string main_verb=*main_verb_result->field_value_at_row_position(0,"value");
+				delete main_verb_result;
+				rapidjson::Value& morphologyArray=jsondoc["morphology"];
+				std::string main_verb_word;
+				rapidjson::Value morphologyObj;
+				for(unsigned int i=0;i<morphologyArray.Size();++i){
+					morphologyObj=morphologyArray[i];
+					if(main_verb.find(std::string("<")+morphologyObj["gcat"].GetString()+std::string(">"))!=std::string::npos){
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"main verb gcat:"+std::string(morphologyObj["gcat"].GetString()));
+						main_verb_word=morphologyObj["word"].GetString();
+						lexeme=morphologyObj["lexeme"].GetString();
+						//TODO: Consider if the main verb shall be marked by the main verb symbol in the successful analyses when saved
+						//so that finding the main verb in earlier contexts (analyses) is not done (like here) by comparing their
+						//grammatical category against the grammatical categories set up for the main verb symbol in the settings table.
+						//E.g. a setence in an earlier analysis may contain more than one verb and here we just pick the first whose
+						//grammatical category matches any of the ones set up in the settings table but it may not be the main verb in that
+						//sentence.
+						break;
+					}
+				}
+				modified_human_input=modify_human_input(main_verb_word,human_input);
+			}
+		}
+	}
+	return modified_human_input;
 }
 
 std::string tokenpaths::modify_human_input(const std::string& word,const std::string& human_input){
 	//In case of dependency semantics (for which this method prepares the human input) the order of words
-    //does not matter as no syntactic analysis is carried out.
+	//does not matter as no syntactic analysis is carried out.
 	std::string modified_human_input=word+" "+human_input;
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"modifying human input to:"+modified_human_input);
 	std::locale locale=std::locale();
-    std::string language=lex->language();
-    delete lex;
-    //lex points to the same instance as ::lex so deletion is fine
-    //but to assign a new lexer the global needs to be updated as well
-    lex=new class lexer(modified_human_input.c_str(),language.c_str(),locale,false,this);
-    path_nr_to_stop_at=0;//TODO:This actually reinitializes that counter for assign_lexer() to work properly but could be done nicer. Figure out how.
-    current_path_nr=0;
-    is_any_path_left=true;
+	std::string language=lex->language();
+	delete lex;
+	//lex points to the same instance as ::lex so deletion is fine
+	//but to assign a new lexer the global needs to be updated as well
+	lex=new class lexer(modified_human_input.c_str(),language.c_str(),locale,false,this);
+	path_nr_to_stop_at=0;//TODO:This actually reinitializes that counter for assign_lexer() to work properly but could be done nicer. Figure out how.
+	current_path_nr=0;
+	is_any_path_left=true;
 	reset();
-    assign_lexer(lex);
+	assign_lexer(lex);
 	return modified_human_input;
 }

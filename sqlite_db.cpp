@@ -10,8 +10,8 @@ sqlite_db::sqlite_db(){
 }
 
 sqlite_db::~sqlite_db(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing sqlite");
-    sqlite=NULL;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing sqlite");
+	sqlite=NULL;
 }
 
 void sqlite_db::open(const std::string& filename){
@@ -32,16 +32,16 @@ const std::string sqlite_db::error_message(){
 query_result *sqlite_db::exec_sql(const std::string& sql){
 	query_result *result_set=NULL;
 
-    result_set=new query_result();
+	result_set=new query_result();
 	if(sqlite3_exec(sqlite, sql.c_str(), sqlite_db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"sql: "+sql);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"sql: "+sql);
 		throw sql_execution_error();
 	}
 	if(result_set->nr_of_result_rows()==0){
 		delete result_set;
 		result_set=NULL;
-        logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Result set empty.");
-    }
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Result set empty.");
+	}
 	return result_set;
 }
 
@@ -64,7 +64,7 @@ int sqlite_db::store_row_data(void *p_result, int nr_of_columns, char **field_va
 			result->insert(std::make_pair(row_index,field));
 		}
 	}
-	return 0; 
+	return 0;
 }
 
 std::string sqlite_db::db_uri(){

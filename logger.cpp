@@ -12,8 +12,8 @@ logger::logger(const std::string& log_mode, const unsigned char& error_level, co
 }
 
 logger::~logger(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing logger");
-    logger::singleton_instance=NULL;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing logger");
+	logger::singleton_instance=NULL;
 }
 
 void logger::log(const unsigned char& error_level, const std::string& message){
@@ -26,19 +26,19 @@ void logger::log(const unsigned char& error_level, const std::string& message){
 			if(error_level<=this->error_level){
 				#ifdef __ANDROID__
 					if(error_level==0){
-                        __android_log_print(ANDROID_LOG_INFO, "hi", "%s", message.c_str());
+						__android_log_print(ANDROID_LOG_INFO, "hi", "%s", message.c_str());
 					}
 					else if(error_level==1){
-                        __android_log_print(ANDROID_LOG_WARN, "hi", "%s", message.c_str());
+						__android_log_print(ANDROID_LOG_WARN, "hi", "%s", message.c_str());
 					}
 					else if(error_level==2){
-                        __android_log_print(ANDROID_LOG_ERROR, "hi", "%s", message.c_str());
+						__android_log_print(ANDROID_LOG_ERROR, "hi", "%s", message.c_str());
 					}
 					else if(error_level==3){
-                        __android_log_print(ANDROID_LOG_DEBUG, "hi", "%s", message.c_str());
+						__android_log_print(ANDROID_LOG_DEBUG, "hi", "%s", message.c_str());
 					}
 					else{
-                        __android_log_print(ANDROID_LOG_INFO, "hi", "%s", message.c_str());
+						__android_log_print(ANDROID_LOG_INFO, "hi", "%s", message.c_str());
 					}
 				#else
 					std::cout<<message<<std::endl;

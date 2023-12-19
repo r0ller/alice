@@ -110,7 +110,6 @@ FOREIGN KEY(lexeme) REFERENCES FUNCTOR_DECL(functor) DEFERRABLE INITIALLY DEFERR
 FOREIGN KEY(gcat, lid) REFERENCES GCAT_LID(gcat, lid) DEFERRABLE INITIALLY DEFERRED
 );
 
-
 /*create table TAGCONTEXT(*//*Extracted tags, just for fast tag search to find the right fcontext*/
 /*model_id text,*//*id for the model in which the context was interpreted*/
 /*context_source text,*//*user or other source of context*/

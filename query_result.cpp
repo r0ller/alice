@@ -7,7 +7,7 @@ query_result::query_result(){
 }
 
 query_result::~query_result(){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing query result");
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing query result");
 }
 
 std::multimap<unsigned int,field>::const_iterator query_result::row_at_position(unsigned int rowid) const{
@@ -24,7 +24,7 @@ const std::string* query_result::field_value_at_row_position(unsigned int rowid,
 		if(position!=raw_result_set.end()) return &position->second.field_value;
 		else return NULL;
 	}
-    return NULL;
+	return NULL;
 }
 
 const std::multimap<unsigned int,field>& query_result::result_set() const{
@@ -41,7 +41,7 @@ unsigned int query_result::nr_of_result_rows() const{
 }
 
 void query_result::insert(const std::pair<unsigned int, field>& row){
-    //insert() ensures that the field values for each field of the same row id are unqiue in the table
+	//insert() ensures that the field values for each field of the same row id are unqiue in the table
 	unsigned int nr_of_inserted_columns=0;
 	std::set<std::string> fields_inserted;
 	std::multimap<unsigned int,field>::iterator upper_bound;
@@ -73,7 +73,7 @@ void query_result::insert(const std::pair<unsigned int, field>& row){
 		}
 		if(row_set.insert(field_set).second==true){
 			for(std::multimap<unsigned int,field>::const_iterator i=row_buffer.lower_bound(row.first),
- 				upper_bound=row_buffer.upper_bound(row.first);
+				upper_bound=row_buffer.upper_bound(row.first);
 				i!=upper_bound;++i){
 				raw_result_set.insert(*i);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting with rowid "+std::to_string(i->first)+":"+i->second.field_name+"="+i->second.field_value+" from row buffer into result set");
@@ -155,8 +155,7 @@ void query_result::keep(const std::set<unsigned int>& rowids){
 
 void query_result::append(const query_result& appending_entries){
 
-	for(std::multimap<unsigned int,field>::const_iterator field=appending_entries.result_set().begin();
-			field!=appending_entries.result_set().end();++field){
+	for(std::multimap<unsigned int,field>::const_iterator field=appending_entries.result_set().begin();field!=appending_entries.result_set().end();++field){
 		append(*field);
 	}
 }
@@ -165,7 +164,7 @@ void query_result::set_metadata(const unsigned int colnr, const char** field_nam
 	if(nr_of_columns==0) nr_of_columns=colnr;
 	if(fields.empty()==true){
 		for(unsigned int i=0;i<nr_of_columns;++i){
-					fields.insert(field_names[i]);
+			fields.insert(field_names[i]);
 		}
 	}
 }
