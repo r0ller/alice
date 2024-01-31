@@ -108,6 +108,8 @@
 			void insert_in_main_dvm_and_dep_node_links(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
 			void build_dependency_semantics(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const std::string&,std::set<std::pair<unsigned int,unsigned int>>&,std::set<std::pair<unsigned int,unsigned int>>&,lexer *);
 			unsigned int combine_nodes(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&,std::set<std::pair<unsigned int,unsigned int>>&,const std::string&);
+			void process_depolex_by_row_nr(const std::pair<const unsigned int,field>*, const std::string&,const std::set<unsigned int>&, const lexicon&, const unsigned int&, const std::string&,
+					std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
 		public:
 			interpreter(const unsigned char toa);
 			~interpreter();

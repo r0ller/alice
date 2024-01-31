@@ -56,7 +56,8 @@ int main(int argc,char **argv){
 		while(true){
 			getline(cin,text);
 			//Test sms scenario:
-			//text="üzenem péternek hogy hello\n";
+			//text="küldj sms tesztnek hogy x";
+			//text="üzenem péternek hogy hello";
 			//text="a másodiknak\n";
 			//text="küldd\n";
 			//Test context ref handling for verb:

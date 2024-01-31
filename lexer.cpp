@@ -570,32 +570,34 @@ std::map<unsigned int,lexicon> lexer::find_main_verb(const std::vector<lexicon>&
 	return main_verbs;
 }
 
-lexicon lexer::find_word_by_lexeme(const std::vector<lexicon>& words,const std::set<unsigned int>& processed_words,const std::string& lexeme,unsigned int& index){
-	lexicon word_found;
+std::map<unsigned int,lexicon> lexer::find_word_by_lexeme(const std::vector<lexicon>& words,const std::set<unsigned int>& processed_words,const std::string& lexeme){
+	std::map<unsigned int,lexicon> words_found;
+	unsigned int index=0;
 
-	index=0;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for word by lexeme:"+lexeme);
 	for(auto& word:words){
-		if(word.lexeme==lexeme){//&&processed_words.find(index)==processed_words.end()){
-			word_found=word;
-			break;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"word:"+word.word+", lexeme:"+word.lexeme);
+		if(word.lexeme==lexeme){
+			words_found.insert(std::make_pair(index,word));
 		}
 		++index;
 	}
-	return word_found;
+	return words_found;
 }
 
-lexicon lexer::find_word_by_gcat(const std::vector<lexicon>& words,const std::set<unsigned int>& processed_words,const std::string& gcat,unsigned int& index){
-	lexicon word_found;
+std::map<unsigned int,lexicon> lexer::find_word_by_gcat(const std::vector<lexicon>& words,const std::set<unsigned int>& processed_words,const std::string& gcat){
+	std::map<unsigned int,lexicon> words_found;
+	unsigned int index=0;
 
-	index=0;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"looking for word by gcat:"+gcat);
 	for(auto& word:words){
-		if(word.gcat==gcat){//&&processed_words.find(index)==processed_words.end()){
-			word_found=word;
-			break;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"word:"+word.word+", gcat:"+word.gcat);
+		if(word.gcat==gcat){
+			words_found.insert(std::make_pair(index,word));
 		}
 		++index;
 	}
-	return word_found;
+	return words_found;
 }
 
 std::vector<lexicon> lexer::all_word_entries(){
