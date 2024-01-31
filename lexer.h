@@ -86,8 +86,8 @@
 				return paths;
 			}
 			std::map<unsigned int,lexicon> find_main_verb(const std::vector<lexicon>&) const;
-			lexicon find_word_by_lexeme(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
-			lexicon find_word_by_gcat(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&,unsigned int&);
+			std::map<unsigned int,lexicon> find_word_by_lexeme(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&);
+			std::map<unsigned int,lexicon> find_word_by_gcat(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&);
 			std::vector<std::string> analyze_and_cache(std::string&);
 			std::vector<lexicon> all_word_entries();
 	};
