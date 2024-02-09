@@ -308,9 +308,11 @@ insert into FUNCTORS values('WHATENGPRON', '1', 'WHATENGPRON_1');
 
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('LISTENGV', '1', 'imperative', '1', 'mood', 'imperative');
+insert into FUNCTOR_TAGS values('BEENGV', '1', 'main_verb', '1', 'is_root', 'true');
 insert into FUNCTOR_TAGS values('BEENGV', '1', 'interrogative', '1', 'mood', 'interrogative');
 insert into FUNCTOR_TAGS values('BEENGV', '1', 'indicative', '1', 'mood', 'indicative');
-insert into FUNCTOR_TAGS values('FILEENGN', '1', 'qw_what', '1', 'qword', 'what');
+insert into FUNCTOR_TAGS values('FILEENGN', '1', 'qword', '1', 'qword', 'what');
+insert into FUNCTOR_TAGS values('WHATENGPRON', '1', 'qword', '1', 'is_qword', 'true');
 
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
@@ -376,6 +378,7 @@ insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar5', 'ENG_AP', '1', NULL,
 /*begin rules for questions*/
 insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar6', 'ENG_V', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP','ENG_Pron_qw','ENG_Vbar6', '1', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'Pron', NULL, 'H', NULL, NULL, 'ENG');
 /*end rules for questions*/
 
 /*insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
@@ -428,8 +431,9 @@ insert into DEPOLEX values('LISTENGV', '1', '1', NULL, NULL, NULL, '0', 'FILEENG
 insert into DEPOLEX values('LISTENGV', '2', '1', NULL, '1', NULL, '0', 'DIRECTORYENGN', '1');
 insert into DEPOLEX values('THATENGRPRO', '1', '1', NULL, NULL, NULL, '0', NULL, NULL);
 
-insert into DEPOLEX values('BEENGV', '1', '1', '1', '2', '2', '0', 'NOTENGVNEG', '1');
-insert into DEPOLEX values('BEENGV', '1', '2', '1', '2', NULL, '0', 'PROPERTIES', '1');
+insert into DEPOLEX values('BEENGV', '1', '1', '1', '2', '2', '0', 'WHATENGPRON', '1');
+insert into DEPOLEX values('BEENGV', '1', '2', '1', '3', '3', '0', 'NOTENGVNEG', '1');
+insert into DEPOLEX values('BEENGV', '1', '3', '1', '3', NULL, '0', 'PROPERTIES', '1');
 insert into DEPOLEX values('BEENGV', '2', '1', '1', '2', '2', '0', 'NOTENGVNEG', '2');
 insert into DEPOLEX values('BEENGV', '2', '2', '1', '2', NULL, '0', 'PROPERTIES', '2');
 insert into DEPOLEX values('NOTENGVNEG', '1', '1', NULL, '1', NULL, '0', 'PROPERTIES', '1');
@@ -472,6 +476,8 @@ insert into DEPOLEX values('LOCATED', '1', '1', '1', NULL, NULL, '0', 'INENGPREP
 insert into DEPOLEX values('ANAENGDET', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 /*insert into DEPOLEX values('TOENGPREP', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 insert into DEPOLEX values('TOENGPAR', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);*/
+
+insert into DEPOLEX values('WHATENGPRON', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL);
 
 /*insert into GRAMMAR values('ENG','S','ENG_VP',NULL,NULL,NULL);*/
 insert into GRAMMAR values('ENG','S','ENG_VP','ENG_Punct',NULL,
@@ -638,7 +644,7 @@ insert into GRAMMAR values('ENG','ENG_Vbar5','ENG_N_Sg','ENG_V',NULL,
 '"const node_info& ENG_N_Sg=sparser->get_node_info($1);
 const node_info& ENG_V=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(ENG_V,"main_verb");
-sparser->add_feature_to_leaf(ENG_N_Sg,"N",std::string("qw_what"));
+sparser->add_feature_to_leaf(ENG_N_Sg,"N",std::string("qword"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar5->ENG_N_Sg ENG_V");
 $$=sparser->combine_nodes("ENG_Vbar5",ENG_V,ENG_N_Sg);"');
 insert into GRAMMAR values('ENG','ENG_VP','ENG_Vbar5','ENG_DP',NULL,NULL);
@@ -662,7 +668,12 @@ insert into GRAMMAR values('ENG','ENG_Pron_3sg','t_ENG_Pron_3sg',NULL,NULL,NULL)
 insert into GRAMMAR values('ENG','ENG_Pron_wh','t_ENG_Pron_wh',NULL,NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Pron','ENG_Pron_Stem','ENG_Pron_3sg',NULL,NULL);
 insert into GRAMMAR values('ENG','ENG_Pron_qw','ENG_Pron','ENG_Pron_wh',NULL,NULL);
-insert into GRAMMAR values('ENG','ENG_VP','ENG_Pron_qw','ENG_Vbar6',NULL,NULL);
+insert into GRAMMAR values('ENG','ENG_VP','ENG_Pron_qw','ENG_Vbar6',NULL,
+'"const node_info& ENG_Pron_qw=sparser->get_node_info($1);
+const node_info& ENG_Vbar6=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(ENG_Pron_qw,"Pron",std::string("qword"));
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Pron_qw ENG_Vbar6");
+$$=sparser->combine_nodes("ENG_VP",ENG_Pron_qw,ENG_Vbar6);"');
 insert into GRAMMAR values('ENG','ENG_Vbar6','ENG_V','ENG_AP',NULL,
 '"const node_info& ENG_V=sparser->get_node_info($1);
 const node_info& ENG_AP=sparser->get_node_info($2);
