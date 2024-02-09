@@ -48,8 +48,7 @@ eval "$1"_out='"$out"';
 elif [ $mood = "interrogative" -a -n "$morph" ]; then 
 	echo $mood;
 	echo $morph;
-	analyses="$(/home/r0ller/hi/build/hi -q /home/r0ller/hi/build/hi_desktop/hi.db BEENGV 1 {})";
-	echo $analyses;
+  script --quiet -c "/home/llencses/projects/hi_netbsd/hi/build/hi -q /home/llencses/projects/hi_netbsd/hi/build/hi_desktop/hi.db indicative \"$analysis_deps\"" /dev/null;
 elif [ $mood = "indicative" ]; then 
 	echo $mood;
 fi;

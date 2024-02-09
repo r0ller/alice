@@ -11,12 +11,15 @@ int hi_state_cvalue(const char *db_uri,const char *deps,const char *function, co
 	rapidjson::Value& dependencies=jsonDeps["dependencies"];
 	if(dependencies.IsArray()==true&&dependencies.Size()>0){
 		rapidjson::Value dependency;
+		rapidjson::Value dependenciesArray=dependencies.GetArray();
 		bool function_found=false;
-		for(unsigned int i=0;i<dependencies.Size();++i){
-			dependency=dependencies[i];
-			if(dependency["function"].GetString()==std::string(function)){
-				function_found=true;
-				break;
+		for(unsigned int i=0;i<dependenciesArray.Size();++i){
+			dependency=dependenciesArray[i];
+			if(dependency.HasMember("function")==true){
+				if(dependency["function"].GetString()==std::string(function)){
+					function_found=true;
+					break;
+				}
 			}
 		}
 		if(function_found==true){
@@ -26,10 +29,11 @@ int hi_state_cvalue(const char *db_uri,const char *deps,const char *function, co
 				+"' where source='"+dependency["source"].GetString()
 				+"' and timestamp="+std::to_string(dependency["timestamp"].GetUint())
 				+" and sentence='"+sqlite->escape(dependency["sentence"].GetString())
-				+"' and rank="+std::to_string(dependency["rank"].GetUint())
+				+"' and rank="+std::to_string(dependency["rank"].GetFloat())
 				+" and a_counter="+std::to_string(dependency["a_counter"].GetUint())
 				+" and mood='"+dependency["mood"].GetString()
 				+"' and function='"+dependency["function"].GetString()+"';";
+			//std::cout<<"sql:"<<sql_stmt<<std::endl;
 			sqlite->exec_sql(sql_stmt);
 			sqlite->close();
 		}
