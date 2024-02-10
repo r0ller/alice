@@ -2076,35 +2076,79 @@ std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_ma
 			functors_found_union.insert(functor_found);
 		}
 	}
-	for(auto& functor:functors_found_union){
-		auto functor_found=functors_found_with_nr_of_deps.find(functor);
-		if(functor_found==functors_found_with_nr_of_deps.end()){
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting functor in functors_found_with_nr_of_deps:"+functor.first+" with d_key:"+std::to_string(functor.second));
-			functors_found_with_nr_of_deps.insert(std::make_pair(functor,functors_found_union.count(functor)));
-		}
-	}
-	unsigned int max_deps=0;
-	for(auto& functor:functors_found_with_nr_of_deps){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has "+std::to_string(functor.second)+" dependencies");
-		if(functor.second>max_deps) max_deps=functor.second;
-		bool word_lexeme_matches=false;
-		for(auto& word:all_words){
-			if(word.lexeme==functor.first.first){
-				word_lexeme_matches=true;
-				break;
+	if(functors_found_union.empty()==true){
+		//No functors found by dependencies, check if any of the words is a top level functor.
+		//If there is more than one, select the one which has no mandatory dependecies
+		//since the previous loop should have found functors with only constant dependencies.
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"no functors found for the words as dependencies, assuming they are functors themselves requiring no dependencies");
+		db *sqlite=db_factory::get_instance();
+		unsigned int min_deps=0;
+		for(auto& word: all_words){
+			query_result *dependencies=NULL;
+			dependencies=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+word.lexeme+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
+			if(dependencies!=NULL){
+				for(unsigned int i=0, n=dependencies->nr_of_result_rows();i<n;++i){
+					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"row index:"+std::to_string(i)+" lexeme:"+*dependencies->field_value_at_row_position(i,"lexeme")+" d_key:"+*dependencies->field_value_at_row_position(i,"d_key")+" d_counter:"+*dependencies->field_value_at_row_position(i,"d_counter"));
+					std::string d_key=*dependencies->field_value_at_row_position(i,"d_key");
+					std::string semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
+					std::string d_failover=*dependencies->field_value_at_row_position(i,"d_failover");
+					auto functor_found=functors_found_with_nr_of_deps.find(std::make_pair(word.lexeme,std::stoi(d_key)));
+					if(functor_found==functors_found_with_nr_of_deps.end()){
+						if(semantic_dependency.empty()==false&&d_failover.empty()==true){
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting first mandatory dependency in functors_found_with_nr_of_deps with lexeme: "+word.lexeme+" and d_key: "+d_key);
+							functors_found_with_nr_of_deps.insert(std::make_pair(std::make_pair(word.lexeme,std::stoi(d_key)),1));
+						}
+						else{
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting first entry with no mandatory dependency in functors_found_with_nr_of_deps with lexeme: "+word.lexeme+" and d_key: "+d_key);
+							functors_found_with_nr_of_deps.insert(std::make_pair(std::make_pair(word.lexeme,std::stoi(d_key)),0));
+						}
+					}
+					else{
+						if(semantic_dependency.empty()==false&&d_failover.empty()==true){
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"increasing nr of mandatory dependencies in functors_found_with_nr_of_deps with lexeme: "+word.lexeme+" and d_key: "+d_key);
+							functor_found->second++;
+						}
+					}
+				}
 			}
 		}
-		//if(word_lexeme_matches==true&&functor.second==words.size()-1||word_lexeme_matches==false&&functor.second==words.size()){
-		if(word_lexeme_matches==true){
-			functors_with_matching_nr_of_deps.insert(functor.first);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has matching nr of dependencies");
+		for(auto& functor:functors_found_with_nr_of_deps){
+			if(functor.second==0){
+				functors_with_matching_nr_of_deps.insert(functor.first);
+			}
 		}
 	}
-	if(functors_with_matching_nr_of_deps.empty()==true){
+	else{
+		for(auto& functor:functors_found_union){
+			auto functor_found=functors_found_with_nr_of_deps.find(functor);
+			if(functor_found==functors_found_with_nr_of_deps.end()){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"inserting functor in functors_found_with_nr_of_deps:"+functor.first+" with d_key:"+std::to_string(functor.second));
+				functors_found_with_nr_of_deps.insert(std::make_pair(functor,functors_found_union.count(functor)));
+			}
+		}
+		unsigned int max_deps=0;
 		for(auto& functor:functors_found_with_nr_of_deps){
-			if(functor.second==max_deps){
-			functors_with_matching_nr_of_deps.insert(functor.first);
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has the highest nr of dependencies found");
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has "+std::to_string(functor.second)+" dependencies");
+			if(functor.second>max_deps) max_deps=functor.second;
+			bool word_lexeme_matches=false;
+			for(auto& word:all_words){
+				if(word.lexeme==functor.first.first){
+					word_lexeme_matches=true;
+					break;
+				}
+			}
+			//if(word_lexeme_matches==true&&functor.second==words.size()-1||word_lexeme_matches==false&&functor.second==words.size()){
+			if(word_lexeme_matches==true){
+				functors_with_matching_nr_of_deps.insert(functor.first);
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has matching nr of dependencies");
+			}
+		}
+		if(functors_with_matching_nr_of_deps.empty()==true){
+			for(auto& functor:functors_found_with_nr_of_deps){
+				if(functor.second==max_deps){
+				functors_with_matching_nr_of_deps.insert(functor.first);
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"functor "+functor.first.first+" with d_key "+std::to_string(functor.first.second)+" has the highest nr of dependencies found");
+				}
 			}
 		}
 	}
