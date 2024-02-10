@@ -94,6 +94,7 @@ int main(int argc,char **argv){
 			//text="felolvasás be\n";
 			//text="vazze kapcsold be a felolvasást";
 			//text="keress a névjegyzékben alizt";
+			//text="küld";
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
