@@ -349,14 +349,16 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 						id_index=std::atoi(graph->id().c_str());
 						std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
-						transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
+						std::set<std::string> features_to_inherit;
+						transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit);
 					}
 					else{
 						const std::pair<std::string,unsigned int> functor_dkey=std::make_pair(functor,d_key);
 						transgraph *graph=new transgraph(std::string(),functor_dkey,word.morphalytics);
 						id_index=std::atoi(graph->id().c_str());
 						std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
-						transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
+						std::set<std::string> features_to_inherit;
+						transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit);
 					}
 				}
 				rowid_field=word.dependencies->value_for_field_name_found_after_row_position(rowid_field->first,"lexeme",functor);
@@ -370,7 +372,8 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 			id_index=std::atoi(graph->id().c_str());
 			std::map<unsigned int,std::pair<std::string,unsigned int>> node_functor_map;
 			std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
-			transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path);
+			std::set<std::string> features_to_inherit;
+			transcript+=graph->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit);
 		}
 	}
 	return transcript;
@@ -543,10 +546,10 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			std::vector<std::string> word_forms=lexer::word_forms(sentence);
 			unsigned int id_index=0;
 			for(auto&& word_form:word_forms){
-				auto&& word_analyses=words_analyses.find(word_form);
+				auto&& word_analyses=lex->copy_word_from_cache(word_form);
 				related_functors.clear();
-				semantic_analysis+=semantics(word_analyses->second,related_functors,id_index,target_language);
-				functors_of_words.insert(std::make_pair(word_analyses->first,related_functors));
+				semantic_analysis+=semantics(word_analyses.second,related_functors,id_index,target_language);
+				functors_of_words.insert(std::make_pair(word_analyses.first,related_functors));
 			}
 			if(semantic_analysis.back()==',') semantic_analysis.pop_back();
 			semantic_analysis+="],";
@@ -612,7 +615,8 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				//ways of ranking than this.
 				rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank));
-				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path);
+				std::set<std::string> features_to_inherit;
+				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path,features_to_inherit);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 				analysis+="\"rank\":"+std::to_string(rank)+",";
@@ -670,9 +674,8 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 						analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[j]))+",";
 						analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[j])+"\",";
 						analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[j]))+",";
-						analyses_deps+="\"tags\":{"+std::get<7>(dependency_path[j])+"},";
+						analyses_deps+="\"tags\":["+std::get<7>(dependency_path[j])+"],";
 						analyses_deps+="\"c_value\":\"\"},";//c_value: no calculated value can be supplied here
-						//analyses_deps+="\"tags\":\""+transgraph::apply_json_escapes(std::get<7>(dependency_path[j]))+"\"},";
 						sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
 							+"','"+std::to_string(timestamp)
 							+"','"+sqlite->escape(sentence)
@@ -688,8 +691,8 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 							+"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
 							+"','"+std::get<5>(dependency_path[j])//dependency
 							+"','"+std::to_string(std::get<6>(dependency_path[j]))//ref_d_key
-							+"','{"+std::get<7>(dependency_path[j])//tags
-							+"}',''"//c_value: no calculated value can be supplied here
+							+"','["+std::get<7>(dependency_path[j])//tags
+							+"]',''"//c_value: no calculated value can be supplied here
 							+");");
 					}
 					if(analyses_deps.back()==',') analyses_deps.pop_back();
@@ -723,6 +726,7 @@ std::string tokenpaths::syntax(const std::vector<node_info>& nodes){
 std::string tokenpaths::traverse_nodes_lr(const node_info& root_node, const std::vector<node_info>& nodes){
 
 	std::string syntax="{\"symbol\":\""+root_node.symbol+"\"";
+	syntax+=",\"id\":\""+std::to_string(root_node.node_id)+"\"";
 	if(root_node.left_child==0&&root_node.right_child==0){
 		if(root_node.expression.morphalytics!=NULL) syntax+=",\"morpheme id\":\""+std::to_string(root_node.expression.morphalytics->id())+"\"";
 		syntax+="}";

@@ -89,7 +89,8 @@
 			std::map<unsigned int,lexicon> find_word_by_lexeme(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&);
 			std::map<unsigned int,lexicon> find_word_by_gcat(const std::vector<lexicon>&,const std::set<unsigned int>&,const std::string&);
 			std::vector<std::string> analyze_and_cache(std::string&);
-			std::vector<lexicon> all_word_entries();
+			std::vector<lexicon> cached_word_entries();
+			std::pair<std::string,std::vector<lexicon>> copy_word_from_cache(std::string&);
 	};
 
 	class lexer_error:public std::exception{

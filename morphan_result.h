@@ -19,9 +19,13 @@
 			std::string lid;
 			static std::map<unsigned int,std::string> global_features_;
 			std::map<unsigned int,std::string> global_features_copy_;
+			static std::map<unsigned int,std::pair<unsigned int,std::string>> features_to_inherit_;
+			std::map<unsigned int,std::pair<unsigned int,std::string>> features_to_inherit_copy_;
+			unsigned int node_id_;
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&, const std::string&);
 			morphan_result(const std::string&, const std::string&, const std::string&);
+			//morphan_result(morphan_result&);
 			~morphan_result();
 			const unsigned int& id() const;
 			const std::string& word() const;
@@ -44,6 +48,16 @@
 				global_features_.clear();
 			}
 			void copy_global_features();
+			static void add_feature_to_inherit(const unsigned int leaf_node_id,const unsigned int node_id,const std::string& feature){
+				features_to_inherit_.insert(std::make_pair(leaf_node_id,std::make_pair(node_id,feature)));
+			}
+			static void clear_features_to_inherit(){
+				features_to_inherit_.clear();
+			}
+			void set_node_id(const unsigned int);
+			unsigned int node_id();
+			std::pair<unsigned int,std::string> find_feature_to_inherit(const unsigned int);
+			void copy_features_to_inherit();
 			//prefix();
 			//suffix();
 			//infix();

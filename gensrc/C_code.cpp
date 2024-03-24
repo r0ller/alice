@@ -165,7 +165,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						if(functors_with_matching_nr_of_deps.empty()==true){//Run only once, not for each token path
 							//Get every possible word analysis from lexer cache to be able to look up all possible functors
 							std::vector<lexicon> words=lex->word_entries();
-							std::vector<lexicon> all_words=lex->all_word_entries();
+							std::vector<lexicon> all_words=lex->cached_word_entries();
 							//std::map<unsigned int,lexicon> main_verbs=lex->find_main_verb(words);
 							functors_with_matching_nr_of_deps=sparser->find_functors_with_matching_nr_of_deps(all_words,words,main_verb_symbols);
 							functor_with_matching_nr_of_deps=functors_with_matching_nr_of_deps.begin();
@@ -320,6 +320,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			return NULL;
 		}
 	morphan_result::clear_global_features();
+	morphan_result::clear_features_to_inherit();
 	transgraph::clear_node_functor_map();
 	}
 	analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
