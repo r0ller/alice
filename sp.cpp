@@ -33,6 +33,7 @@ int interpreter::set_node_info(const std::string& symbol, const lexicon& word){
 	}
 	nodeinfo.left_child=0;
 	nodeinfo.right_child=0;
+	if(nodeinfo.expression.morphalytics!=NULL) nodeinfo.expression.morphalytics->set_node_id(nodeinfo.node_id);
 	node_infos.push_back(nodeinfo);
 	return nodeinfo.node_id;
 }
@@ -52,6 +53,7 @@ int interpreter::set_node_info(const std::string& symbol, const node_info& node)
 	if(word.lexeme.empty()==false) nodeinfo.expression=word;
 	nodeinfo.left_child=0;
 	nodeinfo.right_child=node.node_id;
+	if(nodeinfo.expression.morphalytics!=NULL) nodeinfo.expression.morphalytics->set_node_id(nodeinfo.node_id);
 	node_infos.push_back(nodeinfo);
 	if(nodeinfo.right_child!=0){//This means that no checks can be set up for nonterminal->terminal symbol rules
 		rule_step_failed=check_prerequisite_symbols(nodeinfo,get_node_info(nodeinfo.right_child));
@@ -1722,7 +1724,7 @@ std::pair<std::string,unsigned int> interpreter::find_child_for_parent_bottom_up
 	return node_found;
 }
 
-unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& feature, const bool& global){
+unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& feature, const bool& global, const bool& inherit){
 	unsigned int leaf_node_id=0;
 
 	leaf_node_id=direct_descendant_of(node);
@@ -1734,11 +1736,14 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 			const node_info& leaf_node=get_node_info(leaf_node_id);
 			leaf_node.expression.morphalytics->add_feature(feature);
 		}
+		if(inherit==true){
+			morphan_result::add_feature_to_inherit(leaf_node_id,node.node_id,feature);
+		}
 	}
 	return leaf_node_id;
 }
 
-unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& leaf_symbol, const std::string& feature, const bool& global){
+unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& leaf_symbol, const std::string& feature, const bool& global, const bool& inherit){
 	unsigned int leaf_node_id=0;
 	std::vector<unsigned int> nodes;
 
@@ -1753,12 +1758,15 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 				const node_info& leaf_node=get_node_info(leaf_node_id);
 				leaf_node.expression.morphalytics->add_feature(feature);
 			}
+			if(inherit==true){
+				morphan_result::add_feature_to_inherit(leaf_node_id,node.node_id,feature);
+			}
 		}
 	}
 	return leaf_node_id;
 }
 
-unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& subnode_symbol, const std::string& leaf_symbol, const std::string& feature, const bool& global){
+unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::string& subnode_symbol, const std::string& leaf_symbol, const std::string& feature, const bool& global, const bool& inherit){
 	unsigned int leaf_node_id=0;
 	std::vector<unsigned int> nodes,subnodes;
 
@@ -1779,6 +1787,9 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 			else{
 				const node_info& leaf_node=get_node_info(leaf_node_id);
 				leaf_node.expression.morphalytics->add_feature(feature);
+			}
+			if(inherit==true){
+				morphan_result::add_feature_to_inherit(leaf_node_id,node.node_id,feature);
 			}
 		}
 	}

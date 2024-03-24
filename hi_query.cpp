@@ -40,32 +40,34 @@ const char *hi_query(const char *db_uri, const char* p_mood, const char* p_depen
 					&&dependencyObject.HasMember("word")==true
 					&&dependencyObject.HasMember("tags")==true){
 					auto& tags=dependencyObject["tags"];
-					if(tags.HasMember("is_root")==true){
-						if(tags["is_root"].GetString()==std::string("true")){
-							root_lexeme=dependencyObject["dependency"].GetString();
-							root_d_key=dependencyObject["ref_d_key"].GetUint();
+					for(auto& tagObject:tags.GetArray()){
+						if(tagObject.HasMember("is_root")==true){
+							if(tagObject["is_root"].GetString()==std::string("true")){
+								root_lexeme=dependencyObject["dependency"].GetString();
+								root_d_key=dependencyObject["ref_d_key"].GetUint();
+							}
 						}
-					}
-					if(tags.HasMember("is_qword")==true){
-						if(tags["is_qword"].GetString()==std::string("true")){
-							qwords.insert(dependencyObject["word"].GetString());
+						if(tagObject.HasMember("is_qword")==true){
+							if(tagObject["is_qword"].GetString()==std::string("true")){
+								qwords.insert(dependencyObject["word"].GetString());
+							}
 						}
-					}
-					//It is only possible to do it this way if transgraph::transcript() is modified in a way that it read FUNCTOR_TAGS for CONs as well
-					//and then FUNCTOR_TAGS can have unconditional entries (with empty trigger_tag) for the CON functor.
-					/*if(tags.HasMember("is_con")==true){
-						if(tags["is_con"].GetString()==std::string("true")){
-							lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
+						//It is only possible to do it this way if transgraph::transcript() is modified in a way that it read FUNCTOR_TAGS for CONs as well
+						//and then FUNCTOR_TAGS can have unconditional entries (with empty trigger_tag) for the CON functor.
+						/*if(tagObject.HasMember("is_con")==true){
+							if(tagObject["is_con"].GetString()==std::string("true")){
+								lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
+							}
 						}
-					}
-					else{
-						lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
-					}*/
-					if(dependencyObject["dependency"].GetString()==std::string("CON")){
-						lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["dependency"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
-					}
-					else{
-						lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["dependency"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
+						else{
+							lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["lexeme"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
+						}*/
+						if(dependencyObject["dependency"].GetString()==std::string("CON")){
+							lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["dependency"].GetString(),std::make_pair("",dependencyObject["word"].GetString())));
+						}
+						else{
+							lexemes_to_cvalues_cons.insert(std::make_pair(dependencyObject["dependency"].GetString(),std::make_pair(dependencyObject["c_value"].GetString(),"")));
+						}
 					}
 				}
 				else{

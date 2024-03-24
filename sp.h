@@ -118,9 +118,9 @@
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
 			transgraph* longest_match_for_semantic_rules_found();
-			unsigned int add_feature_to_leaf(const node_info&,const std::string&, const bool& = false);
-			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const bool& = false);
-			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&, const bool& = false);
+			unsigned int add_feature_to_leaf(const node_info&,const std::string&, const bool& = false, const bool& = false);
+			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const bool& = false, const bool& = false);
+			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&, const bool& = false, const bool& = false);
 			std::set<unsigned int> validated_terminals();
 			std::vector<node_info> nodes();
 			bool is_valid_combination(const unsigned int&,const unsigned int&);

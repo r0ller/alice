@@ -66,15 +66,21 @@ std::string sh_transcriptor::transcribeDependencies(rapidjson::Value& morphology
 		std::string tags;
 		std::string tagsVarName;
 		if(dependency.HasMember("tags")==true){
-			for(auto& tag: dependency["tags"].GetObject()){
-				std::string tag_quoted="\""+std::string(tag.name.GetString())+"\":\""+std::string(tag.value.GetString())+"\",";
-				//quoting here breaks sh script
-				//find_replace(tag_quoted,"\"","\\\"");
-				tags+=tag_quoted;
+			for(auto& tagObj: dependency["tags"].GetArray()){
+				std::string tag_quoted;
+				for(auto& tag: tagObj.GetObject()){
+					tag_quoted+="\""+std::string(tag.name.GetString())+"\":\""+std::string(tag.value.GetString())+"\",";
+					//quoting here breaks sh script
+					//find_replace(tag_quoted,"\"","\\\"");
+				}
+				if(tag_quoted.empty()==false){
+					tag_quoted.pop_back();
+					tags+="{"+tag_quoted+"},";
+				}
 			}
 			if(tags.empty()==false){
 				tags.pop_back();
-				tags="{"+tags+"}";
+				tags="["+tags+"]";
 				tagsVarName=functionName+"_tags";
 				arguments.push_back(tagsVarName);
 			}

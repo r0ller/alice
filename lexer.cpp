@@ -38,9 +38,9 @@ unsigned int lexer::next_token(){
 		last_word=next_word();
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"last word:"+last_word);
 		if(last_word.empty()==false){
-			auto cache_hit=cache.find(last_word);
-			if(cache_hit!=cache.end()){
-				new_words=cache_hit->second;
+			auto cache_hit=copy_word_from_cache(last_word);
+			if(cache_hit.second.empty()==false){
+				new_words=cache_hit.second;
 			}
 			else{
 				throw std::runtime_error("Word not found in cache:"+last_word);
@@ -600,7 +600,7 @@ std::map<unsigned int,lexicon> lexer::find_word_by_gcat(const std::vector<lexico
 	return words_found;
 }
 
-std::vector<lexicon> lexer::all_word_entries(){
+std::vector<lexicon> lexer::cached_word_entries(){
 	std::vector<lexicon> words;
 
 	for(auto&& word_analyses:cache){
@@ -609,4 +609,20 @@ std::vector<lexicon> lexer::all_word_entries(){
 		}
 	}
 	return words;
+}
+
+std::pair<std::string,std::vector<lexicon>> lexer::copy_word_from_cache(std::string& word){
+//TODO:
+//-replace all private lexer cache.find() calls with this
+//-review all lexer::word_analyses calls as there are cases when it's called just to call cache.find()
+//-review all usage of the lexer cache either private or public to ensure that cached morphalytics instance is not used instead of the copyconstructed one
+//-make sure that when the next token is requested, a lexicon with a copyconstructed morphalytics is returned
+
+	auto cache_hit=cache.find(word);
+	std::pair<std::string,std::vector<lexicon>> lexicons=*cache_hit;
+	for(auto&& lexicon: lexicons.second){
+		//deep copy only morphalytics for now as currently only that needs to be different
+		lexicon.morphalytics=new morphan_result(*lexicon.morphalytics);
+	}
+	return lexicons;
 }

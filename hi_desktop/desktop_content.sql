@@ -486,19 +486,19 @@ const node_info& ENG_Punct=sparser->get_node_info($2);
 std::vector<unsigned int> nodes;
 sparser->get_nodes_by_symbol(ENG_Punct,"QuestionMark",std::string(),nodes);
 if(nodes.size()==1){
-	const node_info& punct=sparser->get_node_info(nodes[0]);
-	sparser->add_feature_to_leaf(ENG_VP,"main_verb","interrogative",true);
+  const node_info& punct=sparser->get_node_info(nodes[0]);
+  sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("interrogative"),true);
 }
 else{
-	nodes.clear();
-	sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),nodes);
-	if(nodes.size()==1){
-		const node_info& punct=sparser->get_node_info(nodes[0]);
-		sparser->add_feature_to_leaf(ENG_VP,"main_verb","indicative",true);
-	}
-	else{
-		sparser->add_feature_to_leaf(ENG_VP,"main_verb","imperative",true);
-	}
+  nodes.clear();
+  sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),nodes);
+  if(nodes.size()==1){
+    const node_info& punct=sparser->get_node_info(nodes[0]);
+    sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("indicative"),true);
+  }
+  else{
+    sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("imperative"),true);
+  }
 }
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP ENG_Punct");
 $$=sparser->combine_nodes("S",ENG_VP,ENG_Punct);"');

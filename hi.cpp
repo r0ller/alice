@@ -33,7 +33,8 @@ int main(int argc,char **argv){
 						  "\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"EXECUTABLEENGA_1_8\",\"counter\":4,\"level\":3,\"word\":\"executable\",\"lexeme\":\"FILEBEPROP\",\"d_key\":1,\"d_counter\":2,\"dependency\":\"EXECUTABLEENGA\",\"ref_d_key\":1,\"tags\":{},\"c_value\":\"\"}]}");*/
 		//Another example for 'when is peter's birthday ?'
 		//"{\"dependencies\":[{\"source\":\"test\",\"timestamp\":1671634874,\"sentence\":\"when is peter's birthday ?\",\"rank\":1,\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"BEENGV_1_4\",\"counter\":0,\"level\":0,\"word\":\"is\",\"lexeme\":\"\",\"d_key\":0,\"d_counter\":0,\"dependency\":\"BEENGV\",\"ref_d_key\":1,\"tags\":{\"is_root\":\"true\"},\"c_value\":\"\"},{\"source\":\"test\",\"timestamp\":1671634874,\"sentence\":\"when is peter's birthday ?\",\"rank\":1,\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"WHENENGPRON_1\",\"counter\":1,\"level\":1,\"word\":\"when\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"d_counter\":1,\"dependency\":\"WHENENGPRON\",\"ref_d_key\":1,\"tags\":{\"is_qword\":\"true\"},\"c_value\":\"\"},{\"source\":\"test\",\"timestamp\":1671634874,\"sentence\":\"when is peter's birthday ?\",\"rank\":1,\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"BIRTHDAYENGN_1_15\",\"counter\":2,\"level\":1,\"word\":\"birthday\",\"lexeme\":\"BEENGV\",\"d_key\":1,\"d_counter\":2,\"dependency\":\"BIRTHDAYENGN\",\"ref_d_key\":1,\"tags\":{\"qword\":\"when\"},\"c_value\":\"\"},{\"source\":\"test\",\"timestamp\":1671634874,\"sentence\":\"when is peter's birthday ?\",\"rank\":1,\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"CON_10\",\"counter\":3,\"level\":2,\"word\":\"peter's\",\"lexeme\":\"BIRTHDAYENGN\",\"d_key\":1,\"d_counter\":2,\"dependency\":\"CON\",\"ref_d_key\":1,\"tags\":{},\"c_value\":\"\"}]}";
-		analyses=hi_query(argv[2],argv[3],argv[4]);
+		analyses=hi_query("hi_desktop/hi.db","indicative","{\"dependencies\":[{\"source\":\"test\",\"timestamp\":1710968969,\"sentence\":\"mi kell ?\",\"rank\":0.5,\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"KELLHUNV_1_6\",\"counter\":0,\"level\":0,\"word\":\"kell\",\"lexeme\":\"\",\"d_key\":0,\"d_counter\":0,\"dependency\":\"KELLHUNV\",\"ref_d_key\":1,\"tags\":[{\"is_root\":\"true\"}],\"c_value\":\"\"},{\"source\":\"test\",\"timestamp\":1710968969,\"sentence\":\"mi kell ?\",\"rank\":0.5,\"a_counter\":1,\"mood\":\"interrogative\",\"function\":\"MIHUNIPRON_1\",\"counter\":1,\"level\":1,\"word\":\"mi\",\"lexeme\":\"KELLHUNV\",\"d_key\":1,\"d_counter\":2,\"dependency\":\"MIHUNIPRON\",\"ref_d_key\":1,\"tags\":[{\"is_qword\":\"true\"}],\"c_value\":\"\"}]}");
+		//analyses=hi_query(argv[2],argv[3],argv[4]);
 		if(analyses!=NULL){
 			cout<<analyses<<endl;
 			rapidjson::Document jsondoc;
@@ -95,6 +96,8 @@ int main(int argc,char **argv){
 			//text="vazze kapcsold be a felolvasást";
 			//text="keress a névjegyzékben alizt";
 			//text="küld";
+			//text="kell só és bors .";
+			//text="mi kell ?";
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;

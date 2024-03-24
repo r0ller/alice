@@ -5,6 +5,7 @@
 
 unsigned int morphan_result::global_id=0;
 std::map<unsigned int,std::string> morphan_result::global_features_;
+std::map<unsigned int,std::pair<unsigned int,std::string>> morphan_result::features_to_inherit_;
 
 /*PUBLIC*/
 morphan_result::morphan_result(const std::string& word, const std::string& lid, const std::string& gcat=""){
@@ -15,6 +16,7 @@ morphan_result::morphan_result(const std::string& word, const std::string& lid, 
 	word_stem=word;
 	if(gcat.empty()==true) word_gcat="CON";
 	else word_gcat=gcat;
+	node_id_=0;
 }
 
 morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes, const std::string& lid){
@@ -29,6 +31,7 @@ morphan_result::morphan_result(const std::string& word, const std::vector<std::s
 	word_form=word;
 	word_morphemes=morphemes;
 	nr_of_morphemes=morphemes.size();
+	node_id_=0;
 	sqlite=db_factory::get_instance();
 	gcats=sqlite->exec_sql("SELECT DISTINCT GCAT FROM GCAT WHERE LID = '"+lid+"';");
 	if(gcats==NULL){
@@ -146,4 +149,24 @@ void morphan_result::copy_global_features(){
 
 std::map<unsigned int,std::string> morphan_result::global_features_copy(){
 	return global_features_copy_;
+}
+
+void morphan_result::set_node_id(const unsigned int node_id){
+	if(node_id_==0) node_id_=node_id;
+}
+
+unsigned int morphan_result::node_id(){
+	return node_id_;
+}
+
+std::pair<unsigned int,std::string> morphan_result::find_feature_to_inherit(const unsigned int node_id){
+	std::pair<unsigned int,std::string> parent_node_feature={0,""};
+
+	auto&& i_parent_node_feature=features_to_inherit_copy_.find(node_id);
+	if(i_parent_node_feature!=features_to_inherit_copy_.end()) parent_node_feature=i_parent_node_feature->second;
+	return parent_node_feature;
+}
+
+void morphan_result::copy_features_to_inherit(){
+	features_to_inherit_copy_=features_to_inherit_;
 }
