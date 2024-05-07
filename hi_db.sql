@@ -14,7 +14,8 @@ create table LANGUAGES(
 lid varchar(5) primary key,
 language varchar(128),
 head_position smallint, /*0: undefined, 1: head first, 2: head last*/
-fst varchar(256)
+fst varchar(256),
+natural_language smallint /*0: false, otherwise true*/
 );
 
 create table GCAT_LID(

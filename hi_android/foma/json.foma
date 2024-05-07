@@ -1,0 +1,7 @@
+### json.foma ###
+
+read lexc json.lexc
+define LexiconJson;
+define GrammarJson LexiconJson;
+
+regex GrammarJson;

@@ -449,6 +449,8 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 	std::vector<lexicon> new_words;
 	std::vector<morphan_result> *morphalytics;
 	std::vector<std::string> word_forms;
+	db *sqlite=NULL;
+	query_result *language_entries=NULL;
 
 	auto sentence_hit=sentences_word_forms.find(human_input);
 	if(sentence_hit==sentences_word_forms.end()){
@@ -467,8 +469,9 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 				word_forms.push_back(last_word);
 				auto cache_hit=cache.find(last_word);
 				if(cache_hit==cache.end()){
-					if(generate_tokens_==true) morphalytics=stemmer->analyze(last_word,false);
-					else morphalytics=stemmer->analyze(last_word,false);
+					sqlite=db_factory::get_instance();
+					language_entries=sqlite->exec_sql("SELECT * FROM LANGUAGES;");
+					morphalytics=stemmer->analyze(last_word,false);
 					if(morphalytics!=NULL&&morphalytics->empty()==false){
 						if(morphalytics->size()==1&&morphalytics->front().is_mocked()==true){//The word could not be analysed -> treat it as constant
 							std::string symbol="t_"+language()+"_CON_Stem";
@@ -498,6 +501,33 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 							new_word.lexicon_entry=false;
 							new_word_form=last_word;
 							new_words.push_back(new_word);
+							//TODO: check if there's any valid analysis in other fsts but don't add CONs from those
+							for(unsigned int i=0;i<language_entries->nr_of_result_rows();++i){
+								morphalytics->clear();
+								//1. get stemmer for language
+								//2. analyse word
+								//3. store new analyses if there are any non-const
+								morphan *lid_stemmer=morphan::get_instance(*language_entries->field_value_at_row_position(i,"lid"));
+								morphalytics=lid_stemmer->analyze(last_word,false);
+								if(morphalytics!=NULL&&(morphalytics->size()>1||morphalytics->size()==1&&morphalytics->front().is_mocked()==false)){
+									for(auto&& i:*morphalytics){
+										new_word=tokenize_word(i);
+										if(new_word.tokens.empty()==true){
+											throw std::runtime_error("No tokens found for word:"+last_word);
+										}
+										new_words.push_back(new_word);
+										if(new_word_form.empty()==true){
+											//Due to the fact, that the last_word is read from input and the tokenize_word()
+											//reads the word and the tokens from the db, in certain cases last_word contains an additional whitespace
+											//which makes the two strings different in length. Thus, token_paths->next_word(last_word)
+											//would fail in finding the word, as token_paths->add_word(new_word) stores the db word form.
+											//So let's store the word form as it's added to token_paths.
+											new_word_form=new_word.word;
+										}
+										new_word.tokens.clear();
+									}
+								}
+							}
 						}
 						else{
 							for(auto&& i:*morphalytics){
