@@ -21,11 +21,11 @@
 			std::map<unsigned int,std::string> global_features_copy_;
 			static std::map<unsigned int,std::pair<unsigned int,std::string>> features_to_inherit_;
 			std::map<unsigned int,std::pair<unsigned int,std::string>> features_to_inherit_copy_;
-			unsigned int node_id_;
+			unsigned int node_id_;//parse tree node id
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&, const std::string&);
 			morphan_result(const std::string&, const std::string&, const std::string&);
-			//morphan_result(morphan_result&);
+			morphan_result(const morphan_result&);
 			~morphan_result();
 			const unsigned int& id() const;
 			const std::string& word() const;

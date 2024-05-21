@@ -150,6 +150,7 @@ db *db_factory::singleton_instance=NULL;
 %token	t_JSON_Punct_ClosingSBracket
 %token	t_JSON_Punct_OpeningCBracket
 %token	t_JSON_Punct_ClosingCBracket
+%token	t_JSON_Punct_Relative
 
 %precedence t_HUN_CON_Stem t_HUN_Num_Stem t_HUN_CON_swVowel t_HUN_CON_swConsonant t_HUN_Num_swVowel t_HUN_Num_swConsonant t_HUN_Noun_Stem t_HUN_Noun_swVowel t_HUN_Noun_swConsonant t_HUN_Neg_Stem t_HUN_Adj_Stem
 %precedence t_HUN_Conj_Stem
@@ -3354,20 +3355,20 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value
 $$=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_Array,JSON_ClosingSBracket);
 
 }
+|JSON_Dot_Relative JSON_ClosingSBracket
+{
+const node_info& JSON_Dot_Relative=sparser->get_node_info($1);
+const node_info& JSON_ClosingSBracket=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value_Element->JSON_Dot_Relative JSON_ClosingSBracket");
+$$=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_Dot_Relative,JSON_ClosingSBracket);
+
+}
 |JSON_Number JSON_ClosingSBracket
 {
 const node_info& JSON_Number=sparser->get_node_info($1);
 const node_info& JSON_ClosingSBracket=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value_Element->JSON_Number JSON_ClosingSBracket");
 $$=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_Number,JSON_ClosingSBracket);
-
-}
-|JSON_Object JSON_ClosingSBracket
-{
-const node_info& JSON_Object=sparser->get_node_info($1);
-const node_info& JSON_ClosingSBracket=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value_Element->JSON_Object JSON_ClosingSBracket");
-$$=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_Object,JSON_ClosingSBracket);
 
 }
 |JSON_String JSON_ClosingSBracket
@@ -3394,6 +3395,33 @@ const node_info& JSON_Punct_Stem=sparser->get_node_info($1);
 const node_info& JSON_Punct_Comma=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Comma->JSON_Punct_Stem JSON_Punct_Comma");
 $$=sparser->combine_nodes("JSON_Comma",JSON_Punct_Stem,JSON_Punct_Comma);
+
+};
+JSON_Dot:
+JSON_Punct_Stem JSON_Punct_Dot
+{
+const node_info& JSON_Punct_Stem=sparser->get_node_info($1);
+const node_info& JSON_Punct_Dot=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Dot->JSON_Punct_Stem JSON_Punct_Dot");
+$$=sparser->combine_nodes("JSON_Dot",JSON_Punct_Stem,JSON_Punct_Dot);
+
+};
+JSON_Dot_Relative:
+JSON_Dot JSON_Dot_lfea_relative
+{
+const node_info& JSON_Dot=sparser->get_node_info($1);
+const node_info& JSON_Dot_lfea_relative=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Dot_Relative->JSON_Dot JSON_Dot_lfea_relative");
+$$=sparser->combine_nodes("JSON_Dot_Relative",JSON_Dot,JSON_Dot_lfea_relative);
+
+};
+JSON_Dot_lfea_relative:
+t_JSON_Punct_Relative 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_JSON_Punct_Relative);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("JSON_Dot_lfea_relative",word);
 
 };
 JSON_Key:
@@ -3423,20 +3451,20 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pai
 $$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Array);
 
 }
+|JSON_Key JSON_Dot_Relative
+{
+const node_info& JSON_Key=sparser->get_node_info($1);
+const node_info& JSON_Dot_Relative=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Dot_Relative");
+$$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Dot_Relative);
+
+}
 |JSON_Key JSON_Number
 {
 const node_info& JSON_Key=sparser->get_node_info($1);
 const node_info& JSON_Number=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Number");
 $$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Number);
-
-}
-|JSON_Key JSON_Object
-{
-const node_info& JSON_Key=sparser->get_node_info($1);
-const node_info& JSON_Object=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Object");
-$$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Object);
 
 }
 |JSON_Key JSON_String
@@ -3460,9 +3488,12 @@ JSON_Open_Object JSON_Closing_Key_Value_Pair
 {
 const node_info& JSON_Open_Object=sparser->get_node_info($1);
 const node_info& JSON_Closing_Key_Value_Pair=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(JSON_Open_Object,"Punct",std::string("main_verb"));
+sparser->add_feature_to_leaf(JSON_Open_Object,"main_verb",std::string("indicative"),true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Object->JSON_Open_Object JSON_Closing_Key_Value_Pair");
 $$=sparser->combine_nodes("JSON_Object",JSON_Open_Object,JSON_Closing_Key_Value_Pair);
-
+const node_info& JSON_Object=sparser->get_node_info($$);
+sparser->add_feature_to_leaf(JSON_Object,"JSON_Open_Object","Punct",std::string("json_obj"),false,true);
 };
 JSON_Open_Array:
 JSON_Open_Array JSON_Value_List_Element
@@ -3497,7 +3528,15 @@ $$=sparser->set_node_info("JSON_Open_Object",JSON_OpeningCBracket);
 
 };
 JSON_Open_String:
-JSON_Quotes JSON_CON
+JSON_Quotes HUN_N_Sg
+{
+const node_info& JSON_Quotes=sparser->get_node_info($1);
+const node_info& HUN_N_Sg=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(HUN_N_Sg,"Noun",std::string("json_key"));
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Open_String->JSON_Quotes HUN_N_Sg");
+$$=sparser->combine_nodes("JSON_Open_String",JSON_Quotes,HUN_N_Sg);
+}
+|JSON_Quotes JSON_CON
 {
 const node_info& JSON_Quotes=sparser->get_node_info($1);
 const node_info& JSON_CON=sparser->get_node_info($2);
@@ -3557,6 +3596,15 @@ lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_Comma);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
 $$=sparser->set_node_info("JSON_Punct_Comma",word);
+
+};
+JSON_Punct_Dot:
+t_JSON_Punct_Dot 
+{
+lexicon word;
+word=lex->last_word_scanned(token::t_JSON_Punct_Dot);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word.lexeme);
+$$=sparser->set_node_info("JSON_Punct_Dot",word);
 
 };
 JSON_Punct_OpeningCBracket:
@@ -3622,20 +3670,20 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_El
 $$=sparser->combine_nodes("JSON_Value_List_Element",JSON_Array,JSON_Comma);
 
 }
+|JSON_Dot_Relative JSON_Comma
+{
+const node_info& JSON_Dot_Relative=sparser->get_node_info($1);
+const node_info& JSON_Comma=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_Element->JSON_Dot_Relative JSON_Comma");
+$$=sparser->combine_nodes("JSON_Value_List_Element",JSON_Dot_Relative,JSON_Comma);
+
+}
 |JSON_Number JSON_Comma
 {
 const node_info& JSON_Number=sparser->get_node_info($1);
 const node_info& JSON_Comma=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_Element->JSON_Number JSON_Comma");
 $$=sparser->combine_nodes("JSON_Value_List_Element",JSON_Number,JSON_Comma);
-
-}
-|JSON_Object JSON_Comma
-{
-const node_info& JSON_Object=sparser->get_node_info($1);
-const node_info& JSON_Comma=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_Element->JSON_Object JSON_Comma");
-$$=sparser->combine_nodes("JSON_Value_List_Element",JSON_Object,JSON_Comma);
 
 }
 |JSON_String JSON_Comma
@@ -3661,22 +3709,22 @@ const node_info& HUN_Punct=sparser->get_node_info($2);
 std::vector<unsigned int> nodes;
 sparser->get_nodes_by_symbol(HUN_Punct,"QuestionMark",std::string(),nodes);
 if(nodes.size()==1){
-  const node_info& punct=sparser->get_node_info(nodes[0]);
-  logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interrogative");
-  sparser->add_feature_to_leaf(HUN_VP,"main_verb",std::string("interrogative"),true);
+		const node_info& punct=sparser->get_node_info(nodes[0]);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interrogative");
+		sparser->add_feature_to_leaf(HUN_VP,"main_verb",std::string("interrogative"),true);
 }
 else{
-  nodes.clear();
-  sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),nodes);
-  if(nodes.size()==1){
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"indicative");
-    const node_info& punct=sparser->get_node_info(nodes[0]);
-    sparser->add_feature_to_leaf(HUN_VP,"main_verb",std::string("indicative"),true);
-  }
-  else{
-    logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"imperative");
-    sparser->add_feature_to_leaf(HUN_VP,"main_verb",std::string("imperative"),true);
-  }
+		nodes.clear();
+		sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),nodes);
+		if(nodes.size()==1){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"indicative");
+				const node_info& punct=sparser->get_node_info(nodes[0]);
+				sparser->add_feature_to_leaf(HUN_VP,"main_verb",std::string("indicative"),true);
+		}
+		else{
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"imperative");
+				sparser->add_feature_to_leaf(HUN_VP,"main_verb",std::string("imperative"),true);
+		}
 }
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->HUN_VP HUN_Punct");
 $$=sparser->combine_nodes("S",HUN_VP,HUN_Punct);
@@ -4014,22 +4062,32 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	morphan_result::clear_features_to_inherit();
 	transgraph::clear_node_functor_map();
 	}
-	analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
-	if(analyses.empty()==false){
-		analysischr=new char[analyses.length()+1];
-		analyses.copy(analysischr,analyses.length(),0);
-		analysischr[analyses.length()]='\0';
+	try{
+		analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
+		if(analyses.empty()==false){
+			analysischr=new char[analyses.length()+1];
+			analyses.copy(analysischr,analyses.length(),0);
+			analysischr[analyses.length()]='\0';
+		}
+		lexer::delete_cache();
+		delete token_paths;
+		token_paths=NULL;
+		if(sqlite!=NULL){
+			//TODO: consider providing a release() function for the library
+			//and NOT closing+freeing the db here as it'd increase performance
+			//as in case of not freeing the stemmer.
+			sqlite->close();
+			db_factory::delete_instance();
+			sqlite=NULL;
+		}
 	}
-	lexer::delete_cache();
-	delete token_paths;
-	token_paths=NULL;
-	if(sqlite!=NULL){
-		//TODO: consider providing a release() function for the library
-		//and NOT closing+freeing the db here as it'd increase performance
-		//as in case of not freeing the stemmer.
-		sqlite->close();
-		db_factory::delete_instance();
-		sqlite=NULL;
+	catch(std::runtime_error& exception){//Catch underived exceptions thrown with string based messages
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"runtime error:"+std::string(exception.what()));
+		return NULL;
+	}
+	catch(...){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"unexpected error ...");
+		return NULL;
 	}
 	return analysischr;
 }

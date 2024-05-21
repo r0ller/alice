@@ -129,8 +129,7 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 	return word;
 }
 
-/*PRIVATE*/
-lexicon lexer::tokenize_word(morphan_result& morphalytics){
+lexicon lexer::tokenize_word(morphan_result& morphalytics, const std::string& language, const bool generate_tokens){
 	unsigned int i=0, nr_of_morphemes=0, token=0;
 	size_t tag_position=0;
 	lexicon new_word;
@@ -144,7 +143,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 	sqlite=db_factory::get_instance();
 	//TODO:convert gcat to uppercase
 	//std::transform(morphalytics.gcat().begin(),morphalytics.gcat().end(),gcat.begin(),::toupper);
-	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + sqlite->escape(morphalytics.stem()) + "' AND LID = '"+language()+"' AND GCAT = '" + morphalytics.gcat() + "';");
+	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + sqlite->escape(morphalytics.stem()) + "' AND LID = '"+language+"' AND GCAT = '" + morphalytics.gcat() + "';");
 	if(lexeme!=NULL&&lexeme->result_set().empty()==false){
 		for(field_position=lexeme->result_set().begin();field_position!=lexeme->result_set().end();++field_position){
 			if(field_position->second.field_name=="word")
@@ -158,75 +157,78 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 				new_word.lexeme=field_position->second.field_value;
 				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme);
 				new_word.morphalytics=&morphalytics;
-				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
+				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language+"';");
 				morphemes=morphalytics.morphemes();
 				nr_of_morphemes=morphemes.size();
-				for(i=0;i<nr_of_morphemes;++i){
-					tag_position=morphemes[i].find("[stem]");
-					if(tag_position==std::string::npos){
-						lingfea=morphemes[i];
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lingfea:"+lingfea);
-						field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
-						if(field==NULL||field->second.field_value.empty()==true){
-//							Don't do anything, just skip lfeas that are not registered
+				if(gcats_and_lingfeas!=NULL){
+					for(i=0;i<nr_of_morphemes;++i){
+						tag_position=morphemes[i].find("[stem]");
+						if(tag_position==std::string::npos){
+							lingfea=morphemes[i];
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"lingfea:"+lingfea);
+							field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
+							if(field==NULL||field->second.field_value.empty()==true){
+	//							Don't do anything, just skip lfeas that are not registered
+							}
+							else{
+								symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
+								auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+								if(symbol_token_map_entry!=symbol_token_map.end()){
+									token=symbol_token_map_entry->second;
+									logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+									new_word.tokens.push_back(token);
+								}
+								else{
+									if(generate_tokens==true){
+										if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+										token=symbol_token_map.size()+1;
+										symbol_token_map.insert(std::make_pair(symbol,token));
+										token_symbol_map.insert(std::make_pair(token,symbol));
+										logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+										new_word.tokens.push_back(token);
+									}
+									else{
+										//TODO: figure out if it's necessary to harden modelling this way:
+										//Throwing this exception here means that each and every gcat+feature
+										//combination (morpheme symbol) must have a token generated.
+										//As a corollary, it must be present in the grammar as well.
+										//For the ML scenarios this is ok but in case of manual modelling
+										//one may not want to process each and every morpheme.
+										//throw std::runtime_error("No token found for symbol "+symbol);
+									}
+								}
+							}
 						}
 						else{
+							field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
+							if(field==NULL){
+								throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
+							}
 							symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
 							auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
 							if(symbol_token_map_entry!=symbol_token_map.end()){
 								token=symbol_token_map_entry->second;
 								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 								new_word.tokens.push_back(token);
+								new_word.token=token;
 							}
 							else{
-								if(generate_tokens_==true){
+								if(generate_tokens==true){
 									if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
 									token=symbol_token_map.size()+1;
 									symbol_token_map.insert(std::make_pair(symbol,token));
 									token_symbol_map.insert(std::make_pair(token,symbol));
 									logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 									new_word.tokens.push_back(token);
+									new_word.token=token;
 								}
 								else{
-									//TODO: figure out if it's necessary to harden modelling this way:
-									//Throwing this exception here means that each and every gcat+feature
-									//combination (morpheme symbol) must have a token generated.
-									//As a corollary, it must be present in the grammar as well.
-									//For the ML scenarios this is ok but in case of manual modelling
-									//one may not want to process each and every morpheme.
-									//throw std::runtime_error("No token found for symbol "+symbol);
+									throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
 								}
 							}
 						}
 					}
-					else{
-						field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
-						if(field==NULL){
-							throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
-						}
-						symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
-						auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
-						if(symbol_token_map_entry!=symbol_token_map.end()){
-							token=symbol_token_map_entry->second;
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
-							new_word.tokens.push_back(token);
-							new_word.token=token;
-						}
-						else{
-							if(generate_tokens_==true){
-								if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
-								token=symbol_token_map.size()+1;
-								symbol_token_map.insert(std::make_pair(symbol,token));
-								token_symbol_map.insert(std::make_pair(token,symbol));
-								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
-								new_word.tokens.push_back(token);
-								new_word.token=token;
-							}
-							else{
-								throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
-							}
-						}
-					}
+					delete gcats_and_lingfeas;
 				}
 			}
 			else{
@@ -234,14 +236,13 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 			}
 		}
 		delete lexeme;
-		delete gcats_and_lingfeas;
 	}
 	else{//Happens if the stemmer could provide an analysis but the stem is not found in the lexicon.
 		//Another possibility would be to make it strictly available for CONs like if(morphalytics.gcat()=="CON")
 		//but let's make a bold step. See comment at the line below when reading dependencies.
 		new_word.lexicon_entry=false;
 		new_word.word=morphalytics.word();
-		new_word.lid=language();
+		new_word.lid=language;
 		new_word.gcat=morphalytics.gcat();
 		new_word.lexeme=morphalytics.stem();
 		new_word.dependencies=dependencies_read_for_functor(new_word.gcat);
@@ -256,76 +257,78 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 		//result in a dump.
 		//TODO: Set up checks for the dependencies attribute being NULL.
 		new_word.morphalytics=&morphalytics;
-		gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
+		gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language+"';");
 		morphemes=morphalytics.morphemes();
 		nr_of_morphemes=morphemes.size();
-		for(i=0;i<nr_of_morphemes;++i){
-			tag_position=morphemes[i].find("[stem]");
-			if(tag_position==std::string::npos){
-				lingfea=morphemes[i];
-				field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
-				if(field==NULL||field->second.field_value.empty()==true){
-//					Don't do anything, just skip lfeas that are not registered
+		if(gcats_and_lingfeas!=NULL){
+			for(i=0;i<nr_of_morphemes;++i){
+				tag_position=morphemes[i].find("[stem]");
+				if(tag_position==std::string::npos){
+					lingfea=morphemes[i];
+					field=gcats_and_lingfeas->first_value_for_field_name_found("feature",lingfea);
+					if(field==NULL||field->second.field_value.empty()==true){
+	//					Don't do anything, just skip lfeas that are not registered
+					}
+					else{
+						symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
+						auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
+						if(symbol_token_map_entry!=symbol_token_map.end()){
+							token=symbol_token_map_entry->second;
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+							new_word.tokens.push_back(token);
+						}
+						else{
+							if(generate_tokens==true){
+								if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
+								token=symbol_token_map.size()+1;
+								symbol_token_map.insert(std::make_pair(symbol,token));
+								token_symbol_map.insert(std::make_pair(token,symbol));
+								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
+								new_word.tokens.push_back(token);
+							}
+							else{
+								//TODO: figure out if it's necessary to harden modelling this way:
+								//Throwing this exception here means that each and every gcat+feature
+								//combination (morpheme symbol) must have a token generated.
+								//As a corollary, it must be present in the grammar as well.
+								//For the ML scenarios this is ok but in case of manual modelling
+								//one may not want to process each and every morpheme.
+								//throw std::runtime_error("No token found for symbol "+symbol);
+							}
+						}
+					}
 				}
 				else{
+					field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
+					if(field==NULL){
+						throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
+					}
 					symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
 					auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
 					if(symbol_token_map_entry!=symbol_token_map.end()){
 						token=symbol_token_map_entry->second;
 						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 						new_word.tokens.push_back(token);
+						new_word.token=token;
 					}
 					else{
-						if(generate_tokens_==true){
+						if(generate_tokens==true){
 							if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
 							token=symbol_token_map.size()+1;
 							symbol_token_map.insert(std::make_pair(symbol,token));
 							token_symbol_map.insert(std::make_pair(token,symbol));
 							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
 							new_word.tokens.push_back(token);
+							new_word.token=token;
 						}
 						else{
-							//TODO: figure out if it's necessary to harden modelling this way:
-							//Throwing this exception here means that each and every gcat+feature
-							//combination (morpheme symbol) must have a token generated.
-							//As a corollary, it must be present in the grammar as well.
-							//For the ML scenarios this is ok but in case of manual modelling
-							//one may not want to process each and every morpheme.
-							//throw std::runtime_error("No token found for symbol "+symbol);
+							throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
 						}
 					}
 				}
 			}
-			else{
-				field=gcats_and_lingfeas->first_value_for_field_name_found("feature","Stem");
-				if(field==NULL){
-					throw std::runtime_error("No Stem is defined for gcat "+new_word.gcat+" in GCAT db table.");
-				}
-				symbol="t_"+new_word.lid+"_"+new_word.gcat+"_"+field->second.field_value;
-				auto&& symbol_token_map_entry=symbol_token_map.find(symbol);
-				if(symbol_token_map_entry!=symbol_token_map.end()){
-					token=symbol_token_map_entry->second;
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
-					new_word.tokens.push_back(token);
-					new_word.token=token;
-				}
-				else{
-					if(generate_tokens_==true){
-						if(symbol_token_map.size()!=token_symbol_map.size()) throw std::runtime_error("Token-symbol map sizes differ when trying to add symbol "+symbol);
-						token=symbol_token_map.size()+1;
-						symbol_token_map.insert(std::make_pair(symbol,token));
-						token_symbol_map.insert(std::make_pair(token,symbol));
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token:"+symbol);
-						new_word.tokens.push_back(token);
-						new_word.token=token;
-					}
-					else{
-						throw std::runtime_error("No Stem token is defined for gcat "+new_word.gcat+" in GCAT db table.");
-					}
-				}
-			}
+			delete gcats_and_lingfeas;
 		}
-		delete gcats_and_lingfeas;
 	}
 	return new_word;
 }
@@ -503,15 +506,15 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 							new_words.push_back(new_word);
 							//TODO: check if there's any valid analysis in other fsts but don't add CONs from those
 							for(unsigned int i=0;i<language_entries->nr_of_result_rows();++i){
-								morphalytics->clear();
 								//1. get stemmer for language
 								//2. analyse word
 								//3. store new analyses if there are any non-const
-								morphan *lid_stemmer=morphan::get_instance(*language_entries->field_value_at_row_position(i,"lid"));
+								std::string current_lid=*language_entries->field_value_at_row_position(i,"lid");
+								morphan *lid_stemmer=morphan::get_instance(current_lid);
 								morphalytics=lid_stemmer->analyze(last_word,false);
 								if(morphalytics!=NULL&&(morphalytics->size()>1||morphalytics->size()==1&&morphalytics->front().is_mocked()==false)){
 									for(auto&& i:*morphalytics){
-										new_word=tokenize_word(i);
+										new_word=tokenize_word(i,current_lid,generate_tokens_);
 										if(new_word.tokens.empty()==true){
 											throw std::runtime_error("No tokens found for word:"+last_word);
 										}
@@ -531,7 +534,8 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 						}
 						else{
 							for(auto&& i:*morphalytics){
-								new_word=tokenize_word(i);
+								std::string lid=language();
+								new_word=tokenize_word(i,lid,generate_tokens_);
 								if(new_word.tokens.empty()==true){
 									throw std::runtime_error("No tokens found for word:"+last_word);
 								}

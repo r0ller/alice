@@ -1,0 +1,18 @@
+!!!json.lexc!!!
+
+Multichar_Symbols [stem] +Punct +Quotes +OpeningSBracket +ClosingSBracket +OpeningCBracket +ClosingCBracket +Comma +FullStop +Colon
+
+LEXICON Root
+
+Json ;
+
+LEXICON Json
+
+%"[stem]+Punct+Quotes:%" #;
+[[stem]+Punct+OpeningSBracket:[ #;
+][stem]+Punct+ClosingSBracket:] #;
+{[stem]+Punct+OpeningCBracket:{ #;
+}[stem]+Punct+ClosingCBracket:} #;
+,[stem]+Punct+Comma:, #;
+.[stem]+Punct+Dot:. #;
+%:[stem]+Punct+Colon:%: #;

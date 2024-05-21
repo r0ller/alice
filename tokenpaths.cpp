@@ -385,16 +385,16 @@ std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned 
 	nr_of_cons=0;
 	for(auto&& word:word_analyses){
 		morphology+="{\"morpheme id\":\""+std::to_string(word.morphalytics->id())+"\",";
-		morphology+="\"word\":\""+word.morphalytics->word()+"\",";
-		morphology+="\"lexeme\":\""+word.lexeme+"\",";
-		morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
-		morphology+="\"gcat\":\""+word.morphalytics->gcat()+"\"";
+		morphology+="\"word\":\""+transgraph::apply_json_escapes(word.morphalytics->word())+"\",";
+		morphology+="\"lexeme\":\""+transgraph::apply_json_escapes(word.lexeme)+"\",";
+		morphology+="\"stem\":\""+transgraph::apply_json_escapes(word.morphalytics->stem())+"\",";
+		morphology+="\"gcat\":\""+transgraph::apply_json_escapes(word.morphalytics->gcat())+"\"";
 		if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
 		if(word.morphalytics->is_mocked()==false){
 			morphology+=",\"tags\":[";
 			unsigned int morphan_index=0;
 			for(auto&& i:word.morphalytics->morphemes()){
-				morphology+="\""+i+"\",";
+				morphology+="\""+transgraph::apply_json_escapes(i)+"\",";
 				++morphan_index;
 			}
 			if(morphology.back()==',') morphology.pop_back();

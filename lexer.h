@@ -22,7 +22,6 @@
 			std::deque<unsigned int> token_deque;
 			static std::map<std::string,std::vector<std::string>> sentences_word_forms;
 			std::vector<std::string> word_forms_;
-			lexicon tokenize_word(morphan_result&);
 			void destroy_words();
 			static void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 			unsigned int token;
@@ -91,6 +90,8 @@
 			std::vector<std::string> analyze_and_cache(std::string&);
 			std::vector<lexicon> cached_word_entries();
 			std::pair<std::string,std::vector<lexicon>> copy_word_from_cache(std::string&);
+			static lexicon tokenize_word(morphan_result&,const std::string&,const bool=false);
+
 	};
 
 	class lexer_error:public std::exception{
