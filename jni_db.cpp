@@ -64,7 +64,7 @@ query_result *jni_db::exec_sql(const std::string& sql){
 	jobjectArray raw_sqlite_result=reinterpret_cast<jobjectArray>(env->CallObjectMethod(dbhelperobj,dbhelper_exec_sql,jsql));
 	if(env->ExceptionCheck()==JNI_TRUE){
 		env->ExceptionClear();
-		throw sql_execution_error();
+		throw sql_execution_error("SQL execution error");
 	}
 	env->ReleaseStringUTFChars(jsql,env->GetStringUTFChars(jsql,NULL));
 	env->DeleteLocalRef(jsql);

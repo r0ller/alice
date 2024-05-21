@@ -22,7 +22,7 @@
 			std::deque<unsigned int> token_deque;
 			static std::map<std::string,std::vector<std::string>> sentences_word_forms;
 			std::vector<std::string> word_forms_;
-			lexicon tokenize_word(morphan_result&);
+			lexicon tokenize_word(morphan_result&,std::string&);
 			void destroy_words();
 			static void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
 			unsigned int token;

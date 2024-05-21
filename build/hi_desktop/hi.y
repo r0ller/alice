@@ -3460,9 +3460,9 @@ JSON_Open_Object JSON_Closing_Key_Value_Pair
 {
 const node_info& JSON_Open_Object=sparser->get_node_info($1);
 const node_info& JSON_Closing_Key_Value_Pair=sparser->get_node_info($2);
+sparser->add_feature_to_leaf(JSON_Open_Object,"Punct",std::string("main_verb"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Object->JSON_Open_Object JSON_Closing_Key_Value_Pair");
 $$=sparser->combine_nodes("JSON_Object",JSON_Open_Object,JSON_Closing_Key_Value_Pair);
-
 };
 JSON_Open_Array:
 JSON_Open_Array JSON_Value_List_Element
@@ -3497,7 +3497,15 @@ $$=sparser->set_node_info("JSON_Open_Object",JSON_OpeningCBracket);
 
 };
 JSON_Open_String:
-JSON_Quotes JSON_CON
+JSON_Quotes HUN_N_Sg
+{
+const node_info& JSON_Quotes=sparser->get_node_info($1);
+const node_info& HUN_N_Sg=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Open_String->JSON_Quotes HUN_N_Sg");
+$$=sparser->combine_nodes("JSON_Open_String",JSON_Quotes,HUN_N_Sg);
+
+}
+|JSON_Quotes JSON_CON
 {
 const node_info& JSON_Quotes=sparser->get_node_info($1);
 const node_info& JSON_CON=sparser->get_node_info($2);

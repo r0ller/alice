@@ -130,7 +130,7 @@ lexicon lexer::get_word_by_lexeme(const std::string lexeme){
 }
 
 /*PRIVATE*/
-lexicon lexer::tokenize_word(morphan_result& morphalytics){
+lexicon lexer::tokenize_word(morphan_result& morphalytics, std::string& language){
 	unsigned int i=0, nr_of_morphemes=0, token=0;
 	size_t tag_position=0;
 	lexicon new_word;
@@ -144,7 +144,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 	sqlite=db_factory::get_instance();
 	//TODO:convert gcat to uppercase
 	//std::transform(morphalytics.gcat().begin(),morphalytics.gcat().end(),gcat.begin(),::toupper);
-	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + sqlite->escape(morphalytics.stem()) + "' AND LID = '"+language()+"' AND GCAT = '" + morphalytics.gcat() + "';");
+	lexeme=sqlite->exec_sql("SELECT WORD, LID, GCAT, LEXEME FROM LEXICON WHERE WORD = '" + sqlite->escape(morphalytics.stem()) + "' AND LID = '"+language+"' AND GCAT = '" + morphalytics.gcat() + "';");
 	if(lexeme!=NULL&&lexeme->result_set().empty()==false){
 		for(field_position=lexeme->result_set().begin();field_position!=lexeme->result_set().end();++field_position){
 			if(field_position->second.field_name=="word")
@@ -158,7 +158,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 				new_word.lexeme=field_position->second.field_value;
 				new_word.dependencies=dependencies_read_for_functor(new_word.lexeme);
 				new_word.morphalytics=&morphalytics;
-				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
+				gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language+"';");
 				morphemes=morphalytics.morphemes();
 				nr_of_morphemes=morphemes.size();
 				for(i=0;i<nr_of_morphemes;++i){
@@ -241,7 +241,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 		//but let's make a bold step. See comment at the line below when reading dependencies.
 		new_word.lexicon_entry=false;
 		new_word.word=morphalytics.word();
-		new_word.lid=language();
+		new_word.lid=language;
 		new_word.gcat=morphalytics.gcat();
 		new_word.lexeme=morphalytics.stem();
 		new_word.dependencies=dependencies_read_for_functor(new_word.gcat);
@@ -256,7 +256,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics){
 		//result in a dump.
 		//TODO: Set up checks for the dependencies attribute being NULL.
 		new_word.morphalytics=&morphalytics;
-		gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language()+"';");
+		gcats_and_lingfeas=sqlite->exec_sql("SELECT * FROM GCAT WHERE GCAT = '"+new_word.gcat+"' AND LID = '"+language+"';");
 		morphemes=morphalytics.morphemes();
 		nr_of_morphemes=morphemes.size();
 		for(i=0;i<nr_of_morphemes;++i){
@@ -503,15 +503,15 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 							new_words.push_back(new_word);
 							//TODO: check if there's any valid analysis in other fsts but don't add CONs from those
 							for(unsigned int i=0;i<language_entries->nr_of_result_rows();++i){
-								morphalytics->clear();
 								//1. get stemmer for language
 								//2. analyse word
 								//3. store new analyses if there are any non-const
-								morphan *lid_stemmer=morphan::get_instance(*language_entries->field_value_at_row_position(i,"lid"));
+								std::string current_lid=*language_entries->field_value_at_row_position(i,"lid");
+								morphan *lid_stemmer=morphan::get_instance(current_lid);
 								morphalytics=lid_stemmer->analyze(last_word,false);
 								if(morphalytics!=NULL&&(morphalytics->size()>1||morphalytics->size()==1&&morphalytics->front().is_mocked()==false)){
 									for(auto&& i:*morphalytics){
-										new_word=tokenize_word(i);
+										new_word=tokenize_word(i,current_lid);
 										if(new_word.tokens.empty()==true){
 											throw std::runtime_error("No tokens found for word:"+last_word);
 										}
@@ -531,7 +531,8 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 						}
 						else{
 							for(auto&& i:*morphalytics){
-								new_word=tokenize_word(i);
+								std::string lid=language();
+								new_word=tokenize_word(i,lid);
 								if(new_word.tokens.empty()==true){
 									throw std::runtime_error("No tokens found for word:"+last_word);
 								}

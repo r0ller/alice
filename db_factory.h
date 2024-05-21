@@ -38,19 +38,39 @@
 	};
 
 	class db_error:public std::exception{
+		protected:
+			std::string error_msg;
 		public:
+			db_error(std::string error_msg){
+				this->error_msg=error_msg;
+			}
 			virtual const char *what() const throw(){
 				//Since the C-string returned by what() is valid until the exception object
 				//gets destroyed and the sqlite error message string is managed by sqlite
 				//internally, the best bet is to get a copy of it to avoid any crash.
-				return db_factory::get_instance()->error_message().c_str();
+				return error_msg.c_str();
 			}
 	};
 
-	class sql_execution_error:public db_error{};
+	class sql_execution_error:public db_error{
+		public:
+		sql_execution_error(std::string error_msg):db_error(error_msg){
+		}
+		~sql_execution_error() throw() {}
+	};
 
-	class failed_to_open_db:public db_error{};
+	class failed_to_open_db:public db_error{
+		public:
+		failed_to_open_db(std::string error_msg):db_error(error_msg){
+		}
+		~failed_to_open_db() throw() {}
+	};
 
-	class failed_to_close_db:public db_error{};
+	class failed_to_close_db:public db_error{
+		public:
+		failed_to_close_db(std::string error_msg):db_error(error_msg){
+		}
+		~failed_to_close_db() throw() {}
+	};
 
 #endif

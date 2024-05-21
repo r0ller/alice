@@ -1,0 +1,64 @@
+!!!magyar.lexc!!!
+
+Multichar_Symbols  +Verb[gcat] +Rep +Imper  +Pot 
+                   +Inf +Inf11 +Inf12 +Inf13 +Inf21 +Inf22 +Inf23 +Pref+ +Adv +Advan
+                  +IndefSg1   +IndefSg2   +IndefSg3   +IndefSg12
+                  +IndefPl1 +IndefPl2 +IndefPl3
+                  +DefSg1   +DefSg2   +DefSg3  
+                  +DefPl1 +DefPl2 +DefPl3
+                  +ConjDefSg12 +PastDefSg12  +CondDefSg12
+                  +ConjIndefSg1   +ConjIndefSg2   +ConjIndefSg3   
+                  +ConjIndefPl1 +ConjIndefPl2 +ConjIndefPl3
+                  +ConjDefSg1   +ConjDefSg2[lfea]   +ConjDefSg3  
+                  +ConjDefPl1 +ConjDefPl2 +ConjDefPl3
+                  +PastIndefSg1   +PastIndefSg2   +PastIndefSg3   
+                  +PastIndefPl1 +PastIndefPl2 +PastIndefPl3
+                  +PastDefSg1   +PastDefSg2   +PastDefSg3  
+                  +PastDefPl1 +PastDefPl2 +PastDefPl3
+                  +CondIndefSg1   +CondIndefSg2   +CondIndefSg3   
+                  +CondIndefPl1 +CondIndefPl2 +CondIndefPl3
+                  +CondDefSg1   +CondDefSg2   +CondDefSg3  
+                  +CondDefPl1 +CondDefPl2 +CondDefPl3
+                  +Vbpfx[gcat] +Noun[gcat] [Guess] [stem]
+                  +Sg[lfea] +Pl[lfea] +PREP[gcat] +ADV[gcat] +A[gcat]
+                  +Aux[lfea] +RPRO[gcat] +Relative[lfea] +NEG[gcat]
+				  +CON[gcat]
+
+#begin insertion from enhufnevek.lexc
++Dis +Ess +Soc +Tem
++Posss1s +Posss2s +Posss3s +Possp1s +Possp2s +Possp3s 
++Posss1p +Posss2p +Posss3p +Possp1p +Possp2p +Possp3p
+
++Plur +Fam +Gens +Genpl
+      
++Abl +Acc[lfea] +Ade +All +Cau +Dat +Del
++Ela +Fac +For +Forp +Forpen +Ill +Ine +Ins +Nom
++Sub +Sue +Sup +Ter
+      
+§EOA§ §uue§ §OEOE1§ §J§ §UUE§ §OEOE§ §JP§ §AE§ §OEOE2§
+§UUE1§ §oeoez1§ §oooe§ §oeoez2§ §ooez3§ §oeoe§ §oeoez§ §AE1§ §oeoez5§ §Jnull§ §JPnull§
+§VV§ §b§ §h§ §k§ §n§ §r§ §t§ §JJ§ §JPJ§ §VVH§ §VVdzs§
+
+§ooez18§ §uue2§ §EOA17§ §oooe2§ §oeoez22§
+§AAA2§ §oeoe2§ §AA2§ §oeoez25§
+#end insertion from enhufnevek.lexc
+
+§AA§ §AAA§ §igea§ §igeo§ §igeo2§ §igeu§ §igeuo§
+§igejakik1§ §igejatokitek1§ §igeija1§ §igeaa§ §igetattet§
+§felteo§ §j§ §szorelol§ §tatt§ §sj§ §sj3§ §igeoe§ §igeoue§
+§AAmely§ §AAAmely§ §igeamely§ §igeomely§ §igeo2mely§ §igeumely§ §felteo1§ §igeuomely§
+§igejakik1mely§ §igejatokitek1mely§ §igeija1mely§ §igeaamely§ §igetattetmely§
+§felteomely§ §szorelolmely§ §felteo3§ §l§
+§igeoo§ §igeoomely§
+
+LEXICON Root
+Noun;
+
+LEXICON Noun
+[Guess] Constant;
+
+LEXICON Constant
+[stem]+CON[gcat]:0	Object;
+
+LEXICON Object
++Acc[lfea]:^+cAcc^t #; ! ot, et, öt, t

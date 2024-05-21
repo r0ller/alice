@@ -1,0 +1,11 @@
+!!!engpron.lexc!!!
+
+Multichar_Symbols [stem] +Pron +3sg +wh
+
+LEXICON Root
+
+Pronoun ;
+
+LEXICON Pronoun
+
+what[stem]+Pron+3sg+wh:what #;

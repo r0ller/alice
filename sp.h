@@ -141,16 +141,15 @@
 		private:
 			std::string left_node;
 			std::string right_node;
+			std::string message;
 		public:
 			object_node_missing(std::string left, std::string right){
 				left_node=left;
 				right_node=right;
+				message="Object node missing, cannot interpret: "+left_node+right_node;
 			}
 			~object_node_missing() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Object node missing, cannot interpret: "+left_node+right_node;
 				return message.c_str();
 			}
 	};
@@ -159,16 +158,15 @@
 		private:
 			std::string left_node;
 			std::string right_node;
+			std::string message;
 		public:
 			head_node_missing(std::string left, std::string right){
 				left_node=left;
 				right_node=right;
+				message="Head node missing, cannot interpret: "+left_node+right_node;
 			}
 			~head_node_missing() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Head node missing, cannot interpret: "+left_node+right_node;
 				return message.c_str();
 			}
 	};
@@ -177,10 +175,12 @@
 		private:
 			std::string left_node;
 			std::string right_node;
+			std::string message;
 		public:
 			invalid_combination(std::string left, std::string right){
 				left_node=left;
 				right_node=right;
+				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
 			}
 			~invalid_combination() throw() {};
 			std::string get_left(){
@@ -190,9 +190,6 @@
 				return right_node;
 			}
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
 				return message.c_str();
 			}
 	};
@@ -201,16 +198,15 @@
 		private:
 			std::string parent_symbol;
 			std::string child_symbol;
+			std::string message;
 		public:
 			missing_prerequisite_symbol(std::string parent,std::string child){
 				parent_symbol=parent;
 				child_symbol=child;
+				message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
 			}
 			~missing_prerequisite_symbol() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
 				return message.c_str();
 			}
 	};
@@ -218,15 +214,14 @@
 	class dependency_counter_manner_validation_failed:public semper_error{
 		private:
 			std::string functor;
+			std::string message;
 		public:
 			dependency_counter_manner_validation_failed(std::string functor){
 				this->functor=functor;
+				message="Dependency check failed for functor "+functor+" when validating dependency counter and manner.";
 			}
 			~dependency_counter_manner_validation_failed() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Dependency check failed for functor "+functor+" when validating dependency counter and manner.";
 				return message.c_str();
 			}
 	};

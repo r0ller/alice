@@ -1,0 +1,105 @@
+!!!english.lexc!!!
+
+Multichar_Symbols [stem] +N +V +Sg +Pl +PREP +ADV +A +Aux +RPRO
++Relative +VNEG +ANEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET +PAR
++CONJ
+
+LEXICON Root
+
+Verb ;
+Preposition ;
+Adverb ;
+Adjective ;
+Pronoun ;
+Negation ;
+Determiner ;
+Particle ;
+Conjuction ;
+
+LEXICON Verb
+
+list   Vinf;
+be	Vinf;
+be[stem]+V+Sg:is #;
+be[stem]+V+Pl:are #;
+
+LEXICON Vinf
+
+[stem]+V:0 #;
+[stem]+V+Gerund:^ing #;
+
+LEXICON Vaux
+
+[stem]+V+Aux:0 #;
+
+LEXICON Preposition
+
+from Pinf;
+in Pinf;
+to Pinf;
+
+LEXICON Pinf
+
+[stem]+PREP:0 #;
+
+LEXICON Adverb
+
+down Advinf;
+
+LEXICON Advinf
+
+[stem]+ADV:0 #;
+
+LEXICON Adjective
+
+executable Adjinf;
+empty Adjinf;
+symlinked Adjinf;
+
+LEXICON Adjinf
+
+[stem]+A:0 #;
+
+LEXICON Pronoun
+
+that RPro;
+
+LEXICON RPro
+
+[stem]+RPRO+Relative:0 #;
+
+LEXICON Negation
+
+not VNeg;
+not ANeg;
+
+LEXICON VNeg
+
+[stem]+VNEG:0 #;
+
+LEXICON ANeg
+
+[stem]+ANEG:0 #;
+
+LEXICON Determiner
+
+a[stem]+DET+Indef+fwConsonant:a #;
+a[stem]+DET+Indef+fwVowel:an #;
+
+LEXICON Particle
+
+to Par;
+
+LEXICON Par
+
+[stem]+PAR:0 #;
+
+LEXICON Conjuction
+
+and Conj;
+but Conj;
+or Conj;
+
+LEXICON Conj
+
+[stem]+CONJ:0 #;

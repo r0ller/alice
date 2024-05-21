@@ -14,7 +14,7 @@ morphan::morphan(const std::string& lid){
 
 	lid_=lid;
 	sqlite=db_factory::get_instance();
-	fsts=sqlite->exec_sql("SELECT FST FROM LANGUAGES WHERE LID = '"+lid+"';");
+	fsts=sqlite->exec_sql("SELECT * FROM LANGUAGES WHERE LID = '"+lid+"';");
 	if(fsts==NULL){
 		throw std::runtime_error("No entry found for language id "+lid+" in LANGUAGES db table.");
 	}

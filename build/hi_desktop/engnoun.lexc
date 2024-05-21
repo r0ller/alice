@@ -1,0 +1,22 @@
+!!!engnoun.lexc!!!
+
+Multichar_Symbols [stem] +N +V +Sg +Pl +PREP +ADV +A +Aux +RPRO
++Relative +NEG [Guess] +CON +fwConsonant +fwVowel +Indef +DET
+
+LEXICON Root
+
+Noun ;
+
+LEXICON Noun
+
+[Guess] Constant;
+file Ninf;
+directory Ninf;
+
+LEXICON Constant
+[stem]+CON:0	#;
+
+LEXICON Ninf
+
+[stem]+N+Sg:0   #;
+[stem]+N+Pl:^s  #;
