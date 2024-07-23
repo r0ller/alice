@@ -22,7 +22,7 @@
 	typedef struct node_info{
 		unsigned int node_id;
 		std::set<unsigned int> ref_node_ids;//node ids of referenced nodes;
-		bool ref_to_context;
+		bool ref_to_context=false;
 		std::string symbol;
 		lexicon expression;/*lexeme or constant*/
 		unsigned int left_child;
