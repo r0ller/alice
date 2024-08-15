@@ -91,7 +91,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						transgraph=sparser->longest_match_for_semantic_rules_found();
 						if(transgraph!=NULL){
 							token_paths->validate_parse_tree(sparser->nodes());
-							token_paths->validate_path(lex->word_entries(),transgraph,true);
+							token_paths->validate_path(lex->word_entries(),transgraph,sparser->context_nodes(),true);
 							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
 						}
 						else{
@@ -102,7 +102,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 					}
 					else if(toa&HI_SYNTAX){
 						token_paths->validate_parse_tree(sparser->nodes());
-						token_paths->validate_path(lex->word_entries(),NULL,true);
+						token_paths->validate_path(lex->word_entries(),NULL,sparser->context_nodes(),true);
 					}
 					else{
 						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of semantic error");

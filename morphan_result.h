@@ -58,6 +58,7 @@
 			unsigned int node_id();
 			std::pair<unsigned int,std::string> find_feature_to_inherit(const unsigned int);
 			void copy_features_to_inherit();
+			std::string suffixed_id() const;
 			//prefix();
 			//suffix();
 			//infix();

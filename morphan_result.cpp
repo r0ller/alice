@@ -184,3 +184,7 @@ std::pair<unsigned int,std::string> morphan_result::find_feature_to_inherit(cons
 void morphan_result::copy_features_to_inherit(){
 	features_to_inherit_copy_=features_to_inherit_;
 }
+
+std::string morphan_result::suffixed_id() const{
+	return std::to_string(my_id)+"_"+std::to_string(node_id_);
+}

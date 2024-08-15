@@ -112,12 +112,12 @@
 			void process_depolex_by_row_nr(const std::pair<const unsigned int,field>*, const std::string&,const std::set<unsigned int>&, const lexicon&, const unsigned int&, const std::string&,
 					std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
 			std::set<unsigned int> find_context_reference_node(node_info*);
-			unsigned int find_morpheme_id_for_syntax_node(const std::string&,rapidjson::Value::Object&);
+			std::string find_morpheme_id_for_syntax_node(const std::string&,rapidjson::Value::Object&);
 			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string&,const std::string&,const rapidjson::Value&,std::vector<rapidjson::Value>&);
 			void find_dependency_chain_with_tag_value(const std::string&,const std::string&,const std::string&,const unsigned int&,const rapidjson::Value&,const rapidjson::Value::Object&,std::set<unsigned int>&);
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
 			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&);
-			std::map<unsigned int,unsigned int> loaded_node_id_to_new_node_id_map;
+			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
 		public:
 			interpreter(const unsigned char toa);
 			~interpreter();
@@ -137,6 +137,7 @@
 			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
 			void find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>&, const std::string&,const std::string&,const std::string&,const std::string&,std::set<std::pair<std::string,unsigned int>>&,std::set<std::pair<std::string,unsigned int>>&);
 			std::set<std::pair<std::string,unsigned int>> find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& all_words,const std::vector<lexicon>& words,const std::string& main_verb_symbols);
+			std::vector<node_info> context_nodes();
 	};
 
 	class semper_error:public std::exception{
