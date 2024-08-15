@@ -22,6 +22,7 @@
 	typedef struct node_info{
 		unsigned int node_id;
 		std::set<unsigned int> ref_node_ids;//node ids of referenced nodes;
+		bool ref_to_context=false;
 		std::string symbol;
 		lexicon expression;/*lexeme or constant*/
 		unsigned int left_child;
@@ -110,11 +111,19 @@
 			unsigned int combine_nodes(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&,std::set<std::pair<unsigned int,unsigned int>>&,const std::string&);
 			void process_depolex_by_row_nr(const std::pair<const unsigned int,field>*, const std::string&,const std::set<unsigned int>&, const lexicon&, const unsigned int&, const std::string&,
 					std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
+			std::set<unsigned int> find_context_reference_node(node_info*);
+			std::string find_morpheme_id_for_syntax_node(const std::string&,rapidjson::Value::Object&);
+			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string&,const std::string&,const rapidjson::Value&,std::vector<rapidjson::Value>&);
+			void find_dependency_chain_with_tag_value(const std::string&,const std::string&,const std::string&,const unsigned int&,const rapidjson::Value&,const rapidjson::Value::Object&,std::set<unsigned int>&);
+			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
+			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&);
+			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
 		public:
 			interpreter(const unsigned char toa);
 			~interpreter();
 			int set_node_info(const std::string&, const lexicon&);
 			int set_node_info(const std::string&, const node_info&);
+			int set_node_info_left(const std::string&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
 			transgraph* longest_match_for_semantic_rules_found();
@@ -128,6 +137,7 @@
 			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
 			void find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>&, const std::string&,const std::string&,const std::string&,const std::string&,std::set<std::pair<std::string,unsigned int>>&,std::set<std::pair<std::string,unsigned int>>&);
 			std::set<std::pair<std::string,unsigned int>> find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& all_words,const std::vector<lexicon>& words,const std::string& main_verb_symbols);
+			std::vector<node_info> context_nodes();
 	};
 
 	class semper_error:public std::exception{
@@ -141,16 +151,15 @@
 		private:
 			std::string left_node;
 			std::string right_node;
+			std::string message;
 		public:
 			object_node_missing(std::string left, std::string right){
 				left_node=left;
 				right_node=right;
+				message="Object node missing, cannot interpret: "+left_node+right_node;
 			}
 			~object_node_missing() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Object node missing, cannot interpret: "+left_node+right_node;
 				return message.c_str();
 			}
 	};
@@ -159,16 +168,15 @@
 		private:
 			std::string left_node;
 			std::string right_node;
+			std::string message;
 		public:
 			head_node_missing(std::string left, std::string right){
 				left_node=left;
 				right_node=right;
+				message="Head node missing, cannot interpret: "+left_node+right_node;
 			}
 			~head_node_missing() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Head node missing, cannot interpret: "+left_node+right_node;
 				return message.c_str();
 			}
 	};
@@ -177,10 +185,12 @@
 		private:
 			std::string left_node;
 			std::string right_node;
+			std::string message;
 		public:
 			invalid_combination(std::string left, std::string right){
 				left_node=left;
 				right_node=right;
+				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
 			}
 			~invalid_combination() throw() {};
 			std::string get_left(){
@@ -190,9 +200,6 @@
 				return right_node;
 			}
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Cannot interpret the invalid combination of "+left_node+" and "+right_node;
 				return message.c_str();
 			}
 	};
@@ -201,16 +208,15 @@
 		private:
 			std::string parent_symbol;
 			std::string child_symbol;
+			std::string message;
 		public:
 			missing_prerequisite_symbol(std::string parent,std::string child){
 				parent_symbol=parent;
 				child_symbol=child;
+				message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
 			}
 			~missing_prerequisite_symbol() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Prerequisite symbol check failed for rule "+parent_symbol+"->"+child_symbol;
 				return message.c_str();
 			}
 	};
@@ -218,15 +224,14 @@
 	class dependency_counter_manner_validation_failed:public semper_error{
 		private:
 			std::string functor;
+			std::string message;
 		public:
 			dependency_counter_manner_validation_failed(std::string functor){
 				this->functor=functor;
+				message="Dependency check failed for functor "+functor+" when validating dependency counter and manner.";
 			}
 			~dependency_counter_manner_validation_failed() throw() {};
 			virtual const char *what() const throw(){
-				std::string message;
-
-				message="Dependency check failed for functor "+functor+" when validating dependency counter and manner.";
 				return message.c_str();
 			}
 	};

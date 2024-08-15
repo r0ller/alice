@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
 
 	const char *analyses,*script_chr=NULL;
-	string text,script,language="sh";
+	string text,script,language="sh";//language="HUN";
 	FILE *fp;
 	char line[256];
 	unsigned char toa=0,crh=0;
@@ -98,6 +98,11 @@ int main(int argc,char **argv){
 			//text="küld";
 			//text="kell só és bors .";
 			//text="mi kell ?";
+			//text="{ \" anya \" : 1 }";
+			//text="{ \" anya \" : { \" darab \" : 1 } }";
+			//text="{ \" darab \" : 1 }";
+			//text="{ \" anya \" : . }";
+			//text="list files !";
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;

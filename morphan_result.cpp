@@ -19,6 +19,20 @@ morphan_result::morphan_result(const std::string& word, const std::string& lid, 
 	node_id_=0;
 }
 
+morphan_result::morphan_result(const morphan_result& source){
+	word_stem=source.word_stem;
+	word_gcat=source.word_gcat;
+	word_morphemes=source.word_morphemes;
+	word_form=source.word_form;
+	features=source.features;
+	erroneous=source.erroneous;
+	my_id=source.my_id;
+	lid=source.lid;
+	global_features_copy_=source.global_features_copy_;
+	features_to_inherit_copy_=source.features_to_inherit_copy_;
+	node_id_=0;
+}
+
 morphan_result::morphan_result(const std::string& word, const std::vector<std::string>& morphemes, const std::string& lid){
 	unsigned int nr_of_morphemes=0,i;
 	size_t hit=0;
@@ -169,4 +183,8 @@ std::pair<unsigned int,std::string> morphan_result::find_feature_to_inherit(cons
 
 void morphan_result::copy_features_to_inherit(){
 	features_to_inherit_copy_=features_to_inherit_;
+}
+
+std::string morphan_result::suffixed_id() const{
+	return std::to_string(my_id)+"_"+std::to_string(node_id_);
 }

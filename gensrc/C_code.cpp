@@ -91,7 +91,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						transgraph=sparser->longest_match_for_semantic_rules_found();
 						if(transgraph!=NULL){
 							token_paths->validate_parse_tree(sparser->nodes());
-							token_paths->validate_path(lex->word_entries(),transgraph,true);
+							token_paths->validate_path(lex->word_entries(),transgraph,sparser->context_nodes(),true);
 							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"TRUE");
 						}
 						else{
@@ -102,7 +102,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 					}
 					else if(toa&HI_SYNTAX){
 						token_paths->validate_parse_tree(sparser->nodes());
-						token_paths->validate_path(lex->word_entries(),NULL,true);
+						token_paths->validate_path(lex->word_entries(),NULL,sparser->context_nodes(),true);
 					}
 					else{
 						throw std::runtime_error("Logic error: missing type of analysis code coverage in case of semantic error");
@@ -323,22 +323,32 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	morphan_result::clear_features_to_inherit();
 	transgraph::clear_node_functor_map();
 	}
-	analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
-	if(analyses.empty()==false){
-		analysischr=new char[analyses.length()+1];
-		analyses.copy(analysischr,analyses.length(),0);
-		analysischr[analyses.length()]='\0';
+	try{
+		analyses=token_paths->create_analysis(toa,language,target_language,std::string(human_input),timestamp,std::string(source));
+		if(analyses.empty()==false){
+			analysischr=new char[analyses.length()+1];
+			analyses.copy(analysischr,analyses.length(),0);
+			analysischr[analyses.length()]='\0';
+		}
+		lexer::delete_cache();
+		delete token_paths;
+		token_paths=NULL;
+		if(sqlite!=NULL){
+			//TODO: consider providing a release() function for the library
+			//and NOT closing+freeing the db here as it'd increase performance
+			//as in case of not freeing the stemmer.
+			sqlite->close();
+			db_factory::delete_instance();
+			sqlite=NULL;
+		}
 	}
-	lexer::delete_cache();
-	delete token_paths;
-	token_paths=NULL;
-	if(sqlite!=NULL){
-		//TODO: consider providing a release() function for the library
-		//and NOT closing+freeing the db here as it'd increase performance
-		//as in case of not freeing the stemmer.
-		sqlite->close();
-		db_factory::delete_instance();
-		sqlite=NULL;
+	catch(std::runtime_error& exception){//Catch underived exceptions thrown with string based messages
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"runtime error:"+std::string(exception.what()));
+		return NULL;
+	}
+	catch(...){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"unexpected error ...");
+		return NULL;
 	}
 	return analysischr;
 }

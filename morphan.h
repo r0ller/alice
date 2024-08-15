@@ -11,25 +11,29 @@
 	class morphan{
 		private:
 			morphan(const std::string&);
-			static morphan *singleton_instance;
+			static std::map<std::string,morphan*> lid_instances;
 			fsm *fst=NULL;
 			apply_handle *morphan_handle=NULL;
 			char *pfstname=NULL;
 			std::string lid_;
 			std::string lid();
+			bool natural_language;
 		public:
 			~morphan();
 			static morphan *get_instance(const std::string& lid){
-				if(morphan::singleton_instance==NULL){
-					morphan::singleton_instance=new morphan(lid);
+				morphan *lid_instance=NULL;
+				auto instance_found=lid_instances.find(lid);
+				if(instance_found==lid_instances.end()){
+					lid_instance=new morphan(lid);
+					lid_instances.insert(std::make_pair(lid,lid_instance));
 				}
-				else if(morphan::singleton_instance->lid()!=lid){
-					delete morphan::singleton_instance;
-					morphan::singleton_instance=new morphan(lid);
+				else{
+					lid_instance=instance_found->second;
 				}
-				return morphan::singleton_instance;
+				return lid_instance;
 			};
 			std::vector<morphan_result> *analyze(const std::string&, const bool);
 			std::vector<std::string> generate(const std::string&);
+			bool is_natural_language();
 	};
 #endif

@@ -4,7 +4,7 @@
 #include "query_result.h"
 #include "db_factory.h"
 
-morphan *morphan::singleton_instance=NULL;
+std::map<std::string,morphan*> morphan::lid_instances;
 
 morphan::morphan(const std::string& lid){
 	db *sqlite=NULL;
@@ -14,11 +14,12 @@ morphan::morphan(const std::string& lid){
 
 	lid_=lid;
 	sqlite=db_factory::get_instance();
-	fsts=sqlite->exec_sql("SELECT FST FROM LANGUAGES WHERE LID = '"+lid+"';");
+	fsts=sqlite->exec_sql("SELECT * FROM LANGUAGES WHERE LID = '"+lid+"';");
 	if(fsts==NULL){
 		throw std::runtime_error("No entry found for language id "+lid+" in LANGUAGES db table.");
 	}
 	fstname=*fsts->field_value_at_row_position(0,"fst");
+	natural_language=std::atoi(fsts->field_value_at_row_position(0,"natural_language")->c_str());
 	#if defined(__EMSCRIPTEN__) && FS==NODEJS
 		fstname="/virtual/"+fstname;
 	#else
@@ -51,7 +52,9 @@ morphan::~morphan(){
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"destructing morphan");
 	apply_clear(morphan::morphan_handle);
 	fsm_destroy(morphan::fst);
-	morphan::singleton_instance=NULL;
+	for(auto i:morphan::lid_instances){
+		delete i.second;
+	}
 	if(pfstname!=NULL) delete []pfstname;
 }
 
@@ -144,4 +147,8 @@ std::vector<std::string> morphan::generate(const std::string& analysis){
 		result=apply_down(morphan::morphan_handle, NULL);
 	}
 	return words;
+}
+
+bool morphan::is_natural_language(){
+	return natural_language;
 }

@@ -14,7 +14,8 @@ create table LANGUAGES(
 lid varchar(5) primary key,
 language varchar(128),
 head_position smallint, /*0: undefined, 1: head first, 2: head last*/
-fst varchar(256)
+fst varchar(256),
+natural_language smallint /*0: false, otherwise true*/
 );
 
 create table GCAT_LID(
@@ -47,8 +48,21 @@ create table SYMBOLS(/*Table for all kinds of symbols: terminals (including gcat
 symbol varchar(12),/*Currently only used to reference from gcat and rule_to_rule_map*/
 lid varchar(5) references LANGUAGES(lid),
 description varchar(128),
-PRIMARY KEY(symbol, lid)
+PRIMARY KEY(symbol,lid)
 );
+
+/*table for set of symbols to support multi-lingual symbol use in other tables as foreign key*/
+create table SYMBOL_SET(
+symbol varchar(12),
+PRIMARY KEY(symbol)
+);
+
+CREATE TRIGGER SYMBOLS_TRIGGER
+AFTER INSERT ON SYMBOLS
+FOR EACH ROW
+BEGIN
+INSERT OR IGNORE INTO SYMBOL_SET(symbol) select symbol from symbols where rowid=last_insert_rowid();
+END;
 
 /*Handles semantic dependencies like e.g. kick the bucket=kick|1|1|the;kick|1|2|bucket; and so on like look|1|1|up;look|2|1|after;*/
 /*That is, it is to store dependencies of one semantic unit (szótári egység)*/
@@ -89,15 +103,15 @@ dependency_lookup_subtree_symbol varchar(12),
 dependent_set_op smallint check(dependent_set_op>0 and dependent_set_op<6),
 lid varchar(5) references LANGUAGES(lid),
 PRIMARY KEY(parent_symbol, head_root_symbol, non_head_root_symbol, step)
-FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(non_head_root_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(main_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(parent_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(head_root_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(non_head_root_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(main_node_symbol) REFERENCES SYMBOL_SET(symbol)
 FOREIGN KEY(main_node_lexeme) REFERENCES FUNCTOR_DECL(functor) DEFERRABLE INITIALLY DEFERRED
-FOREIGN KEY(main_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(dependent_node_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(main_lookup_subtree_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(dependent_node_symbol) REFERENCES SYMBOL_SET(symbol)
 FOREIGN KEY(dependent_node_lexeme) REFERENCES FUNCTOR_DECL(functor) DEFERRABLE INITIALLY DEFERRED
-FOREIGN KEY(dependency_lookup_subtree_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
+FOREIGN KEY(dependency_lookup_subtree_symbol) REFERENCES SYMBOL_SET(symbol)
 );
 
 create table LEXICON(
@@ -204,10 +218,10 @@ non_head_symbol varchar(12),
 precedence varchar(12),
 action text,/*if content is in quotes then it is regarded as code, if not then it is regarded as filename*/
 PRIMARY KEY(lid, parent_symbol, head_symbol, non_head_symbol)
-FOREIGN KEY(parent_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(non_head_symbol, lid) REFERENCES SYMBOLS(symbol, lid)
-FOREIGN KEY(precedence, lid) REFERENCES SYMBOLS(symbol, lid) /*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
+FOREIGN KEY(parent_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(head_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(non_head_symbol) REFERENCES SYMBOL_SET(symbol)
+FOREIGN KEY(precedence) REFERENCES SYMBOL_SET(symbol) /*Reference to GCAT is too strict as it's not a must for a precedence symbol to match a token*/
 );
 
 create table SETTINGS(
@@ -233,5 +247,5 @@ dependency text,
 ref_d_key smallint,
 tags text,
 c_value text,
-PRIMARY KEY(source,timestamp,sentence,rank,a_counter,mood,function)/*key contains that of the analyses table to be able to make match*/
+PRIMARY KEY(source,timestamp,sentence,rank,a_counter,mood,function)/*key contains that of the analyses table to be able to make match -mood and function don't play a role in matching due to having a timestamp*/
 );

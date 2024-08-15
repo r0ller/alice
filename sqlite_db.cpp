@@ -16,12 +16,12 @@ sqlite_db::~sqlite_db(){
 
 void sqlite_db::open(const std::string& filename){
 	db_uri_=filename;
-	if(sqlite3_open(filename.c_str(),&sqlite)!=SQLITE_OK) throw failed_to_open_db();
+	if(sqlite3_open(filename.c_str(),&sqlite)!=SQLITE_OK) throw failed_to_open_db(db_factory::get_instance()->error_message());
 	return;
 }
 
 void sqlite_db::close(){
-	if(sqlite3_close(sqlite)!=SQLITE_OK) throw failed_to_close_db();
+	if(sqlite3_close(sqlite)!=SQLITE_OK) throw failed_to_close_db(db_factory::get_instance()->error_message());
 	return;
 }
 
@@ -35,7 +35,7 @@ query_result *sqlite_db::exec_sql(const std::string& sql){
 	result_set=new query_result();
 	if(sqlite3_exec(sqlite, sql.c_str(), sqlite_db::fptr_store_row_data, result_set, NULL)!=SQLITE_OK){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"sql: "+sql);
-		throw sql_execution_error();
+		throw sql_execution_error(db_factory::get_instance()->error_message());
 	}
 	if(result_set->nr_of_result_rows()==0){
 		delete result_set;

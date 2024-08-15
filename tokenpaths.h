@@ -31,7 +31,7 @@
 			void add_internal_invalid_path(const std::vector<lexicon>&);
 			void reset();
 			std::string semantics(std::vector<lexicon>&, std::map<std::string,std::string>&,unsigned int&,const std::string&);
-			std::string morphology(std::vector<lexicon>&,unsigned int&);
+			std::string morphology(std::vector<lexicon>&,unsigned int&,std::vector<node_info>&);
 			std::string yyerror;
 			std::string functors(const std::map<std::string,std::map<std::string,std::string> >&,const std::map<std::string,std::vector<lexicon> >&,const unsigned int&,std::string&);
 			std::string dependencies(query_result&,std::map<std::pair<std::string,std::string>,std::string>&);
@@ -45,14 +45,15 @@
 			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
 			unsigned char toa;
 			std::vector<std::map<unsigned int,std::pair<std::string,unsigned int>>> valid_graphs_node_functor_maps;
+			std::vector<std::vector<node_info>> valid_context_nodes;
 		public:
 			tokenpaths(const unsigned char);
 			tokenpaths(const unsigned int,const unsigned int);
 			~tokenpaths();
 			bool is_any_left();
 			lexicon next_word(const std::vector<lexicon>&);
-			void validate_path(const std::vector<lexicon>&, const transgraph *, const bool);
-			void validate_path_wo_checks(const std::vector<lexicon>&,const transgraph*);
+			void validate_path(const std::vector<lexicon>&, const transgraph *, const std::vector<node_info>&, const bool);
+			void validate_path_wo_checks(const std::vector<lexicon>&,const transgraph*, const std::vector<node_info>&);
 			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
 			std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::string&,const std::time_t&,const std::string&);

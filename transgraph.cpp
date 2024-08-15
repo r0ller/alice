@@ -68,7 +68,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			transcript+="\"functor\":\""+functor.first+"\",";
 		}
 		transcript+="\"d_key\":\""+std::to_string(functor.second)+"\",";
-		transcript+="\"morpheme id\":\""+std::to_string(morphan->id())+"\",";
+		transcript+="\"morpheme id\":\""+morphan->suffixed_id()+"\",";
 	}
 	else{
 		transcript="{\"id\":\""+my_id+"\",";

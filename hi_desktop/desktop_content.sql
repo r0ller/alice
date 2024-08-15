@@ -15,8 +15,8 @@ insert into PRECEDENCES values('R','%right');
 insert into PRECEDENCES values('P','%precedence');
 insert into PRECEDENCES values('N','%nonassoc');
 
-insert into LANGUAGES values('HUN', 'Hungarian', '1', 'magyar.fst');
-insert into LANGUAGES values('ENG', 'English', '1', 'english.fst');
+/*insert into LANGUAGES values('HUN', 'Hungarian', '1', 'magyar.fst', '1');*/
+insert into LANGUAGES values('ENG', 'English', '1', 'english.fst', '1');
 
 /*TODO: remove ENG_ prefix later from non-terminals*/
 insert into SYMBOLS values('A', 'ENG', 'Adjective');
@@ -166,7 +166,7 @@ insert into SYMBOLS values('ENG_Pron_qw', 'ENG', NULL);
 insert into SYMBOLS values('ENG_Pron', 'ENG', NULL);
 insert into SYMBOLS values('ENG_Vbar6','ENG','questioning');
 
-insert into SYMBOLS values('HUN_VP','HUN',NULL);
+/*insert into SYMBOLS values('HUN_VP','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerbPfx','HUN',NULL);
 insert into SYMBOLS values('HUN_ImpVerb','HUN',NULL);
 insert into SYMBOLS values('HUN_Verb_lfea_ConjDefSg2','HUN',NULL);
@@ -185,7 +185,7 @@ insert into SYMBOLS values('t_HUN_Verb_ConjDefSg2','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Verb_Stem','HUN',NULL);
 insert into SYMBOLS values('t_HUN_Vbpfx_Stem','HUN',NULL);
 insert into SYMBOLS values('t_Con','HUN',NULL);
-insert into SYMBOLS values('t_HUN_CON_Acc','HUN',NULL);
+insert into SYMBOLS values('t_HUN_CON_Acc','HUN',NULL);*/
 
 /*Entries with NULL or '0' value for token are not to be generated in the bison source.*/
 insert into GCAT values('CON', 'Stem', 'ENG', '1', NULL, NULL);
@@ -486,19 +486,19 @@ const node_info& ENG_Punct=sparser->get_node_info($2);
 std::vector<unsigned int> nodes;
 sparser->get_nodes_by_symbol(ENG_Punct,"QuestionMark",std::string(),nodes);
 if(nodes.size()==1){
-  const node_info& punct=sparser->get_node_info(nodes[0]);
-  sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("interrogative"),true);
+		const node_info& punct=sparser->get_node_info(nodes[0]);
+		sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("interrogative"),true);
 }
 else{
-  nodes.clear();
-  sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),nodes);
-  if(nodes.size()==1){
-    const node_info& punct=sparser->get_node_info(nodes[0]);
-    sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("indicative"),true);
-  }
-  else{
-    sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("imperative"),true);
-  }
+		nodes.clear();
+		sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),nodes);
+		if(nodes.size()==1){
+				const node_info& punct=sparser->get_node_info(nodes[0]);
+				sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("indicative"),true);
+		}
+		else{
+				sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("imperative"),true);
+		}
 }
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP ENG_Punct");
 $$=sparser->combine_nodes("S",ENG_VP,ENG_Punct);"');

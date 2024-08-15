@@ -77,7 +77,7 @@ void tokenpaths::reset(){
 	words.clear();
 }
 
-void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgraph* transgraph, const bool store){
+void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgraph* transgraph, const std::vector<node_info>& context_nodes, const bool store){
 	//TODO:check why words are accepted from outside when the instance anyway has its own words attribute
 	if(is_any_path_left==true&&words.size()==path_indices.size()){
 		if(current_path_nr<path_nr_to_stop_at){
@@ -87,17 +87,19 @@ void tokenpaths::validate_path(const std::vector<lexicon>& words, const transgra
 				valid_paths.push_back(words);
 				valid_graphs.push_back(transgraph);
 				valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
+				valid_context_nodes.push_back(context_nodes);
 			}
 			reset();
 		}
 	}
 }
 
-void tokenpaths::validate_path_wo_checks(const std::vector<lexicon>& words, const transgraph* transgraph){
+void tokenpaths::validate_path_wo_checks(const std::vector<lexicon>& words, const transgraph* transgraph, const std::vector<node_info>& context_nodes){
 	//TODO:check why words are accepted from outside when the instance anyway has its own words attribute
 	valid_paths.push_back(words);
 	valid_graphs.push_back(transgraph);
 	valid_graphs_node_functor_maps.push_back(transgraph::node_functor_map());
+	valid_context_nodes.push_back(context_nodes);
 	reset();
 }
 
@@ -379,28 +381,49 @@ std::string tokenpaths::semantics(std::vector<lexicon>& word_analyses, std::map<
 	return transcript;
 }
 
-std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned int& nr_of_cons){
+std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned int& nr_of_cons,std::vector<node_info>& context_nodes){
 	std::string morphology;
 
 	nr_of_cons=0;
 	for(auto&& word:word_analyses){
-		morphology+="{\"morpheme id\":\""+std::to_string(word.morphalytics->id())+"\",";
-		morphology+="\"word\":\""+word.morphalytics->word()+"\",";
-		morphology+="\"lexeme\":\""+word.lexeme+"\",";
-		morphology+="\"stem\":\""+word.morphalytics->stem()+"\",";
-		morphology+="\"gcat\":\""+word.morphalytics->gcat()+"\"";
+		morphology+="{\"morpheme id\":\""+word.morphalytics->suffixed_id()+"\",";
+		morphology+="\"word\":\""+transgraph::apply_json_escapes(word.morphalytics->word())+"\",";
+		morphology+="\"lexeme\":\""+transgraph::apply_json_escapes(word.lexeme)+"\",";
+		morphology+="\"stem\":\""+transgraph::apply_json_escapes(word.morphalytics->stem())+"\",";
+		morphology+="\"gcat\":\""+transgraph::apply_json_escapes(word.morphalytics->gcat())+"\"";
 		if(word.morphalytics->gcat()=="CON") ++nr_of_cons;
 		if(word.morphalytics->is_mocked()==false){
 			morphology+=",\"tags\":[";
 			unsigned int morphan_index=0;
 			for(auto&& i:word.morphalytics->morphemes()){
-				morphology+="\""+i+"\",";
+				morphology+="\""+transgraph::apply_json_escapes(i)+"\",";
 				++morphan_index;
 			}
 			if(morphology.back()==',') morphology.pop_back();
 			morphology+="]";
 		}
 		morphology+="},";
+	}
+	for(auto node:context_nodes){
+		if(node.expression.morphalytics!=NULL){
+			morphology+="{\"morpheme id\":\""+node.expression.morphalytics->suffixed_id()+"\",";
+			morphology+="\"word\":\""+transgraph::apply_json_escapes(node.expression.morphalytics->word())+"\",";
+			morphology+="\"lexeme\":\""+transgraph::apply_json_escapes(node.expression.lexeme)+"\",";
+			morphology+="\"stem\":\""+transgraph::apply_json_escapes(node.expression.morphalytics->stem())+"\",";
+			morphology+="\"gcat\":\""+transgraph::apply_json_escapes(node.expression.morphalytics->gcat())+"\"";
+			if(node.expression.morphalytics->gcat()=="CON") ++nr_of_cons;
+			if(node.expression.morphalytics->is_mocked()==false){
+				morphology+=",\"tags\":[";
+				unsigned int morphan_index=0;
+				for(auto&& i:node.expression.morphalytics->morphemes()){
+					morphology+="\""+transgraph::apply_json_escapes(i)+"\",";
+					++morphan_index;
+				}
+				if(morphology.back()==',') morphology.pop_back();
+				morphology+="]";
+			}
+			morphology+="},";
+		}
 	}
 	return morphology;
 }
@@ -531,8 +554,9 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 		std::map<std::string,std::vector<lexicon> > words_analyses=lexer::words_analyses();
 		if(toa&HI_MORPHOLOGY){
 			analysis+="\"morphology\":[";
+			std::vector<node_info> empty_context_nodes;
 			for(auto&& word_analyses:words_analyses){
-				analysis+=morphology(word_analyses.second,nr_of_cons);
+				analysis+=morphology(word_analyses.second,nr_of_cons,empty_context_nodes);
 			}
 			if(analysis.back()==',') analysis.pop_back();
 			analysis+="],";
@@ -589,7 +613,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			analysis="{";
 			float rank=0;
 			if(toa&HI_MORPHOLOGY){
-				analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons);
+				analysis+="\"morphology\":["+morphology(valid_paths.at(i),nr_of_cons,valid_context_nodes.at(i));
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 			}
@@ -728,7 +752,7 @@ std::string tokenpaths::traverse_nodes_lr(const node_info& root_node, const std:
 	std::string syntax="{\"symbol\":\""+root_node.symbol+"\"";
 	syntax+=",\"id\":\""+std::to_string(root_node.node_id)+"\"";
 	if(root_node.left_child==0&&root_node.right_child==0){
-		if(root_node.expression.morphalytics!=NULL) syntax+=",\"morpheme id\":\""+std::to_string(root_node.expression.morphalytics->id())+"\"";
+		if(root_node.expression.morphalytics!=NULL) syntax+=",\"morpheme id\":\""+root_node.expression.morphalytics->suffixed_id()+"\"";
 		syntax+="}";
 		return syntax;
 	}
