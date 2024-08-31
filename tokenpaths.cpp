@@ -533,7 +533,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	return functors;
 }
 
-std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source){
+std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source,const std::string& ref_id){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
 	std::multimap<float,std::string> ranked_analyses_map;
@@ -640,7 +640,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank));
 				std::set<std::string> features_to_inherit;
-				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path,features_to_inherit);
+				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path,features_to_inherit,std::to_string(timestamp)+"_"+ref_id);
 				if(analysis.back()==',') analysis.pop_back();
 				analysis+="],";
 				analysis+="\"rank\":"+std::to_string(rank)+",";

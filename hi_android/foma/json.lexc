@@ -1,6 +1,6 @@
 !!!json.lexc!!!
 
-Multichar_Symbols [stem] +Punct +Quotes +OpeningSBracket +ClosingSBracket +OpeningCBracket +ClosingCBracket +Comma +FullStop +Colon +Relative
+Multichar_Symbols [stem] +Punct +Quotes +OpeningSBracket +ClosingSBracket +OpeningCBracket +ClosingCBracket +Comma +Hash +Colon +Relative
 
 LEXICON Root
 
@@ -14,5 +14,5 @@ LEXICON Json
 {[stem]+Punct+OpeningCBracket:{ #;
 }[stem]+Punct+ClosingCBracket:} #;
 ,[stem]+Punct+Comma:, #;
-.[stem]+Punct+Dot+Relative:. #;
+%#[stem]+Punct+Hash+Relative:%# #;
 %:[stem]+Punct+Colon:%: #;

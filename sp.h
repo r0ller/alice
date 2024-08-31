@@ -118,8 +118,10 @@
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
 			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&);
 			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
+			std::string timestamp_;
+			std::string prev_ref_id_;
 		public:
-			interpreter(const unsigned char toa);
+			interpreter(const unsigned char toa,const std::string&,const std::string&);
 			~interpreter();
 			int set_node_info(const std::string&, const lexicon&);
 			int set_node_info(const std::string&, const node_info&);

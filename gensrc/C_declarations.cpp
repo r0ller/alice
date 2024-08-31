@@ -1,3 +1,5 @@
+#ifndef C_DECLARATIONS
+#define C_DECLARATIONS
 int yylex(yy::parser::semantic_type* yylval);
 #include <iostream>
 #include <locale>
@@ -20,8 +22,10 @@ int yylex(yy::parser::semantic_type* yylval);
 #include "morphan_result.h"
 #include "morphan.h"
 #include "transgraph.h"
+#include "pp_factory.h"
 morphan *stemmer=NULL;
 lexer *lex=NULL;
 interpreter *sparser=NULL;
 tokenpaths *token_paths=NULL;
 db *db_factory::singleton_instance=NULL;
+#endif

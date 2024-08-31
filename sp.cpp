@@ -8,9 +8,11 @@
 #include <numeric>
 
 /*PUBLIC*/
-interpreter::interpreter(const unsigned char toa){
+interpreter::interpreter(const unsigned char toa,const std::string& timestamp,const std::string& prev_ref_id){
 	nr_of_nodes_=0;
 	toa_=toa;
+	timestamp_=timestamp;
+	prev_ref_id_=prev_ref_id;
 }
 
 interpreter::~interpreter(){
@@ -776,8 +778,8 @@ void interpreter::find_dependencies_for_functor(const std::string& parent_node_i
 		else{
 			throw std::runtime_error("Inconsistent setup of manner, semantic_dependency and ref_d_key for lexeme "+node.expression.lexeme+", d_key "+d_key+" and d_counter "+d_counter+" in DEPOLEX db table.");
 		}
-		if(node.expression.gcat=="CON"){
-			depolex_entry=followup_dependency(depolex_entry->first,"CON",d_key,dependency_found_for_functor,*node.expression.dependencies);
+		if(node.expression.gcat=="CON"||node.expression.lexicon_entry==false){
+			depolex_entry=followup_dependency(depolex_entry->first,node.expression.gcat,d_key,dependency_found_for_functor,*node.expression.dependencies);
 		}
 		else{
 			depolex_entry=followup_dependency(depolex_entry->first,node.expression.lexeme,d_key,dependency_found_for_functor,*node.expression.dependencies);
@@ -2519,7 +2521,11 @@ std::set<unsigned int> interpreter::find_context_reference_node(node_info *node)
 	//(as an array e.g. {"qword":["when","what",...]} or as multiple tags like {"qword":"when","qword":"what",...})
 	//this seems to be able to catch all
 	//TODO: the special json dot is put in db as a normal json string value. Consider if it's ok.
-	ref_tagged_entries=sqlite->exec_sql("SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\"ref\":\""+node->expression.morphalytics->stem()+"\"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;");
+	std::string ref_value=node->expression.morphalytics->stem();
+	if(prev_ref_id_.empty()==false){
+		ref_value+=timestamp_+"_"+prev_ref_id_;
+	}
+	ref_tagged_entries=sqlite->exec_sql("SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\"ref\":\""+ref_value+"\"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;");
 	if(ref_tagged_entries!=NULL){
 		std::string source=*ref_tagged_entries->field_value_at_row_position(0,"source");
 		std::string timestamp=*ref_tagged_entries->field_value_at_row_position(0,"timestamp");
@@ -2555,7 +2561,7 @@ std::set<unsigned int> interpreter::find_context_reference_node(node_info *node)
 			}
 			else{
 				auto semanticsArray=analysisObject["semantics"].GetArray();
-				find_dependency_chain_with_tag_value(node->expression.lid,"ref",node->expression.morphalytics->stem(),0,semanticsArray[0],analysisObject,nodes_found);
+				find_dependency_chain_with_tag_value(node->expression.lid,"ref",ref_value,0,semanticsArray[0],analysisObject,nodes_found);
 			}
 			delete ref_tagged_analysis;
 		}
@@ -2618,7 +2624,6 @@ void interpreter::find_dependency_chain_with_tag_value(const std::string& lid,co
 	unsigned int dep_node_id=0;
 
 	if(parent_node_id>0){
-		//dep_node_id=create_node2(lid,dependency["id"].GetString(),analysisObject);
 		auto syntaxArray=analysisObject["syntax"].GetArray();
 		auto syntaxObject=syntaxArray[0].GetObject();
 		dep_node_id=find_context_node_ids_for_syntax_node(lid,dependency["id"].GetString(),analysisObject,syntaxObject);
@@ -2642,7 +2647,6 @@ void interpreter::find_dependency_chain_with_tag_value(const std::string& lid,co
 	else{
 		for(auto& tag:dependency["tags"].GetArray()){
 			if(tag.HasMember(key.c_str())==true&&tag[key.c_str()].GetString()==value){
-				//dep_node_id=create_node2(lid,dependency["id"].GetString(),analysisObject);
 				auto syntaxArray=analysisObject["syntax"].GetArray();
 				auto syntaxObject=syntaxArray[0].GetObject();
 				dep_node_id=find_context_node_ids_for_syntax_node(lid,dependency["id"].GetString(),analysisObject,syntaxObject);
@@ -2741,11 +2745,17 @@ unsigned int interpreter::find_context_node_ids_for_syntax_node(const std::strin
 						std::string gcat=morphologyObject["gcat"].GetString();
 						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"moprhologyObject gcat:"+gcat);
 						std::vector<std::string> morphemes;
-						for(auto& i:morphologyObject["tags"].GetArray()){
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"moprhologyObject tag:"+std::string(i.GetString()));
-							morphemes.push_back(i.GetString());
+						morphan_result *morphalytics=NULL;
+						if(gcat=="CON"){
+							morphalytics=new morphan_result(word,lid,"");
 						}
-						morphan_result *morphalytics=new morphan_result(word,morphemes,lid);//TODO:get lid from analysis once it's there
+						else{
+							for(auto& i:morphologyObject["tags"].GetArray()){
+								logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"moprhologyObject tag:"+std::string(i.GetString()));
+								morphemes.push_back(i.GetString());
+							}
+							morphalytics=new morphan_result(word,morphemes,lid);//TODO:get lid from analysis once it's there
+						}
 						lexicon lex_word=lexer::tokenize_word(*morphalytics,lid);
 						if(morphalytics==NULL||morphalytics!=NULL&&morphalytics->is_erroneous()==true){
 							for(unsigned int i=0;i<language_entries->nr_of_result_rows();++i){
