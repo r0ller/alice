@@ -3422,42 +3422,27 @@ JSON_String JSON_Colon
 const node_info& JSON_String=sparser->get_node_info($1);
 const node_info& JSON_Colon=sparser->get_node_info($2);
 sparser->add_feature_to_leaf(JSON_Colon,"Punct",std::string("main_verb"));
-sparser->add_feature_to_leaf(JSON_Colon,"Punct",std::string("json_key_value"),false,true);
 sparser->add_feature_to_leaf(JSON_Colon,"main_verb",std::string("indicative"),true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key->JSON_String JSON_Colon");
 $$=sparser->combine_nodes("JSON_Key",JSON_String,JSON_Colon);
 };
 JSON_Key_Value_Pair:
-JSON_Key JSON_Array
-{
-const node_info& JSON_Key=sparser->get_node_info($1);
-const node_info& JSON_Array=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Array");
-$$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Array);
-
-}
-|JSON_Key JSON_CON
-{
-const node_info& JSON_Key=sparser->get_node_info($1);
-const node_info& JSON_CON=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_CON");
-$$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_CON);
-
-}
-|JSON_Key JSON_Hash_Ref
+JSON_Key JSON_Hash_Ref
 {
 const node_info& JSON_Key=sparser->get_node_info($1);
 const node_info& JSON_Hash_Ref=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Hash_Ref");
 $$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Hash_Ref);
+
 }
-|JSON_Key JSON_String
+|JSON_Key JSON_Value
 {
 const node_info& JSON_Key=sparser->get_node_info($1);
-const node_info& JSON_String=sparser->get_node_info($2);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_String");
-$$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_String);
-
+const node_info& JSON_Value=sparser->get_node_info($2);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Value");
+$$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Value);
+const node_info& JSON_Key_Value_Pair=sparser->get_node_info($$);
+sparser->add_feature_to_leaf(JSON_Key_Value_Pair,"JSON_Colon","Punct",std::string("json_key_value"),false,true);
 };
 JSON_Open_Array:
 JSON_Open_Array JSON_Value_List_Element
@@ -3580,6 +3565,28 @@ const node_info& JSON_Open_String=sparser->get_node_info($1);
 const node_info& JSON_Quotes=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_String->JSON_Open_String JSON_Quotes");
 $$=sparser->combine_nodes("JSON_String",JSON_Open_String,JSON_Quotes);
+
+};
+JSON_Value:
+JSON_Array 
+{
+const node_info& JSON_Array=sparser->get_node_info($1);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value->JSON_Array");
+$$=sparser->set_node_info("JSON_Value",JSON_Array);
+
+}
+|JSON_CON 
+{
+const node_info& JSON_CON=sparser->get_node_info($1);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value->JSON_CON");
+$$=sparser->set_node_info("JSON_Value",JSON_CON);
+
+}
+|JSON_String 
+{
+const node_info& JSON_String=sparser->get_node_info($1);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value->JSON_String");
+$$=sparser->set_node_info("JSON_Value",JSON_String);
 
 };
 JSON_Value_List_Element:

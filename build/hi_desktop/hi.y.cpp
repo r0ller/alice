@@ -685,8 +685,9 @@ namespace yy {
         S_JSON_Punct_Stem = 334,                 // JSON_Punct_Stem
         S_JSON_Quotes = 335,                     // JSON_Quotes
         S_JSON_String = 336,                     // JSON_String
-        S_JSON_Value_List_Element = 337,         // JSON_Value_List_Element
-        S_S = 338                                // S
+        S_JSON_Value = 337,                      // JSON_Value
+        S_JSON_Value_List_Element = 338,         // JSON_Value_List_Element
+        S_S = 339                                // S
       };
     };
 
@@ -1188,9 +1189,9 @@ namespace yy {
     /// Constants.
     enum
     {
-      yylast_ = 1690,     ///< Last index in yytable_.
-      yynnts_ = 223,  ///< Number of nonterminal symbols.
-      yyfinal_ = 283 ///< Termination state number.
+      yylast_ = 1692,     ///< Last index in yytable_.
+      yynnts_ = 224,  ///< Number of nonterminal symbols.
+      yyfinal_ = 284 ///< Termination state number.
     };
 
 
@@ -1199,7 +1200,7 @@ namespace yy {
 
 
 } // yy
-#line 1203 "build/hi_desktop/hi.y.cpp"
+#line 1204 "build/hi_desktop/hi.y.cpp"
 
 
 
@@ -1244,7 +1245,7 @@ tokenpaths *token_paths=NULL;
 db *db_factory::singleton_instance=NULL;
 #endif
 
-#line 1248 "build/hi_desktop/hi.y.cpp"
+#line 1249 "build/hi_desktop/hi.y.cpp"
 
 
 #ifndef YY_
@@ -1317,7 +1318,7 @@ db *db_factory::singleton_instance=NULL;
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 1321 "build/hi_desktop/hi.y.cpp"
+#line 1322 "build/hi_desktop/hi.y.cpp"
 
   /// Build a parser object.
   parser::parser ()
@@ -1778,7 +1779,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_1Con->ENG_Con"
 yylhs.value=sparser->set_node_info("ENG_1Con",ENG_Con);
 
 }
-#line 1782 "build/hi_desktop/hi.y.cpp"
+#line 1783 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 3: // ENG_A: ENG_A_Stem
@@ -1789,7 +1790,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_A->ENG_A_Stem"
 yylhs.value=sparser->set_node_info("ENG_A",ENG_A_Stem);
 
 }
-#line 1793 "build/hi_desktop/hi.y.cpp"
+#line 1794 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 4: // ENG_A0NEG: ENG_A
@@ -1800,7 +1801,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_A0NEG->ENG_A")
 yylhs.value=sparser->set_node_info("ENG_A0NEG",ENG_A);
 
 }
-#line 1804 "build/hi_desktop/hi.y.cpp"
+#line 1805 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 5: // ENG_ANEG: ENG_ANEG_Stem
@@ -1811,7 +1812,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ANEG->ENG_ANEG
 yylhs.value=sparser->set_node_info("ENG_ANEG",ENG_ANEG_Stem);
 
 }
-#line 1815 "build/hi_desktop/hi.y.cpp"
+#line 1816 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 6: // ENG_ANEG_Stem: t_ENG_ANEG_Stem
@@ -1823,7 +1824,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_ANEG_Stem",word);
 
 }
-#line 1827 "build/hi_desktop/hi.y.cpp"
+#line 1828 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 7: // ENG_AP: ENG_Abar1
@@ -1834,7 +1835,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Abar1"
 yylhs.value=sparser->set_node_info("ENG_AP",ENG_Abar1);
 
 }
-#line 1838 "build/hi_desktop/hi.y.cpp"
+#line 1839 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 8: // ENG_AP: ENG_Abar2
@@ -1845,7 +1846,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Abar2"
 yylhs.value=sparser->set_node_info("ENG_AP",ENG_Abar2);
 
 }
-#line 1849 "build/hi_desktop/hi.y.cpp"
+#line 1850 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 9: // ENG_AP: ENG_Alist
@@ -1856,7 +1857,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AP->ENG_Alist"
 yylhs.value=sparser->set_node_info("ENG_AP",ENG_Alist);
 
 }
-#line 1860 "build/hi_desktop/hi.y.cpp"
+#line 1861 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 10: // ENG_A_Stem: t_ENG_A_Stem
@@ -1868,7 +1869,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_A_Stem",word);
 
 }
-#line 1872 "build/hi_desktop/hi.y.cpp"
+#line 1873 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 11: // ENG_Abar1: ENG_A0NEG
@@ -1879,7 +1880,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar1->ENG_A0N
 yylhs.value=sparser->set_node_info("ENG_Abar1",ENG_A0NEG);
 
 }
-#line 1883 "build/hi_desktop/hi.y.cpp"
+#line 1884 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 12: // ENG_Abar1: ENG_ANEG ENG_A
@@ -1891,7 +1892,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar1->ENG_ANE
 yylhs.value=sparser->combine_nodes("ENG_Abar1",ENG_ANEG,ENG_A);
 
 }
-#line 1895 "build/hi_desktop/hi.y.cpp"
+#line 1896 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 13: // ENG_Abar2: ENG_Abar1 ENG_CONJA
@@ -1903,7 +1904,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Aba
 yylhs.value=sparser->combine_nodes("ENG_Abar2",ENG_Abar1,ENG_CONJA);
 
 }
-#line 1907 "build/hi_desktop/hi.y.cpp"
+#line 1908 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 14: // ENG_Abar2: ENG_Abar2 ENG_CONJA
@@ -1915,7 +1916,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Aba
 yylhs.value=sparser->combine_nodes("ENG_Abar2",ENG_Abar2,ENG_CONJA);
 
 }
-#line 1919 "build/hi_desktop/hi.y.cpp"
+#line 1920 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 15: // ENG_Abar2: ENG_Alist ENG_CONJA
@@ -1927,7 +1928,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Abar2->ENG_Ali
 yylhs.value=sparser->combine_nodes("ENG_Abar2",ENG_Alist,ENG_CONJA);
 
 }
-#line 1931 "build/hi_desktop/hi.y.cpp"
+#line 1932 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 16: // ENG_Adv: t_ENG_ADV_Stem
@@ -1939,7 +1940,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Adv",word);
 
 }
-#line 1943 "build/hi_desktop/hi.y.cpp"
+#line 1944 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 17: // ENG_AdvP: ENG_Adv
@@ -1950,7 +1951,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_AdvP->ENG_Adv"
 yylhs.value=sparser->set_node_info("ENG_AdvP",ENG_Adv);
 
 }
-#line 1954 "build/hi_desktop/hi.y.cpp"
+#line 1955 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 18: // ENG_Alist: ENG_Abar1 ENG_Abar1
@@ -1962,7 +1963,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Alist->ENG_Aba
 yylhs.value=sparser->combine_nodes("ENG_Alist",ENG_Abar11,ENG_Abar12);
 
 }
-#line 1966 "build/hi_desktop/hi.y.cpp"
+#line 1967 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 19: // ENG_Alist: ENG_Alist ENG_Abar1
@@ -1974,7 +1975,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Alist->ENG_Ali
 yylhs.value=sparser->combine_nodes("ENG_Alist",ENG_Alist,ENG_Abar1);
 
 }
-#line 1978 "build/hi_desktop/hi.y.cpp"
+#line 1979 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 20: // ENG_CAP: ENG_1Con ENG_N_Pl_0Con_swC
@@ -1986,7 +1987,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CAP->ENG_1Con 
 yylhs.value=sparser->combine_nodes("ENG_CAP",ENG_1Con,ENG_N_Pl_0Con_swC);
 
 }
-#line 1990 "build/hi_desktop/hi.y.cpp"
+#line 1991 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 21: // ENG_CAP: ENG_1Con ENG_N_Pl_0Con_swV
@@ -1998,7 +1999,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CAP->ENG_1Con 
 yylhs.value=sparser->combine_nodes("ENG_CAP",ENG_1Con,ENG_N_Pl_0Con_swV);
 
 }
-#line 2002 "build/hi_desktop/hi.y.cpp"
+#line 2003 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 22: // ENG_CNP: ENG_AP ENG_N
@@ -2010,7 +2011,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CNP->ENG_AP EN
 yylhs.value=sparser->combine_nodes("ENG_CNP",ENG_AP,ENG_N);
 
 }
-#line 2014 "build/hi_desktop/hi.y.cpp"
+#line 2015 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 23: // ENG_CNP: ENG_N
@@ -2021,7 +2022,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CNP->ENG_N");
 yylhs.value=sparser->set_node_info("ENG_CNP",ENG_N);
 
 }
-#line 2025 "build/hi_desktop/hi.y.cpp"
+#line 2026 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 24: // ENG_CONJ: ENG_CONJ_Stem
@@ -2032,7 +2033,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJ->ENG_CONJ
 yylhs.value=sparser->set_node_info("ENG_CONJ",ENG_CONJ_Stem);
 
 }
-#line 2036 "build/hi_desktop/hi.y.cpp"
+#line 2037 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 25: // ENG_CONJA: ENG_CONJ ENG_Abar1
@@ -2044,7 +2045,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJA->ENG_CON
 yylhs.value=sparser->combine_nodes("ENG_CONJA",ENG_CONJ,ENG_Abar1);
 
 }
-#line 2048 "build/hi_desktop/hi.y.cpp"
+#line 2049 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 26: // ENG_CONJA: ENG_CONJ ENG_Alist
@@ -2056,7 +2057,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_CONJA->ENG_CON
 yylhs.value=sparser->combine_nodes("ENG_CONJA",ENG_CONJ,ENG_Alist);
 
 }
-#line 2060 "build/hi_desktop/hi.y.cpp"
+#line 2061 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 27: // ENG_CONJ_Stem: t_ENG_CONJ_Stem
@@ -2068,7 +2069,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_CONJ_Stem",word);
 
 }
-#line 2072 "build/hi_desktop/hi.y.cpp"
+#line 2073 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 28: // ENG_Con: t_ENG_CON_Stem
@@ -2080,7 +2081,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Con",word);
 
 }
-#line 2084 "build/hi_desktop/hi.y.cpp"
+#line 2085 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 29: // ENG_ConjPVP: ENG_CONJ ENG_PVP
@@ -2092,7 +2093,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ConjPVP->ENG_C
 yylhs.value=sparser->combine_nodes("ENG_ConjPVP",ENG_CONJ,ENG_PVP);
 
 }
-#line 2096 "build/hi_desktop/hi.y.cpp"
+#line 2097 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 30: // ENG_ConjPVP: ENG_CONJ ENG_PVPlist
@@ -2104,7 +2105,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ConjPVP->ENG_C
 yylhs.value=sparser->combine_nodes("ENG_ConjPVP",ENG_CONJ,ENG_PVPlist);
 
 }
-#line 2108 "build/hi_desktop/hi.y.cpp"
+#line 2109 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 31: // ENG_ConjV: ENG_CONJ ENG_IVP
@@ -2116,7 +2117,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ConjV->ENG_CON
 yylhs.value=sparser->combine_nodes("ENG_ConjV",ENG_CONJ,ENG_IVP);
 
 }
-#line 2120 "build/hi_desktop/hi.y.cpp"
+#line 2121 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 32: // ENG_ConjV: ENG_CONJ ENG_IVPlist
@@ -2128,7 +2129,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_ConjV->ENG_CON
 yylhs.value=sparser->combine_nodes("ENG_ConjV",ENG_CONJ,ENG_IVPlist);
 
 }
-#line 2132 "build/hi_desktop/hi.y.cpp"
+#line 2133 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 33: // ENG_DP: ENG_Def_Det ENG_N
@@ -2140,7 +2141,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Def_De
 yylhs.value=sparser->combine_nodes("ENG_DP",ENG_Def_Det,ENG_N);
 
 }
-#line 2144 "build/hi_desktop/hi.y.cpp"
+#line 2145 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 34: // ENG_DP: ENG_Def_Det ENG_Num_Ord
@@ -2152,7 +2153,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Def_De
 yylhs.value=sparser->combine_nodes("ENG_DP",ENG_Def_Det,ENG_Num_Ord);
 
 }
-#line 2156 "build/hi_desktop/hi.y.cpp"
+#line 2157 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 35: // ENG_DP: ENG_Indef_Det_a ENG_N_Sg_0Con_swC
@@ -2164,7 +2165,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Indef_
 yylhs.value=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_a,ENG_N_Sg_0Con_swC);
 
 }
-#line 2168 "build/hi_desktop/hi.y.cpp"
+#line 2169 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 36: // ENG_DP: ENG_Indef_Det_an ENG_N_Sg_0Con_swV
@@ -2176,7 +2177,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_DP->ENG_Indef_
 yylhs.value=sparser->combine_nodes("ENG_DP",ENG_Indef_Det_an,ENG_N_Sg_0Con_swV);
 
 }
-#line 2180 "build/hi_desktop/hi.y.cpp"
+#line 2181 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 37: // ENG_Def_Det: ENG_Det_stem ENG_lfea_DefDet
@@ -2188,7 +2189,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Def_Det->ENG_D
 yylhs.value=sparser->combine_nodes("ENG_Def_Det",ENG_Det_stem,ENG_lfea_DefDet);
 
 }
-#line 2192 "build/hi_desktop/hi.y.cpp"
+#line 2193 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 38: // ENG_Det_stem: t_ENG_DET_Stem
@@ -2200,7 +2201,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Det_stem",word);
 
 }
-#line 2204 "build/hi_desktop/hi.y.cpp"
+#line 2205 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 39: // ENG_IVP: ENG_NV ENG_NP
@@ -2212,7 +2213,7 @@ sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_NP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_NP);
 }
-#line 2216 "build/hi_desktop/hi.y.cpp"
+#line 2217 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 40: // ENG_IVP: ENG_NV ENG_PP
@@ -2224,7 +2225,7 @@ sparser->add_feature_to_leaf(ENG_NV,"ENG_V_Aux","V",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_NV ENG_PP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_NV,ENG_PP);
 }
-#line 2228 "build/hi_desktop/hi.y.cpp"
+#line 2229 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 41: // ENG_IVP: ENG_V ENG_AP
@@ -2236,7 +2237,7 @@ sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_AP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_AP);
 }
-#line 2240 "build/hi_desktop/hi.y.cpp"
+#line 2241 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 42: // ENG_IVP: ENG_V ENG_NP
@@ -2249,7 +2250,7 @@ if(leaf_node_id==0) sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_NP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_NP);
 }
-#line 2253 "build/hi_desktop/hi.y.cpp"
+#line 2254 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 43: // ENG_IVP: ENG_V ENG_PP
@@ -2262,7 +2263,7 @@ if(leaf_node_id==0) sparser->add_feature_to_leaf(ENG_V,"RCV");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVP->ENG_V ENG_PP");
 yylhs.value=sparser->combine_nodes("ENG_IVP",ENG_V,ENG_PP);
 }
-#line 2266 "build/hi_desktop/hi.y.cpp"
+#line 2267 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 44: // ENG_IVPConj: ENG_IVPConj ENG_ConjV
@@ -2274,7 +2275,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVPConj->ENG_I
 yylhs.value=sparser->combine_nodes("ENG_IVPConj",ENG_IVPConj,ENG_ConjV);
 
 }
-#line 2278 "build/hi_desktop/hi.y.cpp"
+#line 2279 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 45: // ENG_IVPConj: ENG_Vhead ENG_ConjV
@@ -2286,7 +2287,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVPConj->ENG_V
 yylhs.value=sparser->combine_nodes("ENG_IVPConj",ENG_Vhead,ENG_ConjV);
 
 }
-#line 2290 "build/hi_desktop/hi.y.cpp"
+#line 2291 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 46: // ENG_IVPConj: ENG_Vlisthead ENG_ConjV
@@ -2298,7 +2299,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVPConj->ENG_V
 yylhs.value=sparser->combine_nodes("ENG_IVPConj",ENG_Vlisthead,ENG_ConjV);
 
 }
-#line 2302 "build/hi_desktop/hi.y.cpp"
+#line 2303 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 47: // ENG_IVPlist: ENG_IVP ENG_IVP
@@ -2310,7 +2311,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVPlist->ENG_I
 yylhs.value=sparser->combine_nodes("ENG_IVPlist",ENG_IVP1,ENG_IVP2);
 
 }
-#line 2314 "build/hi_desktop/hi.y.cpp"
+#line 2315 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 48: // ENG_IVPlist: ENG_IVPlist ENG_IVP
@@ -2322,7 +2323,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_IVPlist->ENG_I
 yylhs.value=sparser->combine_nodes("ENG_IVPlist",ENG_IVPlist,ENG_IVP);
 
 }
-#line 2326 "build/hi_desktop/hi.y.cpp"
+#line 2327 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 49: // ENG_Indef_Det: ENG_Det_stem ENG_lfea_IndefDet
@@ -2334,7 +2335,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det->ENG
 yylhs.value=sparser->combine_nodes("ENG_Indef_Det",ENG_Det_stem,ENG_lfea_IndefDet);
 
 }
-#line 2338 "build/hi_desktop/hi.y.cpp"
+#line 2339 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 50: // ENG_Indef_Det_a: ENG_Indef_Det ENG_lfea_fwConsonant
@@ -2346,7 +2347,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det_a->E
 yylhs.value=sparser->combine_nodes("ENG_Indef_Det_a",ENG_Indef_Det,ENG_lfea_fwConsonant);
 
 }
-#line 2350 "build/hi_desktop/hi.y.cpp"
+#line 2351 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 51: // ENG_Indef_Det_an: ENG_Indef_Det ENG_lfea_fwVowel
@@ -2358,7 +2359,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Indef_Det_an->
 yylhs.value=sparser->combine_nodes("ENG_Indef_Det_an",ENG_Indef_Det,ENG_lfea_fwVowel);
 
 }
-#line 2362 "build/hi_desktop/hi.y.cpp"
+#line 2363 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 52: // ENG_N: ENG_N_Pl
@@ -2369,7 +2370,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N->ENG_N_Pl");
 yylhs.value=sparser->set_node_info("ENG_N",ENG_N_Pl);
 
 }
-#line 2373 "build/hi_desktop/hi.y.cpp"
+#line 2374 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 53: // ENG_N: ENG_N_Sg
@@ -2380,7 +2381,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N->ENG_N_Sg");
 yylhs.value=sparser->set_node_info("ENG_N",ENG_N_Sg);
 
 }
-#line 2384 "build/hi_desktop/hi.y.cpp"
+#line 2385 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 54: // ENG_NP: ENG_CAP
@@ -2391,7 +2392,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CAP");
 yylhs.value=sparser->set_node_info("ENG_NP",ENG_CAP);
 
 }
-#line 2395 "build/hi_desktop/hi.y.cpp"
+#line 2396 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 55: // ENG_NP: ENG_CNP
@@ -2402,7 +2403,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_CNP");
 yylhs.value=sparser->set_node_info("ENG_NP",ENG_CNP);
 
 }
-#line 2406 "build/hi_desktop/hi.y.cpp"
+#line 2407 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 56: // ENG_NP: ENG_QPro ENG_CNP
@@ -2414,7 +2415,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NP->ENG_QPro E
 yylhs.value=sparser->combine_nodes("ENG_NP",ENG_QPro,ENG_CNP);
 
 }
-#line 2418 "build/hi_desktop/hi.y.cpp"
+#line 2419 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 57: // ENG_NV: ENG_NV_Aux ENG_V_Stem
@@ -2426,7 +2427,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NV->ENG_NV_Aux
 yylhs.value=sparser->combine_nodes("ENG_NV",ENG_NV_Aux,ENG_V_Stem);
 
 }
-#line 2430 "build/hi_desktop/hi.y.cpp"
+#line 2431 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 58: // ENG_NV: ENG_V ENG_VNEG
@@ -2438,7 +2439,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NV->ENG_V ENG_
 yylhs.value=sparser->combine_nodes("ENG_NV",ENG_V,ENG_VNEG);
 
 }
-#line 2442 "build/hi_desktop/hi.y.cpp"
+#line 2443 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 59: // ENG_NV_Aux: ENG_V_Aux ENG_VNEG
@@ -2450,7 +2451,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_NV_Aux->ENG_V_
 yylhs.value=sparser->combine_nodes("ENG_NV_Aux",ENG_V_Aux,ENG_VNEG);
 
 }
-#line 2454 "build/hi_desktop/hi.y.cpp"
+#line 2455 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 60: // ENG_N_Pl: ENG_N_Pl_0Con_swC
@@ -2461,7 +2462,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl
 yylhs.value=sparser->set_node_info("ENG_N_Pl",ENG_N_Pl_0Con_swC);
 
 }
-#line 2465 "build/hi_desktop/hi.y.cpp"
+#line 2466 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 61: // ENG_N_Pl: ENG_N_Pl_0Con_swC ENG_nCon
@@ -2473,7 +2474,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl
 yylhs.value=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swC,ENG_nCon);
 
 }
-#line 2477 "build/hi_desktop/hi.y.cpp"
+#line 2478 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 62: // ENG_N_Pl: ENG_N_Pl_0Con_swV
@@ -2484,7 +2485,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl
 yylhs.value=sparser->set_node_info("ENG_N_Pl",ENG_N_Pl_0Con_swV);
 
 }
-#line 2488 "build/hi_desktop/hi.y.cpp"
+#line 2489 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 63: // ENG_N_Pl: ENG_N_Pl_0Con_swV ENG_nCon
@@ -2496,7 +2497,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_N_Pl
 yylhs.value=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
 
 }
-#line 2500 "build/hi_desktop/hi.y.cpp"
+#line 2501 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 64: // ENG_N_Pl: ENG_N_Sg ENG_nCon
@@ -2507,7 +2508,7 @@ yylhs.value=sparser->combine_nodes("ENG_N_Pl",ENG_N_Pl_0Con_swV,ENG_nCon);
 //TODO: Any better solution???
 YYERROR;
 }
-#line 2511 "build/hi_desktop/hi.y.cpp"
+#line 2512 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 65: // ENG_N_Pl: ENG_nCon
@@ -2518,7 +2519,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl->ENG_nCon
 yylhs.value=sparser->set_node_info("ENG_N_Pl",ENG_nCon);
 
 }
-#line 2522 "build/hi_desktop/hi.y.cpp"
+#line 2523 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 66: // ENG_N_Pl_0Con: ENG_N_Stem ENG_N_lfea_Pl
@@ -2530,7 +2531,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con->ENG
 yylhs.value=sparser->combine_nodes("ENG_N_Pl_0Con",ENG_N_Stem,ENG_N_lfea_Pl);
 
 }
-#line 2534 "build/hi_desktop/hi.y.cpp"
+#line 2535 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 67: // ENG_N_Pl_0Con_swC: ENG_N_Pl_0Con ENG_lfea_swConsonant
@@ -2542,7 +2543,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con_swC-
 yylhs.value=sparser->combine_nodes("ENG_N_Pl_0Con_swC",ENG_N_Pl_0Con,ENG_lfea_swConsonant);
 
 }
-#line 2546 "build/hi_desktop/hi.y.cpp"
+#line 2547 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 68: // ENG_N_Pl_0Con_swV: ENG_N_Pl_0Con ENG_lfea_swVowel
@@ -2554,7 +2555,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Pl_0Con_swV-
 yylhs.value=sparser->combine_nodes("ENG_N_Pl_0Con_swV",ENG_N_Pl_0Con,ENG_lfea_swVowel);
 
 }
-#line 2558 "build/hi_desktop/hi.y.cpp"
+#line 2559 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 69: // ENG_N_Sg: ENG_1Con
@@ -2565,7 +2566,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_1Con
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_1Con);
 
 }
-#line 2569 "build/hi_desktop/hi.y.cpp"
+#line 2570 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 70: // ENG_N_Sg: ENG_N_Sg_0Con_swC
@@ -2576,7 +2577,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_N_Sg_0Con_swC);
 
 }
-#line 2580 "build/hi_desktop/hi.y.cpp"
+#line 2581 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 71: // ENG_N_Sg: ENG_N_Sg_0Con_swC ENG_1Con
@@ -2588,7 +2589,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg
 yylhs.value=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swC,ENG_1Con);
 
 }
-#line 2592 "build/hi_desktop/hi.y.cpp"
+#line 2593 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 72: // ENG_N_Sg: ENG_N_Sg_0Con_swV
@@ -2599,7 +2600,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg
 yylhs.value=sparser->set_node_info("ENG_N_Sg",ENG_N_Sg_0Con_swV);
 
 }
-#line 2603 "build/hi_desktop/hi.y.cpp"
+#line 2604 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 73: // ENG_N_Sg: ENG_N_Sg_0Con_swV ENG_1Con
@@ -2611,7 +2612,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg->ENG_N_Sg
 yylhs.value=sparser->combine_nodes("ENG_N_Sg",ENG_N_Sg_0Con_swV,ENG_1Con);
 
 }
-#line 2615 "build/hi_desktop/hi.y.cpp"
+#line 2616 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 74: // ENG_N_Sg_0Con: ENG_N_Stem ENG_N_lfea_Sg
@@ -2623,7 +2624,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con->ENG
 yylhs.value=sparser->combine_nodes("ENG_N_Sg_0Con",ENG_N_Stem,ENG_N_lfea_Sg);
 
 }
-#line 2627 "build/hi_desktop/hi.y.cpp"
+#line 2628 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 75: // ENG_N_Sg_0Con_swC: ENG_N_Sg_0Con ENG_lfea_swConsonant
@@ -2635,7 +2636,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con_swC-
 yylhs.value=sparser->combine_nodes("ENG_N_Sg_0Con_swC",ENG_N_Sg_0Con,ENG_lfea_swConsonant);
 
 }
-#line 2639 "build/hi_desktop/hi.y.cpp"
+#line 2640 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 76: // ENG_N_Sg_0Con_swV: ENG_N_Sg_0Con ENG_lfea_swVowel
@@ -2647,7 +2648,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_N_Sg_0Con_swV-
 yylhs.value=sparser->combine_nodes("ENG_N_Sg_0Con_swV",ENG_N_Sg_0Con,ENG_lfea_swVowel);
 
 }
-#line 2651 "build/hi_desktop/hi.y.cpp"
+#line 2652 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 77: // ENG_N_Stem: t_ENG_N_Stem
@@ -2659,7 +2660,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_Stem",word);
 
 }
-#line 2663 "build/hi_desktop/hi.y.cpp"
+#line 2664 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 78: // ENG_N_lfea_Pl: t_ENG_N_Pl
@@ -2671,7 +2672,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_lfea_Pl",word);
 
 }
-#line 2675 "build/hi_desktop/hi.y.cpp"
+#line 2676 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 79: // ENG_N_lfea_Sg: t_ENG_N_Sg
@@ -2683,7 +2684,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_N_lfea_Sg",word);
 
 }
-#line 2687 "build/hi_desktop/hi.y.cpp"
+#line 2688 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 80: // ENG_Num: ENG_Num_Pref ENG_Num
@@ -2695,7 +2696,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num->ENG_Num_P
 yylhs.value=sparser->combine_nodes("ENG_Num",ENG_Num_Pref,ENG_Num);
 
 }
-#line 2699 "build/hi_desktop/hi.y.cpp"
+#line 2700 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 81: // ENG_Num: ENG_Num_Stem
@@ -2706,7 +2707,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num->ENG_Num_S
 yylhs.value=sparser->set_node_info("ENG_Num",ENG_Num_Stem);
 
 }
-#line 2710 "build/hi_desktop/hi.y.cpp"
+#line 2711 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 82: // ENG_Num_Ord: ENG_Num ENG_Num_lfea_Ord
@@ -2718,7 +2719,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Num_Ord->ENG_N
 yylhs.value=sparser->combine_nodes("ENG_Num_Ord",ENG_Num,ENG_Num_lfea_Ord);
 
 }
-#line 2722 "build/hi_desktop/hi.y.cpp"
+#line 2723 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 83: // ENG_Num_Pref: t_ENG_Num_Npref1n
@@ -2730,7 +2731,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2734 "build/hi_desktop/hi.y.cpp"
+#line 2735 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 84: // ENG_Num_Pref: t_ENG_Num_Npref2n
@@ -2742,7 +2743,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2746 "build/hi_desktop/hi.y.cpp"
+#line 2747 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 85: // ENG_Num_Pref: t_ENG_Num_Npref3n
@@ -2754,7 +2755,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2758 "build/hi_desktop/hi.y.cpp"
+#line 2759 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 86: // ENG_Num_Pref: t_ENG_Num_Npref4n
@@ -2766,7 +2767,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2770 "build/hi_desktop/hi.y.cpp"
+#line 2771 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 87: // ENG_Num_Pref: t_ENG_Num_Npref5n
@@ -2778,7 +2779,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2782 "build/hi_desktop/hi.y.cpp"
+#line 2783 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 88: // ENG_Num_Pref: t_ENG_Num_Npref6n
@@ -2790,7 +2791,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2794 "build/hi_desktop/hi.y.cpp"
+#line 2795 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 89: // ENG_Num_Pref: t_ENG_Num_Npref7n
@@ -2802,7 +2803,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2806 "build/hi_desktop/hi.y.cpp"
+#line 2807 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 90: // ENG_Num_Pref: t_ENG_Num_Npref8n
@@ -2814,7 +2815,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2818 "build/hi_desktop/hi.y.cpp"
+#line 2819 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 91: // ENG_Num_Pref: t_ENG_Num_Npref9n
@@ -2826,7 +2827,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Pref",word);
 
 }
-#line 2830 "build/hi_desktop/hi.y.cpp"
+#line 2831 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 92: // ENG_Num_Stem: t_ENG_Num_Stem
@@ -2838,7 +2839,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_Stem",word);
 
 }
-#line 2842 "build/hi_desktop/hi.y.cpp"
+#line 2843 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 93: // ENG_Num_lfea_Ord: t_ENG_Num_Ord
@@ -2850,7 +2851,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Num_lfea_Ord",word);
 
 }
-#line 2854 "build/hi_desktop/hi.y.cpp"
+#line 2855 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 94: // ENG_PNVPbar: ENG_VNEG ENG_PVPbar
@@ -2862,7 +2863,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PNVPbar->ENG_V
 yylhs.value=sparser->combine_nodes("ENG_PNVPbar",ENG_VNEG,ENG_PVPbar);
 
 }
-#line 2866 "build/hi_desktop/hi.y.cpp"
+#line 2867 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 95: // ENG_PP: ENG_Prep ENG_NP
@@ -2874,7 +2875,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PP->ENG_Prep E
 yylhs.value=sparser->combine_nodes("ENG_PP",ENG_Prep,ENG_NP);
 
 }
-#line 2878 "build/hi_desktop/hi.y.cpp"
+#line 2879 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 96: // ENG_PVP: ENG_PNVPbar
@@ -2885,7 +2886,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVP->ENG_PNVPb
 yylhs.value=sparser->set_node_info("ENG_PVP",ENG_PNVPbar);
 
 }
-#line 2889 "build/hi_desktop/hi.y.cpp"
+#line 2890 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 97: // ENG_PVP: ENG_PVPbar
@@ -2896,7 +2897,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVP->ENG_PVPba
 yylhs.value=sparser->set_node_info("ENG_PVP",ENG_PVPbar);
 
 }
-#line 2900 "build/hi_desktop/hi.y.cpp"
+#line 2901 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 98: // ENG_PVPConj: ENG_PVPConj ENG_ConjPVP
@@ -2908,7 +2909,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPConj->ENG_P
 yylhs.value=sparser->combine_nodes("ENG_PVPConj",ENG_PVPConj,ENG_ConjPVP);
 
 }
-#line 2912 "build/hi_desktop/hi.y.cpp"
+#line 2913 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 99: // ENG_PVPConj: ENG_PVPhead ENG_ConjPVP
@@ -2920,7 +2921,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPConj->ENG_P
 yylhs.value=sparser->combine_nodes("ENG_PVPConj",ENG_PVPhead,ENG_ConjPVP);
 
 }
-#line 2924 "build/hi_desktop/hi.y.cpp"
+#line 2925 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 100: // ENG_PVPConj: ENG_PVPlisthead ENG_ConjPVP
@@ -2932,7 +2933,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPConj->ENG_P
 yylhs.value=sparser->combine_nodes("ENG_PVPConj",ENG_PVPlisthead,ENG_ConjPVP);
 
 }
-#line 2936 "build/hi_desktop/hi.y.cpp"
+#line 2937 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 101: // ENG_PVPbar: ENG_V_Ger ENG_NP
@@ -2943,7 +2944,7 @@ const node_info& ENG_NP=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPbar->ENG_V_Ger ENG_NP");
 yylhs.value=sparser->combine_nodes("ENG_PVPbar",ENG_V_Ger,ENG_NP);
 }
-#line 2947 "build/hi_desktop/hi.y.cpp"
+#line 2948 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 102: // ENG_PVPbar: ENG_V_Ger ENG_PP
@@ -2954,7 +2955,7 @@ const node_info& ENG_PP=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPbar->ENG_V_Ger ENG_PP");
 yylhs.value=sparser->combine_nodes("ENG_PVPbar",ENG_V_Ger,ENG_PP);
 }
-#line 2958 "build/hi_desktop/hi.y.cpp"
+#line 2959 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 103: // ENG_PVPhead: ENG_PVP
@@ -2965,7 +2966,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPhead->ENG_P
 yylhs.value=sparser->set_node_info("ENG_PVPhead",ENG_PVP);
 
 }
-#line 2969 "build/hi_desktop/hi.y.cpp"
+#line 2970 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 104: // ENG_PVPlist: ENG_PVP ENG_PVP
@@ -2977,7 +2978,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPlist->ENG_P
 yylhs.value=sparser->combine_nodes("ENG_PVPlist",ENG_PVP1,ENG_PVP2);
 
 }
-#line 2981 "build/hi_desktop/hi.y.cpp"
+#line 2982 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 105: // ENG_PVPlist: ENG_PVPlist ENG_PVP
@@ -2989,7 +2990,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPlist->ENG_P
 yylhs.value=sparser->combine_nodes("ENG_PVPlist",ENG_PVPlist,ENG_PVP);
 
 }
-#line 2993 "build/hi_desktop/hi.y.cpp"
+#line 2994 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 106: // ENG_PVPlisthead: ENG_PVPlist
@@ -3000,7 +3001,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_PVPlisthead->E
 yylhs.value=sparser->set_node_info("ENG_PVPlisthead",ENG_PVPlist);
 
 }
-#line 3004 "build/hi_desktop/hi.y.cpp"
+#line 3005 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 107: // ENG_Prep: t_ENG_PREP_Stem
@@ -3012,7 +3013,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Prep",word);
 
 }
-#line 3016 "build/hi_desktop/hi.y.cpp"
+#line 3017 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 108: // ENG_QPro: t_ENG_QPRO_Stem
@@ -3024,7 +3025,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_QPro",word);
 
 }
-#line 3028 "build/hi_desktop/hi.y.cpp"
+#line 3029 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 109: // ENG_RC: ENG_RPro ENG_IVP
@@ -3036,7 +3037,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RC->ENG_RPro E
 yylhs.value=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVP);
 
 }
-#line 3040 "build/hi_desktop/hi.y.cpp"
+#line 3041 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 110: // ENG_RC: ENG_RPro ENG_IVPConj
@@ -3048,7 +3049,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RC->ENG_RPro E
 yylhs.value=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVPConj);
 
 }
-#line 3052 "build/hi_desktop/hi.y.cpp"
+#line 3053 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 111: // ENG_RC: ENG_RPro ENG_IVPlist
@@ -3060,7 +3061,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RC->ENG_RPro E
 yylhs.value=sparser->combine_nodes("ENG_RC",ENG_RPro,ENG_IVPlist);
 
 }
-#line 3064 "build/hi_desktop/hi.y.cpp"
+#line 3065 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 112: // ENG_RPro: ENG_RPro_stem ENG_RPro_lfea_relative
@@ -3072,7 +3073,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_RPro->ENG_RPro
 yylhs.value=sparser->combine_nodes("ENG_RPro",ENG_RPro_stem,ENG_RPro_lfea_relative);
 
 }
-#line 3076 "build/hi_desktop/hi.y.cpp"
+#line 3077 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 113: // ENG_RPro_lfea_relative: t_ENG_RPRO_Relative
@@ -3084,7 +3085,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_RPro_lfea_relative",word);
 
 }
-#line 3088 "build/hi_desktop/hi.y.cpp"
+#line 3089 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 114: // ENG_RPro_stem: t_ENG_RPRO_Stem
@@ -3096,7 +3097,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_RPro_stem",word);
 
 }
-#line 3100 "build/hi_desktop/hi.y.cpp"
+#line 3101 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 115: // ENG_TP: ENG_Tense_particle ENG_V_Stem
@@ -3108,7 +3109,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_TP->ENG_Tense_
 yylhs.value=sparser->combine_nodes("ENG_TP",ENG_Tense_particle,ENG_V_Stem);
 
 }
-#line 3112 "build/hi_desktop/hi.y.cpp"
+#line 3113 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 116: // ENG_TP: ENG_V_Ger
@@ -3119,7 +3120,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_TP->ENG_V_Ger"
 yylhs.value=sparser->set_node_info("ENG_TP",ENG_V_Ger);
 
 }
-#line 3123 "build/hi_desktop/hi.y.cpp"
+#line 3124 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 117: // ENG_Tense_particle: t_ENG_PAR_Stem
@@ -3131,7 +3132,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_Tense_particle",word);
 
 }
-#line 3135 "build/hi_desktop/hi.y.cpp"
+#line 3136 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 118: // ENG_V: ENG_V_Aux
@@ -3142,7 +3143,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Aux")
 yylhs.value=sparser->set_node_info("ENG_V",ENG_V_Aux);
 
 }
-#line 3146 "build/hi_desktop/hi.y.cpp"
+#line 3147 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 119: // ENG_V: ENG_V_Stem
@@ -3153,7 +3154,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V->ENG_V_Stem"
 yylhs.value=sparser->set_node_info("ENG_V",ENG_V_Stem);
 
 }
-#line 3157 "build/hi_desktop/hi.y.cpp"
+#line 3158 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 120: // ENG_VNEG: ENG_VNEG_Stem
@@ -3164,7 +3165,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VNEG->ENG_VNEG
 yylhs.value=sparser->set_node_info("ENG_VNEG",ENG_VNEG_Stem);
 
 }
-#line 3168 "build/hi_desktop/hi.y.cpp"
+#line 3169 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 121: // ENG_VNEG_Stem: t_ENG_VNEG_Stem
@@ -3176,7 +3177,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_VNEG_Stem",word);
 
 }
-#line 3180 "build/hi_desktop/hi.y.cpp"
+#line 3181 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 122: // ENG_VP: ENG_Vbar1
@@ -3187,7 +3188,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1"
 yylhs.value=sparser->set_node_info("ENG_VP",ENG_Vbar1);
 
 }
-#line 3191 "build/hi_desktop/hi.y.cpp"
+#line 3192 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 123: // ENG_VP: ENG_Vbar1 ENG_AdvP
@@ -3199,7 +3200,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_AdvP);
 
 }
-#line 3203 "build/hi_desktop/hi.y.cpp"
+#line 3204 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 124: // ENG_VP: ENG_Vbar1 ENG_PVP
@@ -3211,7 +3212,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_PVP);
 
 }
-#line 3215 "build/hi_desktop/hi.y.cpp"
+#line 3216 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 125: // ENG_VP: ENG_Vbar1 ENG_PVPConj
@@ -3223,7 +3224,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_PVPConj);
 
 }
-#line 3227 "build/hi_desktop/hi.y.cpp"
+#line 3228 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 126: // ENG_VP: ENG_Vbar1 ENG_PVPlist
@@ -3235,7 +3236,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_PVPlist);
 
 }
-#line 3239 "build/hi_desktop/hi.y.cpp"
+#line 3240 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 127: // ENG_VP: ENG_Vbar1 ENG_RC
@@ -3247,7 +3248,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar1 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar1,ENG_RC);
 
 }
-#line 3251 "build/hi_desktop/hi.y.cpp"
+#line 3252 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 128: // ENG_VP: ENG_Vbar2
@@ -3258,7 +3259,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2"
 yylhs.value=sparser->set_node_info("ENG_VP",ENG_Vbar2);
 
 }
-#line 3262 "build/hi_desktop/hi.y.cpp"
+#line 3263 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 129: // ENG_VP: ENG_Vbar2 ENG_PP
@@ -3270,7 +3271,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_PP);
 
 }
-#line 3274 "build/hi_desktop/hi.y.cpp"
+#line 3275 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 130: // ENG_VP: ENG_Vbar2 ENG_RC
@@ -3282,7 +3283,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar2 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar2,ENG_RC);
 
 }
-#line 3286 "build/hi_desktop/hi.y.cpp"
+#line 3287 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 131: // ENG_VP: ENG_Vbar3 ENG_NP
@@ -3294,7 +3295,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar3 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar3,ENG_NP);
 
 }
-#line 3298 "build/hi_desktop/hi.y.cpp"
+#line 3299 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 132: // ENG_VP: ENG_Vbar4 ENG_DP
@@ -3306,7 +3307,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_VP->ENG_Vbar4 
 yylhs.value=sparser->combine_nodes("ENG_VP",ENG_Vbar4,ENG_DP);
 
 }
-#line 3310 "build/hi_desktop/hi.y.cpp"
+#line 3311 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 133: // ENG_V_Aux: ENG_V_Stem ENG_V_lfea_aux
@@ -3318,7 +3319,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V_Aux->ENG_V_S
 yylhs.value=sparser->combine_nodes("ENG_V_Aux",ENG_V_Stem,ENG_V_lfea_aux);
 
 }
-#line 3322 "build/hi_desktop/hi.y.cpp"
+#line 3323 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 134: // ENG_V_Ger: ENG_V_Stem ENG_V_lfea_ger
@@ -3330,7 +3331,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_V_Ger->ENG_V_S
 yylhs.value=sparser->combine_nodes("ENG_V_Ger",ENG_V_Stem,ENG_V_lfea_ger);
 
 }
-#line 3334 "build/hi_desktop/hi.y.cpp"
+#line 3335 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 135: // ENG_V_Stem: t_ENG_V_Stem
@@ -3342,7 +3343,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_Stem",word);
 
 }
-#line 3346 "build/hi_desktop/hi.y.cpp"
+#line 3347 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 136: // ENG_V_lfea_aux: t_ENG_V_Aux
@@ -3354,7 +3355,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_lfea_aux",word);
 
 }
-#line 3358 "build/hi_desktop/hi.y.cpp"
+#line 3359 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 137: // ENG_V_lfea_ger: t_ENG_V_Gerund
@@ -3366,7 +3367,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_V_lfea_ger",word);
 
 }
-#line 3370 "build/hi_desktop/hi.y.cpp"
+#line 3371 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 138: // ENG_Vbar1: ENG_V ENG_NP
@@ -3378,7 +3379,7 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar1->ENG_V ENG_NP");
 yylhs.value=sparser->combine_nodes("ENG_Vbar1",ENG_V,ENG_NP);
 }
-#line 3382 "build/hi_desktop/hi.y.cpp"
+#line 3383 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 139: // ENG_Vbar2: ENG_Vbar1 ENG_NP
@@ -3390,7 +3391,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar2->ENG_Vba
 yylhs.value=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_NP);
 
 }
-#line 3394 "build/hi_desktop/hi.y.cpp"
+#line 3395 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 140: // ENG_Vbar2: ENG_Vbar1 ENG_PP
@@ -3402,7 +3403,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar2->ENG_Vba
 yylhs.value=sparser->combine_nodes("ENG_Vbar2",ENG_Vbar1,ENG_PP);
 
 }
-#line 3406 "build/hi_desktop/hi.y.cpp"
+#line 3407 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 141: // ENG_Vbar3: ENG_V ENG_AdvP
@@ -3414,7 +3415,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar3->ENG_V E
 yylhs.value=sparser->combine_nodes("ENG_Vbar3",ENG_V,ENG_AdvP);
 
 }
-#line 3418 "build/hi_desktop/hi.y.cpp"
+#line 3419 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 142: // ENG_Vbar4: ENG_DP ENG_V
@@ -3426,7 +3427,7 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_DP ENG_V");
 yylhs.value=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_DP);
 }
-#line 3430 "build/hi_desktop/hi.y.cpp"
+#line 3431 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 143: // ENG_Vbar4: ENG_TP ENG_V
@@ -3438,7 +3439,7 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_TP ENG_V");
 yylhs.value=sparser->combine_nodes("ENG_Vbar4",ENG_V,ENG_TP);
 }
-#line 3442 "build/hi_desktop/hi.y.cpp"
+#line 3443 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 144: // ENG_Vbar4: ENG_V
@@ -3449,7 +3450,7 @@ sparser->add_feature_to_leaf(ENG_V,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vbar4->ENG_V");
 yylhs.value=sparser->set_node_info("ENG_Vbar4",ENG_V);
 }
-#line 3453 "build/hi_desktop/hi.y.cpp"
+#line 3454 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 145: // ENG_Vhead: ENG_IVP
@@ -3460,7 +3461,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vhead->ENG_IVP
 yylhs.value=sparser->set_node_info("ENG_Vhead",ENG_IVP);
 
 }
-#line 3464 "build/hi_desktop/hi.y.cpp"
+#line 3465 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 146: // ENG_Vlisthead: ENG_IVPlist
@@ -3471,7 +3472,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_Vlisthead->ENG
 yylhs.value=sparser->set_node_info("ENG_Vlisthead",ENG_IVPlist);
 
 }
-#line 3475 "build/hi_desktop/hi.y.cpp"
+#line 3476 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 147: // ENG_lfea_DefDet: t_ENG_DET_Def
@@ -3483,7 +3484,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_DefDet",word);
 
 }
-#line 3487 "build/hi_desktop/hi.y.cpp"
+#line 3488 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 148: // ENG_lfea_IndefDet: t_ENG_DET_Indef
@@ -3495,7 +3496,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_IndefDet",word);
 
 }
-#line 3499 "build/hi_desktop/hi.y.cpp"
+#line 3500 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 149: // ENG_lfea_fwConsonant: t_ENG_DET_fwConsonant
@@ -3507,7 +3508,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_fwConsonant",word);
 
 }
-#line 3511 "build/hi_desktop/hi.y.cpp"
+#line 3512 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 150: // ENG_lfea_fwVowel: t_ENG_DET_fwVowel
@@ -3519,7 +3520,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_fwVowel",word);
 
 }
-#line 3523 "build/hi_desktop/hi.y.cpp"
+#line 3524 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 151: // ENG_lfea_swConsonant: t_ENG_N_swConsonant
@@ -3531,7 +3532,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_swConsonant",word);
 
 }
-#line 3535 "build/hi_desktop/hi.y.cpp"
+#line 3536 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 152: // ENG_lfea_swVowel: t_ENG_N_swVowel
@@ -3543,7 +3544,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("ENG_lfea_swVowel",word);
 
 }
-#line 3547 "build/hi_desktop/hi.y.cpp"
+#line 3548 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 153: // ENG_nCon: ENG_1Con ENG_Con
@@ -3555,7 +3556,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_nCon->ENG_1Con
 yylhs.value=sparser->combine_nodes("ENG_nCon",ENG_1Con,ENG_Con);
 
 }
-#line 3559 "build/hi_desktop/hi.y.cpp"
+#line 3560 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 154: // ENG_nCon: ENG_nCon ENG_Con
@@ -3567,7 +3568,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ENG_nCon->ENG_nCon
 yylhs.value=sparser->combine_nodes("ENG_nCon",ENG_nCon,ENG_Con);
 
 }
-#line 3571 "build/hi_desktop/hi.y.cpp"
+#line 3572 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 155: // HUN_1Con: HUN_Con
@@ -3578,7 +3579,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_1Con->HUN_Con"
 yylhs.value=sparser->set_node_info("HUN_1Con",HUN_Con);
 
 }
-#line 3582 "build/hi_desktop/hi.y.cpp"
+#line 3583 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 156: // HUN_A0NEG: HUN_Adj
@@ -3589,7 +3590,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_A0NEG->HUN_Adj
 yylhs.value=sparser->set_node_info("HUN_A0NEG",HUN_Adj);
 
 }
-#line 3593 "build/hi_desktop/hi.y.cpp"
+#line 3594 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 157: // HUN_ANEG: HUN_Neg HUN_Adj
@@ -3601,7 +3602,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ANEG->HUN_Neg 
 yylhs.value=sparser->combine_nodes("HUN_ANEG",HUN_Neg,HUN_Adj);
 
 }
-#line 3605 "build/hi_desktop/hi.y.cpp"
+#line 3606 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 158: // HUN_ANP: HUN_N_Sg HUN_N_Sg
@@ -3613,7 +3614,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ANP->HUN_N_Sg 
 yylhs.value=sparser->combine_nodes("HUN_ANP",HUN_N_Sg1,HUN_N_Sg2);
 
 }
-#line 3617 "build/hi_desktop/hi.y.cpp"
+#line 3618 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 159: // HUN_AN_Acc: HUN_N_Acc END
@@ -3623,7 +3624,7 @@ const node_info& HUN_N_Acc=sparser->get_node_info(yystack_[1].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_AN_Acc->HUN_N_Acc END");
 yylhs.value=sparser->set_node_info("HUN_AN_Acc",HUN_N_Acc);
 }
-#line 3627 "build/hi_desktop/hi.y.cpp"
+#line 3628 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 160: // HUN_AP: HUN_Abar3 HUN_N_Acc
@@ -3635,7 +3636,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_AP->HUN_Abar3 
 yylhs.value=sparser->combine_nodes("HUN_AP",HUN_Abar3,HUN_N_Acc);
 
 }
-#line 3639 "build/hi_desktop/hi.y.cpp"
+#line 3640 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 161: // HUN_AP: HUN_Abar4 HUN_ConjA_End
@@ -3647,7 +3648,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_AP->HUN_Abar4 
 yylhs.value=sparser->combine_nodes("HUN_AP",HUN_Abar4,HUN_ConjA_End);
 
 }
-#line 3651 "build/hi_desktop/hi.y.cpp"
+#line 3652 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 162: // HUN_AP: HUN_Alist HUN_N_Acc
@@ -3659,7 +3660,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_AP->HUN_Alist 
 yylhs.value=sparser->combine_nodes("HUN_AP",HUN_Alist,HUN_N_Acc);
 
 }
-#line 3663 "build/hi_desktop/hi.y.cpp"
+#line 3664 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 163: // HUN_Abar1: HUN_N_Acc HUN_A0NEG
@@ -3671,7 +3672,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar1->HUN_N_A
 yylhs.value=sparser->combine_nodes("HUN_Abar1",HUN_N_Acc,HUN_A0NEG);
 
 }
-#line 3675 "build/hi_desktop/hi.y.cpp"
+#line 3676 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 164: // HUN_Abar1: HUN_N_Ins HUN_A0NEG
@@ -3683,7 +3684,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar1->HUN_N_I
 yylhs.value=sparser->combine_nodes("HUN_Abar1",HUN_N_Ins,HUN_A0NEG);
 
 }
-#line 3687 "build/hi_desktop/hi.y.cpp"
+#line 3688 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 165: // HUN_Abar1: HUN_N_Sub HUN_A0NEG
@@ -3695,7 +3696,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar1->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_Abar1",HUN_N_Sub,HUN_A0NEG);
 
 }
-#line 3699 "build/hi_desktop/hi.y.cpp"
+#line 3700 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 166: // HUN_Abar1N: HUN_N_Acc HUN_ANEG
@@ -3707,7 +3708,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar1N->HUN_N_
 yylhs.value=sparser->combine_nodes("HUN_Abar1N",HUN_N_Acc,HUN_ANEG);
 
 }
-#line 3711 "build/hi_desktop/hi.y.cpp"
+#line 3712 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 167: // HUN_Abar1N: HUN_N_Ins HUN_ANEG
@@ -3719,7 +3720,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar1N->HUN_N_
 yylhs.value=sparser->combine_nodes("HUN_Abar1N",HUN_N_Ins,HUN_ANEG);
 
 }
-#line 3723 "build/hi_desktop/hi.y.cpp"
+#line 3724 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 168: // HUN_Abar1N: HUN_N_Sub HUN_ANEG
@@ -3731,7 +3732,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar1N->HUN_N_
 yylhs.value=sparser->combine_nodes("HUN_Abar1N",HUN_N_Sub,HUN_ANEG);
 
 }
-#line 3735 "build/hi_desktop/hi.y.cpp"
+#line 3736 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 169: // HUN_Abar2: HUN_Abar1
@@ -3742,7 +3743,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar2->HUN_Aba
 yylhs.value=sparser->set_node_info("HUN_Abar2",HUN_Abar1);
 
 }
-#line 3746 "build/hi_desktop/hi.y.cpp"
+#line 3747 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 170: // HUN_Abar2N: HUN_Abar1N
@@ -3753,7 +3754,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar2N->HUN_Ab
 yylhs.value=sparser->set_node_info("HUN_Abar2N",HUN_Abar1N);
 
 }
-#line 3757 "build/hi_desktop/hi.y.cpp"
+#line 3758 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 171: // HUN_Abar2N: HUN_NAbar1
@@ -3764,7 +3765,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar2N->HUN_NA
 yylhs.value=sparser->set_node_info("HUN_Abar2N",HUN_NAbar1);
 
 }
-#line 3768 "build/hi_desktop/hi.y.cpp"
+#line 3769 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 172: // HUN_Abar3: HUN_Abar2
@@ -3775,7 +3776,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar3->HUN_Aba
 yylhs.value=sparser->set_node_info("HUN_Abar3",HUN_Abar2);
 
 }
-#line 3779 "build/hi_desktop/hi.y.cpp"
+#line 3780 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 173: // HUN_Abar3: HUN_Abar2N
@@ -3786,7 +3787,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar3->HUN_Aba
 yylhs.value=sparser->set_node_info("HUN_Abar3",HUN_Abar2N);
 
 }
-#line 3790 "build/hi_desktop/hi.y.cpp"
+#line 3791 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 174: // HUN_Abar3_End: HUN_Abar3 HUN_AN_Acc
@@ -3798,7 +3799,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar3_End->HUN
 yylhs.value=sparser->combine_nodes("HUN_Abar3_End",HUN_Abar3,HUN_AN_Acc);
 
 }
-#line 3802 "build/hi_desktop/hi.y.cpp"
+#line 3803 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 175: // HUN_Abar4: HUN_A0NEG
@@ -3809,7 +3810,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar4->HUN_A0N
 yylhs.value=sparser->set_node_info("HUN_Abar4",HUN_A0NEG);
 
 }
-#line 3813 "build/hi_desktop/hi.y.cpp"
+#line 3814 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 176: // HUN_Abar4: HUN_ANEG
@@ -3820,7 +3821,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar4->HUN_ANE
 yylhs.value=sparser->set_node_info("HUN_Abar4",HUN_ANEG);
 
 }
-#line 3824 "build/hi_desktop/hi.y.cpp"
+#line 3825 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 177: // HUN_Abar4: HUN_Abar3
@@ -3831,7 +3832,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar4->HUN_Aba
 yylhs.value=sparser->set_node_info("HUN_Abar4",HUN_Abar3);
 
 }
-#line 3835 "build/hi_desktop/hi.y.cpp"
+#line 3836 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 178: // HUN_Abar4: HUN_Abar4 HUN_ConjA
@@ -3843,7 +3844,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar4->HUN_Aba
 yylhs.value=sparser->combine_nodes("HUN_Abar4",HUN_Abar4,HUN_ConjA);
 
 }
-#line 3847 "build/hi_desktop/hi.y.cpp"
+#line 3848 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 179: // HUN_Abar4: HUN_Abar4 HUN_ConjAlist
@@ -3855,7 +3856,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar4->HUN_Aba
 yylhs.value=sparser->combine_nodes("HUN_Abar4",HUN_Abar4,HUN_ConjAlist);
 
 }
-#line 3859 "build/hi_desktop/hi.y.cpp"
+#line 3860 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 180: // HUN_Abar4: HUN_Alist
@@ -3866,7 +3867,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Abar4->HUN_Ali
 yylhs.value=sparser->set_node_info("HUN_Abar4",HUN_Alist);
 
 }
-#line 3870 "build/hi_desktop/hi.y.cpp"
+#line 3871 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 181: // HUN_Adj: HUN_Adj_Stem
@@ -3877,7 +3878,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Adj->HUN_Adj_S
 yylhs.value=sparser->set_node_info("HUN_Adj",HUN_Adj_Stem);
 
 }
-#line 3881 "build/hi_desktop/hi.y.cpp"
+#line 3882 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 182: // HUN_Adj_Stem: t_HUN_Adj_Stem
@@ -3889,7 +3890,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Adj_Stem",word);
 
 }
-#line 3893 "build/hi_desktop/hi.y.cpp"
+#line 3894 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 183: // HUN_Alist: HUN_Abar3 HUN_Abar3
@@ -3901,7 +3902,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Alist->HUN_Aba
 yylhs.value=sparser->combine_nodes("HUN_Alist",HUN_Abar31,HUN_Abar32);
 
 }
-#line 3905 "build/hi_desktop/hi.y.cpp"
+#line 3906 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 184: // HUN_Alist: HUN_Alist HUN_Abar3
@@ -3913,7 +3914,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Alist->HUN_Ali
 yylhs.value=sparser->combine_nodes("HUN_Alist",HUN_Alist,HUN_Abar3);
 
 }
-#line 3917 "build/hi_desktop/hi.y.cpp"
+#line 3918 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 185: // HUN_Alist_End: HUN_Alist HUN_AN_Acc
@@ -3925,7 +3926,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Alist_End->HUN
 yylhs.value=sparser->combine_nodes("HUN_Alist_End",HUN_Alist,HUN_AN_Acc);
 
 }
-#line 3929 "build/hi_desktop/hi.y.cpp"
+#line 3930 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 186: // HUN_Con: HUN_lfea_swConsonant HUN_Con
@@ -3937,7 +3938,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Con->HUN_lfea_
 yylhs.value=sparser->combine_nodes("HUN_Con",HUN_lfea_swConsonant,HUN_Con);
 
 }
-#line 3941 "build/hi_desktop/hi.y.cpp"
+#line 3942 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 187: // HUN_Con: HUN_lfea_swVowel HUN_Con
@@ -3949,7 +3950,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Con->HUN_lfea_
 yylhs.value=sparser->combine_nodes("HUN_Con",HUN_lfea_swVowel,HUN_Con);
 
 }
-#line 3953 "build/hi_desktop/hi.y.cpp"
+#line 3954 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 188: // HUN_Con: t_HUN_CON_Stem
@@ -3961,7 +3962,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Con",word);
 
 }
-#line 3965 "build/hi_desktop/hi.y.cpp"
+#line 3966 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 189: // HUN_Con_lfea_Acc: t_HUN_CON_Acc
@@ -3973,7 +3974,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Con_lfea_Acc",word);
 
 }
-#line 3977 "build/hi_desktop/hi.y.cpp"
+#line 3978 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 190: // HUN_Con_lfea_Dat: t_HUN_CON_Dat
@@ -3985,7 +3986,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Con_lfea_Dat",word);
 
 }
-#line 3989 "build/hi_desktop/hi.y.cpp"
+#line 3990 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 191: // HUN_Con_lfea_Ins: t_HUN_CON_Ins
@@ -3997,7 +3998,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Con_lfea_Ins",word);
 
 }
-#line 4001 "build/hi_desktop/hi.y.cpp"
+#line 4002 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 192: // HUN_Con_lfea_Sub: t_HUN_CON_Sub
@@ -4009,7 +4010,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Con_lfea_Sub",word);
 
 }
-#line 4013 "build/hi_desktop/hi.y.cpp"
+#line 4014 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 193: // HUN_Conj: HUN_Conj_Stem
@@ -4020,7 +4021,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Conj->HUN_Conj
 yylhs.value=sparser->set_node_info("HUN_Conj",HUN_Conj_Stem);
 
 }
-#line 4024 "build/hi_desktop/hi.y.cpp"
+#line 4025 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 194: // HUN_ConjA: HUN_Conj HUN_A0NEG
@@ -4032,7 +4033,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjA",HUN_Conj,HUN_A0NEG);
 
 }
-#line 4036 "build/hi_desktop/hi.y.cpp"
+#line 4037 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 195: // HUN_ConjA: HUN_Conj HUN_ANEG
@@ -4044,7 +4045,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjA",HUN_Conj,HUN_ANEG);
 
 }
-#line 4048 "build/hi_desktop/hi.y.cpp"
+#line 4049 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 196: // HUN_ConjA: HUN_Conj HUN_Abar3
@@ -4056,7 +4057,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjA",HUN_Conj,HUN_Abar3);
 
 }
-#line 4060 "build/hi_desktop/hi.y.cpp"
+#line 4061 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 197: // HUN_ConjA: HUN_Conj HUN_Alist
@@ -4068,7 +4069,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjA",HUN_Conj,HUN_Alist);
 
 }
-#line 4072 "build/hi_desktop/hi.y.cpp"
+#line 4073 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 198: // HUN_ConjA_End: HUN_ConjA HUN_AN_Acc
@@ -4080,7 +4081,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA_End->HUN
 yylhs.value=sparser->combine_nodes("HUN_ConjA_End",HUN_ConjA,HUN_AN_Acc);
 
 }
-#line 4084 "build/hi_desktop/hi.y.cpp"
+#line 4085 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 199: // HUN_ConjA_End: HUN_ConjA HUN_Abar3_End
@@ -4092,7 +4093,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA_End->HUN
 yylhs.value=sparser->combine_nodes("HUN_ConjA_End",HUN_ConjA,HUN_Abar3_End);
 
 }
-#line 4096 "build/hi_desktop/hi.y.cpp"
+#line 4097 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 200: // HUN_ConjA_End: HUN_ConjA HUN_Alist_End
@@ -4104,7 +4105,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjA_End->HUN
 yylhs.value=sparser->combine_nodes("HUN_ConjA_End",HUN_ConjA,HUN_Alist_End);
 
 }
-#line 4108 "build/hi_desktop/hi.y.cpp"
+#line 4109 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 201: // HUN_ConjAlist: HUN_ConjA HUN_Abar3
@@ -4116,7 +4117,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjAlist->HUN
 yylhs.value=sparser->combine_nodes("HUN_ConjAlist",HUN_ConjA,HUN_Abar3);
 
 }
-#line 4120 "build/hi_desktop/hi.y.cpp"
+#line 4121 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 202: // HUN_ConjAlist: HUN_ConjA HUN_Alist
@@ -4128,7 +4129,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjAlist->HUN
 yylhs.value=sparser->combine_nodes("HUN_ConjAlist",HUN_ConjA,HUN_Alist);
 
 }
-#line 4132 "build/hi_desktop/hi.y.cpp"
+#line 4133 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 203: // HUN_ConjN: HUN_N_Sg HUN_ConjNbar1
@@ -4140,7 +4141,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjN->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_ConjN",HUN_N_Sg,HUN_ConjNbar1);
 
 }
-#line 4144 "build/hi_desktop/hi.y.cpp"
+#line 4145 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 204: // HUN_ConjNbar1: HUN_Conj HUN_N_Sg
@@ -4152,7 +4153,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjNbar1->HUN
 yylhs.value=sparser->combine_nodes("HUN_ConjNbar1",HUN_Conj,HUN_N_Sg);
 
 }
-#line 4156 "build/hi_desktop/hi.y.cpp"
+#line 4157 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 205: // HUN_ConjV: HUN_Conj HUN_INVP
@@ -4164,7 +4165,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjV->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjV",HUN_Conj,HUN_INVP);
 
 }
-#line 4168 "build/hi_desktop/hi.y.cpp"
+#line 4169 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 206: // HUN_ConjV: HUN_Conj HUN_IVP
@@ -4176,7 +4177,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjV->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjV",HUN_Conj,HUN_IVP);
 
 }
-#line 4180 "build/hi_desktop/hi.y.cpp"
+#line 4181 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 207: // HUN_ConjV: HUN_Conj HUN_IVPlist
@@ -4188,7 +4189,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ConjV->HUN_Con
 yylhs.value=sparser->combine_nodes("HUN_ConjV",HUN_Conj,HUN_IVPlist);
 
 }
-#line 4192 "build/hi_desktop/hi.y.cpp"
+#line 4193 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 208: // HUN_Conj_Stem: t_HUN_Conj_Stem
@@ -4200,7 +4201,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Conj_Stem",word);
 
 }
-#line 4204 "build/hi_desktop/hi.y.cpp"
+#line 4205 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 209: // HUN_DP: HUN_DPbar HUN_N_Acc
@@ -4212,7 +4213,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_DP->HUN_DPbar 
 yylhs.value=sparser->combine_nodes("HUN_DP",HUN_DPbar,HUN_N_Acc);
 
 }
-#line 4216 "build/hi_desktop/hi.y.cpp"
+#line 4217 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 210: // HUN_DP: HUN_DPbar HUN_N_Dat
@@ -4224,7 +4225,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_DP->HUN_DPbar 
 yylhs.value=sparser->combine_nodes("HUN_DP",HUN_DPbar,HUN_N_Dat);
 
 }
-#line 4228 "build/hi_desktop/hi.y.cpp"
+#line 4229 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 211: // HUN_DP: HUN_DPbar HUN_N_Ine
@@ -4236,7 +4237,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_DP->HUN_DPbar 
 yylhs.value=sparser->combine_nodes("HUN_DP",HUN_DPbar,HUN_N_Ine);
 
 }
-#line 4240 "build/hi_desktop/hi.y.cpp"
+#line 4241 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 212: // HUN_DPbar: HUN_Def_Det_a HUN_lfea_swConsonant
@@ -4248,7 +4249,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_DPbar->HUN_Def
 yylhs.value=sparser->combine_nodes("HUN_DPbar",HUN_Def_Det_a,HUN_lfea_swConsonant);
 
 }
-#line 4252 "build/hi_desktop/hi.y.cpp"
+#line 4253 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 213: // HUN_DPbar: HUN_Def_Det_az HUN_lfea_swVowel
@@ -4260,7 +4261,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_DPbar->HUN_Def
 yylhs.value=sparser->combine_nodes("HUN_DPbar",HUN_Def_Det_az,HUN_lfea_swVowel);
 
 }
-#line 4264 "build/hi_desktop/hi.y.cpp"
+#line 4265 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 214: // HUN_Def_Det: HUN_Det_stem HUN_lfea_DefDet
@@ -4272,7 +4273,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Def_Det->HUN_D
 yylhs.value=sparser->combine_nodes("HUN_Def_Det",HUN_Det_stem,HUN_lfea_DefDet);
 
 }
-#line 4276 "build/hi_desktop/hi.y.cpp"
+#line 4277 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 215: // HUN_Def_Det_a: HUN_Def_Det HUN_lfea_fwConsonant
@@ -4284,7 +4285,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Def_Det_a->HUN
 yylhs.value=sparser->combine_nodes("HUN_Def_Det_a",HUN_Def_Det,HUN_lfea_fwConsonant);
 
 }
-#line 4288 "build/hi_desktop/hi.y.cpp"
+#line 4289 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 216: // HUN_Def_Det_az: HUN_Def_Det HUN_lfea_fwVowel
@@ -4296,7 +4297,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Def_Det_az->HU
 yylhs.value=sparser->combine_nodes("HUN_Def_Det_az",HUN_Def_Det,HUN_lfea_fwVowel);
 
 }
-#line 4300 "build/hi_desktop/hi.y.cpp"
+#line 4301 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 217: // HUN_Det_stem: t_HUN_Det_Stem
@@ -4308,7 +4309,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Det_stem",word);
 
 }
-#line 4312 "build/hi_desktop/hi.y.cpp"
+#line 4313 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 218: // HUN_Empty: %empty
@@ -4318,7 +4319,7 @@ lexicon empty;
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Empty->%empty");
 yylhs.value=sparser->set_node_info("HUN_Empty",empty);
 }
-#line 4322 "build/hi_desktop/hi.y.cpp"
+#line 4323 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 219: // HUN_INVP: HUN_NP HUN_INVPbar2
@@ -4330,7 +4331,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVP->HUN_NP H
 yylhs.value=sparser->combine_nodes("HUN_INVP",HUN_NP,HUN_INVPbar2);
 
 }
-#line 4334 "build/hi_desktop/hi.y.cpp"
+#line 4335 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 220: // HUN_INVP: HUN_Neg HUN_INVPbar
@@ -4342,7 +4343,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVP->HUN_Neg 
 yylhs.value=sparser->combine_nodes("HUN_INVP",HUN_Neg,HUN_INVPbar);
 
 }
-#line 4346 "build/hi_desktop/hi.y.cpp"
+#line 4347 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 221: // HUN_INVP: HUN_Neg HUN_IVPbar
@@ -4354,7 +4355,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVP->HUN_Neg 
 yylhs.value=sparser->combine_nodes("HUN_INVP",HUN_Neg,HUN_IVPbar);
 
 }
-#line 4358 "build/hi_desktop/hi.y.cpp"
+#line 4359 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 222: // HUN_INVPbar: HUN_V HUN_N_Ins
@@ -4366,7 +4367,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar->HUN_V HUN_N_Ins");
 yylhs.value=sparser->combine_nodes("HUN_INVPbar",HUN_V,HUN_N_Ins);
 }
-#line 4370 "build/hi_desktop/hi.y.cpp"
+#line 4371 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 223: // HUN_INVPbar: HUN_V HUN_N_Sub
@@ -4378,7 +4379,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar->HUN_V HUN_N_Sub");
 yylhs.value=sparser->combine_nodes("HUN_INVPbar",HUN_V,HUN_N_Sub);
 }
-#line 4382 "build/hi_desktop/hi.y.cpp"
+#line 4383 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 224: // HUN_INVPbar2: HUN_Neg HUN_V
@@ -4390,7 +4391,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_INVPbar2->HUN_Neg HUN_V");
 yylhs.value=sparser->combine_nodes("HUN_INVPbar2",HUN_Neg,HUN_V);
 }
-#line 4394 "build/hi_desktop/hi.y.cpp"
+#line 4395 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 225: // HUN_IVP: HUN_IVPbar
@@ -4401,7 +4402,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVP->HUN_IVPba
 yylhs.value=sparser->set_node_info("HUN_IVP",HUN_IVPbar);
 
 }
-#line 4405 "build/hi_desktop/hi.y.cpp"
+#line 4406 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 226: // HUN_IVPConj: HUN_IVPConj HUN_ConjV
@@ -4413,7 +4414,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPConj->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPConj",HUN_IVPConj,HUN_ConjV);
 
 }
-#line 4417 "build/hi_desktop/hi.y.cpp"
+#line 4418 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 227: // HUN_IVPConj: HUN_Vhead HUN_ConjV
@@ -4425,7 +4426,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPConj->HUN_V
 yylhs.value=sparser->combine_nodes("HUN_IVPConj",HUN_Vhead,HUN_ConjV);
 
 }
-#line 4429 "build/hi_desktop/hi.y.cpp"
+#line 4430 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 228: // HUN_IVPConj: HUN_Vlisthead HUN_ConjV
@@ -4437,7 +4438,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPConj->HUN_V
 yylhs.value=sparser->combine_nodes("HUN_IVPConj",HUN_Vlisthead,HUN_ConjV);
 
 }
-#line 4441 "build/hi_desktop/hi.y.cpp"
+#line 4442 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 229: // HUN_IVPbar: HUN_N_Acc HUN_V
@@ -4449,7 +4450,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Acc HUN_V");
 yylhs.value=sparser->combine_nodes("HUN_IVPbar",HUN_V,HUN_N_Acc);
 }
-#line 4453 "build/hi_desktop/hi.y.cpp"
+#line 4454 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 230: // HUN_IVPbar: HUN_N_Ins HUN_V
@@ -4461,7 +4462,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Ins HUN_V");
 yylhs.value=sparser->combine_nodes("HUN_IVPbar",HUN_N_Ins,HUN_V);
 }
-#line 4465 "build/hi_desktop/hi.y.cpp"
+#line 4466 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 231: // HUN_IVPbar: HUN_N_Sub HUN_V
@@ -4473,7 +4474,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_N_Sub HUN_V");
 yylhs.value=sparser->combine_nodes("HUN_IVPbar",HUN_N_Sub,HUN_V);
 }
-#line 4477 "build/hi_desktop/hi.y.cpp"
+#line 4478 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 232: // HUN_IVPbar: HUN_V HUN_N_Acc
@@ -4485,7 +4486,7 @@ sparser->add_feature_to_leaf(HUN_V,"Verb",std::string("RCV"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPbar->HUN_V HUN_N_Acc");
 yylhs.value=sparser->combine_nodes("HUN_IVPbar",HUN_V,HUN_N_Acc);
 }
-#line 4489 "build/hi_desktop/hi.y.cpp"
+#line 4490 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 233: // HUN_IVPlist: HUN_INVP HUN_INVP
@@ -4497,7 +4498,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPlist->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPlist",HUN_INVP1,HUN_INVP2);
 
 }
-#line 4501 "build/hi_desktop/hi.y.cpp"
+#line 4502 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 234: // HUN_IVPlist: HUN_INVP HUN_IVP
@@ -4509,7 +4510,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPlist->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPlist",HUN_INVP,HUN_IVP);
 
 }
-#line 4513 "build/hi_desktop/hi.y.cpp"
+#line 4514 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 235: // HUN_IVPlist: HUN_IVP HUN_INVP
@@ -4521,7 +4522,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPlist->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPlist",HUN_IVP,HUN_INVP);
 
 }
-#line 4525 "build/hi_desktop/hi.y.cpp"
+#line 4526 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 236: // HUN_IVPlist: HUN_IVP HUN_IVP
@@ -4533,7 +4534,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPlist->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPlist",HUN_IVP1,HUN_IVP2);
 
 }
-#line 4537 "build/hi_desktop/hi.y.cpp"
+#line 4538 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 237: // HUN_IVPlist: HUN_IVPlist HUN_INVP
@@ -4545,7 +4546,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPlist->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPlist",HUN_IVPlist,HUN_INVP);
 
 }
-#line 4549 "build/hi_desktop/hi.y.cpp"
+#line 4550 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 238: // HUN_IVPlist: HUN_IVPlist HUN_IVP
@@ -4557,7 +4558,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IVPlist->HUN_I
 yylhs.value=sparser->combine_nodes("HUN_IVPlist",HUN_IVPlist,HUN_IVP);
 
 }
-#line 4561 "build/hi_desktop/hi.y.cpp"
+#line 4562 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 239: // HUN_ImpVerb: HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2
@@ -4569,7 +4570,7 @@ sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjDefSg2");
 yylhs.value=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjDefSg2);
 }
-#line 4573 "build/hi_desktop/hi.y.cpp"
+#line 4574 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 240: // HUN_ImpVerb: HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2
@@ -4581,7 +4582,7 @@ sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_ConjIndefSg2");
 yylhs.value=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_ConjIndefSg2);
 }
-#line 4585 "build/hi_desktop/hi.y.cpp"
+#line 4586 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 241: // HUN_ImpVerb: HUN_Verb_stem HUN_Verb_lfea_DefSg1
@@ -4593,7 +4594,7 @@ sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb->HUN_Verb_stem HUN_Verb_lfea_DefSg1");
 yylhs.value=sparser->combine_nodes("HUN_ImpVerb",HUN_Verb_stem,HUN_Verb_lfea_DefSg1);
 }
-#line 4597 "build/hi_desktop/hi.y.cpp"
+#line 4598 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 242: // HUN_ImpVerbPfx: HUN_ImpVerb HUN_Vbpfx
@@ -4605,7 +4606,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerbPfx->HU
 yylhs.value=sparser->combine_nodes("HUN_ImpVerbPfx",HUN_ImpVerb,HUN_Vbpfx);
 
 }
-#line 4609 "build/hi_desktop/hi.y.cpp"
+#line 4610 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 243: // HUN_ImpVerb_N_Acc: HUN_ImpVerb HUN_N_Acc
@@ -4617,7 +4618,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb_N_Acc-
 yylhs.value=sparser->combine_nodes("HUN_ImpVerb_N_Acc",HUN_ImpVerb,HUN_N_Acc);
 
 }
-#line 4621 "build/hi_desktop/hi.y.cpp"
+#line 4622 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 244: // HUN_ImpVerb_N_Dat: HUN_ImpVerb HUN_N_Dat
@@ -4629,7 +4630,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_ImpVerb_N_Dat-
 yylhs.value=sparser->combine_nodes("HUN_ImpVerb_N_Dat",HUN_ImpVerb,HUN_N_Dat);
 
 }
-#line 4633 "build/hi_desktop/hi.y.cpp"
+#line 4634 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 245: // HUN_IndVerb: HUN_Verb_stem HUN_Verb_lfea_InDefSg3
@@ -4641,7 +4642,7 @@ sparser->add_feature_to_leaf(HUN_Verb_stem,"main_verb");
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_IndVerb->HUN_Verb_stem HUN_Verb_lfea_InDefSg3");
 yylhs.value=sparser->combine_nodes("HUN_IndVerb",HUN_Verb_stem,HUN_Verb_lfea_InDefSg3);
 }
-#line 4645 "build/hi_desktop/hi.y.cpp"
+#line 4646 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 246: // HUN_NAbar1: HUN_Neg HUN_Abar1
@@ -4653,7 +4654,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_NAbar1->HUN_Ne
 yylhs.value=sparser->combine_nodes("HUN_NAbar1",HUN_Neg,HUN_Abar1);
 
 }
-#line 4657 "build/hi_desktop/hi.y.cpp"
+#line 4658 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 247: // HUN_NP: HUN_N_Acc
@@ -4664,7 +4665,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_NP->HUN_N_Acc"
 yylhs.value=sparser->set_node_info("HUN_NP",HUN_N_Acc);
 
 }
-#line 4668 "build/hi_desktop/hi.y.cpp"
+#line 4669 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 248: // HUN_NP: HUN_N_Ins
@@ -4675,7 +4676,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_NP->HUN_N_Ins"
 yylhs.value=sparser->set_node_info("HUN_NP",HUN_N_Ins);
 
 }
-#line 4679 "build/hi_desktop/hi.y.cpp"
+#line 4680 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 249: // HUN_NP: HUN_N_Sg
@@ -4686,7 +4687,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_NP->HUN_N_Sg")
 yylhs.value=sparser->set_node_info("HUN_NP",HUN_N_Sg);
 
 }
-#line 4690 "build/hi_desktop/hi.y.cpp"
+#line 4691 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 250: // HUN_NP: HUN_N_Sub
@@ -4697,7 +4698,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_NP->HUN_N_Sub"
 yylhs.value=sparser->set_node_info("HUN_NP",HUN_N_Sub);
 
 }
-#line 4701 "build/hi_desktop/hi.y.cpp"
+#line 4702 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 251: // HUN_N_Acc: HUN_ANP HUN_Noun_lfea_Acc
@@ -4709,7 +4710,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Acc->HUN_ANP
 yylhs.value=sparser->combine_nodes("HUN_N_Acc",HUN_ANP,HUN_Noun_lfea_Acc);
 
 }
-#line 4713 "build/hi_desktop/hi.y.cpp"
+#line 4714 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 252: // HUN_N_Acc: HUN_N_Pl HUN_Noun_lfea_Acc
@@ -4721,7 +4722,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Acc->HUN_N_P
 yylhs.value=sparser->combine_nodes("HUN_N_Acc",HUN_N_Pl,HUN_Noun_lfea_Acc);
 
 }
-#line 4725 "build/hi_desktop/hi.y.cpp"
+#line 4726 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 253: // HUN_N_Acc: HUN_N_Sg HUN_Con_lfea_Acc
@@ -4733,7 +4734,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Acc->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Acc",HUN_N_Sg,HUN_Con_lfea_Acc);
 
 }
-#line 4737 "build/hi_desktop/hi.y.cpp"
+#line 4738 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 254: // HUN_N_Acc: HUN_N_Sg HUN_Noun_lfea_Acc
@@ -4745,7 +4746,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Acc->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Acc",HUN_N_Sg,HUN_Noun_lfea_Acc);
 
 }
-#line 4749 "build/hi_desktop/hi.y.cpp"
+#line 4750 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 255: // HUN_N_Acc: HUN_Num HUN_Num_lfea_Acc
@@ -4757,7 +4758,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Acc->HUN_Num
 yylhs.value=sparser->combine_nodes("HUN_N_Acc",HUN_Num,HUN_Num_lfea_Acc);
 
 }
-#line 4761 "build/hi_desktop/hi.y.cpp"
+#line 4762 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 256: // HUN_N_Acc: HUN_Nums HUN_Num_lfea_Acc
@@ -4769,7 +4770,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Acc->HUN_Num
 yylhs.value=sparser->combine_nodes("HUN_N_Acc",HUN_Nums,HUN_Num_lfea_Acc);
 
 }
-#line 4773 "build/hi_desktop/hi.y.cpp"
+#line 4774 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 257: // HUN_N_Dat: HUN_N_Sg HUN_Con_lfea_Dat
@@ -4781,7 +4782,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Dat->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Dat",HUN_N_Sg,HUN_Con_lfea_Dat);
 
 }
-#line 4785 "build/hi_desktop/hi.y.cpp"
+#line 4786 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 258: // HUN_N_Dat: HUN_N_Sg HUN_Noun_lfea_Dat
@@ -4793,7 +4794,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Dat->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Dat",HUN_N_Sg,HUN_Noun_lfea_Dat);
 
 }
-#line 4797 "build/hi_desktop/hi.y.cpp"
+#line 4798 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 259: // HUN_N_Dat: HUN_N_Sg HUN_Noun_lfea_Del
@@ -4805,7 +4806,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Dat->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Dat",HUN_N_Sg,HUN_Noun_lfea_Del);
 
 }
-#line 4809 "build/hi_desktop/hi.y.cpp"
+#line 4810 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 260: // HUN_N_Dat: HUN_Num HUN_Num_lfea_Dat
@@ -4817,7 +4818,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Dat->HUN_Num
 yylhs.value=sparser->combine_nodes("HUN_N_Dat",HUN_Num,HUN_Num_lfea_Dat);
 
 }
-#line 4821 "build/hi_desktop/hi.y.cpp"
+#line 4822 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 261: // HUN_N_Dat: HUN_Num HUN_Num_lfea_Del
@@ -4829,7 +4830,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Dat->HUN_Num
 yylhs.value=sparser->combine_nodes("HUN_N_Dat",HUN_Num,HUN_Num_lfea_Del);
 
 }
-#line 4833 "build/hi_desktop/hi.y.cpp"
+#line 4834 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 262: // HUN_N_Dat: HUN_Nums HUN_Num_lfea_Dat
@@ -4841,7 +4842,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Dat->HUN_Num
 yylhs.value=sparser->combine_nodes("HUN_N_Dat",HUN_Nums,HUN_Num_lfea_Dat);
 
 }
-#line 4845 "build/hi_desktop/hi.y.cpp"
+#line 4846 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 263: // HUN_N_Ine: HUN_N_Pl HUN_Noun_lfea_Ine
@@ -4853,7 +4854,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Ine->HUN_N_P
 yylhs.value=sparser->combine_nodes("HUN_N_Ine",HUN_N_Pl,HUN_Noun_lfea_Ine);
 
 }
-#line 4857 "build/hi_desktop/hi.y.cpp"
+#line 4858 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 264: // HUN_N_Ine: HUN_N_Sg HUN_Noun_lfea_Ine
@@ -4865,7 +4866,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Ine->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Ine",HUN_N_Sg,HUN_Noun_lfea_Ine);
 
 }
-#line 4869 "build/hi_desktop/hi.y.cpp"
+#line 4870 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 265: // HUN_N_Ins: HUN_N_Sg HUN_Con_lfea_Ins
@@ -4877,7 +4878,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Ins->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Ins",HUN_N_Sg,HUN_Con_lfea_Ins);
 
 }
-#line 4881 "build/hi_desktop/hi.y.cpp"
+#line 4882 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 266: // HUN_N_Pl: HUN_Noun_Stem HUN_Noun_lfea_Plur
@@ -4889,7 +4890,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Pl->HUN_Noun
 yylhs.value=sparser->combine_nodes("HUN_N_Pl",HUN_Noun_Stem,HUN_Noun_lfea_Plur);
 
 }
-#line 4893 "build/hi_desktop/hi.y.cpp"
+#line 4894 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 267: // HUN_N_Sg: HUN_1Con
@@ -4900,7 +4901,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Sg->HUN_1Con
 yylhs.value=sparser->set_node_info("HUN_N_Sg",HUN_1Con);
 
 }
-#line 4904 "build/hi_desktop/hi.y.cpp"
+#line 4905 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 268: // HUN_N_Sg: HUN_Noun_Pref HUN_Noun_Stem
@@ -4912,7 +4913,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Sg->HUN_Noun
 yylhs.value=sparser->combine_nodes("HUN_N_Sg",HUN_Noun_Pref,HUN_Noun_Stem);
 
 }
-#line 4916 "build/hi_desktop/hi.y.cpp"
+#line 4917 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 269: // HUN_N_Sg: HUN_Noun_Stem
@@ -4923,7 +4924,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Sg->HUN_Noun
 yylhs.value=sparser->set_node_info("HUN_N_Sg",HUN_Noun_Stem);
 
 }
-#line 4927 "build/hi_desktop/hi.y.cpp"
+#line 4928 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 270: // HUN_N_Sg: HUN_nCon
@@ -4934,7 +4935,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Sg->HUN_nCon
 yylhs.value=sparser->set_node_info("HUN_N_Sg",HUN_nCon);
 
 }
-#line 4938 "build/hi_desktop/hi.y.cpp"
+#line 4939 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 271: // HUN_N_Sub: HUN_N_Sg HUN_Con_lfea_Sub
@@ -4946,7 +4947,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Sub->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Sub",HUN_N_Sg,HUN_Con_lfea_Sub);
 
 }
-#line 4950 "build/hi_desktop/hi.y.cpp"
+#line 4951 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 272: // HUN_N_Sub: HUN_N_Sg HUN_Noun_lfea_Sub
@@ -4958,7 +4959,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_N_Sub->HUN_N_S
 yylhs.value=sparser->combine_nodes("HUN_N_Sub",HUN_N_Sg,HUN_Noun_lfea_Sub);
 
 }
-#line 4962 "build/hi_desktop/hi.y.cpp"
+#line 4963 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 273: // HUN_Neg: HUN_Neg_Stem
@@ -4969,7 +4970,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Neg->HUN_Neg_S
 yylhs.value=sparser->set_node_info("HUN_Neg",HUN_Neg_Stem);
 
 }
-#line 4973 "build/hi_desktop/hi.y.cpp"
+#line 4974 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 274: // HUN_Neg_Stem: t_HUN_Neg_Stem
@@ -4981,7 +4982,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Neg_Stem",word);
 
 }
-#line 4985 "build/hi_desktop/hi.y.cpp"
+#line 4986 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 275: // HUN_Noun_Pref: t_HUN_Noun_Pref
@@ -4993,7 +4994,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_Pref",word);
 
 }
-#line 4997 "build/hi_desktop/hi.y.cpp"
+#line 4998 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 276: // HUN_Noun_Stem: HUN_lfea_swConsonant HUN_Noun_Stem
@@ -5005,7 +5006,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Noun_Stem->HUN
 yylhs.value=sparser->combine_nodes("HUN_Noun_Stem",HUN_lfea_swConsonant,HUN_Noun_Stem);
 
 }
-#line 5009 "build/hi_desktop/hi.y.cpp"
+#line 5010 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 277: // HUN_Noun_Stem: HUN_lfea_swVowel HUN_Noun_Stem
@@ -5017,7 +5018,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Noun_Stem->HUN
 yylhs.value=sparser->combine_nodes("HUN_Noun_Stem",HUN_lfea_swVowel,HUN_Noun_Stem);
 
 }
-#line 5021 "build/hi_desktop/hi.y.cpp"
+#line 5022 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 278: // HUN_Noun_Stem: t_HUN_Noun_Stem
@@ -5029,7 +5030,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_Stem",word);
 
 }
-#line 5033 "build/hi_desktop/hi.y.cpp"
+#line 5034 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 279: // HUN_Noun_lfea_Acc: t_HUN_Noun_Acc
@@ -5041,7 +5042,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Acc",word);
 
 }
-#line 5045 "build/hi_desktop/hi.y.cpp"
+#line 5046 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 280: // HUN_Noun_lfea_Dat: t_HUN_Noun_Dat
@@ -5053,7 +5054,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Dat",word);
 
 }
-#line 5057 "build/hi_desktop/hi.y.cpp"
+#line 5058 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 281: // HUN_Noun_lfea_Del: t_HUN_Noun_Del
@@ -5065,7 +5066,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Del",word);
 
 }
-#line 5069 "build/hi_desktop/hi.y.cpp"
+#line 5070 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 282: // HUN_Noun_lfea_Ine: t_HUN_Noun_Ine
@@ -5077,7 +5078,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Ine",word);
 
 }
-#line 5081 "build/hi_desktop/hi.y.cpp"
+#line 5082 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 283: // HUN_Noun_lfea_Plur: t_HUN_Noun_Plur
@@ -5089,7 +5090,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Plur",word);
 
 }
-#line 5093 "build/hi_desktop/hi.y.cpp"
+#line 5094 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 284: // HUN_Noun_lfea_Relative: t_HUN_Noun_Relative
@@ -5101,7 +5102,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Relative",word);
 
 }
-#line 5105 "build/hi_desktop/hi.y.cpp"
+#line 5106 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 285: // HUN_Noun_lfea_Sub: t_HUN_Noun_Sub
@@ -5113,7 +5114,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Noun_lfea_Sub",word);
 
 }
-#line 5117 "build/hi_desktop/hi.y.cpp"
+#line 5118 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 286: // HUN_Num: HUN_Num HUN_Num_lfea_Ik
@@ -5125,7 +5126,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Num->HUN_Num H
 yylhs.value=sparser->combine_nodes("HUN_Num",HUN_Num,HUN_Num_lfea_Ik);
 
 }
-#line 5129 "build/hi_desktop/hi.y.cpp"
+#line 5130 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 287: // HUN_Num: HUN_Num HUN_Num_lfea_Par
@@ -5137,7 +5138,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Num->HUN_Num H
 yylhs.value=sparser->combine_nodes("HUN_Num",HUN_Num,HUN_Num_lfea_Par);
 
 }
-#line 5141 "build/hi_desktop/hi.y.cpp"
+#line 5142 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 288: // HUN_Num: HUN_Num_Pref HUN_Num
@@ -5149,7 +5150,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Num->HUN_Num_P
 yylhs.value=sparser->combine_nodes("HUN_Num",HUN_Num_Pref,HUN_Num);
 
 }
-#line 5153 "build/hi_desktop/hi.y.cpp"
+#line 5154 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 289: // HUN_Num: HUN_Num_Stem
@@ -5160,7 +5161,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Num->HUN_Num_S
 yylhs.value=sparser->set_node_info("HUN_Num",HUN_Num_Stem);
 
 }
-#line 5164 "build/hi_desktop/hi.y.cpp"
+#line 5165 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 290: // HUN_Num: HUN_lfea_swConsonant HUN_Num
@@ -5172,7 +5173,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Num->HUN_lfea_
 yylhs.value=sparser->combine_nodes("HUN_Num",HUN_lfea_swConsonant,HUN_Num);
 
 }
-#line 5176 "build/hi_desktop/hi.y.cpp"
+#line 5177 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 291: // HUN_Num: HUN_lfea_swVowel HUN_Num
@@ -5184,7 +5185,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Num->HUN_lfea_
 yylhs.value=sparser->combine_nodes("HUN_Num",HUN_lfea_swVowel,HUN_Num);
 
 }
-#line 5188 "build/hi_desktop/hi.y.cpp"
+#line 5189 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 292: // HUN_Num_Pref: t_HUN_Num_Npref1
@@ -5196,7 +5197,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5200 "build/hi_desktop/hi.y.cpp"
+#line 5201 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 293: // HUN_Num_Pref: t_HUN_Num_Npref1n
@@ -5208,7 +5209,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5212 "build/hi_desktop/hi.y.cpp"
+#line 5213 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 294: // HUN_Num_Pref: t_HUN_Num_Npref1nn
@@ -5220,7 +5221,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5224 "build/hi_desktop/hi.y.cpp"
+#line 5225 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 295: // HUN_Num_Pref: t_HUN_Num_Npref1nnn
@@ -5232,7 +5233,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5236 "build/hi_desktop/hi.y.cpp"
+#line 5237 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 296: // HUN_Num_Pref: t_HUN_Num_Npref2
@@ -5244,7 +5245,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5248 "build/hi_desktop/hi.y.cpp"
+#line 5249 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 297: // HUN_Num_Pref: t_HUN_Num_Npref2n
@@ -5256,7 +5257,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5260 "build/hi_desktop/hi.y.cpp"
+#line 5261 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 298: // HUN_Num_Pref: t_HUN_Num_Npref3
@@ -5268,7 +5269,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5272 "build/hi_desktop/hi.y.cpp"
+#line 5273 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 299: // HUN_Num_Pref: t_HUN_Num_Npref3n
@@ -5280,7 +5281,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5284 "build/hi_desktop/hi.y.cpp"
+#line 5285 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 300: // HUN_Num_Pref: t_HUN_Num_Npref4
@@ -5292,7 +5293,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5296 "build/hi_desktop/hi.y.cpp"
+#line 5297 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 301: // HUN_Num_Pref: t_HUN_Num_Npref4n
@@ -5304,7 +5305,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5308 "build/hi_desktop/hi.y.cpp"
+#line 5309 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 302: // HUN_Num_Pref: t_HUN_Num_Npref5
@@ -5316,7 +5317,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5320 "build/hi_desktop/hi.y.cpp"
+#line 5321 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 303: // HUN_Num_Pref: t_HUN_Num_Npref5n
@@ -5328,7 +5329,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5332 "build/hi_desktop/hi.y.cpp"
+#line 5333 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 304: // HUN_Num_Pref: t_HUN_Num_Npref6
@@ -5340,7 +5341,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5344 "build/hi_desktop/hi.y.cpp"
+#line 5345 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 305: // HUN_Num_Pref: t_HUN_Num_Npref6n
@@ -5352,7 +5353,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5356 "build/hi_desktop/hi.y.cpp"
+#line 5357 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 306: // HUN_Num_Pref: t_HUN_Num_Npref7
@@ -5364,7 +5365,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5368 "build/hi_desktop/hi.y.cpp"
+#line 5369 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 307: // HUN_Num_Pref: t_HUN_Num_Npref7n
@@ -5376,7 +5377,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5380 "build/hi_desktop/hi.y.cpp"
+#line 5381 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 308: // HUN_Num_Pref: t_HUN_Num_Npref8
@@ -5388,7 +5389,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5392 "build/hi_desktop/hi.y.cpp"
+#line 5393 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 309: // HUN_Num_Pref: t_HUN_Num_Npref8n
@@ -5400,7 +5401,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5404 "build/hi_desktop/hi.y.cpp"
+#line 5405 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 310: // HUN_Num_Pref: t_HUN_Num_Npref9
@@ -5412,7 +5413,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5416 "build/hi_desktop/hi.y.cpp"
+#line 5417 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 311: // HUN_Num_Pref: t_HUN_Num_Npref9n
@@ -5424,7 +5425,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Pref",word);
 
 }
-#line 5428 "build/hi_desktop/hi.y.cpp"
+#line 5429 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 312: // HUN_Num_Stem: t_HUN_Num_Stem
@@ -5436,7 +5437,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_Stem",word);
 
 }
-#line 5440 "build/hi_desktop/hi.y.cpp"
+#line 5441 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 313: // HUN_Num_lfea_Acc: t_HUN_Num_Acc
@@ -5448,7 +5449,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_lfea_Acc",word);
 
 }
-#line 5452 "build/hi_desktop/hi.y.cpp"
+#line 5453 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 314: // HUN_Num_lfea_Dat: t_HUN_Num_Dat
@@ -5460,7 +5461,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_lfea_Dat",word);
 
 }
-#line 5464 "build/hi_desktop/hi.y.cpp"
+#line 5465 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 315: // HUN_Num_lfea_Del: t_HUN_Num_Del
@@ -5472,7 +5473,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_lfea_Del",word);
 
 }
-#line 5476 "build/hi_desktop/hi.y.cpp"
+#line 5477 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 316: // HUN_Num_lfea_Ik: t_HUN_Num_Ik
@@ -5484,7 +5485,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_lfea_Ik",word);
 
 }
-#line 5488 "build/hi_desktop/hi.y.cpp"
+#line 5489 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 317: // HUN_Num_lfea_Par: t_HUN_Num_Par
@@ -5496,7 +5497,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Num_lfea_Par",word);
 
 }
-#line 5500 "build/hi_desktop/hi.y.cpp"
+#line 5501 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 318: // HUN_Nums: HUN_Num HUN_Num
@@ -5508,7 +5509,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Nums->HUN_Num 
 yylhs.value=sparser->combine_nodes("HUN_Nums",HUN_Num1,HUN_Num2);
 
 }
-#line 5512 "build/hi_desktop/hi.y.cpp"
+#line 5513 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 319: // HUN_Nums: HUN_Nums HUN_Num
@@ -5520,7 +5521,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Nums->HUN_Nums
 yylhs.value=sparser->combine_nodes("HUN_Nums",HUN_Nums,HUN_Num);
 
 }
-#line 5524 "build/hi_desktop/hi.y.cpp"
+#line 5525 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 320: // HUN_Pron_Int: HUN_Pron_Int HUN_Pron_lfea_Nom
@@ -5532,7 +5533,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Pron_Int->HUN_
 yylhs.value=sparser->combine_nodes("HUN_Pron_Int",HUN_Pron_Int,HUN_Pron_lfea_Nom);
 
 }
-#line 5536 "build/hi_desktop/hi.y.cpp"
+#line 5537 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 321: // HUN_Pron_Int: HUN_Pron_Stem HUN_Pron_lfea_Int
@@ -5544,7 +5545,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Pron_Int->HUN_
 yylhs.value=sparser->combine_nodes("HUN_Pron_Int",HUN_Pron_Stem,HUN_Pron_lfea_Int);
 
 }
-#line 5548 "build/hi_desktop/hi.y.cpp"
+#line 5549 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 322: // HUN_Pron_Stem: t_HUN_Pronoun_Stem
@@ -5556,7 +5557,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Pron_Stem",word);
 
 }
-#line 5560 "build/hi_desktop/hi.y.cpp"
+#line 5561 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 323: // HUN_Pron_lfea_Int: t_HUN_Pronoun_Int
@@ -5568,7 +5569,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Pron_lfea_Int",word);
 
 }
-#line 5572 "build/hi_desktop/hi.y.cpp"
+#line 5573 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 324: // HUN_Pron_lfea_Nom: t_HUN_Pronoun_Nom
@@ -5580,7 +5581,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Pron_lfea_Nom",word);
 
 }
-#line 5584 "build/hi_desktop/hi.y.cpp"
+#line 5585 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 325: // HUN_Punct: HUN_Punct_Stem HUN_Punct_ExclamationMark
@@ -5592,7 +5593,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Punct->HUN_Pun
 yylhs.value=sparser->combine_nodes("HUN_Punct",HUN_Punct_Stem,HUN_Punct_ExclamationMark);
 
 }
-#line 5596 "build/hi_desktop/hi.y.cpp"
+#line 5597 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 326: // HUN_Punct: HUN_Punct_Stem HUN_Punct_FullStop
@@ -5604,7 +5605,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Punct->HUN_Pun
 yylhs.value=sparser->combine_nodes("HUN_Punct",HUN_Punct_Stem,HUN_Punct_FullStop);
 
 }
-#line 5608 "build/hi_desktop/hi.y.cpp"
+#line 5609 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 327: // HUN_Punct: HUN_Punct_Stem HUN_Punct_QuestionMark
@@ -5616,7 +5617,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Punct->HUN_Pun
 yylhs.value=sparser->combine_nodes("HUN_Punct",HUN_Punct_Stem,HUN_Punct_QuestionMark);
 
 }
-#line 5620 "build/hi_desktop/hi.y.cpp"
+#line 5621 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 328: // HUN_Punct_ExclamationMark: t_HUN_Punct_ExclamationMark
@@ -5628,7 +5629,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Punct_ExclamationMark",word);
 
 }
-#line 5632 "build/hi_desktop/hi.y.cpp"
+#line 5633 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 329: // HUN_Punct_FullStop: t_HUN_Punct_FullStop
@@ -5640,7 +5641,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Punct_FullStop",word);
 
 }
-#line 5644 "build/hi_desktop/hi.y.cpp"
+#line 5645 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 330: // HUN_Punct_QuestionMark: t_HUN_Punct_QuestionMark
@@ -5652,7 +5653,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Punct_QuestionMark",word);
 
 }
-#line 5656 "build/hi_desktop/hi.y.cpp"
+#line 5657 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 331: // HUN_Punct_Stem: t_HUN_Punct_Stem
@@ -5664,7 +5665,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Punct_Stem",word);
 
 }
-#line 5668 "build/hi_desktop/hi.y.cpp"
+#line 5669 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 332: // HUN_RC: HUN_Conj HUN_N_Sg
@@ -5676,7 +5677,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RC->HUN_Conj H
 yylhs.value=sparser->combine_nodes("HUN_RC",HUN_Conj,HUN_N_Sg);
 
 }
-#line 5680 "build/hi_desktop/hi.y.cpp"
+#line 5681 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 333: // HUN_RC: HUN_RPro HUN_INVP
@@ -5688,7 +5689,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RC->HUN_RPro H
 yylhs.value=sparser->combine_nodes("HUN_RC",HUN_RPro,HUN_INVP);
 
 }
-#line 5692 "build/hi_desktop/hi.y.cpp"
+#line 5693 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 334: // HUN_RC: HUN_RPro HUN_IVP
@@ -5700,7 +5701,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RC->HUN_RPro H
 yylhs.value=sparser->combine_nodes("HUN_RC",HUN_RPro,HUN_IVP);
 
 }
-#line 5704 "build/hi_desktop/hi.y.cpp"
+#line 5705 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 335: // HUN_RC: HUN_RPro HUN_IVPConj
@@ -5712,7 +5713,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RC->HUN_RPro H
 yylhs.value=sparser->combine_nodes("HUN_RC",HUN_RPro,HUN_IVPConj);
 
 }
-#line 5716 "build/hi_desktop/hi.y.cpp"
+#line 5717 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 336: // HUN_RC: HUN_RPro HUN_IVPlist
@@ -5724,7 +5725,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RC->HUN_RPro H
 yylhs.value=sparser->combine_nodes("HUN_RC",HUN_RPro,HUN_IVPlist);
 
 }
-#line 5728 "build/hi_desktop/hi.y.cpp"
+#line 5729 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 337: // HUN_RPro: HUN_Noun_Stem HUN_Noun_lfea_Relative
@@ -5736,7 +5737,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RPro->HUN_Noun
 yylhs.value=sparser->combine_nodes("HUN_RPro",HUN_Noun_Stem,HUN_Noun_lfea_Relative);
 
 }
-#line 5740 "build/hi_desktop/hi.y.cpp"
+#line 5741 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 338: // HUN_RPro: HUN_RPro HUN_Noun_lfea_Plur
@@ -5748,7 +5749,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_RPro->HUN_RPro
 yylhs.value=sparser->combine_nodes("HUN_RPro",HUN_RPro,HUN_Noun_lfea_Plur);
 
 }
-#line 5752 "build/hi_desktop/hi.y.cpp"
+#line 5753 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 339: // HUN_V: HUN_Verb_stem HUN_Verb_lfea_IndefPl3
@@ -5760,7 +5761,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_V->HUN_Verb_st
 yylhs.value=sparser->combine_nodes("HUN_V",HUN_Verb_stem,HUN_Verb_lfea_IndefPl3);
 
 }
-#line 5764 "build/hi_desktop/hi.y.cpp"
+#line 5765 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 340: // HUN_VP: HUN_ImpVerb HUN_AP
@@ -5772,7 +5773,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_ImpVer
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_ImpVerb,HUN_AP);
 
 }
-#line 5776 "build/hi_desktop/hi.y.cpp"
+#line 5777 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 341: // HUN_VP: HUN_ImpVerb HUN_DP
@@ -5784,7 +5785,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_ImpVer
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_ImpVerb,HUN_DP);
 
 }
-#line 5788 "build/hi_desktop/hi.y.cpp"
+#line 5789 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 342: // HUN_VP: HUN_ImpVerb HUN_Empty
@@ -5796,7 +5797,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_ImpVer
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_ImpVerb,HUN_Empty);
 
 }
-#line 5800 "build/hi_desktop/hi.y.cpp"
+#line 5801 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 343: // HUN_VP: HUN_ImpVerbPfx HUN_DP
@@ -5808,7 +5809,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_ImpVer
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_DP);
 
 }
-#line 5812 "build/hi_desktop/hi.y.cpp"
+#line 5813 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 344: // HUN_VP: HUN_ImpVerbPfx HUN_NP
@@ -5820,7 +5821,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_ImpVer
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
 
 }
-#line 5824 "build/hi_desktop/hi.y.cpp"
+#line 5825 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 345: // HUN_VP: HUN_IndVerb HUN_ConjN
@@ -5832,7 +5833,7 @@ sparser->add_feature_to_leaf(HUN_ConjN,"Conj","qword",false,true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_IndVerb HUN_ConjN");
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_IndVerb,HUN_ConjN);
 }
-#line 5836 "build/hi_desktop/hi.y.cpp"
+#line 5837 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 346: // HUN_VP: HUN_IndVerb HUN_N_Sg
@@ -5844,7 +5845,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_IndVer
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_IndVerb,HUN_N_Sg);
 
 }
-#line 5848 "build/hi_desktop/hi.y.cpp"
+#line 5849 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 347: // HUN_VP: HUN_Neg HUN_ImpVerb
@@ -5856,7 +5857,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_Neg HU
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_Neg,HUN_ImpVerb);
 
 }
-#line 5860 "build/hi_desktop/hi.y.cpp"
+#line 5861 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 348: // HUN_VP: HUN_Pron_Int HUN_IndVerb
@@ -5868,7 +5869,7 @@ sparser->add_feature_to_leaf(HUN_Pron_Int,"Pronoun",std::string("qword"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_Pron_Int HUN_IndVerb");
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_Pron_Int,HUN_IndVerb);
 }
-#line 5872 "build/hi_desktop/hi.y.cpp"
+#line 5873 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 349: // HUN_VP: HUN_Vbar1 HUN_NP
@@ -5880,7 +5881,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_Vbar1 
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_Vbar1,HUN_NP);
 
 }
-#line 5884 "build/hi_desktop/hi.y.cpp"
+#line 5885 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 350: // HUN_VP: HUN_Vbar2 HUN_N_Ins
@@ -5892,7 +5893,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_Vbar2 
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_Vbar2,HUN_N_Ins);
 
 }
-#line 5896 "build/hi_desktop/hi.y.cpp"
+#line 5897 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 351: // HUN_VP: HUN_Vbar2 HUN_RC
@@ -5904,7 +5905,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_Vbar2 
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_Vbar2,HUN_RC);
 
 }
-#line 5908 "build/hi_desktop/hi.y.cpp"
+#line 5909 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 352: // HUN_VP: HUN_Vbar3 HUN_RC
@@ -5916,7 +5917,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_Vbar3 
 yylhs.value=sparser->combine_nodes("HUN_VP",HUN_Vbar3,HUN_RC);
 
 }
-#line 5920 "build/hi_desktop/hi.y.cpp"
+#line 5921 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 353: // HUN_Vbar1: HUN_ImpVerb HUN_DP
@@ -5928,7 +5929,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vbar1->HUN_Imp
 yylhs.value=sparser->combine_nodes("HUN_Vbar1",HUN_ImpVerb,HUN_DP);
 
 }
-#line 5932 "build/hi_desktop/hi.y.cpp"
+#line 5933 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 354: // HUN_Vbar2: HUN_ImpVerb HUN_N_Acc
@@ -5940,7 +5941,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vbar2->HUN_Imp
 yylhs.value=sparser->combine_nodes("HUN_Vbar2",HUN_ImpVerb,HUN_N_Acc);
 
 }
-#line 5944 "build/hi_desktop/hi.y.cpp"
+#line 5945 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 355: // HUN_Vbar2: HUN_ImpVerb HUN_N_Dat
@@ -5952,7 +5953,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vbar2->HUN_Imp
 yylhs.value=sparser->combine_nodes("HUN_Vbar2",HUN_ImpVerb,HUN_N_Dat);
 
 }
-#line 5956 "build/hi_desktop/hi.y.cpp"
+#line 5957 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 356: // HUN_Vbar3: HUN_ImpVerb_N_Acc HUN_N_Dat
@@ -5964,7 +5965,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vbar3->HUN_Imp
 yylhs.value=sparser->combine_nodes("HUN_Vbar3",HUN_ImpVerb_N_Acc,HUN_N_Dat);
 
 }
-#line 5968 "build/hi_desktop/hi.y.cpp"
+#line 5969 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 357: // HUN_Vbar3: HUN_ImpVerb_N_Dat HUN_N_Acc
@@ -5976,7 +5977,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vbar3->HUN_Imp
 yylhs.value=sparser->combine_nodes("HUN_Vbar3",HUN_ImpVerb_N_Dat,HUN_N_Acc);
 
 }
-#line 5980 "build/hi_desktop/hi.y.cpp"
+#line 5981 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 358: // HUN_Vbpfx: t_HUN_Vbpfx_Stem
@@ -5988,7 +5989,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Vbpfx",word);
 
 }
-#line 5992 "build/hi_desktop/hi.y.cpp"
+#line 5993 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 359: // HUN_Verb_lfea_ConjDefSg2: t_HUN_Verb_ConjDefSg2
@@ -6000,7 +6001,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Verb_lfea_ConjDefSg2",word);
 
 }
-#line 6004 "build/hi_desktop/hi.y.cpp"
+#line 6005 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 360: // HUN_Verb_lfea_ConjIndefSg2: t_HUN_Verb_ConjIndefSg2
@@ -6012,7 +6013,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Verb_lfea_ConjIndefSg2",word);
 
 }
-#line 6016 "build/hi_desktop/hi.y.cpp"
+#line 6017 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 361: // HUN_Verb_lfea_DefSg1: t_HUN_Verb_DefSg1
@@ -6024,7 +6025,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Verb_lfea_DefSg1",word);
 
 }
-#line 6028 "build/hi_desktop/hi.y.cpp"
+#line 6029 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 362: // HUN_Verb_lfea_InDefSg3: t_HUN_Verb_IndefSg3
@@ -6036,7 +6037,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Verb_lfea_InDefSg3",word);
 
 }
-#line 6040 "build/hi_desktop/hi.y.cpp"
+#line 6041 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 363: // HUN_Verb_lfea_IndefPl3: t_HUN_Verb_IndefPl3
@@ -6048,7 +6049,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Verb_lfea_IndefPl3",word);
 
 }
-#line 6052 "build/hi_desktop/hi.y.cpp"
+#line 6053 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 364: // HUN_Verb_stem: t_HUN_Verb_Stem
@@ -6060,7 +6061,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_Verb_stem",word);
 
 }
-#line 6064 "build/hi_desktop/hi.y.cpp"
+#line 6065 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 365: // HUN_Vhead: HUN_INVP
@@ -6071,7 +6072,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vhead->HUN_INV
 yylhs.value=sparser->set_node_info("HUN_Vhead",HUN_INVP);
 
 }
-#line 6075 "build/hi_desktop/hi.y.cpp"
+#line 6076 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 366: // HUN_Vhead: HUN_IVP
@@ -6082,7 +6083,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vhead->HUN_IVP
 yylhs.value=sparser->set_node_info("HUN_Vhead",HUN_IVP);
 
 }
-#line 6086 "build/hi_desktop/hi.y.cpp"
+#line 6087 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 367: // HUN_Vlisthead: HUN_IVPlist
@@ -6093,7 +6094,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_Vlisthead->HUN
 yylhs.value=sparser->set_node_info("HUN_Vlisthead",HUN_IVPlist);
 
 }
-#line 6097 "build/hi_desktop/hi.y.cpp"
+#line 6098 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 368: // HUN_lfea_DefDet: t_HUN_Det_Def
@@ -6105,7 +6106,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_DefDet",word);
 
 }
-#line 6109 "build/hi_desktop/hi.y.cpp"
+#line 6110 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 369: // HUN_lfea_fwConsonant: t_HUN_Det_fwConsonant
@@ -6117,7 +6118,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_fwConsonant",word);
 
 }
-#line 6121 "build/hi_desktop/hi.y.cpp"
+#line 6122 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 370: // HUN_lfea_fwVowel: t_HUN_Det_fwVowel
@@ -6129,7 +6130,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_fwVowel",word);
 
 }
-#line 6133 "build/hi_desktop/hi.y.cpp"
+#line 6134 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 371: // HUN_lfea_swConsonant: t_HUN_CON_swConsonant
@@ -6141,7 +6142,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_swConsonant",word);
 
 }
-#line 6145 "build/hi_desktop/hi.y.cpp"
+#line 6146 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 372: // HUN_lfea_swConsonant: t_HUN_Noun_swConsonant
@@ -6153,7 +6154,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_swConsonant",word);
 
 }
-#line 6157 "build/hi_desktop/hi.y.cpp"
+#line 6158 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 373: // HUN_lfea_swConsonant: t_HUN_Num_swConsonant
@@ -6165,7 +6166,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_swConsonant",word);
 
 }
-#line 6169 "build/hi_desktop/hi.y.cpp"
+#line 6170 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 374: // HUN_lfea_swVowel: t_HUN_CON_swVowel
@@ -6177,7 +6178,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_swVowel",word);
 
 }
-#line 6181 "build/hi_desktop/hi.y.cpp"
+#line 6182 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 375: // HUN_lfea_swVowel: t_HUN_Noun_swVowel
@@ -6189,7 +6190,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_swVowel",word);
 
 }
-#line 6193 "build/hi_desktop/hi.y.cpp"
+#line 6194 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 376: // HUN_lfea_swVowel: t_HUN_Num_swVowel
@@ -6201,7 +6202,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("HUN_lfea_swVowel",word);
 
 }
-#line 6205 "build/hi_desktop/hi.y.cpp"
+#line 6206 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 377: // HUN_nCon: HUN_1Con HUN_Con
@@ -6213,7 +6214,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_nCon->HUN_1Con
 yylhs.value=sparser->combine_nodes("HUN_nCon",HUN_1Con,HUN_Con);
 
 }
-#line 6217 "build/hi_desktop/hi.y.cpp"
+#line 6218 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 378: // HUN_nCon: HUN_nCon HUN_Con
@@ -6225,7 +6226,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_nCon->HUN_nCon
 yylhs.value=sparser->combine_nodes("HUN_nCon",HUN_nCon,HUN_Con);
 
 }
-#line 6229 "build/hi_desktop/hi.y.cpp"
+#line 6230 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 379: // JSON_Array: JSON_Open_Array JSON_Closing_Value_Element
@@ -6237,7 +6238,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Array->JSON_O
 yylhs.value=sparser->combine_nodes("JSON_Array",JSON_Open_Array,JSON_Closing_Value_Element);
 
 }
-#line 6241 "build/hi_desktop/hi.y.cpp"
+#line 6242 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 380: // JSON_CON: t_JSON_CON_Stem
@@ -6249,7 +6250,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_CON",word);
 
 }
-#line 6253 "build/hi_desktop/hi.y.cpp"
+#line 6254 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 381: // JSON_ClosingSBracket: JSON_Punct_Stem JSON_Punct_ClosingSBracket
@@ -6261,7 +6262,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_ClosingSBrack
 yylhs.value=sparser->combine_nodes("JSON_ClosingSBracket",JSON_Punct_Stem,JSON_Punct_ClosingSBracket);
 
 }
-#line 6265 "build/hi_desktop/hi.y.cpp"
+#line 6266 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 382: // JSON_Closing_Value_Element: JSON_Array JSON_ClosingSBracket
@@ -6273,7 +6274,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value
 yylhs.value=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_Array,JSON_ClosingSBracket);
 
 }
-#line 6277 "build/hi_desktop/hi.y.cpp"
+#line 6278 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 383: // JSON_Closing_Value_Element: JSON_CON JSON_ClosingSBracket
@@ -6285,7 +6286,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value
 yylhs.value=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_CON,JSON_ClosingSBracket);
 
 }
-#line 6289 "build/hi_desktop/hi.y.cpp"
+#line 6290 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 384: // JSON_Closing_Value_Element: JSON_Hash_Ref JSON_ClosingSBracket
@@ -6297,7 +6298,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value
 yylhs.value=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_Hash_Ref,JSON_ClosingSBracket);
 
 }
-#line 6301 "build/hi_desktop/hi.y.cpp"
+#line 6302 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 385: // JSON_Closing_Value_Element: JSON_String JSON_ClosingSBracket
@@ -6309,7 +6310,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Closing_Value
 yylhs.value=sparser->combine_nodes("JSON_Closing_Value_Element",JSON_String,JSON_ClosingSBracket);
 
 }
-#line 6313 "build/hi_desktop/hi.y.cpp"
+#line 6314 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 386: // JSON_Colon: JSON_Punct_Stem JSON_Punct_Colon
@@ -6321,7 +6322,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Colon->JSON_P
 yylhs.value=sparser->combine_nodes("JSON_Colon",JSON_Punct_Stem,JSON_Punct_Colon);
 
 }
-#line 6325 "build/hi_desktop/hi.y.cpp"
+#line 6326 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 387: // JSON_Comma: JSON_Punct_Stem JSON_Punct_Comma
@@ -6333,7 +6334,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Comma->JSON_P
 yylhs.value=sparser->combine_nodes("JSON_Comma",JSON_Punct_Stem,JSON_Punct_Comma);
 
 }
-#line 6337 "build/hi_desktop/hi.y.cpp"
+#line 6338 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 388: // JSON_Hash: JSON_Punct_Stem JSON_Punct_Hash
@@ -6345,7 +6346,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Hash->JSON_Pu
 yylhs.value=sparser->combine_nodes("JSON_Hash",JSON_Punct_Stem,JSON_Punct_Hash);
 
 }
-#line 6349 "build/hi_desktop/hi.y.cpp"
+#line 6350 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 389: // JSON_Hash_Ref: JSON_Hash_Relative JSON_CON
@@ -6357,7 +6358,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Hash_Ref->JSO
 yylhs.value=sparser->combine_nodes("JSON_Hash_Ref",JSON_Hash_Relative,JSON_CON);
 
 }
-#line 6361 "build/hi_desktop/hi.y.cpp"
+#line 6362 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 390: // JSON_Hash_Relative: JSON_Hash JSON_Hash_lfea_relative
@@ -6369,7 +6370,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Hash_Relative
 yylhs.value=sparser->combine_nodes("JSON_Hash_Relative",JSON_Hash,JSON_Hash_lfea_relative);
 
 }
-#line 6373 "build/hi_desktop/hi.y.cpp"
+#line 6374 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 391: // JSON_Hash_lfea_relative: t_JSON_Punct_Relative
@@ -6381,7 +6382,7 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Hash_lfea_relative",word);
 
 }
-#line 6385 "build/hi_desktop/hi.y.cpp"
+#line 6386 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 392: // JSON_Key: JSON_String JSON_Colon
@@ -6390,7 +6391,6 @@ yylhs.value=sparser->set_node_info("JSON_Hash_lfea_relative",word);
 const node_info& JSON_String=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Colon=sparser->get_node_info(yystack_[0].value);
 sparser->add_feature_to_leaf(JSON_Colon,"Punct",std::string("main_verb"));
-sparser->add_feature_to_leaf(JSON_Colon,"Punct",std::string("json_key_value"),false,true);
 sparser->add_feature_to_leaf(JSON_Colon,"main_verb",std::string("indicative"),true);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key->JSON_String JSON_Colon");
 yylhs.value=sparser->combine_nodes("JSON_Key",JSON_String,JSON_Colon);
@@ -6398,55 +6398,33 @@ yylhs.value=sparser->combine_nodes("JSON_Key",JSON_String,JSON_Colon);
 #line 6399 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 393: // JSON_Key_Value_Pair: JSON_Key JSON_Array
-#line 3432 "build/hi_desktop/hi.y"
-{
-const node_info& JSON_Key=sparser->get_node_info(yystack_[1].value);
-const node_info& JSON_Array=sparser->get_node_info(yystack_[0].value);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Array");
-yylhs.value=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Array);
-
-}
-#line 6411 "build/hi_desktop/hi.y.cpp"
-    break;
-
-  case 394: // JSON_Key_Value_Pair: JSON_Key JSON_CON
-#line 3440 "build/hi_desktop/hi.y"
-{
-const node_info& JSON_Key=sparser->get_node_info(yystack_[1].value);
-const node_info& JSON_CON=sparser->get_node_info(yystack_[0].value);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_CON");
-yylhs.value=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_CON);
-
-}
-#line 6423 "build/hi_desktop/hi.y.cpp"
-    break;
-
-  case 395: // JSON_Key_Value_Pair: JSON_Key JSON_Hash_Ref
-#line 3448 "build/hi_desktop/hi.y"
+  case 393: // JSON_Key_Value_Pair: JSON_Key JSON_Hash_Ref
+#line 3431 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Key=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Hash_Ref=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Hash_Ref");
 yylhs.value=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Hash_Ref);
+
 }
-#line 6434 "build/hi_desktop/hi.y.cpp"
+#line 6411 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 396: // JSON_Key_Value_Pair: JSON_Key JSON_String
-#line 3455 "build/hi_desktop/hi.y"
+  case 394: // JSON_Key_Value_Pair: JSON_Key JSON_Value
+#line 3439 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Key=sparser->get_node_info(yystack_[1].value);
-const node_info& JSON_String=sparser->get_node_info(yystack_[0].value);
-logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_String");
-yylhs.value=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_String);
-
+const node_info& JSON_Value=sparser->get_node_info(yystack_[0].value);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Value");
+yylhs.value=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Value);
+const node_info& JSON_Key_Value_Pair=sparser->get_node_info(yylhs.value);
+sparser->add_feature_to_leaf(JSON_Key_Value_Pair,"JSON_Colon","Punct",std::string("json_key_value"),false,true);
 }
-#line 6446 "build/hi_desktop/hi.y.cpp"
+#line 6424 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 397: // JSON_Open_Array: JSON_Open_Array JSON_Value_List_Element
-#line 3464 "build/hi_desktop/hi.y"
+  case 395: // JSON_Open_Array: JSON_Open_Array JSON_Value_List_Element
+#line 3449 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Open_Array=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Value_List_Element=sparser->get_node_info(yystack_[0].value);
@@ -6454,22 +6432,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Open_Array->J
 yylhs.value=sparser->combine_nodes("JSON_Open_Array",JSON_Open_Array,JSON_Value_List_Element);
 
 }
-#line 6458 "build/hi_desktop/hi.y.cpp"
+#line 6436 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 398: // JSON_Open_Array: JSON_OpeningSBracket
-#line 3472 "build/hi_desktop/hi.y"
+  case 396: // JSON_Open_Array: JSON_OpeningSBracket
+#line 3457 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_OpeningSBracket=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Open_Array->JSON_OpeningSBracket");
 yylhs.value=sparser->set_node_info("JSON_Open_Array",JSON_OpeningSBracket);
 
 }
-#line 6469 "build/hi_desktop/hi.y.cpp"
+#line 6447 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 399: // JSON_Open_String: JSON_Quotes HUN_N_Sg
-#line 3480 "build/hi_desktop/hi.y"
+  case 397: // JSON_Open_String: JSON_Quotes HUN_N_Sg
+#line 3465 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Quotes=sparser->get_node_info(yystack_[1].value);
 const node_info& HUN_N_Sg=sparser->get_node_info(yystack_[0].value);
@@ -6477,11 +6455,11 @@ sparser->add_feature_to_leaf(HUN_N_Sg,"Noun",std::string("json_key"));
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Open_String->JSON_Quotes HUN_N_Sg");
 yylhs.value=sparser->combine_nodes("JSON_Open_String",JSON_Quotes,HUN_N_Sg);
 }
-#line 6481 "build/hi_desktop/hi.y.cpp"
+#line 6459 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 400: // JSON_Open_String: JSON_Quotes JSON_CON
-#line 3488 "build/hi_desktop/hi.y"
+  case 398: // JSON_Open_String: JSON_Quotes JSON_CON
+#line 3473 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Quotes=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_CON=sparser->get_node_info(yystack_[0].value);
@@ -6489,11 +6467,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Open_String->
 yylhs.value=sparser->combine_nodes("JSON_Open_String",JSON_Quotes,JSON_CON);
 
 }
-#line 6493 "build/hi_desktop/hi.y.cpp"
+#line 6471 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 401: // JSON_OpeningSBracket: JSON_Punct_Stem JSON_Punct_OpeningSBracket
-#line 3497 "build/hi_desktop/hi.y"
+  case 399: // JSON_OpeningSBracket: JSON_Punct_Stem JSON_Punct_OpeningSBracket
+#line 3482 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Punct_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Punct_OpeningSBracket=sparser->get_node_info(yystack_[0].value);
@@ -6501,11 +6479,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_OpeningSBrack
 yylhs.value=sparser->combine_nodes("JSON_OpeningSBracket",JSON_Punct_Stem,JSON_Punct_OpeningSBracket);
 
 }
-#line 6505 "build/hi_desktop/hi.y.cpp"
+#line 6483 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 402: // JSON_Punct_ClosingSBracket: t_JSON_Punct_ClosingSBracket
-#line 3506 "build/hi_desktop/hi.y"
+  case 400: // JSON_Punct_ClosingSBracket: t_JSON_Punct_ClosingSBracket
+#line 3491 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_ClosingSBracket);
@@ -6513,11 +6491,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_ClosingSBracket",word);
 
 }
-#line 6517 "build/hi_desktop/hi.y.cpp"
+#line 6495 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 403: // JSON_Punct_Colon: t_JSON_Punct_Colon
-#line 3515 "build/hi_desktop/hi.y"
+  case 401: // JSON_Punct_Colon: t_JSON_Punct_Colon
+#line 3500 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_Colon);
@@ -6525,11 +6503,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_Colon",word);
 
 }
-#line 6529 "build/hi_desktop/hi.y.cpp"
+#line 6507 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 404: // JSON_Punct_Comma: t_JSON_Punct_Comma
-#line 3524 "build/hi_desktop/hi.y"
+  case 402: // JSON_Punct_Comma: t_JSON_Punct_Comma
+#line 3509 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_Comma);
@@ -6537,11 +6515,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_Comma",word);
 
 }
-#line 6541 "build/hi_desktop/hi.y.cpp"
+#line 6519 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 405: // JSON_Punct_Hash: t_JSON_Punct_Hash
-#line 3533 "build/hi_desktop/hi.y"
+  case 403: // JSON_Punct_Hash: t_JSON_Punct_Hash
+#line 3518 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_Hash);
@@ -6549,11 +6527,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_Hash",word);
 
 }
-#line 6553 "build/hi_desktop/hi.y.cpp"
+#line 6531 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 406: // JSON_Punct_OpeningSBracket: t_JSON_Punct_OpeningSBracket
-#line 3542 "build/hi_desktop/hi.y"
+  case 404: // JSON_Punct_OpeningSBracket: t_JSON_Punct_OpeningSBracket
+#line 3527 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_OpeningSBracket);
@@ -6561,11 +6539,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_OpeningSBracket",word);
 
 }
-#line 6565 "build/hi_desktop/hi.y.cpp"
+#line 6543 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 407: // JSON_Punct_Quotes: t_JSON_Punct_Quotes
-#line 3551 "build/hi_desktop/hi.y"
+  case 405: // JSON_Punct_Quotes: t_JSON_Punct_Quotes
+#line 3536 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_Quotes);
@@ -6573,11 +6551,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_Quotes",word);
 
 }
-#line 6577 "build/hi_desktop/hi.y.cpp"
+#line 6555 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 408: // JSON_Punct_Stem: t_JSON_Punct_Stem
-#line 3560 "build/hi_desktop/hi.y"
+  case 406: // JSON_Punct_Stem: t_JSON_Punct_Stem
+#line 3545 "build/hi_desktop/hi.y"
 {
 lexicon word;
 word=lex->last_word_scanned(token::t_JSON_Punct_Stem);
@@ -6585,11 +6563,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+"->"+word
 yylhs.value=sparser->set_node_info("JSON_Punct_Stem",word);
 
 }
-#line 6589 "build/hi_desktop/hi.y.cpp"
+#line 6567 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 409: // JSON_Quotes: JSON_Punct_Stem JSON_Punct_Quotes
-#line 3569 "build/hi_desktop/hi.y"
+  case 407: // JSON_Quotes: JSON_Punct_Stem JSON_Punct_Quotes
+#line 3554 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Punct_Stem=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Punct_Quotes=sparser->get_node_info(yystack_[0].value);
@@ -6597,11 +6575,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Quotes->JSON_
 yylhs.value=sparser->combine_nodes("JSON_Quotes",JSON_Punct_Stem,JSON_Punct_Quotes);
 
 }
-#line 6601 "build/hi_desktop/hi.y.cpp"
+#line 6579 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 410: // JSON_String: JSON_Open_String JSON_Quotes
-#line 3578 "build/hi_desktop/hi.y"
+  case 408: // JSON_String: JSON_Open_String JSON_Quotes
+#line 3563 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Open_String=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Quotes=sparser->get_node_info(yystack_[0].value);
@@ -6609,11 +6587,44 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_String->JSON_
 yylhs.value=sparser->combine_nodes("JSON_String",JSON_Open_String,JSON_Quotes);
 
 }
+#line 6591 "build/hi_desktop/hi.y.cpp"
+    break;
+
+  case 409: // JSON_Value: JSON_Array
+#line 3572 "build/hi_desktop/hi.y"
+{
+const node_info& JSON_Array=sparser->get_node_info(yystack_[0].value);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value->JSON_Array");
+yylhs.value=sparser->set_node_info("JSON_Value",JSON_Array);
+
+}
+#line 6602 "build/hi_desktop/hi.y.cpp"
+    break;
+
+  case 410: // JSON_Value: JSON_CON
+#line 3579 "build/hi_desktop/hi.y"
+{
+const node_info& JSON_CON=sparser->get_node_info(yystack_[0].value);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value->JSON_CON");
+yylhs.value=sparser->set_node_info("JSON_Value",JSON_CON);
+
+}
 #line 6613 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 411: // JSON_Value_List_Element: JSON_Array JSON_Comma
-#line 3587 "build/hi_desktop/hi.y"
+  case 411: // JSON_Value: JSON_String
+#line 3586 "build/hi_desktop/hi.y"
+{
+const node_info& JSON_String=sparser->get_node_info(yystack_[0].value);
+logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value->JSON_String");
+yylhs.value=sparser->set_node_info("JSON_Value",JSON_String);
+
+}
+#line 6624 "build/hi_desktop/hi.y.cpp"
+    break;
+
+  case 412: // JSON_Value_List_Element: JSON_Array JSON_Comma
+#line 3594 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Array=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Comma=sparser->get_node_info(yystack_[0].value);
@@ -6621,11 +6632,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_El
 yylhs.value=sparser->combine_nodes("JSON_Value_List_Element",JSON_Array,JSON_Comma);
 
 }
-#line 6625 "build/hi_desktop/hi.y.cpp"
+#line 6636 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 412: // JSON_Value_List_Element: JSON_CON JSON_Comma
-#line 3595 "build/hi_desktop/hi.y"
+  case 413: // JSON_Value_List_Element: JSON_CON JSON_Comma
+#line 3602 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_CON=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Comma=sparser->get_node_info(yystack_[0].value);
@@ -6633,11 +6644,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_El
 yylhs.value=sparser->combine_nodes("JSON_Value_List_Element",JSON_CON,JSON_Comma);
 
 }
-#line 6637 "build/hi_desktop/hi.y.cpp"
+#line 6648 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 413: // JSON_Value_List_Element: JSON_Hash_Ref JSON_Comma
-#line 3603 "build/hi_desktop/hi.y"
+  case 414: // JSON_Value_List_Element: JSON_Hash_Ref JSON_Comma
+#line 3610 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Hash_Ref=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Comma=sparser->get_node_info(yystack_[0].value);
@@ -6645,11 +6656,11 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_El
 yylhs.value=sparser->combine_nodes("JSON_Value_List_Element",JSON_Hash_Ref,JSON_Comma);
 
 }
-#line 6649 "build/hi_desktop/hi.y.cpp"
+#line 6660 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 414: // JSON_Value_List_Element: JSON_String JSON_Comma
-#line 3611 "build/hi_desktop/hi.y"
+  case 415: // JSON_Value_List_Element: JSON_String JSON_Comma
+#line 3618 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_String=sparser->get_node_info(yystack_[1].value);
 const node_info& JSON_Comma=sparser->get_node_info(yystack_[0].value);
@@ -6657,22 +6668,22 @@ logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Value_List_El
 yylhs.value=sparser->combine_nodes("JSON_Value_List_Element",JSON_String,JSON_Comma);
 
 }
-#line 6661 "build/hi_desktop/hi.y.cpp"
+#line 6672 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 415: // S: ENG_VP
-#line 3620 "build/hi_desktop/hi.y"
+  case 416: // S: ENG_VP
+#line 3627 "build/hi_desktop/hi.y"
 {
 const node_info& ENG_VP=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->ENG_VP");
 yylhs.value=sparser->set_node_info("S",ENG_VP);
 
 }
-#line 6672 "build/hi_desktop/hi.y.cpp"
+#line 6683 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 416: // S: HUN_VP HUN_Punct
-#line 3627 "build/hi_desktop/hi.y"
+  case 417: // S: HUN_VP HUN_Punct
+#line 3634 "build/hi_desktop/hi.y"
 {
 const node_info& HUN_VP=sparser->get_node_info(yystack_[1].value);
 const node_info& HUN_Punct=sparser->get_node_info(yystack_[0].value);
@@ -6699,22 +6710,22 @@ else{
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->HUN_VP HUN_Punct");
 yylhs.value=sparser->combine_nodes("S",HUN_VP,HUN_Punct);
 }
-#line 6703 "build/hi_desktop/hi.y.cpp"
+#line 6714 "build/hi_desktop/hi.y.cpp"
     break;
 
-  case 417: // S: JSON_Key_Value_Pair
-#line 3654 "build/hi_desktop/hi.y"
+  case 418: // S: JSON_Key_Value_Pair
+#line 3661 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Key_Value_Pair=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->JSON_Key_Value_Pair");
 yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
 
 }
-#line 6714 "build/hi_desktop/hi.y.cpp"
+#line 6725 "build/hi_desktop/hi.y.cpp"
     break;
 
 
-#line 6718 "build/hi_desktop/hi.y.cpp"
+#line 6729 "build/hi_desktop/hi.y.cpp"
 
             default:
               break;
@@ -7062,78 +7073,78 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
   }
 
 
-  const short parser::yypact_ninf_ = -355;
+  const short parser::yypact_ninf_ = -362;
 
   const short parser::yytable_ninf_ = -368;
 
   const short
   parser::yypact_[] =
   {
-      80,  -355,  -355,  -355,  -355,  -355,  -355,  -355,    36,  1246,
-      56,   262,    71,    71,    36,    36,   401,  -355,  -355,  -355,
-      98,   274,    37,   168,    99,   636,  1006,  1185,  1185,   460,
-      27,  -355,    22,    74,   123,  1185,   510,   654,   150,   204,
-    -355,    29,    81,    62,    29,   199,  -355,   208,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-     226,  -355,  -355,  -355,   282,   226,   226,   226,   282,   226,
-     226,   317,   207,  -355,  1146,  -355,   226,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,   215,  -355,   240,   242,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,   149,  -355,  -355,   267,
-    -355,   149,  -355,    89,   241,  -355,  -355,    89,  -355,  -355,
-    -355,  -355,   320,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,   101,   241,  -355,   241,   115,   241,
-     168,  -355,    36,   259,    36,  -355,   668,   263,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,   235,  -355,  -355,   211,  -355,
-    -355,  -355,  -355,  -355,  1047,   231,  -355,  -355,  1047,  -355,
-     297,  1185,   303,    67,    96,   237,  -355,  -355,   162,   254,
-      86,   211,   560,    86,  1088,   485,   239,  1314,  1607,  -355,
-    1394,  -355,  1505,  1505,   235,  -355,  -355,  -355,  -355,  1255,
-    -355,  1541,  1574,  -355,    53,  -355,  1354,  1432,  -355,   385,
-    -355,   231,   315,   315,  -355,    24,  -355,  -355,  -355,   260,
-    -355,  -355,  -355,  -355,   308,  -355,  -355,   460,  -355,  -355,
-     278,   273,  -355,   712,   273,  -355,   485,   485,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,   277,
-    -355,   293,   204,  -355,   197,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,   285,  -355,  -355,  -355,  -355,  -355,  -355,   226,
-     226,   226,   226,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,   395,  -355,  -355,
-    -355,  -355,    92,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-     170,  -355,  -355,  -355,  -355,  -355,    47,   241,   107,   668,
-      36,   329,   391,   241,   241,  -355,  -355,  -355,  -355,  -355,
-    -355,   235,   235,  -355,  -355,  -355,    86,  1255,  1185,   909,
-    1047,  -355,  -355,  -355,    86,  -355,  -355,  -355,    66,  1226,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-     314,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,   314,   314,   314,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,   330,  -355,  -355,  -355,  -355,
-    -355,  1607,  1607,   330,   330,  -355,  -355,  -355,  -355,   330,
-    -355,  -355,   330,  -355,   460,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,   777,   821,   231,  -355,   865,
-     323,    27,    27,    27,  1144,  -355,  1185,   321,   231,   231,
-    -355,  -355,  -355,    29,    29,  -355,    29,    29,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,    92,    92,   170,   170,  -355,
-      36,  -355,  -355,  -355,  -355,  -355,   149,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  1467,  1467,    86,  -355,  1047,
-    -355,  1047,  -355,    43,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,   965,  -355,  -355,  -355,  -355,    27,  -355,  -355,
-    -355,  -355,  -355,    27,    27,    27,  1185,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,   117,  -355,  -355,  -355,  -355,  -355,
-    -355,    36,    36,  -355,  -355,  -355,   965,   965,   965,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355
+      89,  -362,  -362,  -362,  -362,  -362,  -362,  -362,    33,   536,
+      40,    82,   135,   135,    33,    33,   165,  -362,  -362,  -362,
+     136,  1268,   130,   240,   142,   638,  1008,  1187,  1187,   386,
+     -33,  -362,     4,   110,   137,  1187,   511,   216,   295,    92,
+    -362,    63,   105,    79,    63,   230,  -362,   228,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+     252,  -362,  -362,  -362,   201,   252,   252,   252,   201,   252,
+     252,   322,   234,  -362,  1148,  -362,   252,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,   248,  -362,   269,   262,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,   245,  -362,  -362,   306,
+    -362,   245,  -362,    81,   300,  -362,  -362,    81,  -362,  -362,
+    -362,  -362,   373,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,    93,   300,  -362,   300,   113,   300,
+     240,  -362,    33,   332,    33,  -362,   317,   338,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,    48,  -362,  -362,   303,  -362,
+    -362,  -362,  -362,  -362,  1049,   298,  -362,  -362,  1049,  -362,
+     355,  1187,   289,    53,    57,   345,  -362,  -362,   198,   325,
+     117,   303,   561,   117,  1090,   319,   340,  1316,  1609,  -362,
+    1396,  -362,  1507,  1507,    48,  -362,  -362,  -362,  -362,  1257,
+    -362,  1543,  1576,  -362,    20,  -362,  1356,  1434,  -362,   235,
+    -362,   298,   327,   327,  -362,    18,  -362,  -362,  -362,   346,
+    -362,  -362,  -362,  -362,   247,  -362,  -362,   386,  -362,  -362,
+     320,   357,  -362,   714,   357,  -362,   319,   319,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,   333,
+    -362,   343,    92,  -362,   195,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,   344,  -362,  -362,  -362,  -362,  -362,  -362,
+     252,   252,   252,   252,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,   443,  -362,
+    -362,  -362,  -362,   134,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,   310,  -362,  -362,  -362,  -362,  -362,   140,   300,   177,
+     317,    33,   719,   438,   300,   300,  -362,  -362,  -362,  -362,
+    -362,  -362,    48,    48,  -362,  -362,  -362,   117,  1257,  1187,
+     911,  1049,  -362,  -362,  -362,   117,  -362,  -362,  -362,    83,
+    1228,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,   361,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,   361,   361,   361,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,   329,  -362,  -362,  -362,
+    -362,  -362,  1609,  1609,   329,   329,  -362,  -362,  -362,  -362,
+     329,  -362,  -362,   329,  -362,   386,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,   779,   823,   298,  -362,
+     867,   370,   -33,   -33,   -33,  1146,  -362,  1187,   362,   298,
+     298,  -362,  -362,  -362,    63,    63,  -362,    63,    63,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,   134,   134,   310,   310,
+    -362,    33,  -362,  -362,  -362,  -362,  -362,   245,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  1469,  1469,   117,  -362,
+    1049,  -362,  1049,  -362,    38,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,   967,  -362,  -362,  -362,  -362,   -33,  -362,
+    -362,  -362,  -362,  -362,   -33,   -33,   -33,  1187,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,   242,  -362,  -362,  -362,  -362,
+    -362,  -362,    33,    33,  -362,  -362,  -362,   967,   967,   967,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362
   };
 
   const short
   parser::yydefact_[] =
   {
-       0,    38,   135,   117,   322,   364,   274,   408,     0,     0,
-       0,     0,     0,     0,     0,     0,   144,   415,   118,   116,
+       0,    38,   135,   117,   322,   364,   274,   406,     0,     0,
+       0,     0,     0,     0,     0,     0,   144,   416,   118,   116,
      119,   122,   128,     0,     0,   218,     0,     0,     0,     0,
        0,   273,     0,     0,     0,     0,     0,     0,     0,     0,
-     417,     0,     0,     0,     0,     0,   142,   119,    28,    77,
+     418,     0,     0,     0,     0,     0,   142,   119,    28,    77,
       92,    83,    84,    85,    86,    87,    88,    89,    90,    91,
       69,     2,    33,    52,     0,    60,    62,    53,     0,    70,
       72,     0,     0,    34,     0,    81,    65,   148,   147,    37,
@@ -7153,443 +7164,443 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
        0,   242,     0,     0,   270,   343,   344,   247,   248,   249,
      250,     0,     0,   356,     0,   269,     0,     0,   357,     0,
      345,   346,     0,     0,   347,     0,   324,   348,   320,     0,
-     323,   321,   331,   416,     0,   349,   208,     0,   193,   350,
+     323,   321,   331,   417,     0,   349,   208,     0,   193,   350,
        0,   269,   351,     0,     0,   352,     0,     0,   359,   362,
-     360,   361,   239,   240,   241,   245,   380,   393,   394,     0,
-     395,     0,     0,   398,     0,   396,   410,   407,   409,   399,
-     400,   392,     0,     1,   153,   152,   151,    67,    68,     0,
-      61,    63,    64,    75,    76,    71,    73,    78,    79,    66,
-      74,    93,    82,    80,   154,    20,    21,     0,    12,    22,
-      27,    18,     0,    13,    24,    14,    19,    15,    56,   104,
-       0,    98,    99,   105,   100,    95,   109,   110,   111,     0,
-       0,     0,   118,     0,     0,   113,   112,    94,   101,   102,
-     377,     0,     0,   279,   251,   183,   160,     0,     0,     0,
-     178,   161,   179,   184,   162,   209,   210,   211,     0,     0,
-     370,   369,   215,   216,   212,   213,   368,   214,   163,   166,
-       0,   164,   167,   252,   189,   192,   285,   191,   280,   190,
-     281,   253,   257,   265,   271,   158,   254,   258,   259,   272,
-     165,   168,   246,   157,     0,     0,     0,   268,   283,   266,
-     316,   317,   313,   314,   315,   318,   255,   260,   261,   286,
-     287,     0,     0,   288,   319,   256,   262,   186,   276,   290,
-     187,   277,   291,   378,     0,   203,   329,   330,   328,   325,
-     326,   327,   332,   284,   337,   333,   334,   335,   225,   336,
-       0,   247,   248,   250,     0,   338,     0,     0,     0,     0,
-     391,   390,   389,     0,     0,   379,     0,     0,   397,   405,
-     406,   388,   401,   403,   386,    25,    26,    29,    30,    47,
-       0,    44,    48,    39,    40,    57,    41,    42,    43,    58,
-      59,    45,    46,   194,   195,   196,   197,     0,   198,   201,
-     199,   202,   200,     0,   282,   263,   264,   204,   233,   234,
-     235,   236,     0,   226,   237,   238,   219,     0,   229,   230,
-     231,   220,   221,     0,     0,     0,     0,   232,   363,   339,
-     227,   228,   382,   411,     0,   383,   412,   384,   413,   385,
-     414,    31,    32,   174,   185,   159,   205,   206,   207,   224,
-     222,   223,   404,   402,   381,   387
+     360,   361,   239,   240,   241,   245,   380,   409,   410,     0,
+     393,     0,     0,   396,     0,   411,   394,   408,   405,   407,
+     397,   398,   392,     0,     1,   153,   152,   151,    67,    68,
+       0,    61,    63,    64,    75,    76,    71,    73,    78,    79,
+      66,    74,    93,    82,    80,   154,    20,    21,     0,    12,
+      22,    27,    18,     0,    13,    24,    14,    19,    15,    56,
+     104,     0,    98,    99,   105,   100,    95,   109,   110,   111,
+       0,     0,     0,   118,     0,     0,   113,   112,    94,   101,
+     102,   377,     0,     0,   279,   251,   183,   160,     0,     0,
+       0,   178,   161,   179,   184,   162,   209,   210,   211,     0,
+       0,   370,   369,   215,   216,   212,   213,   368,   214,   163,
+     166,     0,   164,   167,   252,   189,   192,   285,   191,   280,
+     190,   281,   253,   257,   265,   271,   158,   254,   258,   259,
+     272,   165,   168,   246,   157,     0,     0,     0,   268,   283,
+     266,   316,   317,   313,   314,   315,   318,   255,   260,   261,
+     286,   287,     0,     0,   288,   319,   256,   262,   186,   276,
+     290,   187,   277,   291,   378,     0,   203,   329,   330,   328,
+     325,   326,   327,   332,   284,   337,   333,   334,   335,   225,
+     336,     0,   247,   248,   250,     0,   338,     0,     0,     0,
+       0,   391,   390,   389,     0,     0,   379,     0,     0,   395,
+     403,   404,   388,   399,   401,   386,    25,    26,    29,    30,
+      47,     0,    44,    48,    39,    40,    57,    41,    42,    43,
+      58,    59,    45,    46,   194,   195,   196,   197,     0,   198,
+     201,   199,   202,   200,     0,   282,   263,   264,   204,   233,
+     234,   235,   236,     0,   226,   237,   238,   219,     0,   229,
+     230,   231,   220,   221,     0,     0,     0,     0,   232,   363,
+     339,   227,   228,   382,   412,     0,   383,   413,   384,   414,
+     385,   415,    31,    32,   174,   185,   159,   205,   206,   207,
+     224,   222,   223,   402,   400,   381,   387
   };
 
   const short
   parser::yypgoto_[] =
   {
-    -355,    -4,   328,  -355,  -355,  -355,   104,  -355,   -77,  -355,
-    -355,   396,   124,  -355,   326,   -72,   116,  -355,     4,    78,
-      68,   417,  -355,  -355,  -104,  -355,   -28,  -355,  -355,  -355,
-      -2,     0,  -355,  -355,  -355,  -355,   348,   351,  -355,   374,
-     441,   442,    55,  -355,  -355,   380,  -355,  -355,  -355,  -355,
-    -355,   -10,   -12,  -355,   325,  -355,   140,  -355,  -355,  -355,
-     439,  -355,  -355,  -355,  -355,  -355,   135,   102,  -355,  -355,
-     289,   462,    39,  -355,  -355,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,   406,   407,   318,  -355,    -5,
-      16,  -355,  -250,  -355,  -159,  -355,  -355,  -355,    -8,  -355,
-    -355,  -160,  -355,   100,  -355,  -129,  -355,  -355,  -355,  -355,
-      45,  -355,  -355,  -355,  -355,  -355,   -19,  -355,   447,  -355,
-    -355,  -355,  -355,  -355,  -355,  -239,  -355,  -355,  -222,  -355,
-      31,   -26,   449,  -355,  -355,  -355,   448,  -355,   113,    -1,
-      10,  -355,   -20,   290,   -25,   -13,     8,  -355,  -355,    13,
-    -149,  -355,  -355,   127,   234,  -355,  -355,    46,  -355,  -355,
-    -152,  -133,  -355,  -355,  -355,    11,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,   455,  -355,  -354,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,    91,  -355,
-    -355,  -355,  -355,  -355,   327,   403,  -355,   232,   -24,   -83,
-    -355,  -355,   -79,  -355,   233,  -355,  -355,  -355,  -355,  -355,
-    -355,  -355,  -355,  -355,  -355,  -355,  -355,  -355,    35,   457,
-      -7,  -355,  -355
+    -362,    -4,   364,  -362,  -362,  -362,   138,  -362,   -84,  -362,
+    -362,   441,   154,  -362,   359,   -49,   -30,  -362,   -28,   211,
+      34,   448,  -362,  -362,  -120,  -362,     3,  -362,  -362,  -362,
+      -2,     7,  -362,  -362,  -362,  -362,   380,   381,  -362,   391,
+     468,   469,    45,  -362,  -362,   407,  -362,  -362,  -362,  -362,
+    -362,    14,   -12,  -362,   353,  -362,   167,  -362,  -362,  -362,
+     471,  -362,  -362,  -362,  -362,  -362,   266,   102,  -362,  -362,
+     292,   499,    39,  -362,  -362,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,   437,   442,   363,  -362,    -5,
+      16,  -362,   -71,  -362,  -161,  -362,  -362,  -362,    -8,  -362,
+    -362,  -190,  -362,    86,  -362,  -122,  -362,  -362,  -362,  -362,
+      50,  -362,  -362,  -362,  -362,  -362,    -7,  -362,   479,  -362,
+    -362,  -362,  -362,  -362,  -362,  -227,  -362,  -362,  -206,  -362,
+      65,     6,   481,  -362,  -362,  -362,   483,  -362,   179,    -1,
+       2,  -362,   -20,   331,   -25,   -13,     8,  -362,  -362,    13,
+    -132,  -362,  -362,   160,   270,  -362,  -362,    46,  -362,  -362,
+    -155,  -110,  -362,  -362,  -362,    10,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,   490,  -362,  -361,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,    64,  -362,
+    -362,  -362,  -362,  -362,   328,   404,  -362,   256,   -22,  -219,
+    -362,  -362,   -83,  -362,   257,  -362,  -362,  -362,  -362,  -362,
+    -362,  -362,  -362,  -362,  -362,  -362,  -362,  -362,    31,   491,
+       5,  -362,  -362,  -362
   };
 
   const short
   parser::yydefgoto_[] =
   {
        0,    96,    97,    98,    99,   100,   101,   102,   103,   104,
-     105,   106,   107,   108,   109,   312,   313,   314,    61,   321,
-     471,     8,     9,    10,   469,   327,   328,    11,    12,    13,
-     110,   111,   329,   330,    63,    64,    65,    66,    67,    68,
-      69,    70,    71,   299,   300,    72,    73,    74,    75,   302,
-     122,   123,   319,   125,   126,   127,   128,   129,   130,   112,
-     131,   132,   336,   133,    14,    15,   331,   134,   135,    17,
-     332,   136,    47,   115,   116,    21,    22,    23,    24,   333,
-     334,    79,    80,    83,    84,   293,   294,    76,   175,   368,
-     369,   178,   488,   179,   180,   181,   182,   183,   345,   490,
-     185,   186,   187,   188,   492,   189,   381,   382,   383,   384,
-     502,   350,   351,   352,   230,   425,   503,   248,   190,   191,
-     192,   193,   194,   195,   196,   498,   511,   506,   499,   437,
-     438,   439,    25,    26,    27,    28,    29,   197,   440,   441,
-     199,   357,   200,   201,   347,   203,   444,    31,   205,   206,
-     386,   387,   388,   495,   399,   434,   389,   221,   208,   209,
-     406,   407,   408,   409,   410,   222,    32,    33,   241,   238,
-     243,   429,   430,   431,   244,   252,   253,   446,    34,    35,
-      36,    37,   211,   262,   263,   264,   265,   519,   447,   448,
-     449,   367,   362,   363,   212,   213,   214,   267,   268,   522,
-     455,   281,   523,   269,   270,   271,   451,    39,    40,   272,
-      41,   273,   544,   464,   545,   461,   462,   278,   524,    43,
-      44,   458,    45
+     105,   106,   107,   108,   109,   313,   314,   315,    61,   322,
+     472,     8,     9,    10,   470,   328,   329,    11,    12,    13,
+     110,   111,   330,   331,    63,    64,    65,    66,    67,    68,
+      69,    70,    71,   300,   301,    72,    73,    74,    75,   303,
+     122,   123,   320,   125,   126,   127,   128,   129,   130,   112,
+     131,   132,   337,   133,    14,    15,   332,   134,   135,    17,
+     333,   136,    47,   115,   116,    21,    22,    23,    24,   334,
+     335,    79,    80,    83,    84,   294,   295,    76,   175,   369,
+     370,   178,   489,   179,   180,   181,   182,   183,   346,   491,
+     185,   186,   187,   188,   493,   189,   382,   383,   384,   385,
+     503,   351,   352,   353,   230,   426,   504,   248,   190,   191,
+     192,   193,   194,   195,   196,   499,   512,   507,   500,   438,
+     439,   440,    25,    26,    27,    28,    29,   197,   441,   442,
+     199,   358,   200,   201,   348,   203,   445,    31,   205,   206,
+     387,   388,   389,   496,   400,   435,   390,   221,   208,   209,
+     407,   408,   409,   410,   411,   222,    32,    33,   241,   238,
+     243,   430,   431,   432,   244,   252,   253,   447,    34,    35,
+      36,    37,   211,   262,   263,   264,   265,   520,   448,   449,
+     450,   368,   363,   364,   212,   213,   214,   267,   268,   523,
+     456,   282,   524,   269,   270,   271,   452,    39,    40,   272,
+      41,   273,   545,   465,   546,   462,   463,   279,   525,    43,
+      44,   276,   459,    45
   };
 
   const short
   parser::yytable_[] =
   {
      202,   219,   224,   229,   231,    60,   218,    62,    30,   124,
-     219,   250,   138,   220,   435,   218,   249,   184,   279,   280,
-     176,   121,   220,   140,   198,   217,   311,   228,   326,   344,
-     316,   436,   275,   204,   217,    42,   210,   223,   227,    20,
-     225,   177,   225,   535,   393,   392,   340,   117,     2,   251,
-     254,   118,   373,   320,    91,   320,   225,   320,   415,     2,
-     137,   289,   289,   289,   284,   295,   296,    87,    87,   236,
-     415,   207,  -145,   226,   274,    77,    42,   416,    49,   282,
-     304,   247,   247,   417,   420,   423,     1,   508,   509,   510,
-     516,    38,     2,    92,   416,    78,    92,    60,     3,   309,
-     284,  -124,   142,   417,   420,     1,    95,     5,    60,    95,
-     258,   113,     5,     2,   310,  -126,   323,   119,   260,     2,
-     240,   235,   114,   239,   261,     4,   339,     2,   156,   157,
-     325,   119,  -146,     6,   157,    16,   338,     7,   173,   216,
-     167,   168,   169,    46,   170,   171,   168,   343,   245,    90,
-     171,   307,    48,   539,   378,   379,    49,   380,   494,   508,
-     509,   510,   156,   137,   242,     5,   359,   137,   174,   266,
-       6,    48,    92,   137,   167,    49,     6,   385,   170,    94,
-     353,   173,     2,   346,   395,    95,   119,   354,     7,   392,
-     355,   396,   348,   277,   385,   371,   348,   500,   390,   283,
-     504,   356,   210,   394,   385,   322,   370,   324,   370,   373,
-     393,   370,   417,   420,   501,   225,   372,   505,   397,   391,
-     315,   113,   432,   317,   472,   418,   421,   542,   219,    48,
-     349,   543,   225,   442,   301,   465,   258,   207,   286,   533,
-     443,   534,   225,   259,   260,   418,   421,   452,   454,   298,
-     261,  -354,     6,   405,   413,   470,   414,   173,   419,   422,
-     225,   470,   470,   536,   285,   457,   310,   405,   414,   418,
-     421,    92,   405,   414,   335,   142,   424,    48,    92,    93,
-     537,    49,    81,    82,   117,    94,     2,   114,   118,    18,
-     119,    95,   343,   284,   304,   304,   304,    18,   500,   504,
-     366,   156,   157,    18,   285,   286,   459,   274,   467,   277,
-     460,   266,     7,   167,   168,   501,   505,   170,   171,   474,
-     246,   478,   385,    48,    92,   297,   298,    49,   395,   473,
-     398,   477,    48,    92,   385,   396,    49,    95,  -341,   117,
-      94,   485,   489,  -355,   483,   119,    95,   394,   487,   493,
-     426,   427,   428,   259,   370,   142,   232,   204,   348,   137,
-     225,   433,   370,   232,   256,   484,   531,   360,   361,   475,
-     232,   525,   225,   527,   529,   526,   377,   528,   530,   400,
-     401,   156,   157,   290,   291,   292,    85,    88,   311,   316,
-     371,   390,   450,   167,   168,   169,   463,   170,   171,   497,
-     266,   481,   482,   297,    48,    92,    93,   119,    49,   173,
-     219,   219,    94,     6,   219,   442,   442,   120,    95,   442,
-     518,   229,   443,   443,   514,   142,   443,   308,   472,   520,
-     521,   515,   233,   479,   480,   476,   466,   225,   318,   233,
-     257,   141,   532,   513,   305,   517,   233,   306,   507,   486,
-     491,   156,   157,    86,   303,    89,   323,   419,   422,   337,
-     468,   139,    19,   167,   168,   169,   343,   170,   171,   374,
-     287,   288,    60,   215,   309,   512,   538,   219,   353,   234,
-     237,   358,   442,   353,   487,   487,   496,   445,   493,   443,
-     493,   174,   255,   348,   348,   370,   540,   348,   276,   348,
-     142,   370,   341,   541,   453,   456,   137,   137,     0,     0,
-       0,   219,   219,   219,     0,   517,   442,   442,   442,     0,
-     364,     0,     0,   443,   443,   443,   156,   157,     0,   232,
-       0,     0,   256,     0,   411,   411,     0,   411,   167,   168,
-     169,   341,   170,   171,     0,     0,   232,     0,   411,   411,
-     142,   156,   157,   411,   411,     0,   232,     0,     0,   232,
-     232,     0,     0,   167,   168,   169,   174,   170,   171,     0,
-       0,     0,     0,     0,   232,     0,   156,   157,   342,     0,
-       0,     0,     0,   256,   256,     0,     0,     0,   167,   168,
-     169,     0,   170,   171,     0,     0,     0,   365,     0,   246,
-     142,     0,     0,     0,     0,   233,     0,     0,   257,     0,
-     412,   412,     0,   412,     0,     0,   174,   342,     0,     0,
-       0,     0,   233,     0,   412,   412,   156,   157,     0,   412,
-     412,     0,   233,     0,     0,   233,   233,     0,   167,   168,
-     169,   343,   170,   171,   374,     0,     0,     0,     0,     0,
-     233,     0,     0,     0,     0,     0,   375,   376,   377,   257,
-     257,   378,   379,     0,   380,     0,   174,     0,   341,   341,
-       0,    48,    92,     0,   232,    49,   142,     0,   117,    94,
-       0,     0,     0,     0,   143,    95,   232,   144,   145,   146,
-     147,   148,   149,   150,   151,   152,   153,   154,   155,     0,
-       0,     0,   156,   157,     0,   158,   159,   160,   161,   162,
-     163,   164,   165,   166,   167,   168,   169,     0,   170,   171,
-     156,   157,     0,   172,     0,     0,     6,     0,     0,     0,
-       0,   173,   167,   168,   169,     0,   170,   171,   411,   411,
-       0,     0,   174,   246,   342,   342,     0,     0,     0,     0,
-     233,   232,   142,     0,     0,     0,     0,     0,     0,     0,
-     143,     0,   233,   144,   145,   146,   147,   148,   149,   150,
-     151,   152,   153,   154,     0,     0,     0,     0,   156,   157,
-       0,   158,   159,   160,   161,   162,   163,   164,   165,   166,
-     167,   168,   169,     0,   170,   171,     0,     5,     0,     0,
-       0,     0,     6,   398,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,   412,   412,     0,   142,   174,     0,
-       0,     0,     0,     0,     0,   143,     0,   233,   144,   145,
-     146,   147,   148,   149,   150,   151,   152,   153,   154,     0,
+     219,   250,   327,   220,   394,   218,   249,   184,   280,   312,
+     176,   281,   220,   317,   198,   217,   436,   228,   121,   223,
+     140,    42,   285,   204,   217,   210,   138,   227,   536,    20,
+     225,   177,   225,   393,   275,     2,   345,   437,   305,   251,
+     254,   236,     5,   341,    91,   416,   225,    87,    87,    77,
+     137,   290,   290,   290,    38,   296,   297,   416,   285,   374,
+     274,   207,    42,   226,   316,   283,   321,   318,   321,    78,
+     321,   509,   510,   511,   517,    92,   247,   247,   142,     5,
+     418,   421,   424,  -124,   235,     1,   239,    60,    95,   310,
+     417,     2,    81,    82,   258,     2,   311,     3,    60,   119,
+     418,   421,   260,  -126,   156,   157,   324,   417,   261,   142,
+     157,   379,   380,   156,   381,     2,   167,   168,     6,   119,
+     170,   171,   168,   173,     4,   167,   171,   326,    92,   170,
+     117,   308,    49,   339,   118,   156,   157,   540,     1,   113,
+     340,    95,     2,   509,   510,   511,   240,   167,   168,   169,
+     114,   170,   171,   137,   344,  -145,   360,   137,    48,    92,
+      93,     7,    49,   137,     5,   495,    94,   386,   242,     6,
+     354,   394,    95,   347,   396,   174,   266,   355,   393,     2,
+     356,   397,   349,   357,   386,   372,   349,     7,   391,   266,
+       7,   210,  -146,   395,   386,   216,   371,     6,   371,   473,
+     501,   371,   173,   505,   245,   225,   373,   278,   398,   392,
+     418,   421,   433,   286,   287,   419,   422,   374,   219,   466,
+     284,   502,   225,   443,   506,   350,   526,   207,   528,   530,
+     444,   113,   225,    48,    92,   419,   422,    49,    48,   453,
+     455,    94,    49,   406,   414,    48,   415,    95,   420,   423,
+     225,   302,   285,   305,   305,   305,    16,   406,   415,   419,
+     422,   287,   406,   415,    46,   142,   537,   458,   299,   471,
+      90,   425,   156,   157,   286,   471,   471,  -354,     6,   427,
+     428,   429,    18,   173,   167,   168,   169,   538,   170,   171,
+      18,   156,   157,   274,   460,   246,    18,   278,   461,   468,
+      92,   501,   505,   167,   168,   169,   344,   170,   171,   375,
+      48,    92,     2,   386,    49,   311,   119,   117,    94,   396,
+     298,   299,   502,   506,    95,   386,   397,   474,   323,   478,
+     325,   174,   486,   490,   475,   484,   479,   336,   395,   488,
+     494,   532,   543,   361,   362,   371,   544,   232,   204,   349,
+     137,   225,   114,   371,   232,   256,   485,   142,   482,   483,
+     476,   232,   527,   225,   529,   531,    48,    92,   401,   402,
+      49,   258,   312,   317,   344,   156,   157,   246,   259,   260,
+      95,   372,   391,   156,   157,   261,  -341,   167,   168,   169,
+     498,   170,   171,    85,    88,   167,   168,   169,   367,   170,
+     171,   219,   219,   473,  -355,   219,   443,   443,   378,   534,
+     443,   535,   229,   444,   444,   515,   142,   444,   291,   292,
+     293,   399,   516,   233,   480,   481,   487,   492,   225,   259,
+     233,   257,   521,   522,   514,   434,   518,   233,   451,   508,
+     266,   298,   156,   157,   119,   464,   173,   324,   420,   423,
+       6,   519,   120,   309,   167,   168,   169,   467,   170,   171,
+     477,   319,   141,    60,   533,   310,   306,   307,   219,   354,
+      86,   304,    89,   443,   354,   488,   488,   338,   469,   494,
+     444,   494,   174,   139,   349,   349,   371,   541,   349,    19,
+     349,   288,   371,   342,   542,   215,   289,   137,   137,   539,
+     513,   234,   219,   219,   219,   237,   518,   443,   443,   443,
+     497,   365,   359,   446,   444,   444,   444,   255,   454,   457,
+     232,     0,   277,   256,     0,   412,   412,     0,   412,    48,
+       0,     0,   342,    49,     0,     0,     0,   232,     0,   412,
+     412,   142,     0,     0,   412,   412,     0,   232,     0,     0,
+     232,   232,    50,     0,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,     0,     0,   232,     0,   156,   157,   343,
+       0,     0,     0,     0,   256,   256,     0,     0,     0,   167,
+     168,   169,     0,   170,   171,     0,     0,     0,   366,     0,
+     246,   142,     0,     0,     0,     0,   233,     0,     0,   257,
+       0,   413,   413,     0,   413,     0,     0,   174,   343,     0,
+       0,     0,     0,   233,     0,   413,   413,   156,   157,     0,
+     413,   413,     0,   233,     0,     0,   233,   233,     0,   167,
+     168,   169,   344,   170,   171,   375,     0,     0,     0,     0,
+       0,   233,     0,     0,     0,     0,     0,   376,   377,   378,
+     257,   257,   379,   380,     0,   381,     0,   174,     0,     0,
+     342,   342,     0,     0,     0,     0,   232,     0,   142,     0,
+       0,     0,     0,     0,     0,     0,   143,     0,   232,   144,
+     145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
+     155,     0,     0,     0,   156,   157,     0,   158,   159,   160,
+     161,   162,   163,   164,   165,   166,   167,   168,   169,     0,
+     170,   171,    48,    92,     0,   172,    49,     0,     6,   117,
+      94,     0,     0,   173,     0,   119,    95,     0,     0,     0,
+     412,   412,     0,     0,   174,     0,   343,   343,     0,     0,
+       0,     0,   233,   232,   142,     0,     0,     0,     0,     0,
+       0,     0,   143,     0,   233,   144,   145,   146,   147,   148,
+     149,   150,   151,   152,   153,   154,     0,     0,     0,     0,
+     156,   157,     0,   158,   159,   160,   161,   162,   163,   164,
+     165,   166,   167,   168,   169,     0,   170,   171,     0,     5,
+       0,     0,     0,     0,     6,   399,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,   413,   413,     0,   142,
+     174,     0,     0,     0,     0,     0,     0,   143,     0,   233,
+     144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
+     154,     0,     0,     0,     0,   156,   157,     0,   158,   159,
+     160,   161,   162,   163,   164,   165,   166,   167,   168,   169,
+       0,   170,   171,   142,     5,     0,     0,     0,  -365,     6,
+       0,   143,     0,     0,   144,   145,   146,   147,   148,   149,
+     150,   151,   152,   153,   154,   174,     0,     0,     0,   156,
+     157,     0,   158,   159,   160,   161,   162,   163,   164,   165,
+     166,   167,   168,   169,     0,   170,   171,   142,     5,     0,
+       0,     0,  -366,     6,     0,   143,     0,     0,   144,   145,
+     146,   147,   148,   149,   150,   151,   152,   153,   154,   174,
        0,     0,     0,   156,   157,     0,   158,   159,   160,   161,
      162,   163,   164,   165,   166,   167,   168,   169,     0,   170,
-     171,   142,     5,     0,     0,     0,  -365,     6,     0,   143,
+     171,   142,     5,     0,     0,     0,  -367,     6,     0,   143,
        0,     0,   144,   145,   146,   147,   148,   149,   150,   151,
      152,   153,   154,   174,     0,     0,     0,   156,   157,     0,
      158,   159,   160,   161,   162,   163,   164,   165,   166,   167,
-     168,   169,     0,   170,   171,   142,     5,     0,     0,     0,
-    -366,     6,     0,   143,     0,     0,   144,   145,   146,   147,
-     148,   149,   150,   151,   152,   153,   154,   174,     0,     0,
-       0,   156,   157,     0,   158,   159,   160,   161,   162,   163,
-     164,   165,   166,   167,   168,   169,     0,   170,   171,   142,
-       5,     0,     0,     0,  -367,     6,     0,   143,     0,     0,
+     168,   169,     0,   170,   171,     0,     0,     0,     0,     0,
+       0,     6,     0,     0,     0,     0,   173,   142,     0,     0,
+       0,     0,     0,     0,     0,   143,     0,   174,   144,   145,
+     146,   147,   148,   149,   150,   151,   152,   153,   154,     0,
+       0,     0,     0,   156,   157,     0,   158,   159,   160,   161,
+     162,   163,   164,   165,   166,   167,   168,   169,   142,   170,
+     171,     0,     5,     0,     0,     0,   143,     6,     0,   144,
+     145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
+     155,     0,     0,   174,   156,   157,     0,   158,   159,   160,
+     161,   162,   163,   164,   165,   166,   167,   168,   169,   142,
+     170,   171,     0,     0,     0,     0,     0,   143,     0,     0,
      144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
-     154,   174,     0,     0,     0,   156,   157,     0,   158,   159,
+     154,     0,     0,     0,   174,   156,   157,     0,   158,   159,
      160,   161,   162,   163,   164,   165,   166,   167,   168,   169,
-       0,   170,   171,     0,     0,     0,     0,     0,     0,     6,
-       0,     0,     0,     0,   173,   142,     0,     0,     0,     0,
-       0,     0,     0,   143,     0,   174,   144,   145,   146,   147,
-     148,   149,   150,   151,   152,   153,   154,     0,     0,     0,
-       0,   156,   157,     0,   158,   159,   160,   161,   162,   163,
-     164,   165,   166,   167,   168,   169,   142,   170,   171,     0,
-       5,     0,     0,     0,   143,     6,     0,   144,   145,   146,
-     147,   148,   149,   150,   151,   152,   153,   154,   155,     0,
-       0,   174,   156,   157,     0,   158,   159,   160,   161,   162,
+     142,   170,   171,     0,     0,     0,     0,     0,   143,     6,
+       0,   144,   145,   146,   147,   148,   149,   150,   151,   152,
+     153,   154,     0,     0,     0,   174,   156,   157,     0,   158,
+     159,   160,   161,   162,   163,   164,   165,   166,   167,   168,
+     169,     0,   170,   171,    50,     0,    51,    52,    53,    54,
+      55,    56,    57,    58,    59,   173,   142,     0,     0,     0,
+       0,     0,     0,     0,   143,     0,   174,   144,   145,   146,
+     147,   148,   149,   150,   151,   152,   153,   154,     0,     0,
+       0,     0,   156,   157,     0,   158,   159,   160,   161,   162,
      163,   164,   165,   166,   167,   168,   169,   142,   170,   171,
-       0,     0,     0,     0,     0,   143,     0,     0,   144,   145,
+       0,     5,     0,     0,     0,   143,     0,     0,   144,   145,
      146,   147,   148,   149,   150,   151,   152,   153,   154,     0,
        0,     0,   174,   156,   157,     0,   158,   159,   160,   161,
      162,   163,   164,   165,   166,   167,   168,   169,   142,   170,
-     171,     0,     0,     0,     0,     0,   143,     6,     0,   144,
-     145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
-       0,     0,     0,   174,   156,   157,     0,   158,   159,   160,
-     161,   162,   163,   164,   165,   166,   167,   168,   169,     0,
-     170,   171,    50,     0,    51,    52,    53,    54,    55,    56,
-      57,    58,    59,   173,   142,     0,     0,     0,     0,     0,
-       0,     0,   143,     0,   174,   144,   145,   146,   147,   148,
-     149,   150,   151,   152,   153,   154,     0,     0,     0,     0,
-     156,   157,     0,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168,   169,   142,   170,   171,     0,     5,
-       0,     0,     0,   143,     0,     0,   144,   145,   146,   147,
-     148,   149,   150,   151,   152,   153,   154,     0,     0,    48,
-     174,   156,   157,    49,   158,   159,   160,   161,   162,   163,
-     164,   165,   166,   167,   168,   169,   142,   170,   171,     0,
-       0,     0,    50,     0,    51,    52,    53,    54,    55,    56,
-      57,    58,    59,     0,     0,     0,     0,     0,     0,     0,
-       0,   174,   156,   157,     0,   142,     0,     0,     0,     0,
-       0,     0,     0,     0,   167,   168,   169,   343,   170,   171,
-     374,     0,     0,     0,     0,     0,     0,     0,   494,     0,
-       0,   156,   157,     0,     0,     0,     0,   378,   379,     0,
-     380,     0,   174,   167,   168,   169,   343,   170,   171,   374,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,   375,   376,   377,     0,     0,     0,     0,     0,     0,
-       0,   174,   143,   400,   401,   144,   145,   146,   147,   148,
-     149,   150,   151,   152,   153,   154,     0,     0,     0,     0,
-     156,   157,   402,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168,     0,     0,   170,   171,     0,     0,
-       0,     0,   143,   400,   401,   144,   145,   146,   147,   148,
-     149,   150,   151,   152,   153,   154,     0,   403,     0,   404,
-     156,   157,     0,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168,     0,     0,   170,   171,     0,     0,
+     171,    48,    92,    93,     0,    49,     0,     0,   117,    94,
+       2,     0,   118,     0,   119,    95,     0,     0,     0,     0,
+       0,     0,     0,   174,   156,   157,     0,   142,     0,     0,
+       0,     0,     0,     0,     0,     0,   167,   168,   169,   344,
+     170,   171,   375,     0,     0,     0,     0,     0,     0,     0,
+     495,     0,     0,   156,   157,     0,     0,     0,     0,   379,
+     380,     0,   381,     0,   174,   167,   168,   169,   344,   170,
+     171,   375,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,   376,   377,   378,     0,     0,     0,     0,
+       0,     0,     0,   174,   143,   401,   402,   144,   145,   146,
+     147,   148,   149,   150,   151,   152,   153,   154,     0,     0,
+       0,     0,   156,   157,   403,   158,   159,   160,   161,   162,
+     163,   164,   165,   166,   167,   168,     0,     0,   170,   171,
+       0,     0,     0,     0,   143,   401,   402,   144,   145,   146,
+     147,   148,   149,   150,   151,   152,   153,   154,     0,   404,
+       0,   405,   156,   157,     0,   158,   159,   160,   161,   162,
+     163,   164,   165,   166,   167,   168,     0,     0,   170,   171,
+       0,     0,     0,     0,   143,     0,     0,   144,   145,   146,
+     147,   148,   149,   150,   151,   152,   153,   154,     0,   404,
+       0,   405,   156,   157,   403,   158,   159,   160,   161,   162,
+     163,   164,   165,   166,   167,   168,     0,     0,   170,   171,
        0,     0,   143,     0,     0,   144,   145,   146,   147,   148,
-     149,   150,   151,   152,   153,   154,     0,   403,     0,   404,
-     156,   157,   402,   158,   159,   160,   161,   162,   163,   164,
+     149,   150,   151,   152,   153,   154,     0,     0,     0,   404,
+     156,   157,     0,   158,   159,   160,   161,   162,   163,   164,
      165,   166,   167,   168,     0,     0,   170,   171,     0,     0,
-     143,     0,     0,   144,   145,   146,   147,   148,   149,   150,
-     151,   152,   153,   154,     0,     0,     0,   403,   156,   157,
-       0,   158,   159,   160,   161,   162,   163,   164,   165,   166,
-     167,   168,     0,     0,   170,   171,     0,     0,   144,   145,
+     144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
+     154,     0,     0,     0,     0,     0,     0,   404,   158,   159,
+     160,   161,   162,   163,   164,   165,   166,   142,     0,     0,
+       0,     0,     0,     0,     0,   143,     0,     0,   144,   145,
      146,   147,   148,   149,   150,   151,   152,   153,   154,     0,
-       0,     0,     0,     0,     0,   403,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   142,     0,     0,     0,     0,
-       0,     0,     0,   143,     0,     0,   144,   145,   146,   147,
-     148,   149,   150,   151,   152,   153,   154,     0,     0,     0,
-       0,   156,   157,   174,   158,   159,   160,   161,   162,   163,
-     164,   165,   166,   167,   168,   169,     0,   170,   171,   143,
-     400,   401,   144,   145,   146,   147,   148,   149,   150,   151,
-     152,   153,   154,     0,     0,     0,     0,   156,   157,   402,
-     158,   159,   160,   161,   162,   163,   164,   165,   166,   167,
-     168,     0,   143,   170,   171,   144,   145,   146,   147,   148,
-     149,   150,   151,   152,   153,   154,     0,     0,     0,     0,
-     156,   157,   402,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168,     0,   143,   170,   171,   144,   145,
-     146,   147,   148,   149,   150,   151,   152,   153,   154,     0,
-       0,     0,     0,   156,   157,     0,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   167,   168,     0,     0,   170,
-     171
+       0,     0,     0,   156,   157,   174,   158,   159,   160,   161,
+     162,   163,   164,   165,   166,   167,   168,   169,     0,   170,
+     171,   143,   401,   402,   144,   145,   146,   147,   148,   149,
+     150,   151,   152,   153,   154,     0,     0,     0,     0,   156,
+     157,   403,   158,   159,   160,   161,   162,   163,   164,   165,
+     166,   167,   168,     0,   143,   170,   171,   144,   145,   146,
+     147,   148,   149,   150,   151,   152,   153,   154,     0,     0,
+       0,     0,   156,   157,   403,   158,   159,   160,   161,   162,
+     163,   164,   165,   166,   167,   168,     0,   143,   170,   171,
+     144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
+     154,     0,     0,     0,     0,   156,   157,     0,   158,   159,
+     160,   161,   162,   163,   164,   165,   166,   167,   168,     0,
+       0,   170,   171
   };
 
   const short
   parser::yycheck_[] =
   {
       25,    26,    27,    28,    29,     9,    26,     9,     0,    21,
-      35,    36,    22,    26,   253,    35,    36,    25,    43,    43,
-      25,    21,    35,    23,    25,    26,   103,    28,   132,   178,
-     107,   253,    39,    25,    35,     0,    25,    27,    27,     0,
-      27,    25,    29,     0,   204,   204,   175,    10,    12,    36,
-      37,    14,   201,   125,    15,   127,    43,   129,   210,    12,
-      21,    65,    66,    67,    60,    69,    70,    12,    13,    47,
-     222,    25,    25,    27,    39,    19,    41,   210,     7,    44,
-      76,    36,    37,   212,   213,   214,     6,   441,   442,   443,
-     444,     0,    12,     4,   227,    39,     4,   101,    18,   101,
-      96,     0,    40,   232,   233,     6,    17,    85,   112,    17,
-      86,    13,    85,    12,    25,     0,   128,    16,    94,    12,
-      46,    30,    24,    32,   100,    45,   136,    12,    66,    67,
-     130,    16,    25,    90,    67,     0,   136,   108,    95,    26,
-      78,    79,    80,     8,    82,    83,    79,    81,    35,    14,
-      83,    96,     3,   507,   101,   102,     7,   104,    92,   513,
-     514,   515,    66,   124,    41,    85,   191,   128,   106,   107,
-      90,     3,     4,   134,    78,     7,    90,   202,    82,    11,
-     188,    95,    12,   184,   204,    17,    16,   188,   108,   348,
-     191,   204,   184,   112,   219,   200,   188,   436,   203,     0,
-     439,   191,   191,   204,   229,   127,   198,   129,   200,   358,
-     370,   203,   341,   342,   436,   202,   200,   439,   205,   203,
-     104,    13,   247,   107,   328,   212,   213,   110,   253,     3,
-     185,   114,   219,   253,    27,   312,    86,   191,    23,   489,
-     253,   491,   229,    93,    94,   232,   233,   271,   272,     9,
-     100,    89,    90,   207,   208,   327,   210,    95,   212,   213,
-     247,   333,   334,   502,    22,   272,    25,   221,   222,   256,
-     257,     4,   226,   227,    15,    40,   231,     3,     4,     5,
-     502,     7,    20,    21,    10,    11,    12,    24,    14,     0,
-      16,    17,    81,   289,   290,   291,   292,     8,   537,   538,
-      63,    66,    67,    14,    22,    23,   109,   272,   320,   112,
-     113,   107,   108,    78,    79,   537,   538,    82,    83,   329,
-      89,   331,   347,     3,     4,     8,     9,     7,   348,   329,
-      91,   331,     3,     4,   359,   348,     7,    17,    41,    10,
-      11,   349,   350,    89,   349,    16,    17,   348,   349,   350,
-      42,    43,    44,    93,   346,    40,    29,   349,   350,   320,
-     347,    88,   354,    36,    37,   349,   470,    64,    65,   330,
-      43,   454,   359,   456,   457,   454,    98,   456,   457,    49,
-      50,    66,    67,    65,    66,    67,    12,    13,   465,   466,
-     395,   396,   115,    78,    79,    80,   111,    82,    83,   424,
-     107,   333,   334,     8,     3,     4,     5,    16,     7,    95,
-     435,   436,    11,    90,   439,   435,   436,    21,    17,   439,
-      99,   446,   435,   436,   444,    40,   439,    99,   532,   448,
-     449,   444,    29,   331,   332,   331,   312,   424,   112,    36,
-      37,    24,   470,   444,    96,   446,    43,    96,   440,   349,
-     350,    66,    67,    12,    74,    13,   468,   411,   412,   134,
-     320,    22,     0,    78,    79,    80,    81,    82,    83,    84,
-      64,    64,   476,    26,   476,   444,   502,   502,   486,    30,
-      32,   191,   502,   491,   485,   486,   359,   253,   489,   502,
-     491,   106,    37,   485,   486,   487,   516,   489,    41,   491,
-      40,   493,   175,   516,   272,   272,   467,   468,    -1,    -1,
-      -1,   536,   537,   538,    -1,   516,   536,   537,   538,    -1,
-     193,    -1,    -1,   536,   537,   538,    66,    67,    -1,   202,
-      -1,    -1,   205,    -1,   207,   208,    -1,   210,    78,    79,
-      80,   214,    82,    83,    -1,    -1,   219,    -1,   221,   222,
-      40,    66,    67,   226,   227,    -1,   229,    -1,    -1,   232,
-     233,    -1,    -1,    78,    79,    80,   106,    82,    83,    -1,
-      -1,    -1,    -1,    -1,   247,    -1,    66,    67,   175,    -1,
-      -1,    -1,    -1,   256,   257,    -1,    -1,    -1,    78,    79,
-      80,    -1,    82,    83,    -1,    -1,    -1,   194,    -1,    89,
-      40,    -1,    -1,    -1,    -1,   202,    -1,    -1,   205,    -1,
-     207,   208,    -1,   210,    -1,    -1,   106,   214,    -1,    -1,
-      -1,    -1,   219,    -1,   221,   222,    66,    67,    -1,   226,
-     227,    -1,   229,    -1,    -1,   232,   233,    -1,    78,    79,
-      80,    81,    82,    83,    84,    -1,    -1,    -1,    -1,    -1,
-     247,    -1,    -1,    -1,    -1,    -1,    96,    97,    98,   256,
-     257,   101,   102,    -1,   104,    -1,   106,    -1,   341,   342,
-      -1,     3,     4,    -1,   347,     7,    40,    -1,    10,    11,
-      -1,    -1,    -1,    -1,    48,    17,   359,    51,    52,    53,
-      54,    55,    56,    57,    58,    59,    60,    61,    62,    -1,
-      -1,    -1,    66,    67,    -1,    69,    70,    71,    72,    73,
-      74,    75,    76,    77,    78,    79,    80,    -1,    82,    83,
-      66,    67,    -1,    87,    -1,    -1,    90,    -1,    -1,    -1,
-      -1,    95,    78,    79,    80,    -1,    82,    83,   411,   412,
-      -1,    -1,   106,    89,   341,   342,    -1,    -1,    -1,    -1,
-     347,   424,    40,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      48,    -1,   359,    51,    52,    53,    54,    55,    56,    57,
-      58,    59,    60,    61,    -1,    -1,    -1,    -1,    66,    67,
-      -1,    69,    70,    71,    72,    73,    74,    75,    76,    77,
-      78,    79,    80,    -1,    82,    83,    -1,    85,    -1,    -1,
-      -1,    -1,    90,    91,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,   411,   412,    -1,    40,   106,    -1,
-      -1,    -1,    -1,    -1,    -1,    48,    -1,   424,    51,    52,
-      53,    54,    55,    56,    57,    58,    59,    60,    61,    -1,
+      35,    36,   132,    26,   204,    35,    36,    25,    43,   103,
+      25,    43,    35,   107,    25,    26,   253,    28,    21,    27,
+      23,     0,    60,    25,    35,    25,    22,    27,     0,     0,
+      27,    25,    29,   204,    39,    12,   178,   253,    76,    36,
+      37,    47,    85,   175,    15,   210,    43,    12,    13,    19,
+      21,    65,    66,    67,     0,    69,    70,   222,    96,   201,
+      39,    25,    41,    27,   104,    44,   125,   107,   127,    39,
+     129,   442,   443,   444,   445,     4,    36,    37,    40,    85,
+     212,   213,   214,     0,    30,     6,    32,   101,    17,   101,
+     210,    12,    20,    21,    86,    12,    25,    18,   112,    16,
+     232,   233,    94,     0,    66,    67,   128,   227,   100,    40,
+      67,   101,   102,    66,   104,    12,    78,    79,    90,    16,
+      82,    83,    79,    95,    45,    78,    83,   130,     4,    82,
+      10,    96,     7,   136,    14,    66,    67,   508,     6,    13,
+     136,    17,    12,   514,   515,   516,    46,    78,    79,    80,
+      24,    82,    83,   124,    81,    25,   191,   128,     3,     4,
+       5,   108,     7,   134,    85,    92,    11,   202,    41,    90,
+     188,   371,    17,   184,   204,   106,   107,   188,   349,    12,
+     191,   204,   184,   191,   219,   200,   188,   108,   203,   107,
+     108,   191,    25,   204,   229,    26,   198,    90,   200,   329,
+     437,   203,    95,   440,    35,   202,   200,   112,   205,   203,
+     342,   343,   247,    22,    23,   212,   213,   359,   253,   313,
+       0,   437,   219,   253,   440,   185,   455,   191,   457,   458,
+     253,    13,   229,     3,     4,   232,   233,     7,     3,   271,
+     272,    11,     7,   207,   208,     3,   210,    17,   212,   213,
+     247,    27,   290,   291,   292,   293,     0,   221,   222,   256,
+     257,    23,   226,   227,     8,    40,   503,   272,     9,   328,
+      14,   231,    66,    67,    22,   334,   335,    89,    90,    42,
+      43,    44,     0,    95,    78,    79,    80,   503,    82,    83,
+       8,    66,    67,   272,   109,    89,    14,   112,   113,   321,
+       4,   538,   539,    78,    79,    80,    81,    82,    83,    84,
+       3,     4,    12,   348,     7,    25,    16,    10,    11,   349,
+       8,     9,   538,   539,    17,   360,   349,   330,   127,   332,
+     129,   106,   350,   351,   330,   350,   332,    15,   349,   350,
+     351,   471,   110,    64,    65,   347,   114,    29,   350,   351,
+     321,   348,    24,   355,    36,    37,   350,    40,   334,   335,
+     331,    43,   455,   360,   457,   458,     3,     4,    49,    50,
+       7,    86,   466,   467,    81,    66,    67,    89,    93,    94,
+      17,   396,   397,    66,    67,   100,    41,    78,    79,    80,
+     425,    82,    83,    12,    13,    78,    79,    80,    63,    82,
+      83,   436,   437,   533,    89,   440,   436,   437,    98,   490,
+     440,   492,   447,   436,   437,   445,    40,   440,    65,    66,
+      67,    91,   445,    29,   332,   333,   350,   351,   425,    93,
+      36,    37,   449,   450,   445,    88,   447,    43,   115,   441,
+     107,     8,    66,    67,    16,   111,    95,   469,   412,   413,
+      90,    99,    21,    99,    78,    79,    80,   313,    82,    83,
+     332,   112,    24,   477,   471,   477,    96,    96,   503,   487,
+      12,    74,    13,   503,   492,   486,   487,   134,   321,   490,
+     503,   492,   106,    22,   486,   487,   488,   517,   490,     0,
+     492,    64,   494,   175,   517,    26,    64,   468,   469,   503,
+     445,    30,   537,   538,   539,    32,   517,   537,   538,   539,
+     360,   193,   191,   253,   537,   538,   539,    37,   272,   272,
+     202,    -1,    41,   205,    -1,   207,   208,    -1,   210,     3,
+      -1,    -1,   214,     7,    -1,    -1,    -1,   219,    -1,   221,
+     222,    40,    -1,    -1,   226,   227,    -1,   229,    -1,    -1,
+     232,   233,    26,    -1,    28,    29,    30,    31,    32,    33,
+      34,    35,    36,    -1,    -1,   247,    -1,    66,    67,   175,
+      -1,    -1,    -1,    -1,   256,   257,    -1,    -1,    -1,    78,
+      79,    80,    -1,    82,    83,    -1,    -1,    -1,   194,    -1,
+      89,    40,    -1,    -1,    -1,    -1,   202,    -1,    -1,   205,
+      -1,   207,   208,    -1,   210,    -1,    -1,   106,   214,    -1,
+      -1,    -1,    -1,   219,    -1,   221,   222,    66,    67,    -1,
+     226,   227,    -1,   229,    -1,    -1,   232,   233,    -1,    78,
+      79,    80,    81,    82,    83,    84,    -1,    -1,    -1,    -1,
+      -1,   247,    -1,    -1,    -1,    -1,    -1,    96,    97,    98,
+     256,   257,   101,   102,    -1,   104,    -1,   106,    -1,    -1,
+     342,   343,    -1,    -1,    -1,    -1,   348,    -1,    40,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    48,    -1,   360,    51,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
+      62,    -1,    -1,    -1,    66,    67,    -1,    69,    70,    71,
+      72,    73,    74,    75,    76,    77,    78,    79,    80,    -1,
+      82,    83,     3,     4,    -1,    87,     7,    -1,    90,    10,
+      11,    -1,    -1,    95,    -1,    16,    17,    -1,    -1,    -1,
+     412,   413,    -1,    -1,   106,    -1,   342,   343,    -1,    -1,
+      -1,    -1,   348,   425,    40,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    48,    -1,   360,    51,    52,    53,    54,    55,
+      56,    57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,
+      66,    67,    -1,    69,    70,    71,    72,    73,    74,    75,
+      76,    77,    78,    79,    80,    -1,    82,    83,    -1,    85,
+      -1,    -1,    -1,    -1,    90,    91,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,   412,   413,    -1,    40,
+     106,    -1,    -1,    -1,    -1,    -1,    -1,    48,    -1,   425,
+      51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+      61,    -1,    -1,    -1,    -1,    66,    67,    -1,    69,    70,
+      71,    72,    73,    74,    75,    76,    77,    78,    79,    80,
+      -1,    82,    83,    40,    85,    -1,    -1,    -1,    89,    90,
+      -1,    48,    -1,    -1,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61,   106,    -1,    -1,    -1,    66,
+      67,    -1,    69,    70,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    80,    -1,    82,    83,    40,    85,    -1,
+      -1,    -1,    89,    90,    -1,    48,    -1,    -1,    51,    52,
+      53,    54,    55,    56,    57,    58,    59,    60,    61,   106,
       -1,    -1,    -1,    66,    67,    -1,    69,    70,    71,    72,
       73,    74,    75,    76,    77,    78,    79,    80,    -1,    82,
       83,    40,    85,    -1,    -1,    -1,    89,    90,    -1,    48,
       -1,    -1,    51,    52,    53,    54,    55,    56,    57,    58,
       59,    60,    61,   106,    -1,    -1,    -1,    66,    67,    -1,
       69,    70,    71,    72,    73,    74,    75,    76,    77,    78,
-      79,    80,    -1,    82,    83,    40,    85,    -1,    -1,    -1,
-      89,    90,    -1,    48,    -1,    -1,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61,   106,    -1,    -1,
-      -1,    66,    67,    -1,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    -1,    82,    83,    40,
-      85,    -1,    -1,    -1,    89,    90,    -1,    48,    -1,    -1,
+      79,    80,    -1,    82,    83,    -1,    -1,    -1,    -1,    -1,
+      -1,    90,    -1,    -1,    -1,    -1,    95,    40,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    48,    -1,   106,    51,    52,
+      53,    54,    55,    56,    57,    58,    59,    60,    61,    -1,
+      -1,    -1,    -1,    66,    67,    -1,    69,    70,    71,    72,
+      73,    74,    75,    76,    77,    78,    79,    80,    40,    82,
+      83,    -1,    85,    -1,    -1,    -1,    48,    90,    -1,    51,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
+      62,    -1,    -1,   106,    66,    67,    -1,    69,    70,    71,
+      72,    73,    74,    75,    76,    77,    78,    79,    80,    40,
+      82,    83,    -1,    -1,    -1,    -1,    -1,    48,    -1,    -1,
       51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
-      61,   106,    -1,    -1,    -1,    66,    67,    -1,    69,    70,
+      61,    -1,    -1,    -1,   106,    66,    67,    -1,    69,    70,
       71,    72,    73,    74,    75,    76,    77,    78,    79,    80,
-      -1,    82,    83,    -1,    -1,    -1,    -1,    -1,    -1,    90,
-      -1,    -1,    -1,    -1,    95,    40,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    48,    -1,   106,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61,    -1,    -1,    -1,
-      -1,    66,    67,    -1,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    40,    82,    83,    -1,
-      85,    -1,    -1,    -1,    48,    90,    -1,    51,    52,    53,
-      54,    55,    56,    57,    58,    59,    60,    61,    62,    -1,
-      -1,   106,    66,    67,    -1,    69,    70,    71,    72,    73,
+      40,    82,    83,    -1,    -1,    -1,    -1,    -1,    48,    90,
+      -1,    51,    52,    53,    54,    55,    56,    57,    58,    59,
+      60,    61,    -1,    -1,    -1,   106,    66,    67,    -1,    69,
+      70,    71,    72,    73,    74,    75,    76,    77,    78,    79,
+      80,    -1,    82,    83,    26,    -1,    28,    29,    30,    31,
+      32,    33,    34,    35,    36,    95,    40,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    48,    -1,   106,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    -1,    -1,
+      -1,    -1,    66,    67,    -1,    69,    70,    71,    72,    73,
       74,    75,    76,    77,    78,    79,    80,    40,    82,    83,
-      -1,    -1,    -1,    -1,    -1,    48,    -1,    -1,    51,    52,
+      -1,    85,    -1,    -1,    -1,    48,    -1,    -1,    51,    52,
       53,    54,    55,    56,    57,    58,    59,    60,    61,    -1,
       -1,    -1,   106,    66,    67,    -1,    69,    70,    71,    72,
       73,    74,    75,    76,    77,    78,    79,    80,    40,    82,
-      83,    -1,    -1,    -1,    -1,    -1,    48,    90,    -1,    51,
-      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
-      -1,    -1,    -1,   106,    66,    67,    -1,    69,    70,    71,
-      72,    73,    74,    75,    76,    77,    78,    79,    80,    -1,
-      82,    83,    26,    -1,    28,    29,    30,    31,    32,    33,
-      34,    35,    36,    95,    40,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    48,    -1,   106,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,
-      66,    67,    -1,    69,    70,    71,    72,    73,    74,    75,
-      76,    77,    78,    79,    80,    40,    82,    83,    -1,    85,
-      -1,    -1,    -1,    48,    -1,    -1,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61,    -1,    -1,     3,
-     106,    66,    67,     7,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    40,    82,    83,    -1,
-      -1,    -1,    26,    -1,    28,    29,    30,    31,    32,    33,
-      34,    35,    36,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   106,    66,    67,    -1,    40,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    78,    79,    80,    81,    82,    83,
-      84,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    92,    -1,
-      -1,    66,    67,    -1,    -1,    -1,    -1,   101,   102,    -1,
-     104,    -1,   106,    78,    79,    80,    81,    82,    83,    84,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    96,    97,    98,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   106,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,
-      66,    67,    68,    69,    70,    71,    72,    73,    74,    75,
-      76,    77,    78,    79,    -1,    -1,    82,    83,    -1,    -1,
-      -1,    -1,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61,    -1,   103,    -1,   105,
-      66,    67,    -1,    69,    70,    71,    72,    73,    74,    75,
-      76,    77,    78,    79,    -1,    -1,    82,    83,    -1,    -1,
+      83,     3,     4,     5,    -1,     7,    -1,    -1,    10,    11,
+      12,    -1,    14,    -1,    16,    17,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,   106,    66,    67,    -1,    40,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    78,    79,    80,    81,
+      82,    83,    84,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      92,    -1,    -1,    66,    67,    -1,    -1,    -1,    -1,   101,
+     102,    -1,   104,    -1,   106,    78,    79,    80,    81,    82,
+      83,    84,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    96,    97,    98,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,   106,    48,    49,    50,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    -1,    -1,
+      -1,    -1,    66,    67,    68,    69,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    -1,    -1,    82,    83,
+      -1,    -1,    -1,    -1,    48,    49,    50,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    -1,   103,
+      -1,   105,    66,    67,    -1,    69,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    -1,    -1,    82,    83,
+      -1,    -1,    -1,    -1,    48,    -1,    -1,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    -1,   103,
+      -1,   105,    66,    67,    68,    69,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    -1,    -1,    82,    83,
       -1,    -1,    48,    -1,    -1,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61,    -1,   103,    -1,   105,
-      66,    67,    68,    69,    70,    71,    72,    73,    74,    75,
+      56,    57,    58,    59,    60,    61,    -1,    -1,    -1,   103,
+      66,    67,    -1,    69,    70,    71,    72,    73,    74,    75,
       76,    77,    78,    79,    -1,    -1,    82,    83,    -1,    -1,
-      48,    -1,    -1,    51,    52,    53,    54,    55,    56,    57,
-      58,    59,    60,    61,    -1,    -1,    -1,   103,    66,    67,
-      -1,    69,    70,    71,    72,    73,    74,    75,    76,    77,
-      78,    79,    -1,    -1,    82,    83,    -1,    -1,    51,    52,
+      51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+      61,    -1,    -1,    -1,    -1,    -1,    -1,   103,    69,    70,
+      71,    72,    73,    74,    75,    76,    77,    40,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    48,    -1,    -1,    51,    52,
       53,    54,    55,    56,    57,    58,    59,    60,    61,    -1,
-      -1,    -1,    -1,    -1,    -1,   103,    69,    70,    71,    72,
-      73,    74,    75,    76,    77,    40,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    48,    -1,    -1,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61,    -1,    -1,    -1,
-      -1,    66,    67,   106,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    -1,    82,    83,    48,
-      49,    50,    51,    52,    53,    54,    55,    56,    57,    58,
-      59,    60,    61,    -1,    -1,    -1,    -1,    66,    67,    68,
-      69,    70,    71,    72,    73,    74,    75,    76,    77,    78,
-      79,    -1,    48,    82,    83,    51,    52,    53,    54,    55,
-      56,    57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,
-      66,    67,    68,    69,    70,    71,    72,    73,    74,    75,
-      76,    77,    78,    79,    -1,    48,    82,    83,    51,    52,
-      53,    54,    55,    56,    57,    58,    59,    60,    61,    -1,
-      -1,    -1,    -1,    66,    67,    -1,    69,    70,    71,    72,
-      73,    74,    75,    76,    77,    78,    79,    -1,    -1,    82,
-      83
+      -1,    -1,    -1,    66,    67,   106,    69,    70,    71,    72,
+      73,    74,    75,    76,    77,    78,    79,    80,    -1,    82,
+      83,    48,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,    66,
+      67,    68,    69,    70,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    -1,    48,    82,    83,    51,    52,    53,
+      54,    55,    56,    57,    58,    59,    60,    61,    -1,    -1,
+      -1,    -1,    66,    67,    68,    69,    70,    71,    72,    73,
+      74,    75,    76,    77,    78,    79,    -1,    48,    82,    83,
+      51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+      61,    -1,    -1,    -1,    -1,    66,    67,    -1,    69,    70,
+      71,    72,    73,    74,    75,    76,    77,    78,    79,    -1,
+      -1,    82,    83
   };
 
   const short
@@ -7599,7 +7610,7 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
      139,   143,   144,   145,   180,   181,   182,   185,   186,   187,
      188,   191,   192,   193,   194,   248,   249,   250,   251,   252,
      262,   263,   282,   283,   294,   295,   296,   297,   304,   323,
-     324,   326,   334,   335,   336,   338,   182,   188,     3,     7,
+     324,   326,   334,   335,   336,   339,   182,   188,     3,     7,
       26,    28,    29,    30,    31,    32,    33,    34,    35,    36,
      117,   134,   146,   150,   151,   152,   153,   154,   155,   156,
      157,   158,   161,   162,   163,   164,   203,    19,    39,   197,
@@ -7622,34 +7633,34 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
       46,   284,    41,   286,   290,   254,    89,   226,   233,   258,
      260,   265,   291,   292,   265,   291,   310,   311,    86,    93,
       94,   100,   299,   300,   301,   302,   107,   313,   314,   319,
-     320,   321,   325,   327,   334,   336,   335,   112,   333,   260,
-     314,   317,   334,     0,   134,    22,    23,   201,   202,   117,
-     203,   203,   203,   201,   202,   117,   117,     8,     9,   159,
-     160,    27,   165,   161,   134,   152,   153,   158,   118,   146,
-      25,   124,   131,   132,   133,   132,   124,   132,   130,   168,
-     131,   135,   135,   168,   135,   147,   140,   141,   142,   148,
-     149,   182,   186,   195,   196,    15,   178,   170,   147,   167,
-     221,   310,   311,    81,   266,   214,   255,   260,   262,   226,
-     227,   228,   229,   214,   255,   255,   256,   257,   259,   260,
-      64,    65,   308,   309,   310,   311,    63,   307,   205,   206,
-     262,   205,   206,   266,    84,    96,    97,    98,   101,   102,
-     104,   222,   223,   224,   225,   260,   266,   267,   268,   272,
-     205,   206,   210,   217,   255,   258,   261,   265,    91,   270,
-      49,    50,    68,   103,   105,   273,   276,   277,   278,   279,
-     280,   310,   311,   273,   273,   276,   277,   221,   265,   273,
-     221,   265,   273,   221,   226,   231,    42,    43,    44,   287,
-     288,   289,   260,    88,   271,   241,   244,   245,   246,   247,
-     254,   255,   258,   261,   262,   270,   293,   304,   305,   306,
-     115,   322,   314,   313,   314,   316,   320,   336,   337,   109,
-     113,   331,   332,   111,   329,   124,   128,   168,   172,   140,
-     131,   136,   140,   147,   167,   188,   122,   147,   167,   183,
-     183,   136,   136,   205,   206,   214,   219,   255,   208,   214,
-     215,   219,   220,   255,    92,   269,   269,   260,   241,   244,
-     241,   244,   226,   232,   241,   244,   243,   262,   293,   293,
-     293,   242,   246,   255,   258,   261,   293,   255,    99,   303,
-     232,   232,   315,   318,   334,   315,   318,   315,   318,   315,
-     318,   140,   142,   208,   208,     0,   241,   244,   247,   293,
-     258,   261,   110,   114,   328,   330
+     320,   321,   325,   327,   334,   336,   337,   335,   112,   333,
+     260,   314,   317,   334,     0,   134,    22,    23,   201,   202,
+     117,   203,   203,   203,   201,   202,   117,   117,     8,     9,
+     159,   160,    27,   165,   161,   134,   152,   153,   158,   118,
+     146,    25,   124,   131,   132,   133,   132,   124,   132,   130,
+     168,   131,   135,   135,   168,   135,   147,   140,   141,   142,
+     148,   149,   182,   186,   195,   196,    15,   178,   170,   147,
+     167,   221,   310,   311,    81,   266,   214,   255,   260,   262,
+     226,   227,   228,   229,   214,   255,   255,   256,   257,   259,
+     260,    64,    65,   308,   309,   310,   311,    63,   307,   205,
+     206,   262,   205,   206,   266,    84,    96,    97,    98,   101,
+     102,   104,   222,   223,   224,   225,   260,   266,   267,   268,
+     272,   205,   206,   210,   217,   255,   258,   261,   265,    91,
+     270,    49,    50,    68,   103,   105,   273,   276,   277,   278,
+     279,   280,   310,   311,   273,   273,   276,   277,   221,   265,
+     273,   221,   265,   273,   221,   226,   231,    42,    43,    44,
+     287,   288,   289,   260,    88,   271,   241,   244,   245,   246,
+     247,   254,   255,   258,   261,   262,   270,   293,   304,   305,
+     306,   115,   322,   314,   313,   314,   316,   320,   336,   338,
+     109,   113,   331,   332,   111,   329,   124,   128,   168,   172,
+     140,   131,   136,   140,   147,   167,   188,   122,   147,   167,
+     183,   183,   136,   136,   205,   206,   214,   219,   255,   208,
+     214,   215,   219,   220,   255,    92,   269,   269,   260,   241,
+     244,   241,   244,   226,   232,   241,   244,   243,   262,   293,
+     293,   293,   242,   246,   255,   258,   261,   293,   255,    99,
+     303,   232,   232,   315,   318,   334,   315,   318,   315,   318,
+     315,   318,   140,   142,   208,   208,     0,   241,   244,   247,
+     293,   258,   261,   110,   114,   328,   330
   };
 
   const short
@@ -7694,9 +7705,9 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
      300,   301,   302,   303,   304,   305,   305,   306,   307,   308,
      309,   310,   310,   310,   311,   311,   311,   312,   312,   313,
      314,   315,   316,   316,   316,   316,   317,   318,   319,   320,
-     321,   322,   323,   324,   324,   324,   324,   325,   325,   326,
-     326,   327,   328,   329,   330,   331,   332,   333,   334,   335,
-     336,   337,   337,   337,   337,   338,   338,   338
+     321,   322,   323,   324,   324,   325,   325,   326,   326,   327,
+     328,   329,   330,   331,   332,   333,   334,   335,   336,   337,
+     337,   337,   338,   338,   338,   338,   339,   339,   339
   };
 
   const signed char
@@ -7741,9 +7752,9 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     2,     2,     2,
        1,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     1,     2,     2,     2,     2,     2,     2,     1,     2,
-       2,     2,     1,     1,     1,     1,     1,     1,     1,     2,
-       2,     2,     2,     2,     2,     1,     2,     1
+       2,     1,     2,     2,     2,     2,     1,     2,     2,     2,
+       1,     1,     1,     1,     1,     1,     1,     2,     2,     1,
+       1,     1,     2,     2,     2,     2,     1,     2,     1
   };
 
 
@@ -7844,7 +7855,7 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
   "JSON_OpeningSBracket", "JSON_Punct_ClosingSBracket", "JSON_Punct_Colon",
   "JSON_Punct_Comma", "JSON_Punct_Hash", "JSON_Punct_OpeningSBracket",
   "JSON_Punct_Quotes", "JSON_Punct_Stem", "JSON_Quotes", "JSON_String",
-  "JSON_Value_List_Element", "S", YY_NULLPTR
+  "JSON_Value", "JSON_Value_List_Element", "S", YY_NULLPTR
   };
 #endif
 
@@ -7892,9 +7903,9 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
     3144,  3153,  3162,  3171,  3180,  3189,  3196,  3204,  3212,  3221,
     3230,  3239,  3247,  3255,  3264,  3272,  3280,  3289,  3297,  3306,
     3315,  3324,  3333,  3341,  3349,  3357,  3366,  3375,  3384,  3393,
-    3402,  3411,  3420,  3431,  3439,  3447,  3454,  3463,  3471,  3479,
-    3487,  3496,  3505,  3514,  3523,  3532,  3541,  3550,  3559,  3568,
-    3577,  3586,  3594,  3602,  3610,  3619,  3626,  3653
+    3402,  3411,  3420,  3430,  3438,  3448,  3456,  3464,  3472,  3481,
+    3490,  3499,  3508,  3517,  3526,  3535,  3544,  3553,  3562,  3571,
+    3578,  3585,  3593,  3601,  3609,  3617,  3626,  3633,  3660
   };
 
   void
@@ -7984,9 +7995,9 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
   }
 
 } // yy
-#line 7988 "build/hi_desktop/hi.y.cpp"
+#line 7999 "build/hi_desktop/hi.y.cpp"
 
-#line 3660 "build/hi_desktop/hi.y"
+#line 3667 "build/hi_desktop/hi.y"
 
 //Included just in order that the IDE can see what's
 //in there and it does not report so many errors.

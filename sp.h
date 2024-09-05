@@ -113,13 +113,16 @@
 					std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
 			std::set<unsigned int> find_context_reference_node(node_info*);
 			std::string find_morpheme_id_for_syntax_node(const std::string&,rapidjson::Value::Object&);
-			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string&,const std::string&,const rapidjson::Value&,std::vector<rapidjson::Value>&);
-			void find_dependency_chain_with_tag_value(const std::string&,const std::string&,const std::string&,const unsigned int&,const rapidjson::Value&,const rapidjson::Value::Object&,std::set<unsigned int>&);
+			//find_dependency_nodes_with_tag_value: 2nd and 3rd params (key, value) are pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
+			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string,const std::string,const rapidjson::Value&,std::vector<rapidjson::Value>&);
+			//find_dependency_chain_with_tag_value: lid (fist param) is pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
+			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const rapidjson::Value&,const rapidjson::Value::Object&,std::string&,std::set<unsigned int>&);
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
-			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&);
+			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&);
 			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
 			std::string timestamp_;
 			std::string prev_ref_id_;
+			rapidjson::Value::Object find_syntax_node(const rapidjson::Value::Object&,const std::string&);
 		public:
 			interpreter(const unsigned char toa,const std::string&,const std::string&);
 			~interpreter();

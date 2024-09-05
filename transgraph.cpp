@@ -250,7 +250,7 @@ std::string transgraph::get_tags(query_result *functor_tag_entries,morphan_resul
 						if(feature.first>0&&feature.second==trigger_tag){
 							std::string tag_to_inherit="{\""+tag+"\":\""+value+"\",\"leaf_node\":\""+std::to_string(morphan->node_id())+"\",\"parent_node\":\""+std::to_string(feature.first)+"\"},";
 							features_to_inherit.insert(tag_to_inherit);
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"trigger_tag:"+trigger_tag+",tag to inherit:"+tag+",value:"+value);
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"trigger_tag:"+trigger_tag+",tag to inherit:"+tag+",value:"+value+",parent_node:"+std::to_string(feature.first)+",leaf_node:"+std::to_string(morphan->node_id()));
 						}
 						else{
 							tags+="{\""+tag+"\":\""+value+"\"},";

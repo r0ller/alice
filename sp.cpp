@@ -2130,6 +2130,7 @@ unsigned int interpreter::add_feature_to_leaf(const node_info& node, const std::
 				leaf_node.expression.morphalytics->add_feature(feature);
 			}
 			if(inherit==true){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"add_feature_to_leaf: inheritance top node id:"+std::to_string(node.node_id));
 				morphan_result::add_feature_to_inherit(leaf_node_id,node.node_id,feature);
 			}
 		}
@@ -2561,7 +2562,8 @@ std::set<unsigned int> interpreter::find_context_reference_node(node_info *node)
 			}
 			else{
 				auto semanticsArray=analysisObject["semantics"].GetArray();
-				find_dependency_chain_with_tag_value(node->expression.lid,"ref",ref_value,0,semanticsArray[0],analysisObject,nodes_found);
+				std::string top_syntax_node_id;
+				find_dependency_chain_with_tag_value(node->expression.lid,"ref",ref_value,0,semanticsArray[0],analysisObject,top_syntax_node_id,nodes_found);
 			}
 			delete ref_tagged_analysis;
 		}
@@ -2600,7 +2602,7 @@ std::string interpreter::find_morpheme_id_for_syntax_node(const std::string& nod
 	return "";
 }
 
-void interpreter::find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType& allocator, const std::string& key,const std::string& value,const rapidjson::Value& dependency,std::vector<rapidjson::Value>& dependencies_found){
+void interpreter::find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType& allocator, const std::string key,const std::string value,const rapidjson::Value& dependency,std::vector<rapidjson::Value>& dependencies_found){
 	for(auto& tag:dependency["tags"].GetArray()){
 		if(tag.HasMember(key.c_str())==true&&tag[key.c_str()].GetString()==value){
 			dependencies_found.push_back(rapidjson::Value(dependency,allocator));
@@ -2620,15 +2622,19 @@ void interpreter::find_dependency_nodes_with_tag_value(rapidjson::Document::Allo
 	}
 }
 
-void interpreter::find_dependency_chain_with_tag_value(const std::string& lid,const std::string& key,const std::string& value,const unsigned int& parent_node_id,const rapidjson::Value& dependency,const rapidjson::Value::Object& analysisObject,std::set<unsigned int>& node_ids_found){
+void interpreter::find_dependency_chain_with_tag_value(const std::string lid,const std::string& key,const std::string& value,const unsigned int& parent_dep_node_id,const rapidjson::Value& dependency,const rapidjson::Value::Object& analysisObject,std::string& top_syntax_node_id,std::set<unsigned int>& node_ids_found){
 	unsigned int dep_node_id=0;
 
-	if(parent_node_id>0){
+	if(parent_dep_node_id>0){
 		auto syntaxArray=analysisObject["syntax"].GetArray();
-		auto syntaxObject=syntaxArray[0].GetObject();
-		dep_node_id=find_context_node_ids_for_syntax_node(lid,dependency["id"].GetString(),analysisObject,syntaxObject);
+		auto rootSyntaxObject=syntaxArray[0].GetObject();
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_dependency_chain_with_tag_value: dep node ref tag parent_node id:"+top_syntax_node_id);
+		auto syntaxObject=find_syntax_node(rootSyntaxObject,top_syntax_node_id);
+		std::string syntaxObjectId=syntaxObject["id"].GetString();
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_dependency_chain_with_tag_value: syntaxObject id found for parent_node:"+syntaxObjectId);
+		dep_node_id=find_context_node_ids_for_syntax_node(lid,analysisObject,syntaxObject);
 		node_info dep_node=get_private_node_info(dep_node_id);
-		node_info parent_node=get_private_node_info(parent_node_id);
+		node_info parent_node=get_private_node_info(parent_dep_node_id);
 		const std::pair<const unsigned int,field> *depolex_entry=NULL;
 		if(parent_node.expression.dependencies!=NULL){
 			depolex_entry=parent_node.expression.dependencies->first_value_for_field_name_found("semantic_dependency",dependency["functor"].GetString());
@@ -2646,10 +2652,15 @@ void interpreter::find_dependency_chain_with_tag_value(const std::string& lid,co
 	}
 	else{
 		for(auto& tag:dependency["tags"].GetArray()){
-			if(tag.HasMember(key.c_str())==true&&tag[key.c_str()].GetString()==value){
+			if(tag.HasMember(key.c_str())==true&&tag[key.c_str()].GetString()==value&&tag.HasMember("parent_node")){
 				auto syntaxArray=analysisObject["syntax"].GetArray();
-				auto syntaxObject=syntaxArray[0].GetObject();
-				dep_node_id=find_context_node_ids_for_syntax_node(lid,dependency["id"].GetString(),analysisObject,syntaxObject);
+				auto rootSyntaxObject=syntaxArray[0].GetObject();
+				top_syntax_node_id=tag["parent_node"].GetString();
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_dependency_chain_with_tag_value: root node ref tag parent_node id:"+top_syntax_node_id);
+				auto syntaxObject=find_syntax_node(rootSyntaxObject,top_syntax_node_id);
+				std::string syntaxObjectId=syntaxObject["id"].GetString();
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_dependency_chain_with_tag_value: syntaxObject id found for parent_node:"+syntaxObjectId);
+				dep_node_id=find_context_node_ids_for_syntax_node(lid,analysisObject,syntaxObject);
 				if(dep_node_id>0){
 					node_ids_found.insert(dep_node_id);
 				}
@@ -2659,7 +2670,8 @@ void interpreter::find_dependency_chain_with_tag_value(const std::string& lid,co
 	}
 	if(dep_node_id>0&&dependency.HasMember("dependencies")==true){
 		for(auto& dep_of_dep:dependency["dependencies"].GetArray()){
-			find_dependency_chain_with_tag_value(lid,key,value,dep_node_id,dep_of_dep,analysisObject,node_ids_found);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_dependency_chain_with_tag_value: processing dependency of dep. id "+std::string(dependency["id"].GetString()));
+			find_dependency_chain_with_tag_value(lid,key,value,dep_node_id,dep_of_dep,analysisObject,top_syntax_node_id,node_ids_found);
 		}
 	}
 }
@@ -2686,11 +2698,17 @@ unsigned int interpreter::create_node(const std::string& lid,const std::string& 
 				std::string gcat=morphologyObject["gcat"].GetString();
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"moprhologyObject gcat:"+gcat);
 				std::vector<std::string> morphemes;
-				for(auto& i:morphologyObject["tags"].GetArray()){
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"moprhologyObject tag:"+std::string(i.GetString()));
-					morphemes.push_back(i.GetString());
+				morphan_result *morphalytics=NULL;
+				if(gcat=="CON"){
+					morphalytics=new morphan_result(word,lid,"");
 				}
-				morphan_result *morphalytics=new morphan_result(word,morphemes,lid);//TODO:get lid from analysis once it's there
+				else{
+					for(auto& i:morphologyObject["tags"].GetArray()){
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"moprhologyObject tag:"+std::string(i.GetString()));
+						morphemes.push_back(i.GetString());
+					}
+					morphalytics=new morphan_result(word,morphemes,lid);//TODO:get lid from analysis once it's there
+				}
 				lexicon lex_word=lexer::tokenize_word(*morphalytics,lid);
 				if(morphalytics==NULL||morphalytics!=NULL&&morphalytics->is_erroneous()==true){
 					for(unsigned int i=0;i<language_entries->nr_of_result_rows();++i){
@@ -2717,22 +2735,21 @@ unsigned int interpreter::create_node(const std::string& lid,const std::string& 
 	return new_node_id;
 }
 
-unsigned int interpreter::find_context_node_ids_for_syntax_node(const std::string& lid,const std::string& node_id,const rapidjson::Value::Object& analysisObject,rapidjson::Value::Object& syntaxObject){
+unsigned int interpreter::find_context_node_ids_for_syntax_node(const std::string& lid,const rapidjson::Value::Object& analysisObject,rapidjson::Value::Object& syntaxObject){
 	db *sqlite=NULL;
 	query_result *language_entries=NULL;
+	unsigned int child_parent_node_id=0;
 
 	if(syntaxObject.HasMember("id")==true){
 		auto node_id_it=context_node_id_to_new_node_id_map.find(std::atoi(syntaxObject["id"].GetString()));
 		if(node_id_it!=context_node_id_to_new_node_id_map.end()){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: node id "+std::to_string(node_id_it->second)+" found for context node id "+syntaxObject["id"].GetString());
 			const node_info& node=get_node_info(node_id_it->second);
-			if(std::to_string(node.node_id)==node_id){
-				return node_id_it->second;
-			}
+			return node_id_it->second;
 		}
 		else{
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node:"+node_id+", syntaxObject id:"+syntaxObject["id"].GetString());
-			if(syntaxObject["id"].GetString()==node_id&&syntaxObject.HasMember("morpheme id")==true){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: syntaxObject id:"+std::string(syntaxObject["id"].GetString()));
+			if(syntaxObject.HasMember("morpheme id")==true){
 				std::string morpheme_id=syntaxObject["morpheme id"].GetString();
 				sqlite=db_factory::get_instance();
 				language_entries=sqlite->exec_sql("SELECT * FROM LANGUAGES WHERE LID !='"+lid+"';");
@@ -2775,70 +2792,66 @@ unsigned int interpreter::find_context_node_ids_for_syntax_node(const std::strin
 					}
 				}
 				delete language_entries;
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for node id "+node_id+", returning new node id:"+std::to_string(new_node_id));
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+", returning new node id:"+std::to_string(new_node_id));
 				context_node_id_to_new_node_id_map.insert(std::make_pair(std::atoi(syntaxObject["id"].GetString()),new_node_id));
 				return new_node_id;
 			}
+			if(syntaxObject.HasMember("left child")==true){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: checking left child");
+				auto left_child=syntaxObject["left child"].GetObject();
+				unsigned int child_node_id=find_context_node_ids_for_syntax_node(lid,analysisObject,left_child);
+				if(child_node_id>0){
+					std::string symbol=syntaxObject["symbol"].GetString();
+					const node_info& child_node=get_node_info(child_node_id);
+					auto node_id_it=context_node_id_to_new_node_id_map.find(std::atoi(syntaxObject["id"].GetString()));
+					if(node_id_it!=context_node_id_to_new_node_id_map.end()){
+						node_info& child_parent_node=get_private_node_info(node_id_it->second);
+						child_parent_node_id=child_parent_node.node_id;
+						if(child_parent_node.left_child>0&&child_parent_node.left_child!=child_node_id){
+							throw std::runtime_error("Left child node id is already set.");
+						}
+						else{
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting left child node id:"+std::to_string(child_node_id));
+							child_parent_node.left_child=child_node_id;
+						}
+					}
+					else{
+						child_parent_node_id=set_node_info_left(symbol,child_node);
+						context_node_id_to_new_node_id_map.insert(std::make_pair(std::atoi(syntaxObject["id"].GetString()),child_parent_node_id));
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting left child node id:"+std::to_string(child_node_id));
+					}
+				}
+			}
+			if(syntaxObject.HasMember("right child")==true){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: checking right child");
+				auto right_child=syntaxObject["right child"].GetObject();
+				unsigned int child_node_id=find_context_node_ids_for_syntax_node(lid,analysisObject,right_child);
+				if(child_node_id>0){
+					std::string symbol=syntaxObject["symbol"].GetString();
+					const node_info& child_node=get_node_info(child_node_id);
+					auto node_id_it=context_node_id_to_new_node_id_map.find(std::atoi(syntaxObject["id"].GetString()));
+					if(node_id_it!=context_node_id_to_new_node_id_map.end()){
+						node_info& child_parent_node=get_private_node_info(node_id_it->second);
+						child_parent_node_id=child_parent_node.node_id;
+						if(child_parent_node.right_child>0&&child_parent_node.right_child!=child_node_id){
+							throw std::runtime_error("Right child node id is already set.");
+						}
+						else{
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting right child node id:"+std::to_string(child_node_id));
+							child_parent_node.right_child=child_node_id;
+						}
+					}
+					else{
+						child_parent_node_id=set_node_info(symbol,child_node);
+						context_node_id_to_new_node_id_map.insert(std::make_pair(std::atoi(syntaxObject["id"].GetString()),child_parent_node_id));
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting right child node id:"+std::to_string(child_node_id));
+					}
+				}
+			}
 		}
 	}
-	if(syntaxObject.HasMember("left child")==true){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: checking left child");
-		auto left_child=syntaxObject["left child"].GetObject();
-		unsigned int child_node_id=find_context_node_ids_for_syntax_node(lid,node_id,analysisObject,left_child);
-		if(child_node_id>0){
-			std::string symbol=left_child["symbol"].GetString();
-			const node_info& child_node=get_node_info(child_node_id);
-			unsigned int child_parent_node_id=0;;
-			auto node_id_it=context_node_id_to_new_node_id_map.find(std::atoi(syntaxObject["id"].GetString()));
-			if(node_id_it!=context_node_id_to_new_node_id_map.end()){
-				node_info& child_parent_node=get_private_node_info(node_id_it->second);
-				child_parent_node_id=child_parent_node.node_id;
-				if(child_parent_node.left_child>0&&child_parent_node.left_child!=child_node_id){
-					throw std::runtime_error("Left child node id is already set.");
-				}
-				else{
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting left child node id:"+std::to_string(child_node_id));
-					child_parent_node.left_child=child_node_id;
-				}
-			}
-			else{
-				child_parent_node_id=set_node_info_left(symbol,child_node);
-				context_node_id_to_new_node_id_map.insert(std::make_pair(std::atoi(syntaxObject["id"].GetString()),child_parent_node_id));
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting left child node id:"+std::to_string(child_node_id));
-			}
-			return child_parent_node_id;
-		}
-	}
-	if(syntaxObject.HasMember("right child")==true){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: checking right child");
-		auto right_child=syntaxObject["right child"].GetObject();
-		unsigned int child_node_id=find_context_node_ids_for_syntax_node(lid,node_id,analysisObject,right_child);
-		if(child_node_id>0){
-			std::string symbol=right_child["symbol"].GetString();
-			const node_info& child_node=get_node_info(child_node_id);
-			unsigned int child_parent_node_id=0;;
-			auto node_id_it=context_node_id_to_new_node_id_map.find(std::atoi(syntaxObject["id"].GetString()));
-			if(node_id_it!=context_node_id_to_new_node_id_map.end()){
-				node_info& child_parent_node=get_private_node_info(node_id_it->second);
-				child_parent_node_id=child_parent_node.node_id;
-				if(child_parent_node.right_child>0&&child_parent_node.right_child!=child_node_id){
-					throw std::runtime_error("Right child node id is already set.");
-				}
-				else{
-					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting right child node id:"+std::to_string(child_node_id));
-					child_parent_node.right_child=child_node_id;
-				}
-			}
-			else{
-				child_parent_node_id=set_node_info(symbol,child_node);
-				context_node_id_to_new_node_id_map.insert(std::make_pair(std::atoi(syntaxObject["id"].GetString()),child_parent_node_id));
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: for context node id "+std::string(syntaxObject["id"].GetString())+" with new node id "+std::to_string(child_parent_node_id)+", setting right child node id:"+std::to_string(child_node_id));
-			}
-			return child_parent_node_id;
-		}
-	}
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: returning zero");
-	return 0;
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_syntax_node: returning parent node id "+std::to_string(child_parent_node_id));
+	return child_parent_node_id;
 }
 
 std::vector<node_info> interpreter::context_nodes(){
@@ -2849,4 +2862,29 @@ std::vector<node_info> interpreter::context_nodes(){
 		context_words.push_back(node);
 	}
 	return context_words;
+}
+
+rapidjson::Value::Object interpreter::find_syntax_node(const rapidjson::Value::Object& syntaxObject,const std::string& syntax_node_id){
+	if(syntaxObject.HasMember("id")==true){
+		if(syntaxObject["id"].GetString()==syntax_node_id){
+			return syntaxObject;
+		}
+		if(syntaxObject.HasMember("left child")==true){
+			auto node_found=find_syntax_node(syntaxObject["left child"].GetObject(),syntax_node_id);
+			if(node_found.HasMember("id")==true){
+				if(node_found["id"].GetString()==syntax_node_id){
+					return node_found;
+				}
+			}
+		}
+		if(syntaxObject.HasMember("right child")==true){
+			auto node_found=find_syntax_node(syntaxObject["right child"].GetObject(),syntax_node_id);
+			if(node_found.HasMember("id")==true){
+				if(node_found["id"].GetString()==syntax_node_id){
+					return node_found;
+				}
+			}
+		}
+	}
+	return syntaxObject;
 }
