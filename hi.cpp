@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
 
 	const char *analyses,*script_chr=NULL;
-	string text,script,language="HUN";//language="HUN";
+	string text,script,language="HUN";
 	FILE *fp;
 	char line[256];
 	unsigned char toa=0,crh=0;
@@ -103,7 +103,12 @@ int main(int argc,char **argv){
 			//text="{ \" darab \" : 1 }";
 			//text="{ \" anya \" : . }";
 			//text="list files !";
-			text="{\"anya\":{\"darab\":1}}";
+			//text="{\"anya\":{\"darab\":1}}";
+			//text="{\"contact\":{\"name\":1}}";
+			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":1}}";
+			//text="{\"anya\":{\"hány darab\":1}}";
+			//text="{\"anya\":{\"darab\":[{\"hány\":1}]}}";
+			text="{\"anya\":{\"darab\":{\"mennyiség\":1}}}";
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;

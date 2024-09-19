@@ -145,6 +145,16 @@ void morphan_result::add_feature(const std::string& feature){
 	features.insert(feature);
 }
 
+void morphan_result::add_feature_with_value(const std::string& feature,const std::string& value){
+	//TODO: verify feature in gcat db table to see if the feature belongs indeed to the gcat in question
+	features_with_values.insert(std::make_pair(feature,value));
+}
+
+std::string morphan_result::feature_value(const std::string feature) const{
+	auto feature_found=features_with_values.find(feature);
+	return feature_found!=features_with_values.end()?feature_found->second:"";
+}
+
 const std::set<std::string>& morphan_result::lfeas() const{
 	return features;
 }

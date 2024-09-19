@@ -151,6 +151,8 @@ db *db_factory::singleton_instance=NULL;
 %token	t_JSON_Punct_Quotes
 %token	t_JSON_Punct_OpeningSBracket
 %token	t_JSON_Punct_ClosingSBracket
+%token	t_JSON_Punct_OpeningCBracket
+%token	t_JSON_Punct_ClosingCBracket
 %token	t_JSON_Punct_Relative
 
 %precedence t_HUN_CON_Stem t_HUN_Num_Stem t_HUN_CON_swVowel t_HUN_CON_swConsonant t_HUN_Num_swVowel t_HUN_Num_swConsonant t_HUN_Noun_Stem t_HUN_Noun_swVowel t_HUN_Noun_swConsonant t_HUN_Neg_Stem t_HUN_Adj_Stem
@@ -3019,7 +3021,7 @@ $$=sparser->combine_nodes("HUN_VP",HUN_ImpVerbPfx,HUN_NP);
 {
 const node_info& HUN_IndVerb=sparser->get_node_info($1);
 const node_info& HUN_ConjN=sparser->get_node_info($2);
-sparser->add_feature_to_leaf(HUN_ConjN,"Conj","qword",false,true);
+sparser->add_feature_to_leaf(HUN_ConjN,"Conj","qword",false,$2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"HUN_VP->HUN_IndVerb HUN_ConjN");
 $$=sparser->combine_nodes("HUN_VP",HUN_IndVerb,HUN_ConjN);
 }
@@ -3433,7 +3435,8 @@ const node_info& JSON_Key=sparser->get_node_info($1);
 const node_info& JSON_Hash_Ref=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Hash_Ref");
 $$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Hash_Ref);
-
+const node_info& JSON_Key_reread=sparser->get_node_info($1);
+sparser->add_feature_to_leaf(JSON_Key_reread,"JSON_Colon","Punct",std::string("json_key_value"),false,$$);
 }
 |JSON_Key JSON_Value
 {
@@ -3442,7 +3445,7 @@ const node_info& JSON_Value=sparser->get_node_info($2);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"JSON_Key_Value_Pair->JSON_Key JSON_Value");
 $$=sparser->combine_nodes("JSON_Key_Value_Pair",JSON_Key,JSON_Value);
 const node_info& JSON_Key_Value_Pair=sparser->get_node_info($$);
-sparser->add_feature_to_leaf(JSON_Key_Value_Pair,"JSON_Colon","Punct",std::string("json_key_value"),false,true);
+sparser->add_feature_to_leaf(JSON_Key_Value_Pair,"JSON_Colon","Punct",std::string("json_key_value"),false,$$);
 };
 JSON_Open_Array:
 JSON_Open_Array JSON_Value_List_Element
@@ -3758,6 +3761,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	preprocessor *pp=NULL;
 	std::string ref_id;
 	while(preprocessing_finished==false){
+		unsigned int level=0;
+		unsigned int obj_row_nr=0;
+		unsigned int obj_nr=0;
 		std::string pp_human_input;
 		std::string prev_ref_id;
 		if(row_nr==0){
@@ -3770,11 +3776,10 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 		}
 		if(pp!=NULL){
-			std::pair<std::string,std::string> next_row=pp->get_row(row_nr);
-			if(next_row.first.empty()==false){
+			std::tie(level,obj_row_nr,obj_nr,pp_human_input)=pp->get_row(row_nr);
+			if(pp_human_input.empty()==false){
 				prev_ref_id=ref_id;
-				ref_id=next_row.first;
-				pp_human_input=next_row.second;
+				ref_id=std::to_string(level)+"_"+std::to_string(obj_row_nr);
 			}
 			else{
 				preprocessing_finished=true;
@@ -4061,7 +4066,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		}
 		if(pp_human_input.empty()==false){
 			try{
-				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id);
+				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id+"_"+std::to_string(obj_nr));
 				if(analyses.empty()==false){
 					analysischr=new char[analyses.length()+1];
 					analyses.copy(analysischr,analyses.length(),0);

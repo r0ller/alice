@@ -9,7 +9,7 @@
 		public:
 			preprocessor(const time_t& timestamp);
 			~preprocessor();
-			virtual std::pair<std::string,std::string> get_row(const unsigned int)=0;
+			virtual std::tuple<unsigned int,unsigned int,unsigned int,std::string> get_row(const unsigned int)=0;
 	};
 
 #endif

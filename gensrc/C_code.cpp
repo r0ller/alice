@@ -91,6 +91,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	preprocessor *pp=NULL;
 	std::string ref_id;
 	while(preprocessing_finished==false){
+		unsigned int level=0;
+		unsigned int obj_row_nr=0;
+		unsigned int obj_nr=0;
 		std::string pp_human_input;
 		std::string prev_ref_id;
 		if(row_nr==0){
@@ -103,11 +106,10 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 		}
 		if(pp!=NULL){
-			std::pair<std::string,std::string> next_row=pp->get_row(row_nr);
-			if(next_row.first.empty()==false){
+			std::tie(level,obj_row_nr,obj_nr,pp_human_input)=pp->get_row(row_nr);
+			if(pp_human_input.empty()==false){
 				prev_ref_id=ref_id;
-				ref_id=next_row.first;
-				pp_human_input=next_row.second;
+				ref_id=std::to_string(level)+"_"+std::to_string(obj_row_nr);
 			}
 			else{
 				preprocessing_finished=true;
@@ -394,7 +396,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		}
 		if(pp_human_input.empty()==false){
 			try{
-				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id);
+				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id+"_"+std::to_string(obj_nr));
 				if(analyses.empty()==false){
 					analysischr=new char[analyses.length()+1];
 					analyses.copy(analysischr,analyses.length(),0);

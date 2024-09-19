@@ -405,7 +405,9 @@ std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned 
 		morphology+="},";
 	}
 	for(auto node:context_nodes){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"tokenpaths::morphology: checking context node "+std::to_string(node.node_id)+" morphology");
 		if(node.expression.morphalytics!=NULL){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"tokenpaths::morphology: morphalytics found");
 			morphology+="{\"morpheme id\":\""+node.expression.morphalytics->suffixed_id()+"\",";
 			morphology+="\"word\":\""+transgraph::apply_json_escapes(node.expression.morphalytics->word())+"\",";
 			morphology+="\"lexeme\":\""+transgraph::apply_json_escapes(node.expression.lexeme)+"\",";

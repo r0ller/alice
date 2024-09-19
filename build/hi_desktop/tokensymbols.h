@@ -113,6 +113,8 @@ std::map<std::string, unsigned int> symbol_token_map={
 {"t_JSON_Punct_Quotes",yy::parser::token::t_JSON_Punct_Quotes},
 {"t_JSON_Punct_OpeningSBracket",yy::parser::token::t_JSON_Punct_OpeningSBracket},
 {"t_JSON_Punct_ClosingSBracket",yy::parser::token::t_JSON_Punct_ClosingSBracket},
+{"t_JSON_Punct_OpeningCBracket",yy::parser::token::t_JSON_Punct_OpeningCBracket},
+{"t_JSON_Punct_ClosingCBracket",yy::parser::token::t_JSON_Punct_ClosingCBracket},
 {"t_JSON_Punct_Relative",yy::parser::token::t_JSON_Punct_Relative}
 };
 
@@ -229,5 +231,7 @@ std::map<unsigned int,std::string> token_symbol_map={
 {yy::parser::token::t_JSON_Punct_Quotes,"t_JSON_Punct_Quotes"},
 {yy::parser::token::t_JSON_Punct_OpeningSBracket,"t_JSON_Punct_OpeningSBracket"},
 {yy::parser::token::t_JSON_Punct_ClosingSBracket,"t_JSON_Punct_ClosingSBracket"},
+{yy::parser::token::t_JSON_Punct_OpeningCBracket,"t_JSON_Punct_OpeningCBracket"},
+{yy::parser::token::t_JSON_Punct_ClosingCBracket,"t_JSON_Punct_ClosingCBracket"},
 {yy::parser::token::t_JSON_Punct_Relative,"t_JSON_Punct_Relative"}
 };

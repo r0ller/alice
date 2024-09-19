@@ -22,6 +22,7 @@
 			static std::map<unsigned int,std::pair<unsigned int,std::string>> features_to_inherit_;
 			std::map<unsigned int,std::pair<unsigned int,std::string>> features_to_inherit_copy_;
 			unsigned int node_id_;//parse tree node id
+			std::map<std::string,std::string> features_with_values;			
 		public:
 			morphan_result(const std::string&, const std::vector<std::string>&, const std::string&);
 			morphan_result(const std::string&, const std::string&, const std::string&);
@@ -59,6 +60,8 @@
 			std::pair<unsigned int,std::string> find_feature_to_inherit(const unsigned int);
 			void copy_features_to_inherit();
 			std::string suffixed_id() const;
+			void add_feature_with_value(const std::string&, const std::string&);
+			std::string feature_value(const std::string feature) const;
 			//prefix();
 			//suffix();
 			//infix();
