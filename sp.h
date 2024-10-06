@@ -116,7 +116,7 @@
 			//find_dependency_nodes_with_tag_value: 2nd and 3rd params (key, value) are pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
 			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string,const std::string,const rapidjson::Value&,std::vector<rapidjson::Value>&);
 			//find_dependency_chain_with_tag_value: lid (fist param) is pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
-			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const rapidjson::Value&,const rapidjson::Value::Object&,std::string&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
+			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value&,const rapidjson::Value::Object&,std::string&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
 			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
 			std::set<unsigned int> context_node_ids;
@@ -142,7 +142,7 @@
 			std::vector<node_info> nodes();
 			bool is_valid_combination(const unsigned int&,const unsigned int&);
 			void build_dependency_semantics(lexer*,tokenpaths*,lexicon&);
-			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
+			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::map<unsigned int,bool>&, std::vector<unsigned int>&);
 			void find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>&, const std::string&,const std::string&,const std::string&,const std::string&,std::set<std::pair<std::string,unsigned int>>&,std::set<std::pair<std::string,unsigned int>>&);
 			std::set<std::pair<std::string,unsigned int>> find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& all_words,const std::vector<lexicon>& words,const std::string& main_verb_symbols);
 			std::vector<node_info> context_nodes();

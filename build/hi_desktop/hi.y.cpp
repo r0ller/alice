@@ -6693,7 +6693,8 @@ yylhs.value=sparser->set_node_info("S",ENG_VP);
 const node_info& HUN_VP=sparser->get_node_info(yystack_[1].value);
 const node_info& HUN_Punct=sparser->get_node_info(yystack_[0].value);
 std::vector<unsigned int> nodes;
-sparser->get_nodes_by_symbol(HUN_Punct,"QuestionMark",std::string(),nodes);
+std::map<unsigned int,bool> empty_ref_node_id_parents;
+sparser->get_nodes_by_symbol(HUN_Punct,"QuestionMark",std::string(),empty_ref_node_id_parents,nodes);
 if(nodes.size()==1){
 		const node_info& punct=sparser->get_node_info(nodes[0]);
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interrogative");
@@ -6701,7 +6702,7 @@ if(nodes.size()==1){
 }
 else{
 		nodes.clear();
-		sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),nodes);
+		sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),empty_ref_node_id_parents,nodes);
 		if(nodes.size()==1){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"indicative");
 				const node_info& punct=sparser->get_node_info(nodes[0]);
@@ -6715,22 +6716,22 @@ else{
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->HUN_VP HUN_Punct");
 yylhs.value=sparser->combine_nodes("S",HUN_VP,HUN_Punct);
 }
-#line 6719 "build/hi_desktop/hi.y.cpp"
+#line 6720 "build/hi_desktop/hi.y.cpp"
     break;
 
   case 418: // S: JSON_Key_Value_Pair
-#line 3664 "build/hi_desktop/hi.y"
+#line 3665 "build/hi_desktop/hi.y"
 {
 const node_info& JSON_Key_Value_Pair=sparser->get_node_info(yystack_[0].value);
 logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"S->JSON_Key_Value_Pair");
 yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
 
 }
-#line 6730 "build/hi_desktop/hi.y.cpp"
+#line 6731 "build/hi_desktop/hi.y.cpp"
     break;
 
 
-#line 6734 "build/hi_desktop/hi.y.cpp"
+#line 6735 "build/hi_desktop/hi.y.cpp"
 
             default:
               break;
@@ -7911,7 +7912,7 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
     3317,  3326,  3335,  3343,  3351,  3359,  3368,  3377,  3386,  3395,
     3404,  3413,  3422,  3432,  3441,  3451,  3459,  3467,  3475,  3484,
     3493,  3502,  3511,  3520,  3529,  3538,  3547,  3556,  3565,  3574,
-    3581,  3588,  3596,  3604,  3612,  3620,  3629,  3636,  3663
+    3581,  3588,  3596,  3604,  3612,  3620,  3629,  3636,  3664
   };
 
   void
@@ -8001,9 +8002,9 @@ yylhs.value=sparser->set_node_info("S",JSON_Key_Value_Pair);
   }
 
 } // yy
-#line 8005 "build/hi_desktop/hi.y.cpp"
+#line 8006 "build/hi_desktop/hi.y.cpp"
 
-#line 3670 "build/hi_desktop/hi.y"
+#line 3671 "build/hi_desktop/hi.y"
 
 //Included just in order that the IDE can see what's
 //in there and it does not report so many errors.

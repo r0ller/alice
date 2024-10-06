@@ -3638,7 +3638,8 @@ $$=sparser->set_node_info("S",ENG_VP);
 const node_info& HUN_VP=sparser->get_node_info($1);
 const node_info& HUN_Punct=sparser->get_node_info($2);
 std::vector<unsigned int> nodes;
-sparser->get_nodes_by_symbol(HUN_Punct,"QuestionMark",std::string(),nodes);
+std::map<unsigned int,bool> empty_ref_node_id_parents;
+sparser->get_nodes_by_symbol(HUN_Punct,"QuestionMark",std::string(),empty_ref_node_id_parents,nodes);
 if(nodes.size()==1){
 		const node_info& punct=sparser->get_node_info(nodes[0]);
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interrogative");
@@ -3646,7 +3647,7 @@ if(nodes.size()==1){
 }
 else{
 		nodes.clear();
-		sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),nodes);
+		sparser->get_nodes_by_symbol(HUN_Punct,"FullStop",std::string(),empty_ref_node_id_parents,nodes);
 		if(nodes.size()==1){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"indicative");
 				const node_info& punct=sparser->get_node_info(nodes[0]);
