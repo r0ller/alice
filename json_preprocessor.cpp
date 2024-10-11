@@ -55,7 +55,8 @@ void json_preprocessor::traverse(const rapidjson::Value::Object& jsonObj,const u
 				row=" \" "+std::string(i.name.GetString())+" \" : \" "+value+" \"";
 			}
 		}
-		obj_node_level_obj_nr_row_nr_to_key_value.push_back(std::make_tuple(level,row_nr,obj_nr,row));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed row at level "+std::to_string(level)+", row nr "+std::to_string(obj_row_nr)+", obj nr "+std::to_string(obj_nr)+": "+row);
+		obj_node_level_obj_nr_row_nr_to_key_value.push_back(std::make_tuple(level,obj_row_nr,obj_nr,row));
 		++obj_row_nr;
 	}
 }

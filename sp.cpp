@@ -1316,7 +1316,6 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 		dependent_nodes_found_by_symbol.clear();
 		main_subtree_nodes_found_by_symbol.clear();
 		dependency_subtree_nodes_found_by_symbol.clear();
-		logger::singleton("console",3,"LE");
 		if(head_root_symbol==new_phrase_head_root.symbol&&non_head_root_symbol==new_phrase_non_head_root.symbol){
 			if(main_node_symbol.empty()==false){
 				std::map<unsigned int,bool> ref_node_id_parents;
@@ -1782,7 +1781,6 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 					}
 				}
 			}
-			logger::singleton("console",0,"LE");
 			if(main_set_op>0){
 				for(auto& m:main_node_id_to_node_ids_found_by_symbol){
 					auto m_hit=prev_main_node_id_to_node_ids_found_by_symbol.find(m.first);
@@ -1845,7 +1843,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 											if(dependent_or_ref_node->expression.morphalytics!=NULL&&dependent_or_ref_node->expression.morphalytics->is_mocked()==false
 												&&dependent_or_ref_node->expression.morphalytics->has_feature("Relative")==true){
 												if(dependency_lookup_root=="HC"||dependency_lookup_root=="NC"){
-													std::set<unsigned int> nodes_found=find_context_reference_node(dependent_or_ref_node);
+													std::set<unsigned int> nodes_found=find_context_reference_node(dependent_or_ref_node->node_id);
 													if(nodes_found.empty()==false){
 														new_main_ref_node_id_parents.insert(std::make_pair(main_node_id,false));
 														new_dep_ref_node_id_parents.insert(std::make_pair(dep_node_id,false));
@@ -2761,12 +2759,13 @@ std::set<std::pair<std::string,unsigned int>> interpreter::find_functors_with_ma
 	return functors_with_matching_nr_of_deps;
 }
 
-std::set<unsigned int> interpreter::find_context_reference_node(node_info *node){
+std::set<unsigned int> interpreter::find_context_reference_node(const unsigned int node_id){
 //1) read analyses_deps table to find entries with tag "ref" as close in time to the current utterance as possible
 //2) check if the found analyses_deps entry has only one lexeme tagged with "ref" or more
 //3) get the corresponding entry from analyses table and the best ranked analysis
 //4) find the tagged lexeme (if only one is tagged) or the parent of all tagged ones using the parent_node tag
 //5) instantiate the necessary objects (morphan, parser nodes, etc.)
+	node_info o_node=get_node_info(node_id);
 	std::map<unsigned int,bool> empty_ref_node_id_parents;
 	std::set<unsigned int> nodes_found;
 	db *sqlite=db_factory::get_instance();
@@ -2774,29 +2773,31 @@ std::set<unsigned int> interpreter::find_context_reference_node(node_info *node)
 	//to handle more than one qwords no matter how they are stored
 	//(as an array e.g. {"qword":["when","what",...]} or as multiple tags like {"qword":"when","qword":"what",...})
 	//this seems to be able to catch all
-	//TODO: the special json dot is put in db as a normal json string value. Consider if it's ok.
 	std::string ref_value;
-	std::string ref_id=node->expression.morphalytics->feature_value(ref_tag);
+	std::string ref_id=o_node.expression.morphalytics->feature_value(ref_tag);
 	if(ref_id.empty()==false){
 		ref_value=ref_id;
 	}
 	else if(prev_ref_id_.empty()==false){
 		ref_value=ref_stem+timestamp_+"_"+prev_ref_id_;
 	}
-	std::string query="SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' AND RANK IN (SELECT MIN(RANK) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE) GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;";
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"query:"+query);
-	ref_tagged_entries=sqlite->exec_sql(query);
+	std::string analysis_deps_query="SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' AND RANK IN (SELECT MIN(RANK) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE) GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;";
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"query:"+analysis_deps_query);
+	ref_tagged_entries=sqlite->exec_sql(analysis_deps_query);
 	if(ref_tagged_entries!=NULL){
 		for(unsigned int i=0;i<ref_tagged_entries->nr_of_result_rows();++i){
+			node_info node=get_node_info(node_id);
 			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
-			std::string source=*ref_tagged_entries->field_value_at_row_position(0,"source");
-			std::string timestamp=*ref_tagged_entries->field_value_at_row_position(0,"timestamp");
-			std::string sentence=*ref_tagged_entries->field_value_at_row_position(0,"sentence");
-			std::string rank=*ref_tagged_entries->field_value_at_row_position(0,"rank");
-			std::string a_counter=*ref_tagged_entries->field_value_at_row_position(0,"a_counter");
-			std::string tags=*ref_tagged_entries->field_value_at_row_position(0,"tags");
+			std::string source=*ref_tagged_entries->field_value_at_row_position(i,"source");
+			std::string timestamp=*ref_tagged_entries->field_value_at_row_position(i,"timestamp");
+			std::string sentence=*ref_tagged_entries->field_value_at_row_position(i,"sentence");
+			std::string rank=*ref_tagged_entries->field_value_at_row_position(i,"rank");
+			std::string a_counter=*ref_tagged_entries->field_value_at_row_position(i,"a_counter");
+			std::string tags=*ref_tagged_entries->field_value_at_row_position(i,"tags");
 			query_result *ref_tagged_analysis=NULL;
-			ref_tagged_analysis=sqlite->exec_sql("SELECT ANALYSIS FROM ANALYSES WHERE SOURCE='"+source+"' AND TIMESTAMP='"+timestamp+"' AND SENTENCE='"+sentence+"' AND RANK='"+rank+"' AND A_COUNTER='"+a_counter+"' ORDER BY RANK ASC;");
+			std::string analysis_query="SELECT ANALYSIS FROM ANALYSES WHERE SOURCE='"+source+"' AND TIMESTAMP='"+timestamp+"' AND SENTENCE='"+sentence+"' AND RANK='"+rank+"' AND A_COUNTER='"+a_counter+"' ORDER BY RANK ASC;";
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"query:"+analysis_query);
+			ref_tagged_analysis=sqlite->exec_sql(analysis_query);
 			if(ref_tagged_analysis!=NULL){
 				std::string analyses=*ref_tagged_analysis->field_value_at_row_position(0,"analysis");//trust ranking, take the first record
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"context analysis found:"+analyses);
@@ -2815,7 +2816,7 @@ std::set<unsigned int> interpreter::find_context_reference_node(node_info *node)
 					for(auto& dependency:dependencies_found){
 						unsigned int dependency_node_id=std::atoi(dependency["id"].GetString());
 						if(context_node_id_to_new_node_id_map.find(dependency_node_id)==context_node_id_to_new_node_id_map.end()){
-							unsigned int node_id=create_node(node->expression.lid,dependency["id"].GetString(),analysisObject);
+							unsigned int node_id=create_node(node.expression.lid,dependency["id"].GetString(),analysisObject);
 							nodes_found.insert(node_id);
 							context_node_id_to_new_node_id_map.insert(std::make_pair(dependency_node_id,node_id));
 						}
@@ -2824,7 +2825,7 @@ std::set<unsigned int> interpreter::find_context_reference_node(node_info *node)
 				else{
 					auto semanticsArray=analysisObject["semantics"].GetArray();
 					std::string top_syntax_node_id;
-					find_dependency_chain_with_tag_value(node->expression.lid,ref_tag,ref_value,0,"",semanticsArray[0],analysisObject,top_syntax_node_id,nodes_found,context_node_id_to_new_node_id_map);
+					find_dependency_chain_with_tag_value(node.expression.lid,ref_tag,ref_value,0,"",semanticsArray[0],analysisObject,top_syntax_node_id,nodes_found,context_node_id_to_new_node_id_map);
 				}
 				for(auto i:context_node_id_to_new_node_id_map){
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_context_reference_node: storing context node id "+std::to_string(i.second));

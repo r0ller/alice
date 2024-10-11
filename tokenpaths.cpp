@@ -640,7 +640,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				//nr of nodes but none of them having constants. Figure out if there are better
 				//ways of ranking than this.
 				rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
-				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank));
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank)+", ref_id:"+std::to_string(timestamp)+"_"+ref_id);
 				std::set<std::string> features_to_inherit;
 				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path,features_to_inherit,std::to_string(timestamp)+"_"+ref_id);
 				if(analysis.back()==',') analysis.pop_back();

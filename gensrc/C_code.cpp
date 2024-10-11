@@ -109,7 +109,9 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			std::tie(level,obj_row_nr,obj_nr,pp_human_input)=pp->get_row(row_nr);
 			if(pp_human_input.empty()==false){
 				prev_ref_id=ref_id;
-				ref_id=std::to_string(level)+"_"+std::to_string(obj_row_nr);
+				//TODO:it may prove difficult to process the db entries in find_context_reference_node()
+				//in the correct order, due to sorting strings with numbers is problematic
+				ref_id=std::to_string(level)+"_";//+std::to_string(obj_row_nr)+"_";
 			}
 			else{
 				preprocessing_finished=true;
@@ -118,7 +120,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 			++row_nr;
 		}
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed human input:"+pp_human_input);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed human input at level "+std::to_string(level)+", row nr "+std::to_string(obj_row_nr)+", obj nr "+std::to_string(obj_nr)+": "+pp_human_input);
 		token_paths=new tokenpaths(toa);
 		while(pp_human_input.empty()==false&&toa!=0&&token_paths->is_any_left()==true){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
@@ -396,7 +398,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		}
 		if(pp_human_input.empty()==false){
 			try{
-				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id+"_"+std::to_string(obj_nr));
+				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id+std::to_string(obj_nr));
 				if(analyses.empty()==false){
 					analysischr=new char[analyses.length()+1];
 					analyses.copy(analysischr,analyses.length(),0);

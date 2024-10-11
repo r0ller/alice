@@ -5,6 +5,7 @@
 	#include <vector>
 	#include "preprocessor.h"
 	#include "rapidjson/document.h"
+	#include "logger.h"
 
 	class json_preprocessor:public preprocessor{
 		private:
