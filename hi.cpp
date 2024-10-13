@@ -107,9 +107,15 @@ int main(int argc,char **argv){
 			//text="{\"contact\":{\"name\":1}}";
 			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":1}}";
 			//text="{\"anya\":{\"hány darab\":1}}";
-			//text="{\"anya\":{\"darab\":[{\"hány\":1}]}}";
 			//text="{\"anya\":{\"darab\":{\"mennyiség\":1}}}";
-			text="{\"anya\":{\"darab\":{\"mennyiség\":1,\"tömeg\":2}}}";
+			//text="{\"anya\":{\"darab\":{\"mennyiség\":1,\"tömeg\":2}}}";
+			//text="{\"anya\":[1]}";
+			//text="{\"anya\":[1,2]}";
+			//text="{\"anya\":[\"teszt\"]}";
+			//text="{\"anya\":[\"teszt\",\"valami\"]}";
+			text="{\"anya\":[1,\"teszt\",2,\"valami\"]}";
+			//text="{\"anya\":{\"darab\":[1]}}";
+			//text="{\"anya\":{\"darab\":[{\"hány\":1}]}}";
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
