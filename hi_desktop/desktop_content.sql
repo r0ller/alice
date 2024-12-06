@@ -314,79 +314,79 @@ insert into FUNCTOR_TAGS values('BEENGV', '1', 'indicative', '1', 'mood', 'indic
 insert into FUNCTOR_TAGS values('FILEENGN', '1', 'qword', '1', 'qword', 'what');
 insert into FUNCTOR_TAGS values('WHATENGPRON', '1', 'qword', '1', 'is_qword', 'true');
 
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '5', '5', '6', NULL, NULL, NULL, NULL, NULL, 'Sg', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '6', '7', '9', NULL, NULL, NULL, NULL, NULL, 'N', 'FILEENGN', 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '7', '7', '8', NULL, NULL, NULL, NULL, NULL, 'N', 'DIRECTORYENGN', 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '8', NULL, '8', NULL, NULL, NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '9', NULL, '10', 'V', 'BEENGV', 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '10', NULL, '11', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '11', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '1', NULL, NULL, 'N', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '1', '2', '3', 'N', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '2', '4', '3', 'N', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '4', '5', '5', 'N', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '5', '5', NULL, 'N', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '1', '2', '3', 'PREP', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, NULL, 'RPRO', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '4', '5', '6', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '5', '7', '6', 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '6', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '7', '8', '8', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '8', '8', NULL, 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', 'ENG_Vbar1', NULL, 'RPRO', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '5', '5', 'V', NULL, 'N', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '5', '6', '7', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '6', '8', '7', 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '7', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '8', '9', '9', 'V', NULL, 'N', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '9', '9', NULL, 'V', NULL, 'N', NULL, NULL, 'A', NULL, 'H', 'ENG_A0NEG', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '1', '2', '3', 'V', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '2', '4', '3', 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '3', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '4', '5', '5', 'V', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '5', '5', NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_A0NEG', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '2', '3', '4', 'VNEG', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '3', '5', '4', 'VNEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_Ahead', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '4', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '5', '6', '6', 'VNEG', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '6', '6', NULL, 'VNEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', 'ENG_A0NEG', NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Abar1', 'ENG_ANEG', 'ENG_A', '1', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV', NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '4', NULL, '5', 'V', NULL, 'H', NULL, NULL, NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '5', '5', '6', NULL, NULL, NULL, NULL, NULL, NULL, 'Sg', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '6', '7', '9', NULL, NULL, NULL, NULL, NULL, NULL, 'N', 'FILEENGN', 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '7', '7', '8', NULL, NULL, NULL, NULL, NULL, NULL, 'N', 'DIRECTORYENGN', 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '8', NULL, '8', NULL, NULL, NULL, NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '9', NULL, '10', 'V', 'BEENGV', 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '10', NULL, '11', 'N', NULL, 'N', NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '11', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar2', 'ENG_Vbar1', 'ENG_PP', '1', NULL, NULL, 'N', NULL, 'H', NULL, NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '1', '2', '3', 'N', NULL, 'N', NULL, NULL, NULL, 'ANEG', NULL, 'H', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '2', '4', '3', 'N', NULL, 'N', NULL, NULL, NULL, 'A', NULL, 'H', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '4', '5', '5', 'N', NULL, 'N', NULL, NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CNP', 'ENG_AP', 'ENG_N', '5', '5', NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'A', NULL, 'H', NULL, 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '1', '2', '3', 'PREP', NULL, 'H', NULL, NULL, NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '2', NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_PP', 'ENG_Prep', 'ENG_NP', '3', NULL, NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, NULL, NULL, 'RPRO', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '4', '5', '6', 'V', NULL, 'N', NULL, NULL, NULL, 'ANEG', NULL, 'H', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '5', '7', '6', 'V', NULL, 'N', NULL, NULL, NULL, 'A', NULL, 'H', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '6', NULL, NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '7', '8', '8', 'V', NULL, 'N', NULL, NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_RC', '8', '8', NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'A', NULL, 'H', NULL, 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '1', NULL, '2', 'N', NULL, 'H', NULL, 'ENG_Vbar1', NULL, 'RPRO', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '2', NULL, '3', 'RCV', NULL, 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '3', NULL, '4', 'RPRO', NULL, 'N', NULL, NULL, NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '4', '5', '5', 'V', NULL, 'N', NULL, NULL, NULL, 'PREP', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '5', '6', '7', 'V', NULL, 'N', NULL, NULL, NULL, 'ANEG', NULL, 'H', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '6', '8', '7', 'V', NULL, 'N', NULL, NULL, NULL, 'A', NULL, 'H', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '7', NULL, NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '8', '9', '9', 'V', NULL, 'N', NULL, NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar2', 'ENG_RC', '9', '9', NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'A', NULL, 'H', NULL, 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_PP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_PP', '2', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, NULL, 'PREP', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '1', '2', '3', 'V', NULL, 'H', NULL, NULL, NULL, 'ANEG', NULL, 'N', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '2', '4', '3', 'V', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '3', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '4', '5', '5', 'V', NULL, 'H', NULL, NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_V', 'ENG_AP', '5', '5', NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '1', NULL, '2', 'V', NULL, 'H', NULL, NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '2', '3', '4', 'VNEG', NULL, 'H', NULL, NULL, NULL, 'ANEG', NULL, 'N', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '3', '5', '4', 'VNEG', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, 'ENG_Ahead', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '4', NULL, NULL, 'VNEG', NULL, 'H', NULL, NULL, NULL, 'CONJ', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '5', '6', '6', 'VNEG', NULL, 'H', NULL, NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_IVP', 'ENG_NV', 'ENG_AP', '6', '6', NULL, 'VNEG', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, 'ENG_A0NEG', NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Abar1', 'ENG_ANEG', 'ENG_A', '1', NULL, NULL, 'ANEG', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '1', '2', NULL, 'CONJ', NULL, 'H', NULL, NULL, NULL, 'ANEG', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_CONJA','ENG_CONJ','ENG_Abar1', '2', NULL, NULL, 'CONJ', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, NULL, NULL, 'ENG');
 
 /*begin rules for statements*/
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar5', 'ENG_V', 'ENG_N_Sg', '1', NULL, '2', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar5', 'ENG_V', 'ENG_N_Sg', '2', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'N', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar5', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar5', 'ENG_V', 'ENG_N_Sg', '1', NULL, '2', 'N', NULL, 'N', NULL, NULL, NULL, 'CON', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar5', 'ENG_V', 'ENG_N_Sg', '2', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'N', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar5', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, NULL, NULL, 'ENG');
 /*end rules for statements*/
 
 /*begin rules for questions*/
-insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_Vbar6', 'ENG_V', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, 'A', NULL, 'N', NULL, NULL, 'ENG');
-insert into RULE_TO_RULE_MAP values( 'ENG_VP','ENG_Pron_qw','ENG_Vbar6', '1', NULL, NULL, 'V', NULL, 'N', NULL, NULL, 'Pron', NULL, 'H', NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP', 'ENG_Vbar1', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_Vbar6', 'ENG_V', 'ENG_AP', '1', NULL, NULL, 'V', NULL, 'H', NULL, NULL, NULL, 'A', NULL, 'N', NULL, NULL, NULL, 'ENG');
+insert into RULE_TO_RULE_MAP values( 'ENG_VP','ENG_Pron_qw','ENG_Vbar6', '1', NULL, NULL, 'V', NULL, 'N', NULL, NULL, NULL, 'Pron', NULL, 'H', NULL, NULL, NULL, 'ENG');
 /*end rules for questions*/
 
-/*insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '2', NULL, NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_ImpVerbPfx', 'HUN_ImpVerb', 'Vbpfx', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, 'Vbpfx', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, 'CON', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, 'Num', NULL, 'N', NULL, 'HUN');
-insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '3', NULL, NULL, 'Verb', NULL, 'H', NULL, 'Noun', NULL, 'N', NULL, 'HUN');
+/*insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_NP', '2', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_ImpVerbPfx', 'HUN_ImpVerb', 'Vbpfx', '1', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Vbpfx', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '1', '2', NULL, 'Verb', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '2', '3', NULL, 'Verb', NULL, 'H', NULL, NULL, 'Num', NULL, 'N', NULL, NULL, 'HUN');
+insert into RULE_TO_RULE_MAP values( 'HUN_VP', 'HUN_ImpVerbPfx', 'HUN_DP', '3', NULL, NULL, 'Verb', NULL, 'H', NULL, NULL, 'Noun', NULL, 'N', NULL, NULL, 'HUN');
 */
 
 insert into LEXICON values('list', 'ENG', 'V', 'LISTENGV');
@@ -484,14 +484,15 @@ insert into GRAMMAR values('ENG','S','ENG_VP','ENG_Punct',NULL,
 '"const node_info& ENG_VP=sparser->get_node_info($1);
 const node_info& ENG_Punct=sparser->get_node_info($2);
 std::vector<unsigned int> nodes;
-sparser->get_nodes_by_symbol(ENG_Punct,"QuestionMark",std::string(),nodes);
+std::map<unsigned int,bool> lookup_nodes_reached;
+sparser->get_nodes_by_symbol(ENG_Punct,"QuestionMark",std::string(),lookup_nodes_reached,nodes);
 if(nodes.size()==1){
 		const node_info& punct=sparser->get_node_info(nodes[0]);
 		sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("interrogative"),true);
 }
 else{
 		nodes.clear();
-		sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),nodes);
+		sparser->get_nodes_by_symbol(ENG_Punct,"FullStop",std::string(),lookup_nodes_reached,nodes);
 		if(nodes.size()==1){
 				const node_info& punct=sparser->get_node_info(nodes[0]);
 				sparser->add_feature_to_leaf(ENG_VP,"main_verb",std::string("indicative"),true);

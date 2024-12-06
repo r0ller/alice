@@ -12,6 +12,7 @@
 	#include "transgraph.h"
 	#include "rapidjson/document.h"
 	#include "logger.h"
+	#include "preprocessor.h"
 
 	typedef struct functor_data{
 		std::string functor;
@@ -111,15 +112,24 @@
 			unsigned int combine_nodes(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&,std::set<std::pair<unsigned int,unsigned int>>&,const std::string&);
 			void process_depolex_by_row_nr(const std::pair<const unsigned int,field>*, const std::string&,const std::set<unsigned int>&, const lexicon&, const unsigned int&, const std::string&,
 					std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
-			std::set<unsigned int> find_context_reference_node(node_info*);
+			std::set<unsigned int> find_context_reference_node(const unsigned int);
 			std::string find_morpheme_id_for_syntax_node(const std::string&,rapidjson::Value::Object&);
-			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string&,const std::string&,const rapidjson::Value&,std::vector<rapidjson::Value>&);
-			void find_dependency_chain_with_tag_value(const std::string&,const std::string&,const std::string&,const unsigned int&,const rapidjson::Value&,const rapidjson::Value::Object&,std::set<unsigned int>&);
+			//find_dependency_nodes_with_tag_value: 2nd and 3rd params (key, value) are pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
+			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string,const std::string,const rapidjson::Value&,std::vector<rapidjson::Value>&);
+			//find_dependency_chain_with_tag_value: lid (fist param) is pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
+			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
-			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&);
-			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
+			unsigned int create_node_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
+			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
+			std::set<unsigned int> context_node_ids;
+			std::string timestamp_;
+			const preprocessor *pp_;
+			rapidjson::Value::Object find_syntax_node(const rapidjson::Value::Object&,const std::string&);
+			std::string ref_symbol;
+			std::string ref_stem;
+			std::string ref_tag;
 		public:
-			interpreter(const unsigned char toa);
+			interpreter(const unsigned char toa,const std::string&,const preprocessor*);
 			~interpreter();
 			int set_node_info(const std::string&, const lexicon&);
 			int set_node_info(const std::string&, const node_info&);
@@ -127,17 +137,20 @@
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
 			transgraph* longest_match_for_semantic_rules_found();
-			unsigned int add_feature_to_leaf(const node_info&,const std::string&, const bool& = false, const bool& = false);
-			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const bool& = false, const bool& = false);
-			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&, const bool& = false, const bool& = false);
+			unsigned int add_feature_to_leaf(const node_info&,const std::string&, const bool& = false, const unsigned int& = 0);
+			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const bool& = false, const unsigned int& = 0);
+			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&, const bool& = false, const unsigned int& = 0);
 			std::set<unsigned int> validated_terminals();
 			std::vector<node_info> nodes();
 			bool is_valid_combination(const unsigned int&,const unsigned int&);
 			void build_dependency_semantics(lexer*,tokenpaths*,lexicon&);
-			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::vector<unsigned int>&);
+			void get_nodes_by_symbol(const node_info&, const std::string, const std::string, std::map<unsigned int,bool>&, std::vector<unsigned int>&);
 			void find_functors_for_dependency_with_gcat_in_db(const std::vector<lexicon>&, const std::string&,const std::string&,const std::string&,const std::string&,std::set<std::pair<std::string,unsigned int>>&,std::set<std::pair<std::string,unsigned int>>&);
 			std::set<std::pair<std::string,unsigned int>> find_functors_with_matching_nr_of_deps(const std::vector<lexicon>& all_words,const std::vector<lexicon>& words,const std::string& main_verb_symbols);
 			std::vector<node_info> context_nodes();
+			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&);
+			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&, const std::string&);
+			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&, const std::string&, const std::string&);
 	};
 
 	class semper_error:public std::exception{

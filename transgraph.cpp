@@ -39,7 +39,7 @@ void transgraph::insert(const unsigned int d_counter, const transgraph *functor)
 }
 
 std::string transgraph::transcript(std::map<std::string,std::string>& functors,const std::map<unsigned int,std::pair<std::string,unsigned int>>& node_functor_map,const std::string& target_language,
-	std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>>& dependency_path,std::set<std::string> features_to_inherit,const unsigned int level,const std::string& parent_functor,
+	std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>>& dependency_path,std::set<std::string> features_to_inherit,const std::string& ref_id,const unsigned int level,const std::string& parent_functor,
 	const unsigned int& parent_d_key,const unsigned int& parent_d_counter) const{
 	std::string transcript,initial_argscript,argument_list,functor_id,functor_def,tag_content;
 	db *sqlite=NULL;
@@ -102,19 +102,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 		functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
 		if(functor_tag_entries!=NULL){
 			std::string tags="\"tags\":[";
-			/*unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
-			for(unsigned int i=0;i<nr_of_entries;++i){
-				std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
-				if(trigger_tag.empty()==true||trigger_tag.empty()==false&&morphan!=NULL&&morphan->has_feature(trigger_tag)==true){
-					std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
-					std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
-					if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
-						tags+="\""+tag+"\":\""+value+"\",";
-						tag_content+="\""+tag+"\":\""+value+"\",";
-					}
-				}
-			}*/
-			std::string tags_returned=get_tags(functor_tag_entries,morphan,features_to_inherit);
+			std::string tags_returned=get_tags(functor_tag_entries,morphan,features_to_inherit,ref_id);
 			tags+=tags_returned;
 			tag_content+=tags_returned;
 			for(auto&& feature:features_to_inherit){
@@ -123,23 +111,12 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			}
 			std::map<unsigned int,std::string> global_features=morphan_result::global_features();
 			for(auto&& node_feature:global_features){
-				std::pair<std::string,unsigned int> functor=node_functor_map.find(node_feature.first)->second;
-				functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
-				/*if(functor_tag_entries!=NULL){
-					unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
-					for(unsigned int i=0;i<nr_of_entries;++i){
-						std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
-						if(trigger_tag.empty()==false){
-							std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
-							std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
-							if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
-								tags+="\""+tag+"\":\""+value+"\",";
-								logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
-							}
-						}
-					}
-				}*/
-				tags+=get_global_tags(functor_tag_entries);
+				auto node_found=node_functor_map.find(node_feature.first);
+				if(node_found!=node_functor_map.end()){
+					std::pair<std::string,unsigned int> functor=node_found->second;
+					functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
+					tags+=get_global_tags(functor_tag_entries);
+				}
 			}
 			if(tags.back()==','){
 				tags.pop_back();
@@ -150,30 +127,27 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			tags+="],";
 			transcript+=tags;
 		}
-		else{
+		else{//TODO?: add copying features_to_inherit
 			std::string tags="\"tags\":[";
+			/*for(auto&& feature:features_to_inherit){
+				tags+=feature;
+				tag_content+=feature;
+			}*/
 			std::map<unsigned int,std::string> global_features=morphan_result::global_features();
 			for(auto&& node_feature:global_features){
-				std::pair<std::string,unsigned int> functor=node_functor_map.find(node_feature.first)->second;
-				functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
-				/*if(functor_tag_entries!=NULL){
-					unsigned int nr_of_entries=functor_tag_entries->nr_of_result_rows();
-					for(unsigned int i=0;i<nr_of_entries;++i){
-						std::string trigger_tag=*functor_tag_entries->field_value_at_row_position(i,"trigger_tag");
-						if(trigger_tag.empty()==false){
-							std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
-							std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
-							if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
-								tags+="\""+tag+"\":\""+value+"\",";
-							}
-						}
-					}
-				}*/
-				tags+=get_global_tags(functor_tag_entries);
+				auto node_found=node_functor_map.find(node_feature.first);
+				if(node_found!=node_functor_map.end()){
+					std::pair<std::string,unsigned int> functor=node_found->second;
+					functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
+					tags+=get_global_tags(functor_tag_entries);
+				}
 			}
 			if(tags.back()==','){
 				tags.pop_back();
 			}
+			/*if(tag_content.back()==','){
+				tag_content.pop_back();
+			}*/
 			tags+="],";
 			transcript+=tags;
 		}
@@ -203,20 +177,20 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 				if(*semantic_dependency=="CON"){
 					auto argument_script=argument_scripts.find(i.first);
 					if(argument_script!=argument_scripts.end()){
-						argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+						argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,ref_id,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
 					}
 					else{
-						initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+						initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,ref_id,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
 						argument_scripts.insert(std::make_pair(i.first,initial_argscript));
 					}
 				}
 				else{
 					auto argument_script=argument_scripts.find(i.first);
 					if(argument_script!=argument_scripts.end()){
-						argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+						argument_script->second+=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,ref_id,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
 					}
 					else{
-						initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
+						initial_argscript=i.second->transcript(functors,node_functor_map,target_language,dependency_path,features_to_inherit,ref_id,level+1,functor.first,functor.second,std::stoi(d_counter_field->second.field_value));
 						argument_scripts.insert(std::make_pair(i.first,initial_argscript));
 					}
 				}
@@ -232,7 +206,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 		}
 		transcript+="},";
 	}
-	else{
+	else{//TODO?: add copying features_to_inherit
 		if(transcript.back()==',') transcript.pop_back();
 		transcript+="},";
 	}
@@ -259,7 +233,7 @@ std::string transgraph::get_global_tags(query_result *functor_tag_entries) const
 	return tags;
 }
 
-std::string transgraph::get_tags(query_result *functor_tag_entries,morphan_result *morphan,std::set<std::string>& features_to_inherit) const{
+std::string transgraph::get_tags(query_result *functor_tag_entries,morphan_result *morphan,std::set<std::string>& features_to_inherit,const std::string& ref_id) const{
 	std::string tags;
 
 	if(functor_tag_entries!=NULL){
@@ -269,22 +243,23 @@ std::string transgraph::get_tags(query_result *functor_tag_entries,morphan_resul
 			if(trigger_tag.empty()==true||trigger_tag.empty()==false&&morphan!=NULL&&morphan->has_feature(trigger_tag)==true){
 				std::string tag=*functor_tag_entries->field_value_at_row_position(i,"tag");
 				std::string value=*functor_tag_entries->field_value_at_row_position(i,"value");
+				if(value=="#") value+=ref_id;
 				if(tag.empty()==false&&tags.find("\""+tag+"\":")==std::string::npos){
 					if(morphan!=NULL){
 						auto&& feature=morphan->find_feature_to_inherit(morphan->node_id());
 						if(feature.first>0&&feature.second==trigger_tag){
 							std::string tag_to_inherit="{\""+tag+"\":\""+value+"\",\"leaf_node\":\""+std::to_string(morphan->node_id())+"\",\"parent_node\":\""+std::to_string(feature.first)+"\"},";
 							features_to_inherit.insert(tag_to_inherit);
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag to inherit:"+tag+",value:"+value);
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"trigger_tag:"+trigger_tag+",tag to inherit:"+tag+",value:"+value+",parent_node:"+std::to_string(feature.first)+",leaf_node:"+std::to_string(morphan->node_id()));
 						}
 						else{
 							tags+="{\""+tag+"\":\""+value+"\"},";
-							logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
+							logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
 						}
 					}
 					else{
 						tags+="{\""+tag+"\":\""+value+"\"},";
-						logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
+						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
 					}
 				}
 			}
