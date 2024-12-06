@@ -203,6 +203,7 @@ insert into FUNCTORS values('SHOWENGV', '1', 'SHOWENGV_1');
 insert into FUNCTOR_TAGS values('SHOWENGV', '1', 'main_verb', '1', 'type', 'action');
 insert into FUNCTOR_TAGS values('SHOWENGV', '1', NULL, '2', 'type', 'action');
 
+/*TODO: add main_ref_parents and dependency_ref_parents fields with NULLs*/
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '1', '2', NULL, 'RCV',  NULL, 'H', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '2', '3', '4', 'N', NULL, 'N', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');
 insert into RULE_TO_RULE_MAP values( 'ENG_Vbar1', 'ENG_V', 'ENG_NP', '3', '4', NULL, 'V', NULL, 'H', NULL, NULL, 'CON', NULL, 'N', NULL, NULL, 'ENG');

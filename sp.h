@@ -12,6 +12,7 @@
 	#include "transgraph.h"
 	#include "rapidjson/document.h"
 	#include "logger.h"
+	#include "preprocessor.h"
 
 	typedef struct functor_data{
 		std::string functor;
@@ -116,18 +117,19 @@
 			//find_dependency_nodes_with_tag_value: 2nd and 3rd params (key, value) are pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
 			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string,const std::string,const rapidjson::Value&,std::vector<rapidjson::Value>&);
 			//find_dependency_chain_with_tag_value: lid (fist param) is pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
-			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value&,const rapidjson::Value::Object&,std::string&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
+			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
-			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
+			unsigned int create_node_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
+			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
 			std::set<unsigned int> context_node_ids;
 			std::string timestamp_;
-			std::string prev_ref_id_;
+			const preprocessor *pp_;
 			rapidjson::Value::Object find_syntax_node(const rapidjson::Value::Object&,const std::string&);
 			std::string ref_symbol;
 			std::string ref_stem;
 			std::string ref_tag;
 		public:
-			interpreter(const unsigned char toa,const std::string&,const std::string&);
+			interpreter(const unsigned char toa,const std::string&,const preprocessor*);
 			~interpreter();
 			int set_node_info(const std::string&, const lexicon&);
 			int set_node_info(const std::string&, const node_info&);

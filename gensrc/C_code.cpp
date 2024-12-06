@@ -91,11 +91,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	preprocessor *pp=NULL;
 	std::string ref_id;
 	while(preprocessing_finished==false){
-		unsigned int level=0;
-		unsigned int obj_row_nr=0;
-		unsigned int obj_nr=0;
 		std::string pp_human_input;
-		std::string prev_ref_id;
 		if(row_nr==0){
 			if(natural_language==false){
 				pp=pp_factory::get_instance(language,timestamp,human_input);
@@ -106,21 +102,20 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 		}
 		if(pp!=NULL){
-			std::tie(level,obj_row_nr,obj_nr,pp_human_input)=pp->get_row(row_nr);
+			auto ref_id_and_row=pp->get_row(row_nr);
+			pp_human_input=ref_id_and_row.second;
 			if(pp_human_input.empty()==false){
-				prev_ref_id=ref_id;
 				//TODO:it may prove difficult to process the db entries in find_context_reference_node()
 				//in the correct order, due to sorting strings with numbers is problematic
-				ref_id=std::to_string(level)+"_";//+std::to_string(obj_row_nr)+"_";
+				ref_id=ref_id_and_row.first;
 			}
 			else{
 				preprocessing_finished=true;
 				ref_id="";
-				prev_ref_id="";
 			}
 			++row_nr;
 		}
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed human input at level "+std::to_string(level)+", row nr "+std::to_string(obj_row_nr)+", obj nr "+std::to_string(obj_nr)+": "+pp_human_input);
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed human input with ref_id "+ref_id+":"+pp_human_input);
 		token_paths=new tokenpaths(toa);
 		while(pp_human_input.empty()==false&&toa!=0&&token_paths->is_any_left()==true){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
@@ -154,7 +149,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 					token_paths->assign_lexer(lex);
 				}
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"lexer started");
-				sparser=new interpreter(toa,std::to_string(timestamp),prev_ref_id);
+				sparser=new interpreter(toa,std::to_string(timestamp),pp);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"interpreter started");
 				bool delete_lexer=true;
 				if(toa&HI_SYNTAX||toa&HI_SYNTAX&&toa&HI_SEMANTICS){
@@ -398,7 +393,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		}
 		if(pp_human_input.empty()==false){
 			try{
-				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id+std::to_string(obj_nr));
+				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id);
 				if(analyses.empty()==false){
 					analysischr=new char[analyses.length()+1];
 					analyses.copy(analysischr,analyses.length(),0);
@@ -426,6 +421,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			}
 		}
 	}
+	if(pp!=NULL) delete pp;
 	return analysischr;
 }
 #ifdef __EMSCRIPTEN__

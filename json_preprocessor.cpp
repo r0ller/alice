@@ -3,29 +3,28 @@
 json_preprocessor::json_preprocessor(const time_t& timestamp,const std::string& jsondoc):preprocessor(timestamp){
 	this->jsondoc.Parse(jsondoc.c_str());
 	rapidjson::Value::Object jsonObj=this->jsondoc.GetObject();
-	traverse(jsonObj,0,0,0);
+	traverse(jsonObj,"",0,0,0);
 }
 
 json_preprocessor::~json_preprocessor(){
 
 }
 
-void json_preprocessor::traverse(const rapidjson::Value::Object& jsonObj,const unsigned int level,const unsigned int row_nr,const unsigned int obj_nr){
+void json_preprocessor::traverse(const rapidjson::Value::Object& jsonObj,const std::string& parent_ref_id,const unsigned int level,const unsigned int row_nr,const unsigned int obj_nr){
 	std::string row;
 	unsigned int obj_row_nr=0;
 
 	for(auto& i:jsonObj){
 		if(i.value.IsObject()==true){
 			rapidjson::Value::Object obj=i.value.GetObject();
-			traverse(obj,level+1,obj_row_nr,0);
-			row=" \" "+std::string(i.name.GetString())+" \" : # "+timestamp+"_"+std::to_string(level+1)+"_"+std::to_string(obj_row_nr)+"_"+std::to_string(obj_nr);
+			traverse(obj,std::to_string(level)+"_"+std::to_string(obj_row_nr)+"_"+std::to_string(obj_nr),level+1,0,0);
+			row=" \" "+std::string(i.name.GetString())+" \" : # "+timestamp+"_"+std::to_string(level)+"_"+std::to_string(obj_row_nr)+"_"+std::to_string(obj_nr)+"_"+std::to_string(level+1)+"_"+std::to_string(0)+"_"+std::to_string(0);
 		}
 		else if(i.value.IsArray()==true){
 			rapidjson::Value::Array array=i.value.GetArray();
-			std::string value=" [ ";
-			traverseArray(array,level,row_nr,value);
-			value+=" ] ";
-			row=" \" "+std::string(i.name.GetString())+" \" : "+value;
+			std::string value;
+			traverseArray(array,std::to_string(level)+"_"+std::to_string(obj_row_nr)+"_"+std::to_string(obj_nr),level+1,0,0,value);
+			row=" \" "+std::string(i.name.GetString())+" \" : # "+timestamp+"_"+std::to_string(level)+"_"+std::to_string(obj_row_nr)+"_"+std::to_string(obj_nr)+"_"+std::to_string(level+1)+"_"+std::to_string(0)+"_"+std::to_string(0);
 		}
 		else{
 			std::string value;
@@ -55,27 +54,29 @@ void json_preprocessor::traverse(const rapidjson::Value::Object& jsonObj,const u
 				row=" \" "+std::string(i.name.GetString())+" \" : \" "+value+" \"";
 			}
 		}
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed row at level "+std::to_string(level)+", row nr "+std::to_string(obj_row_nr)+", obj nr "+std::to_string(obj_nr)+": "+row);
-		obj_node_level_obj_nr_row_nr_to_key_value.push_back(std::make_tuple(level,obj_row_nr,obj_nr,row));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"parent_ref_id: "+parent_ref_id+", preprocessed row at level "+std::to_string(level)+", row nr "+std::to_string(obj_row_nr)+", obj nr "+std::to_string(obj_nr)+": "+row);
+		std::string ref_id=timestamp+"_"+parent_ref_id+"_"+std::to_string(level)+"_"+std::to_string(obj_row_nr)+"_"+std::to_string(obj_nr);
+		ref_ids_and_rows.push_back(std::make_pair(ref_id,row));
+		ref_ids_to_search_ref_ids.insert(std::make_pair(ref_id,timestamp+"_"+parent_ref_id+"_"));
 		++obj_row_nr;
 	}
 }
 
-void json_preprocessor::traverseArray(const rapidjson::Value::Array& jsonArray,const unsigned int level,const unsigned int row_nr,std::string& value){
+void json_preprocessor::traverseArray(const rapidjson::Value::Array& jsonArray,const std::string& parent_ref_id,const unsigned int level,const unsigned int row_nr,const unsigned int obj_nr,std::string& value){
 
-	unsigned int obj_nr=0;
+	unsigned int element_obj_nr=0;
 	for(auto& i:jsonArray){
 		if(i.IsObject()==true){
 			rapidjson::Value::Object obj=i.GetObject();
-			traverse(obj,level,row_nr,obj_nr);
-			value+=" # "+timestamp+std::to_string(level)+"_"+std::to_string(row_nr)+"_"+std::to_string(obj_nr)+" ,";
-			++obj_nr;
+			traverse(obj,std::to_string(level)+"_"+std::to_string(row_nr)+"_"+std::to_string(element_obj_nr),level+1,0,0);
+			value+=" # "+timestamp+"_"+std::to_string(level)+"_"+std::to_string(row_nr)+"_"+std::to_string(element_obj_nr)+"_"+std::to_string(level+1)+"_"+std::to_string(0)+"_"+std::to_string(0)+" ,";
+			++element_obj_nr;
 		}
 		else if(i.IsArray()==true){
 			rapidjson::Value::Array array=i.GetArray();
-			traverseArray(array,level,row_nr,value);
-			value+=" # "+timestamp+std::to_string(level)+"_"+std::to_string(row_nr)+"_"+std::to_string(obj_nr)+" ,";
-			++obj_nr;
+			traverseArray(array,std::to_string(level)+"_"+std::to_string(row_nr)+"_"+std::to_string(element_obj_nr),level+1,0,0,value);
+			value+=" # "+timestamp+"_"+std::to_string(level)+"_"+std::to_string(row_nr)+"_"+std::to_string(element_obj_nr)+"_"+std::to_string(level+1)+"_"+std::to_string(0)+"_"+std::to_string(0)+" ,";
+			++element_obj_nr;
 		}
 		else{
 			if(i.IsBool()==true){
@@ -96,18 +97,30 @@ void json_preprocessor::traverseArray(const rapidjson::Value::Array& jsonArray,c
 				value+=" "+std::to_string(i.GetInt())+" ,";
 			}
 			else{
-				value+=" "+std::string(i.GetString())+" ,";
+				value+=" \" "+std::string(i.GetString())+" \" ,";
 			}
 		}
 	}
 	if(value.back()==',') value.pop_back();
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"parent_ref_id: "+parent_ref_id+", preprocessed row at level "+std::to_string(level)+", row nr "+std::to_string(0)+", obj nr "+std::to_string(obj_nr)+": "+"[ "+value+" ]");
+	std::string ref_id=timestamp+"_"+parent_ref_id+"_"+std::to_string(level)+"_0_"+std::to_string(obj_nr);
+	ref_ids_and_rows.push_back(std::make_pair(ref_id,"[ "+value+" ]"));
+	ref_ids_to_search_ref_ids.insert(std::make_pair(ref_id,ref_id));
 }
 
-std::tuple<unsigned int,unsigned int,unsigned int,std::string> json_preprocessor::get_row(const unsigned int row_nr){
-	std::tuple<unsigned int,unsigned int,unsigned int,std::string> ref_id_and_row;
+std::pair<std::string,std::string> json_preprocessor::get_row(const unsigned int row_nr) const{
+	std::pair<std::string,std::string> ref_id_and_row;
 
-	if(row_nr<obj_node_level_obj_nr_row_nr_to_key_value.size()){
-		ref_id_and_row=obj_node_level_obj_nr_row_nr_to_key_value.at(row_nr);
+	if(row_nr<ref_ids_and_rows.size()){
+		ref_id_and_row=ref_ids_and_rows.at(row_nr);
 	}
 	return ref_id_and_row;
+}
+
+std::string json_preprocessor::get_search_ref_id(const std::string& ref_id) const{
+	std::string search_ref_id;
+
+	auto hit=ref_ids_to_search_ref_ids.find(ref_id);
+	if(hit!=ref_ids_to_search_ref_ids.end()) search_ref_id=hit->second;
+	return search_ref_id;
 }

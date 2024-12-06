@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
 
 	const char *analyses,*script_chr=NULL;
-	string text,script,language="HUN";
+	string text,script,language="sh";
 	FILE *fp;
 	char line[256];
 	unsigned char toa=0,crh=0;
@@ -43,7 +43,7 @@ int main(int argc,char **argv){
 				rapidjson::Value& analysesArray=jsondoc["analyses"];
 				if(analysesArray.IsArray()==true&&analysesArray.Size()>0){
 					rapidjson::SizeType i=analysesArray.Size()-1;
-					for(i;i>0;--i){
+					for(;i>0;--i){
 						auto analysisObject=analysesArray[i].GetObject();
 						//look for the first analysis having the qword tag and c_calue then stop
 						string c_value=analysisObject["c_value"].GetString();
@@ -78,8 +78,8 @@ int main(int argc,char **argv){
 		hi_state_cvalue(argv[2],argv[3],argv[4],argv[5]);
 	}
 	else{
-		//while(true){
-			//getline(cin,text);
+		while(true){
+			getline(cin,text);
 			//Test sms scenario:
 			//text="küldj sms tesztnek hogy x";
 			//text="üzenem péternek hogy hello";
@@ -98,30 +98,34 @@ int main(int argc,char **argv){
 			//text="küld";
 			//text="kell só és bors .";
 			//text="mi kell ?";
-			//text="{ \" anya \" : 1 }";
-			//text="{ \" anya \" : { \" darab \" : 1 } }";
-			//text="{ \" darab \" : 1 }";
-			//text="{ \" anya \" : . }";
 			//text="list files !";
+			//text="{\"anya\":1}";
 			//text="{\"anya\":{\"darab\":1}}";
-			//text="{\"contact\":{\"name\":1}}";
-			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":1}}";
-			//text="{\"anya\":{\"hány darab\":1}}";
+			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":2}}";
 			//text="{\"anya\":{\"darab\":{\"mennyiség\":1}}}";
 			//text="{\"anya\":{\"darab\":{\"mennyiség\":1,\"tömeg\":2}}}";
 			//text="{\"anya\":[1]}";
 			//text="{\"anya\":[1,2]}";
 			//text="{\"anya\":[\"teszt\"]}";
 			//text="{\"anya\":[\"teszt\",\"valami\"]}";
-			text="{\"anya\":[1,\"teszt\",2,\"valami\"]}";
+			//text="{\"anya\":[1,\"teszt\",2,\"valami\"]}";//order of array elements depends on rule2rule map
 			//text="{\"anya\":{\"darab\":[1]}}";
-			//text="{\"anya\":{\"darab\":[{\"hány\":1}]}}";
+			//text="{\"anya\":{\"darab\":[1,2]}}";
+			//text="{\"anya\":{\"darab\":[\"teszt\"]}}";
+			//text="{\"anya\":{\"darab\":[\"teszt\",\"valami\"]}}";
+			//text="{\"anya\":{\"darab\":[1,\"teszt\",2,\"valami\"]}}";
+			//text="{\"anya\":[{\"darab\":1}]}";
+			//text="{\"anya\":[1,{\"darab\":2}]}";
+			//text="{\"anya\":[{\"darab\":1},{\"mennyiség\":2}]}";
+			//text="{\"anya\":{\"darab\":[{\"mennyiség\":1}]}}";
+			//text="{\"anya\":{\"adat\":[{\"darab\":1},{\"mennyiség\":2}]}}";
+			//text="{\"anya\":[[1]]}";//FIXME: does not work yet
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
 				//toa=HI_MORPHOLOGY|HI_SEMANTICS;
 				//crh=HI_VERB;
-				analyses=hi(text.c_str(),"JSON",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
+				analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
 				if(analyses!=NULL){
 					cout<<analyses<<endl;
 					script_chr=hi_transcribe(language.c_str(),analyses);
@@ -158,7 +162,7 @@ int main(int argc,char **argv){
 				}
 				text.clear();
 			}
-			//else break;
-		//}
+			else break;
+		}
 	}
 }
