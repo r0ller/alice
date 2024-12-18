@@ -262,6 +262,15 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 							}
 						}
 						if(functor_with_matching_nr_of_deps!=functors_with_matching_nr_of_deps.end()){
+							if(lex==NULL){//exception was thrown so new lexer creation and setting the main_verb did not happen
+								lex=new lexer(modified_human_input.c_str(),language,locale,false,token_paths);
+								token_paths->assign_lexer(lex);
+								while(lex->is_end_of_input()==false){//go through the input simulating what bison does as well but w/o syntactic analysis
+									lex->next_token();
+								}
+								main_verb=lex->get_word_by_lexeme(functor_with_matching_nr_of_deps->first);
+								delete_lexer=false;
+							}
 							sparser->build_dependency_semantics(lex,token_paths,main_verb);
 							if(token_paths->is_any_left()==true){
 								delete lex;

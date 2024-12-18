@@ -110,8 +110,8 @@
 			void insert_in_main_dvm_and_dep_node_links(std::multimap<unsigned int,std::pair<unsigned int,unsigned int> >&);
 			void build_dependency_semantics(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const std::string&,std::set<std::pair<unsigned int,unsigned int>>&,std::set<std::pair<unsigned int,unsigned int>>&,lexer *);
 			unsigned int combine_nodes(std::vector<lexicon>&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const unsigned int&,const unsigned int&,const unsigned int&,std::set<std::pair<unsigned int,unsigned int>>&,const std::string&);
-			void process_depolex_by_row_nr(const std::pair<const unsigned int,field>*, const std::string&,const std::set<unsigned int>&, const lexicon&, const unsigned int&, const std::string&,
-					std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
+			void process_depolex_by_row_nr(const std::pair<const unsigned int,field>*, const std::string&,const std::string&,const std::set<unsigned int>&, const lexicon&, const unsigned int&, const unsigned int&, const std::string&,
+					const unsigned int&,std::vector<lexicon>&, std::set<unsigned int>&, std::map<unsigned int,unsigned int>&, std::set<std::pair<unsigned int,unsigned int>>&, std::set<std::pair<unsigned int,unsigned int>>&, lexer*);
 			std::set<unsigned int> find_context_reference_node(const unsigned int);
 			std::string find_morpheme_id_for_syntax_node(const std::string&,rapidjson::Value::Object&);
 			//find_dependency_nodes_with_tag_value: 2nd and 3rd params (key, value) are pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
