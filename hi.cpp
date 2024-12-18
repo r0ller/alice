@@ -96,9 +96,11 @@ int main(int argc,char **argv){
 			//text="vazze kapcsold be a felolvasást";
 			//text="keress a névjegyzékben alizt";
 			//text="küld";
+			//Test interpreting mood:
 			//text="kell só és bors .";
 			//text="mi kell ?";
 			//text="list files !";
+			//Test interpreting json:
 			//text="{\"anya\":1}";
 			//text="{\"anya\":{\"darab\":1}}";
 			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":2}}";
