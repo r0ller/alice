@@ -8,7 +8,7 @@ extern std::map<std::string, unsigned int> symbol_token_map;
 extern std::map<unsigned int,std::string> token_symbol_map;
 
 tokenpaths::tokenpaths(const unsigned char toa){
-	this->toa=toa;
+	toa_=toa;
 	lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=0;
@@ -17,7 +17,7 @@ tokenpaths::tokenpaths(const unsigned char toa){
 }
 
 tokenpaths::tokenpaths(const unsigned int start,const unsigned int stop){
-	toa=0;
+	toa_=0;
 	lex=NULL;
 	is_any_path_left=true;
 	path_nr_to_start_at=start;
@@ -136,14 +136,14 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 		//	followup_token(lex->last_token_returned());
 
 			if(reason=="syntax error"||reason=="semantic error"){
-				if(toa&HI_SYNTAX){
+				if(toa_&HI_SYNTAX){
 					validated_words=lex->validated_words();
 					logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"processed words:"+validated_words);
 					if(lex->last_word_scanned().morphalytics!=NULL&&lex->last_word_scanned().morphalytics->is_mocked()==false)
 						last_word=lex->last_word_scanned().morphalytics->word();
 					else last_word=lex->last_word_scanned().word;
 				}
-				else if(toa&HI_SEMANTICS){
+				else if(toa_&HI_SEMANTICS){
 					last_word=words[0].word;
 				}
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"FALSE: error at "+last_word);
@@ -233,6 +233,55 @@ std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_to
 	}
 	for(auto&& i:token_paths){
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"anchor token:"+i.first.first+" anchor counter:"+std::to_string(i.first.second)+" followup token:"+i.second);
+	}
+	return token_paths;
+}
+
+std::multimap<p_m1_token_symbol_m2_counter,token_symbol> tokenpaths::followup_token(const unsigned int token, const std::string& parent_symbol, const std::string& head_symbol, const std::string& non_head_symbol){
+	db *sqlite=NULL;
+	query_result *result=NULL;
+	std::string gcat, feature, lid, symbol;
+	std::multimap<p_m1_token_symbol_m2_counter,token_symbol> token_paths;
+	std::set<t_m0_parent_symbol_m1_head_symbol_m2_non_head_symbol> lhs_rules_processed, rhs_rules_processed;
+
+	sqlite=db_factory::get_instance();
+	auto&& token_symbol_map_entry=token_symbol_map.find(token);
+	if(token_symbol_map_entry!=token_symbol_map.end()){
+		if(gcat=="CON")	symbol="t_Con";
+		else symbol=token_symbol_map_entry->second;
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"token symbol:"+symbol);
+		delete result;
+	}
+	else{
+		throw std::runtime_error("No symbol found for token: "+std::to_string(token));
+	}
+	if(symbol==head_symbol||symbol==non_head_symbol){
+		result=sqlite->exec_sql("SELECT * FROM GRAMMAR WHERE LID = '"+lex->language()+"' AND PARENT_SYMBOL = '"+parent_symbol+"' AND  HEAD_SYMBOL = '"+head_symbol+"' AND NON_HEAD_SYMBOL = '"+non_head_symbol+"';");
+		if(result!=NULL){
+			for(unsigned int i=0;i<result->nr_of_result_rows();++i){
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,parent_symbol+" "+head_symbol+" "+non_head_symbol);
+				lhs_rules_processed.clear();
+				rhs_rules_processed.clear();
+				if(head_symbol==symbol&&non_head_symbol.empty()==false){
+					lhs_rules_processed.insert(std::make_tuple(parent_symbol,head_symbol,non_head_symbol));
+					find_lhs_down(symbol,i,non_head_symbol,token_paths,lhs_rules_processed);
+				}
+				else{
+					rhs_rules_processed.insert(std::make_tuple(parent_symbol,head_symbol,non_head_symbol));
+					find_rhs_up(symbol,i,parent_symbol,token_paths,lhs_rules_processed,rhs_rules_processed);
+				}
+			}
+			delete result;
+		}
+		else{
+			throw std::runtime_error("There's no entry for the head/non-head symbol "+symbol+" in the GRAMMAR db table.");
+		}
+		for(auto&& i:token_paths){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"anchor token:"+i.first.first+" anchor counter:"+std::to_string(i.first.second)+" followup token:"+i.second);
+		}
+	}
+	else{
+		throw std::runtime_error("Head/non-head symbol for token symbol "+symbol+" does not match.");
 	}
 	return token_paths;
 }
@@ -881,4 +930,8 @@ std::string tokenpaths::modify_human_input(const std::string& word,const std::st
 	reset();
 	assign_lexer(lex);
 	return modified_human_input;
+}
+
+unsigned int tokenpaths::toa(){
+	return toa_;
 }

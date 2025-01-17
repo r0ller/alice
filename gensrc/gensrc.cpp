@@ -210,6 +210,7 @@ int main(int argc, char* argv[]){
 							action="lexicon word;\n"
 							"word=lex->last_word_scanned(token::"+head_symbol+");\n"
 							"logger::singleton()==NULL?(void)0:logger::singleton()->log(0,word.gcat+\"->\"+word.lexeme);\n"
+							"if(token_paths->toa()&HI_LEO_SYNTAX&&word.lexicon_entry==false&&word.gcat!=\"CON\") YYERROR;\n"
 							"$$=sparser->set_node_info(\""+parent_symbol+"\",word);\n";
 						}
 					}
