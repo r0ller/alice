@@ -43,7 +43,7 @@
 			unsigned int current_path_nr;
 			std::vector<unsigned short int> path_indices;
 			std::vector<unsigned short int> path_nr_to_indices(const unsigned int);
-			unsigned char toa;
+			unsigned char toa_;
 			std::vector<std::map<unsigned int,std::pair<std::string,unsigned int>>> valid_graphs_node_functor_maps;
 			std::vector<std::vector<node_info>> valid_context_nodes;
 		public:
@@ -56,6 +56,7 @@
 			void validate_path_wo_checks(const std::vector<lexicon>&,const transgraph*, const std::vector<node_info>&);
 			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
+			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int,const std::string&,const std::string&,const std::string&);
 			std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::string&,const std::time_t&,const std::string&,const std::string&);
 			void log_yyerror(const std::string&);
 			void validate_parse_tree(const std::vector<node_info>&);
@@ -64,6 +65,7 @@
 			std::string add_context_reference_word(const unsigned char&,const std::string&,std::string&);
 			std::string modify_human_input(const std::string&,const std::string&);
 			lexer* lexer();
+			unsigned int toa();
 	};
 
 	class invalid_token_path:public std::exception{

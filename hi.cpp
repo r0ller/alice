@@ -122,8 +122,11 @@ int main(int argc,char **argv){
 			//text="{\"anya\":{\"darab\":[{\"mennyiség\":1}]}}";
 			//text="{\"anya\":{\"adat\":[{\"darab\":1},{\"mennyiség\":2}]}}";
 			//text="{\"anya\":[[1]]}";//FIXME: does not work yet
+			//Test semantics with leo (lexical entries only) syntax:
+			//text="kérem az izé útmutatót !"
 			if(text.empty()==false){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
+				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
 				//toa=HI_MORPHOLOGY|HI_SEMANTICS;
 				//crh=HI_VERB;
