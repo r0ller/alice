@@ -10,7 +10,7 @@ int yylex(yy::parser::semantic_type* yylval){
 
 	if(lex->is_end_of_input()==false){
 		token=lex->next_token();
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"next token:"+std::to_string(token));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"next token:"+token_symbol_map.find(token)->second);
 		return token;
 	}
 	else return 0;//historic indicator of YACC about end of input stream
