@@ -128,6 +128,7 @@ int main(int argc,char **argv){
 				//toa=HI_MORPHOLOGY|HI_SYNTAX;
 				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
 				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX|HI_SEMANTICS;
 				//toa=HI_MORPHOLOGY|HI_SEMANTICS;
 				//crh=HI_VERB;
 				analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);

@@ -1,6 +1,8 @@
 #ifndef LEXER_H
 	#define LEXER_H
 
+	#include "hi.y.hpp"
+	#include "hi_constants.h"
 	#include <locale>
 	#include "logger.h"
 	#include "db_factory.h"

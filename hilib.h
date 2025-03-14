@@ -1,13 +1,6 @@
 #ifndef HILIB_H
 	#define HILIB_H
-	//type of analysis (toa) flags:
-	#define HI_MORPHOLOGY 1
-	#define HI_SYNTAX 2
-	#define HI_SEMANTICS 4
-	#define HI_LEO_SYNTAX 8
-	//contextual reference handling (crh) flags:
-	#define HI_VERB 1
-	#define HI_PRONOUN 2
+	#include "hi_constants.h"
 	#ifdef __ANDROID__
 		const char *hi(const char *,const char *,const unsigned char,const char *,const char *,JavaVM *,jobject,const char *,const unsigned char);
 		const char *hi_query(const char*, const char*, const unsigned int, const char*);
