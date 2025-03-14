@@ -50,6 +50,10 @@ unsigned int lexer::next_token(){
 				throw std::runtime_error("Got no next word from token paths.");
 			}
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"new word:"+last_word);
+			if(token_paths->toa()&HI_LEO_SYNTAX&&new_word.lexicon_entry==false&&new_word.word.empty()==false&&new_word.gcat!="CON"&&new_word.dependencies==NULL){
+				new_word.tokens.clear();
+				new_word.tokens.push_back(yy::parser::token::YYUNDEF);
+			}
 			words.push_back(new_word);
 			token_deque=new_word.tokens;
 			token=token_deque.front();

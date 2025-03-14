@@ -1,5 +1,6 @@
 #ifndef C_DECLARATIONS
 #define C_DECLARATIONS
+#include "hi.y.hpp"
 int yylex(yy::parser::semantic_type* yylval);
 #include <iostream>
 #include <locale>

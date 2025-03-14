@@ -1782,20 +1782,10 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 				}
 			}
 			if(main_set_op>0){
-				for(auto& m:main_node_id_to_node_ids_found_by_symbol){
-					auto m_hit=prev_main_node_id_to_node_ids_found_by_symbol.find(m.first);
-					if(m_hit!=prev_main_node_id_to_node_ids_found_by_symbol.end()){
-						combine_sets(main_set_op,m_hit->second,m.second);
-					}
-				}
+				combine_sets(main_set_op,prev_main_node_id_to_node_ids_found_by_symbol,main_node_id_to_node_ids_found_by_symbol);
 			}
 			if(dependent_set_op>0){
-				for(auto& d:dependent_node_id_to_node_ids_found_by_symbol){
-					auto d_hit=prev_dependent_node_id_to_node_ids_found_by_symbol.find(d.first);
-					if(d_hit!=prev_dependent_node_id_to_node_ids_found_by_symbol.end()){
-						combine_sets(dependent_set_op,d_hit->second,d.second);
-					}
-				}
+				combine_sets(dependent_set_op,prev_dependent_node_id_to_node_ids_found_by_symbol,dependent_node_id_to_node_ids_found_by_symbol);
 			}
 			if(main_node_symbol.empty()==false
 				&&dependent_node_symbol.empty()==false
@@ -2026,74 +2016,155 @@ bool interpreter::is_valid_combination(const unsigned int& main_node_id,const un
 	return valid_combination;
 }
 
-void interpreter::combine_sets(const unsigned int& operation, const std::vector<unsigned int>& prev_set, std::vector<unsigned int>& current_set){
+void interpreter::combine_sets(const unsigned int& operation, const std::map<unsigned int,std::vector<unsigned int>>& prev_sets,std::map<unsigned int,std::vector<unsigned int>>& current_sets){
+
 	if(operation==1){//union
-		std::set<unsigned int> union_set;
-		for(auto&& i:prev_set){
-			union_set.insert(i);
+		if(current_sets.empty()==false&&prev_sets.empty()==false){
+			for(auto&& current_set:current_sets){
+				auto prev_set=prev_sets.find(current_set.first);
+				if(prev_set!=prev_sets.end()){
+					std::set<unsigned int> union_set;
+					for(auto&& i:prev_set->second){
+						union_set.insert(i);
+					}
+					for(auto&& i:current_set.second){
+						union_set.insert(i);
+					}
+					current_set.second.clear();
+					for(auto&& i:union_set){
+						current_set.second.push_back(i);
+					}
+				}
+			}
 		}
-		for(auto&& i:current_set){
-			union_set.insert(i);
+		else if(current_sets.empty()==true&&prev_sets.empty()==false){
+			current_sets=prev_sets;
 		}
-		current_set.clear();
-		for(auto&& i:union_set){
-			current_set.push_back(i);
+		else if(current_sets.empty()==false&&prev_sets.empty()==true){
+			//Norhing to do.
+		}
+		else{
+			//Norhing to do.
 		}
 	}
 	else if(operation==2){//intersection
-		std::multiset<unsigned int> union_set;
-		for(auto&& i:prev_set){
-			union_set.insert(i);
+		if(current_sets.empty()==false&&prev_sets.empty()==false){
+			for(auto&& current_set:current_sets){
+				auto prev_set=prev_sets.find(current_set.first);
+				if(prev_set!=prev_sets.end()){
+					std::multiset<unsigned int> union_set;
+					for(auto&& i:prev_set->second){
+						union_set.insert(i);
+					}
+					for(auto&& i:current_set.second){
+						union_set.insert(i);
+					}
+					current_set.second.clear();
+					for(auto&& i:union_set){
+						if(union_set.count(i)==2) current_set.second.push_back(i);
+					}
+				}
+			}
 		}
-		for(auto&& i:current_set){
-			union_set.insert(i);
+		else if(current_sets.empty()==true&&prev_sets.empty()==false){
+			current_sets.clear();
 		}
-		current_set.clear();
-		for(auto&& i:union_set){
-			if(union_set.count(i)==2) current_set.push_back(i);
+		else if(current_sets.empty()==false&&prev_sets.empty()==true){
+			current_sets.clear();
+		}
+		else{
+			//Norhing to do.
 		}
 	}
 	else if(operation==3){//Current minus previous -> current minus intersection
-		std::multiset<unsigned int> union_set;
-		std::set<unsigned int> current_set_copy;
-		for(auto&& i:prev_set){
-			union_set.insert(i);
+		if(current_sets.empty()==false&&prev_sets.empty()==false){
+			for(auto&& current_set:current_sets){
+				auto prev_set=prev_sets.find(current_set.first);
+				if(prev_set!=prev_sets.end()){
+					std::multiset<unsigned int> union_set;
+					std::set<unsigned int> current_set_copy;
+					for(auto&& i:prev_set->second){
+						union_set.insert(i);
+					}
+					for(auto&& i:current_set.second){
+						union_set.insert(i);
+						current_set_copy.insert(i);
+					}
+					current_set.second.clear();
+					for(auto&& i:current_set_copy){
+						if(union_set.count(i)==1) current_set.second.push_back(i);
+					}
+				}
+			}
 		}
-		for(auto&& i:current_set){
-			union_set.insert(i);
-			current_set_copy.insert(i);
+		else if(current_sets.empty()==true&&prev_sets.empty()==false){
+			//Nothing to do.
 		}
-		current_set.clear();
-		for(auto&& i:current_set_copy){
-			if(union_set.count(i)==1) current_set.push_back(i);
+		else if(current_sets.empty()==false&&prev_sets.empty()==true){
+			//Norhing to do.
+		}
+		else{
+			//Norhing to do.
 		}
 	}
 	else if(operation==4){//Previous minus current -> previous minus intersection
-		std::multiset<unsigned int> union_set;
-		std::set<unsigned int> prev_set_copy;
-		for(auto&& i:prev_set){
-			union_set.insert(i);
-			prev_set_copy.insert(i);
+		if(current_sets.empty()==false&&prev_sets.empty()==false){
+			for(auto&& current_set:current_sets){
+				auto prev_set=prev_sets.find(current_set.first);
+				if(prev_set!=prev_sets.end()){
+					std::multiset<unsigned int> union_set;
+					std::set<unsigned int> prev_set_copy;
+					for(auto&& i:prev_set->second){
+						union_set.insert(i);
+						prev_set_copy.insert(i);
+					}
+					for(auto&& i:current_set.second){
+						union_set.insert(i);
+					}
+					current_set.second.clear();
+					for(auto&& i:prev_set_copy){
+						if(union_set.count(i)==1) current_set.second.push_back(i);
+					}
+				}
+			}
 		}
-		for(auto&& i:current_set){
-			union_set.insert(i);
+		else if(current_sets.empty()==true&&prev_sets.empty()==false){
+			current_sets=prev_sets;
 		}
-		current_set.clear();
-		for(auto&& i:prev_set_copy){
-			if(union_set.count(i)==1) current_set.push_back(i);
+		else if(current_sets.empty()==false&&prev_sets.empty()==true){
+			//Norhing to do.
+		}
+		else{
+			//Norhing to do.
 		}
 	}
 	else if(operation==5){//disjunct
-		std::multiset<unsigned int> union_set;
-		for(auto&& i:prev_set){
-			union_set.insert(i);
+		if(current_sets.empty()==false&&prev_sets.empty()==false){
+			for(auto&& current_set:current_sets){
+				auto prev_set=prev_sets.find(current_set.first);
+				if(prev_set!=prev_sets.end()){
+					std::multiset<unsigned int> union_set;
+					for(auto&& i:prev_set->second){
+						union_set.insert(i);
+					}
+					for(auto&& i:current_set.second){
+						union_set.insert(i);
+					}
+					current_set.second.clear();
+					for(auto&& i:union_set){
+						if(union_set.count(i)==1) current_set.second.push_back(i);
+					}
+				}
+			}
 		}
-		for(auto&& i:current_set){
-			union_set.insert(i);
+		else if(current_sets.empty()==true&&prev_sets.empty()==false){
+			current_sets=prev_sets;
 		}
-		current_set.clear();
-		for(auto&& i:union_set){
-			if(union_set.count(i)==1) current_set.push_back(i);
+		else if(current_sets.empty()==false&&prev_sets.empty()==true){
+			//Norhing to do.
+		}
+		else{
+			//Norhing to do.
 		}
 	}
 }
@@ -2384,7 +2455,7 @@ unsigned int interpreter::add_feature_to_leaf_with_value(const node_info& node, 
 
 unsigned int interpreter::direct_descendant_of(const node_info& root_node){
 	if(root_node.left_child==0&&root_node.right_child==0){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"direct descendant found: "+std::to_string(root_node.node_id));
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"direct descendant found: "+std::to_string(root_node.node_id));
 		return root_node.node_id;
 	}
 	if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
