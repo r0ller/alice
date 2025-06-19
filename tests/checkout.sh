@@ -15,3 +15,8 @@ while IFS= read -r line;
 			output=$(echo $line|./hi|tail -2|tr -d '\n' );
 		fi;
 	done < $1;
+echo $line;
+if [ ! "$output" = "$line" ];
+then
+	echo "Line $row_nr does not match the output.\n";
+fi;
