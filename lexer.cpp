@@ -18,6 +18,7 @@ lexer::lexer(const char *input_string,const char *language,std::locale& locale,c
 		word_forms_=analyze_and_cache(human_input);
 		word_form_iterator=word_forms_.begin();
 		this->token_paths=token_paths;
+		end_token_returned=false;
 }
 
 lexer::~lexer(){
@@ -52,13 +53,14 @@ unsigned int lexer::next_token(){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"new word:"+last_word);
 			if(token_paths->toa()&HI_LEO_SYNTAX&&new_word.lexicon_entry==false&&new_word.word.empty()==false&&new_word.gcat!="CON"&&new_word.dependencies==NULL){
 				new_word.tokens.clear();
-				new_word.tokens.push_back(yy::parser::token::YYUNDEF);
+				new_word.tokens.push_back(yy::parser::token::YYerror);
 			}
 			words.push_back(new_word);
 			token_deque=new_word.tokens;
 			token=token_deque.front();
 			token_deque.pop_front();
 		}
+		else token=0;
 	}
 	return token;
 }
@@ -663,4 +665,12 @@ std::pair<std::string,std::vector<lexicon>> lexer::copy_word_from_cache(std::str
 		lexicon.morphalytics=new morphan_result(*lexicon.morphalytics);
 	}
 	return lexicons;
+}
+
+bool lexer::is_end_token_returned(){
+	return end_token_returned;
+}
+
+void lexer::end_reached(){
+	end_token_returned=true;
 }

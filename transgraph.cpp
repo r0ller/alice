@@ -62,7 +62,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 		transcript="{\"id\":\""+my_id+"\",";
 		if(morphan->gcat()=="CON"){
 			transcript+="\"functor\":\"CON\",";
-			dependency_path.push_back(std::make_tuple(level,morphan->word(),parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,"CON_"+my_id));
+			//dependency_path.push_back(std::make_tuple(level,morphan->word(),parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,"CON_"+my_id));
 		}
 		else{
 			transcript+="\"functor\":\""+functor.first+"\",";
@@ -206,9 +206,72 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 		}
 		transcript+="},";
 	}
-	else{//TODO?: add copying features_to_inherit
-		if(transcript.back()==',') transcript.pop_back();
-		transcript+="},";
+	else{
+		if(dependencies!=NULL&&morphan!=NULL&&morphan->gcat()=="CON"){
+			functor_id_entry=sqlite->exec_sql("SELECT * FROM FUNCTORS WHERE FUNCTOR = '"+sqlite->escape(functor.first)+"' AND D_KEY = '"+std::to_string(functor.second)+"';");
+			if(functor_id_entry==NULL){
+				throw std::runtime_error("No entries found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
+			}
+			functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
+			if(functor_tag_entries!=NULL){
+				std::string tags="\"tags\":[";
+				std::string tags_returned=get_tags(functor_tag_entries,morphan,features_to_inherit,ref_id);
+				tags+=tags_returned;
+				tag_content+=tags_returned;
+				for(auto&& feature:features_to_inherit){
+					tags+=feature;
+					tag_content+=feature;
+				}
+				std::map<unsigned int,std::string> global_features=morphan_result::global_features();
+				for(auto&& node_feature:global_features){
+					auto node_found=node_functor_map.find(node_feature.first);
+					if(node_found!=node_functor_map.end()){
+						std::pair<std::string,unsigned int> functor=node_found->second;
+						functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
+						tags+=get_global_tags(functor_tag_entries);
+					}
+				}
+				if(tags.back()==','){
+					tags.pop_back();
+				}
+				if(tag_content.back()==','){
+					tag_content.pop_back();
+				}
+				tags+="],";
+				transcript+=tags;
+			}
+			else{//TODO?: add copying features_to_inherit
+				std::string tags="\"tags\":[";
+				/*for(auto&& feature:features_to_inherit){
+					tags+=feature;
+					tag_content+=feature;
+				}*/
+				std::map<unsigned int,std::string> global_features=morphan_result::global_features();
+				for(auto&& node_feature:global_features){
+					auto node_found=node_functor_map.find(node_feature.first);
+					if(node_found!=node_functor_map.end()){
+						std::pair<std::string,unsigned int> functor=node_found->second;
+						functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
+						tags+=get_global_tags(functor_tag_entries);
+					}
+				}
+				if(tags.back()==','){
+					tags.pop_back();
+				}
+				/*if(tag_content.back()==','){
+					tag_content.pop_back();
+				}*/
+				tags+="],";
+				transcript+=tags;
+			}
+			dependency_path.push_back(std::make_tuple(level,morphan->word(),parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,"CON_"+my_id));
+			if(transcript.back()==',') transcript.pop_back();
+			transcript+="},";
+		}
+		else{//TODO?: add copying features_to_inherit
+			if(transcript.back()==',') transcript.pop_back();
+			transcript+="},";
+		}
 	}
 	return transcript;
 }

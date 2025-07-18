@@ -9,9 +9,18 @@ while IFS= read -r line;
 		then
 			if [ ! "$output" = "$line" ];
 			then
-				echo "Line $row_nr does not match the output.\n";
+				echo "Line $row_nr does not match the output:";
+				echo "$output";
 			fi;
 		else
-			output=$(echo $line|./hi|tail -2|tr -d '\n' );
+			text=$(echo $line|cut -f1 -d'|');
+			options=$(echo $line|cut -f2 -d'|');
+			output=$(echo $text|./hi $options|tail -2|tr -d '\n' );
 		fi;
 	done < $1;
+echo $line;
+if [ ! "$output" = "$line" ];
+then
+	echo "Line $row_nr does not match the output:";
+	echo "$output";
+fi;

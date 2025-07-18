@@ -13,9 +13,13 @@ int yylex(yy::parser::semantic_type* yylval){
 		if(token_symbol_hit!=token_symbol_map.end()){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"next token:"+token_symbol_hit->second);
 		}
+		else logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"next token:"+std::to_string(token));
 		return token;
 	}
-	else return 0;//historic indicator of YACC about end of input stream
+	else{
+		lex->end_reached();
+		return 0;//historic indicator of YACC about end of input stream
+	}
 }
 
 void yy::parser::error(const std::string& msg){
@@ -33,7 +37,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 const char *hi(const char *human_input,const char *language,const unsigned char toa,const char *target_language,const char *db_uri,const char *source,const unsigned char crh){
 #endif
 
-	std::string analyses,modified_human_input,main_verb_symbols,main_verb_lexeme;
+	std::string analyses,modified_human_input,main_verb_symbols,main_verb_lexeme,bundle;
 	db *sqlite=NULL;
 	transgraph *transgraph=NULL;
 	char *analysischr=NULL;
@@ -93,12 +97,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	preprocessor *pp=NULL;
 	std::string ref_id;
 	while(preprocessing_finished==false){
+		token_paths=new tokenpaths(toa);
 		std::string pp_human_input;
 		if(row_nr==0){
-			if(natural_language==false){
-				pp=pp_factory::get_instance(language,timestamp,human_input);
-			}
-			else{
+			pp=pp_factory::get_instance(language,timestamp,human_input);
+			if(pp==NULL){
 				preprocessing_finished=true;
 				pp_human_input=human_input;
 			}
@@ -118,7 +121,6 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			++row_nr;
 		}
 		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"preprocessed human input with ref_id "+ref_id+":"+pp_human_input);
-		token_paths=new tokenpaths(toa);
 		while(pp_human_input.empty()==false&&toa!=0&&token_paths->is_any_left()==true){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"picking new token path");
 			try{
@@ -406,9 +408,30 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			try{
 				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id);
 				if(analyses.empty()==false){
+				#ifdef BUNDLE_JS_RESULTS
+					if(target_language=="js"){
+					#ifdef __EMSCRIPTEN__
+						js_transcriptor *js_trans=new js_transcriptor(analyses.c_str());
+						std::string script=js_trans->transcribe();
+						if(script.empty()==false){
+							script="(function(){"+script+"})()";
+							char *result=emscripten_run_script_string(script.c_str());
+							bundle+=std::string(result);
+						}
+						delete js_trans;
+					#elif __ANDROID__
+					#else
+						//0x1F is the ASCII unit separator code used here to separate results
+						//generated for each sentence.
+						script.push_back(0x1F);
+						bundle+=script;
+					#endif
+					}
+				#else
 					analysischr=new char[analyses.length()+1];
 					analyses.copy(analysischr,analyses.length(),0);
 					analysischr[analyses.length()]='\0';
+				#endif
 				}
 				lexer::delete_cache();
 				delete token_paths;
@@ -433,6 +456,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 		}
 	}
 	if(pp!=NULL) delete pp;
+	#ifdef BUNDLE_JS_RESULTS
+	analysischr=new char[bundle.length()+1];
+	bundle.copy(analysischr,bundle.length(),0);
+	analysischr[bundle.length()]='\0';
+	#endif
 	return analysischr;
 }
 #ifdef __EMSCRIPTEN__

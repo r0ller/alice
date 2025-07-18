@@ -78,12 +78,24 @@ int main(int argc,char **argv){
 		hi_state_cvalue(argv[2],argv[3],argv[4],argv[5]);
 	}
 	else{
+		bool bundle=false;
+		if(argc==2&&string(argv[1])=="-b") bundle=true;
+		if(argc==5&&((string(argv[1])=="-toa"&&string(argv[3])=="-crh")||(string(argv[3])=="-toa"&&string(argv[1])=="-crh"))){
+			if(string(argv[1])=="-toa"){
+				toa=std::atoi(argv[2]);
+				crh=std::atoi(argv[4]);
+			}
+			else{
+				toa=std::atoi(argv[4]);
+				crh=std::atoi(argv[2]);
+			}
+		}
 		while(true){
 			getline(cin,text);
 			//Test sms scenario:
 			//text="küldj sms tesztnek hogy x";
-			//text="üzenem péternek hogy hello";
 			//text="a másodiknak\n";
+			//text="üzenem péternek hogy hello";
 			//text="küldd\n";
 			//Test context ref handling for verb:
 			//text="hí­vd fel pétert\n";
@@ -125,31 +137,64 @@ int main(int argc,char **argv){
 			//Test semantics with leo (lexical entries only) syntax:
 			//text="kérem az izé útmutatót !"
 			if(text.empty()==false){
-				//toa=HI_MORPHOLOGY|HI_SYNTAX;
-				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
-				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX|HI_SEMANTICS;
-				//toa=HI_MORPHOLOGY|HI_SEMANTICS;
-				//crh=HI_VERB;
+				if(argc!=5){
+					//toa=HI_MORPHOLOGY|HI_SYNTAX;
+					//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
+					toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+					//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX|HI_SEMANTICS;
+					//toa=HI_MORPHOLOGY|HI_SEMANTICS;
+					//crh=HI_VERB;
+				}
 				analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
 				if(analyses!=NULL){
 					cout<<analyses<<endl;
-					script_chr=hi_transcribe(language.c_str(),analyses);
-					if(script_chr!=NULL){
-						script=string(script_chr);
-						if(script.length()>0){
-							cout<<script<<endl;
-							if(language=="sh"){
-								if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
-									fp=popen(script.c_str(),"r");
+					if(bundle==true){
+						script=string(analyses);
+					}
+					else{
+						script_chr=hi_transcribe(language.c_str(),analyses);
+						if(script_chr!=NULL){
+							script=string(script_chr);
+						}
+					}
+					if(script.length()>0){
+						cout<<script<<endl;
+						if(language=="sh"){
+							if(argc>1&&string(argv[1])=="-d") script="set -x;"+script;
+								fp=popen(script.c_str(),"r");
+								if(fp!=NULL){
+									while(fgets(line,sizeof line,fp)){
+										cout<<line<<endl;
+								}
+								pclose(fp);
+							}
+						}
+						else if(language=="js"){
+							if(bundle==true){
+								string::size_type start=0;
+								string::size_type end=script.find(0x1F,start);
+								string output;
+								while(end!=string::npos){
+									string subscript="console.log((function(){"+script.substr(start,end-start)+"})())";
+									//cout<<subscript<<endl;
+									ofstream *js_file=new std::ofstream("script.js");
+									*js_file << subscript;
+									js_file->close();
+									delete js_file;
+									fp=popen("node -e \"$(cat script.js)\"","r");
 									if(fp!=NULL){
 										while(fgets(line,sizeof line,fp)){
-											cout<<line<<endl;
+											output+=line;
+											if(output.back()=='\n') output.pop_back();
+										}
+										pclose(fp);
 									}
-									pclose(fp);
+									start=end+1;
+									end=script.find(0x1F,start);
 								}
+								cout<<output;
 							}
-							else if(language=="js"){
+							else{
 								script="console.log((function(){"+script+"})())";
 								ofstream *js_file=new std::ofstream("script.js");
 								*js_file << script;

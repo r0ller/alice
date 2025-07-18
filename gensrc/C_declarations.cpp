@@ -12,6 +12,7 @@ int yylex(yy::parser::semantic_type* yylval);
 #endif
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
+	#include "js_transcriptor.h"
 #endif
 #include "logger.h"
 #include "hilib.h"

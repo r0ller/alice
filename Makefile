@@ -113,7 +113,7 @@ shared_native_lib:
 	parserfilename=$$(basename ${NATIVEPARSERFILEPATH});\
 	nativesrcfilepath=${BUILDDIR}/hi_desktop/$$parserfilename.cpp;\
 	nativeobjfilepath=${BUILDDIR}/hi_desktop/$$parserfilename.o;\
-	${CXX} $$nativesrcfilepath $$projectdir/json_preprocessor.cpp $$projectdir/preprocessor.cpp $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -U__ANDROID__ -U__EMSCRIPTEN ${CXXFLAGS} ${CXXFLAGS_DEBUG} -I${BUILDDIR}/hi_desktop $$includedirs -shared -o ${BUILDDIR}/hi_desktop/libhilib.so;
+	${CXX} $$nativesrcfilepath $$projectdir/nlpp.cpp $$projectdir/json_preprocessor.cpp $$projectdir/preprocessor.cpp $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -U__ANDROID__ -U__EMSCRIPTEN ${CXXFLAGS} ${CXXFLAGS_DEBUG} -I${BUILDDIR}/hi_desktop $$includedirs -shared -o ${BUILDDIR}/hi_desktop/libhilib.so;
 
 android_fst:
 	mkdir -p ${BUILDDIR}/hi_android;\
@@ -230,7 +230,7 @@ embedded_js_lib:
 	absbuilddir=${ABSBUILDDIR};\
 	exportedfunction="\"['_hi']\"";\
 	${USERSHELL} -c "source ${EMSCRIPTENDIR}/emsdk_env.sh;\
-	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} $$includedirs -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXTRA_EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$srcfilepath $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz -lreadline -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
+	${EMSCRIPTENDIR}/upstream/emscripten/em++ ${CXXFLAGS} -O3 $$includedirs -s ALLOW_MEMORY_GROWTH -s NO_DISABLE_EXCEPTION_CATCHING -s EXPORTED_FUNCTIONS=$$exportedfunction -s EXPORTED_RUNTIME_METHODS=\"['ccall']\" $$projectdir/nlpp.cpp $$projectdir/json_preprocessor.cpp $$projectdir/preprocessor.cpp $$projectdir/sh_transcriptor.cpp $$projectdir/js_transcriptor.cpp $$projectdir/transcriptor.cpp $$projectdir/hi_transcribe.cpp $$projectdir/hi_cvalue.cpp $$projectdir/hi_query.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp $$jslibdir -lsqlite3 -lfoma -lz $$srcfilepath -o $$absbuilddir/hi_js/embedded/hi.js --embed-file $$jsdb --embed-file $$jsfst;"
 #POSIX breaks here: ${USERSHELL} is necessary as some shells like the default NetBSD sh does not support pushd and popd used in emsdk_env.sh
 
 node_js_lib:

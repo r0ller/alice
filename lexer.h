@@ -29,12 +29,13 @@
 			unsigned int token;
 			std::locale locale;
 			static std::map<std::string,std::vector<lexicon> > cache;
-			std::string next_word();
 			bool generate_tokens_;
 			tokenpaths *token_paths;
+			bool end_token_returned;
 		public:
 			lexer(const char *,const char *,std::locale&,const bool,tokenpaths *);
 			~lexer();
+			std::string next_word();
 			unsigned int next_token();
 			lexicon last_word_scanned();
 			lexicon last_word_scanned(const unsigned int);
@@ -93,7 +94,8 @@
 			std::vector<lexicon> cached_word_entries();
 			std::pair<std::string,std::vector<lexicon>> copy_word_from_cache(std::string&);
 			static lexicon tokenize_word(morphan_result&,const std::string&,const bool=false);
-
+			bool is_end_token_returned();
+			void end_reached();
 	};
 
 	class lexer_error:public std::exception{

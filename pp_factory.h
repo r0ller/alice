@@ -3,6 +3,7 @@
 
 	#include "preprocessor.h"
 	#include "json_preprocessor.h"
+	#include "nlpp.h"
 
 	class pp_factory{
 		public:
@@ -10,6 +11,9 @@
 				preprocessor *pp=NULL;
 				if(lid=="JSON"||lid=="json"){
 					pp=(preprocessor*) new json_preprocessor(timestamp,text);
+				}
+				else{
+					pp=(preprocessor*) new nl_preprocessor(timestamp,text,lid);
 				}
 				return pp;
 			}
