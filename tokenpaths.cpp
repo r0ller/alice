@@ -708,6 +708,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			//preparing to collect data for jsemantics
 			std::map<unsigned int,std::string> global_features=morphan_result::global_features();
 			query_result *result=sqlite->exec_sql("SELECT * FROM SETTINGS WHERE key='indicative_mood_tag' OR key='interrogative_mood_tag' OR key='imperative_mood_tag';");
+			std::string mood;
 			if(result!=NULL){
 				std::string indicative_mood_tag;
 				const std::pair<const unsigned int,field> *mood_tag=result->first_value_for_field_name_found("key","indicative_mood_tag");
@@ -724,58 +725,57 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				if(mood_tag!=NULL){
 					imperative_mood_tag=*result->field_value_at_row_position(mood_tag->first,"value");
 				}
-				std::string mood;
 				for(auto&& feature:global_features){
 					if(feature.second==indicative_mood_tag||feature.second==interrogative_mood_tag||feature.second==imperative_mood_tag){
 						mood=feature.second;
 						break;
 					}
 				}
-				if(mood.empty()==false){
-					std::string analyses_deps="\"analysis_deps\":[";
-					for(unsigned int j=0;j<dependency_path.size();++j){
-						analyses_deps+="{\"source\":\""+source+"\",";
-						analyses_deps+="\"timestamp\":"+std::to_string(timestamp)+",";
-						analyses_deps+="\"sentence\":\""+transgraph::apply_json_escapes(sentence)+"\",";
-						analyses_deps+="\"rank\":"+std::to_string(rank)+",";
-						analyses_deps+="\"a_counter\":"+std::to_string(i+1)+",";
-						analyses_deps+="\"mood\":\""+mood+"\",";
-						analyses_deps+="\"function\":\""+std::get<8>(dependency_path[j])+"\",";
-						analyses_deps+="\"counter\":"+std::to_string(j)+",";
-						analyses_deps+="\"level\":"+std::to_string(std::get<0>(dependency_path[j]))+",";
-						analyses_deps+="\"word\":\""+std::get<1>(dependency_path[j])+"\",";
-						analyses_deps+="\"lexeme\":\""+std::get<2>(dependency_path[j])+"\",";
-						analyses_deps+="\"d_key\":"+std::to_string(std::get<3>(dependency_path[j]))+",";
-						analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[j]))+",";
-						analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[j])+"\",";
-						analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[j]))+",";
-						analyses_deps+="\"tags\":["+std::get<7>(dependency_path[j])+"],";
-						analyses_deps+="\"c_value\":\"\"},";//c_value: no calculated value can be supplied here
-						sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
-							+"','"+std::to_string(timestamp)
-							+"','"+sqlite->escape(sentence)
-							+"','"+std::to_string(rank)//rank
-							+"','"+std::to_string(i+1)//a_counter
-							+"','"+mood
-							+"','"+std::get<8>(dependency_path[j])//function
-							+"','"+std::to_string(j)//counter
-							+"','"+std::to_string(std::get<0>(dependency_path[j]))//level
-							+"','"+sqlite->escape(std::get<1>(dependency_path[j]))//word
-							+"','"+std::get<2>(dependency_path[j])//lexeme
-							+"','"+std::to_string(std::get<3>(dependency_path[j]))//d_key
-							+"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
-							+"','"+std::get<5>(dependency_path[j])//dependency
-							+"','"+std::to_string(std::get<6>(dependency_path[j]))//ref_d_key
-							+"','["+std::get<7>(dependency_path[j])//tags
-							+"]',''"//c_value: no calculated value can be supplied here
-							+");");
-					}
-					if(analyses_deps.back()==',') analyses_deps.pop_back();
-					analyses_deps+="]";
-					analysis+=analyses_deps;
-				}
 				delete result;
 			}
+			//if(mood.empty()==false){
+				std::string analyses_deps="\"analysis_deps\":[";
+				for(unsigned int j=0;j<dependency_path.size();++j){
+					analyses_deps+="{\"source\":\""+source+"\",";
+					analyses_deps+="\"timestamp\":"+std::to_string(timestamp)+",";
+					analyses_deps+="\"sentence\":\""+transgraph::apply_json_escapes(sentence)+"\",";
+					analyses_deps+="\"rank\":"+std::to_string(rank)+",";
+					analyses_deps+="\"a_counter\":"+std::to_string(i+1)+",";
+					analyses_deps+="\"mood\":\""+mood+"\",";
+					analyses_deps+="\"function\":\""+std::get<8>(dependency_path[j])+"\",";
+					analyses_deps+="\"counter\":"+std::to_string(j)+",";
+					analyses_deps+="\"level\":"+std::to_string(std::get<0>(dependency_path[j]))+",";
+					analyses_deps+="\"word\":\""+std::get<1>(dependency_path[j])+"\",";
+					analyses_deps+="\"lexeme\":\""+std::get<2>(dependency_path[j])+"\",";
+					analyses_deps+="\"d_key\":"+std::to_string(std::get<3>(dependency_path[j]))+",";
+					analyses_deps+="\"d_counter\":"+std::to_string(std::get<4>(dependency_path[j]))+",";
+					analyses_deps+="\"dependency\":\""+std::get<5>(dependency_path[j])+"\",";
+					analyses_deps+="\"ref_d_key\":"+std::to_string(std::get<6>(dependency_path[j]))+",";
+					analyses_deps+="\"tags\":["+std::get<7>(dependency_path[j])+"],";
+					analyses_deps+="\"c_value\":\"\"},";//c_value: no calculated value can be supplied here
+					sqlite->exec_sql("INSERT INTO ANALYSES_DEPS VALUES('"+source
+						+"','"+std::to_string(timestamp)
+						+"','"+sqlite->escape(sentence)
+						+"','"+std::to_string(rank)//rank
+						+"','"+std::to_string(i+1)//a_counter
+						+"','"+mood
+						+"','"+std::get<8>(dependency_path[j])//function
+						+"','"+std::to_string(j)//counter
+						+"','"+std::to_string(std::get<0>(dependency_path[j]))//level
+						+"','"+sqlite->escape(std::get<1>(dependency_path[j]))//word
+						+"','"+std::get<2>(dependency_path[j])//lexeme
+						+"','"+std::to_string(std::get<3>(dependency_path[j]))//d_key
+						+"','"+std::to_string(std::get<4>(dependency_path[j]))//d_counter
+						+"','"+std::get<5>(dependency_path[j])//dependency
+						+"','"+std::to_string(std::get<6>(dependency_path[j]))//ref_d_key
+						+"','["+std::get<7>(dependency_path[j])//tags
+						+"]',''"//c_value: no calculated value can be supplied here
+						+");");
+				}
+				if(analyses_deps.back()==',') analyses_deps.pop_back();
+				analyses_deps+="]";
+				analysis+=analyses_deps;
+			//}
 			if(analysis.back()==',') analysis.pop_back();
 			analysis+="}";
 			ranked_analyses_map.insert(std::make_pair(rank,analysis));

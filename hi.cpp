@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
 
 	const char *analyses,*script_chr=NULL;
-	string text,script,language="js";
+	string text,script,language="sh";
 	FILE *fp;
 	char line[256];
 	unsigned char toa=0,crh=0;
@@ -80,12 +80,22 @@ int main(int argc,char **argv){
 	else{
 		bool bundle=false;
 		if(argc==2&&string(argv[1])=="-b") bundle=true;
+		if(argc==5&&((string(argv[1])=="-toa"&&string(argv[3])=="-crh")||(string(argv[3])=="-toa"&&string(argv[1])=="-crh"))){
+			if(string(argv[1])=="-toa"){
+				toa=std::atoi(argv[2]);
+				crh=std::atoi(argv[4]);
+			}
+			else{
+				toa=std::atoi(argv[4]);
+				crh=std::atoi(argv[2]);
+			}
+		}
 		while(true){
 			getline(cin,text);
 			//Test sms scenario:
 			//text="küldj sms tesztnek hogy x";
-			//text="üzenem péternek hogy hello";
 			//text="a másodiknak\n";
+			//text="üzenem péternek hogy hello";
 			//text="küldd\n";
 			//Test context ref handling for verb:
 			//text="hí­vd fel pétert\n";
@@ -127,13 +137,15 @@ int main(int argc,char **argv){
 			//Test semantics with leo (lexical entries only) syntax:
 			//text="kérem az izé útmutatót !"
 			if(text.empty()==false){
-				//toa=HI_MORPHOLOGY|HI_SYNTAX;
-				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
-				toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
-				//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX|HI_SEMANTICS;
-				//toa=HI_MORPHOLOGY|HI_SEMANTICS;
-				//crh=HI_VERB;
-				analyses=hi(text.c_str(),"HUN",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
+				if(argc!=5){
+					//toa=HI_MORPHOLOGY|HI_SYNTAX;
+					//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
+					toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
+					//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX|HI_SEMANTICS;
+					//toa=HI_MORPHOLOGY|HI_SEMANTICS;
+					//crh=HI_VERB;
+				}
+				analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
 				if(analyses!=NULL){
 					cout<<analyses<<endl;
 					if(bundle==true){

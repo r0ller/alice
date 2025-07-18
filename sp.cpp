@@ -2699,7 +2699,7 @@ void interpreter::process_depolex_by_row_nr(const std::pair<const unsigned int,f
 	std::string dependency_failover=*main_word.dependencies->field_value_at_row_position(depolex_entry->first,"d_failover");
 	//check if the current depolex entry has already been processed for the main_node_id (which may be the dependent_node_id if already in recursion)
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"searching in processed_depolex_by_row_nr for main_node_id "+std::to_string(main_node_id)+" and dependent row id "+std::to_string(depolex_entry->first));
-	//No tree is built from the combined nodes as there's no syntax tree in this case, so combined nodes are not inserted anywhere	
+	//No tree is built from the combined nodes as there's no syntax tree in this case, so combined nodes are not inserted anywhere
 	if(processed_depolex_by_row_nr.find(std::make_pair(main_node_id,depolex_entry->first))!=processed_depolex_by_row_nr.end()){
 		if((manner.empty()==true||manner=="0")&&dependencies_found_in_dvm.size()==0
 				||manner=="1"
@@ -2897,8 +2897,9 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 	//(as an array e.g. {"qword":["when","what",...]} or as multiple tags like {"qword":"when","qword":"what",...})
 	//this seems to be able to catch all
 	std::string ref_value;
-	std::string ref_id=o_node.expression.morphalytics->feature_value(ref_tag);
-	if(pp_!=NULL){
+	std::string ref_id;
+	if(pp_!=NULL){//TODO: add check for not being a natural language
+		ref_id=o_node.expression.morphalytics->feature_value(ref_tag);
 		if(ref_id.empty()==false){
 			ref_value=ref_stem+pp_->get_search_ref_id(ref_id);
 		}
@@ -2907,7 +2908,7 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 		}
 	}
 	else{
-		//TODO: this is for natural language reference
+		ref_value=o_node.expression.morphalytics->gcat();
 	}
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ref_id:"+ref_id);
 	std::string analysis_deps_query="SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' AND RANK IN (SELECT MIN(RANK) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE) GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;";
@@ -3091,7 +3092,7 @@ void interpreter::find_dependency_chain_with_tag_value(const std::string lid,con
 		}
 	}
 	if(dep_node_id>0&&dependency.HasMember("dependencies")==true){
-		unsigned int dep_node_id_semantics_root=find_context_node_ids_for_syntax_node(lid,analysisObject,dependency,context_node_id_to_new_node_id_map);			
+		unsigned int dep_node_id_semantics_root=find_context_node_ids_for_syntax_node(lid,analysisObject,dependency,context_node_id_to_new_node_id_map);
 		for(auto& dep_of_dep:dependency["dependencies"].GetArray()){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"find_dependency_chain_with_tag_value: processing dependency of dep. id "+std::string(dependency["id"].GetString()));
 			std::string top_syntax_node_id_of_dep=dep_of_dep["id"].GetString();
