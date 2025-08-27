@@ -8,7 +8,7 @@
 			std::string timestamp;
 		public:
 			preprocessor(const time_t& timestamp);
-			~preprocessor();
+			virtual ~preprocessor();
 			virtual std::pair<std::string,std::string> get_row(const unsigned int) const =0;
 			virtual std::string get_search_ref_id(const std::string&) const =0;
 	};
