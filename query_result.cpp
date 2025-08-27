@@ -142,13 +142,16 @@ void query_result::keep(const std::set<unsigned int>& rowids){
 
 	for(position=raw_result_set.begin();position!=raw_result_set.end();++position){
 		if(rowids.find(position->first)==rowids.end()){
-			for(auto i=raw_result_set.lower_bound(position->first),
-				upper_bound=raw_result_set.upper_bound(position->first);
+			upper_bound=raw_result_set.upper_bound(position->first);
+			field_set.clear();
+			for(auto i=raw_result_set.lower_bound(position->first);
 				i!=upper_bound;++i){
 				field_set.insert(std::make_pair(i->second.field_name,i->second.field_value));
 			}
-			raw_result_set.erase(position->first);
-			row_set.erase(field_set);
+			if(field_set.empty()==false){
+				position=raw_result_set.erase(position,upper_bound);
+				row_set.erase(field_set);
+			}
 		}
 	}
 }

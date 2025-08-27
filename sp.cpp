@@ -2898,7 +2898,9 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 	//this seems to be able to catch all
 	std::string ref_value;
 	std::string ref_id;
-	if(pp_!=NULL){//TODO: add check for not being a natural language
+	morphan *morphan=morphan::get_instance(o_node.expression.lid);
+	bool natural_language=morphan->is_natural_language();
+	if(pp_!=NULL&&natural_language==false){
 		ref_id=o_node.expression.morphalytics->feature_value(ref_tag);
 		if(ref_id.empty()==false){
 			ref_value=ref_stem+pp_->get_search_ref_id(ref_id);
@@ -2910,11 +2912,15 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 	else{
 		ref_value=o_node.expression.morphalytics->gcat();
 	}
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ref_id:"+ref_id);
+	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ref_id:"+ref_id+", ref_value:"+ref_value);
 	std::string analysis_deps_query="SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' AND RANK IN (SELECT MIN(RANK) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE) GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;";
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"query:"+analysis_deps_query);
 	ref_tagged_entries=sqlite->exec_sql(analysis_deps_query);
 	if(ref_tagged_entries!=NULL){
+		if(natural_language==true){
+			std::set<unsigned int> first_row={0};
+			ref_tagged_entries->keep(first_row);
+		}
 		for(unsigned int i=0;i<ref_tagged_entries->nr_of_result_rows();++i){
 			node_info node=get_node_info(node_id);
 			std::map<unsigned int,unsigned int> context_node_id_to_new_node_id_map;
@@ -2934,10 +2940,21 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 				rapidjson::Document jsondoc;
 				jsondoc.Parse(analyses.c_str());
 				rapidjson::Value::Object analysisObject=jsondoc.GetObject();
-				//The string search for parent_node checks only if a subtree needs to be handled or independent nodes
-				//TODO:check if there are independent nodes as well beside a subtree with parent_node and return them as well
-				std::string::size_type parent_node_tag_position=tags.find("\"parent_node\":");
-				if(parent_node_tag_position==std::string::npos){
+				//Searching for parent_node checks only if a subtree needs to be handled or (exclusive or) independent nodes
+				//TODO:check if there are independent nodes as well even if there is a subtree with parent_node and return them as well
+				bool ref_has_parent_node=false;
+				auto analysis_deps=analysisObject["analysis_deps"].GetArray();
+				for(auto& dep:analysis_deps){
+					for(auto& tag:dep["tags"].GetArray()){
+						if(tag.HasMember(ref_tag.c_str())==true&&ref_value.compare(std::string(tag[ref_tag.c_str()].GetString()).substr(0,ref_value.length()))==0
+							&&tag.HasMember("parent_node")==true){
+							ref_has_parent_node=true;
+							break;
+						}
+					}
+					if(ref_has_parent_node==true) break;
+				}
+				if(ref_has_parent_node==false){
 					//if there is no parent_node in tags then look up the lexeme as functor in the semantics part of the analysis,
 					//and get the node id of it to be able to look it up in the syntax part of the analysis
 					std::vector<rapidjson::Value> dependencies_found;
