@@ -120,7 +120,6 @@
 			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
 			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
 			unsigned int create_node_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
-			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
 			std::set<unsigned int> context_node_ids;
 			std::string timestamp_;
 			const preprocessor *pp_;
@@ -128,6 +127,7 @@
 			std::string ref_symbol;
 			std::string ref_stem;
 			std::string ref_tag;
+			void get_paths_to_lexeme(const node_info&,const std::string&,std::vector<std::vector<unsigned int>>&,std::vector<unsigned int>);
 		public:
 			interpreter(const unsigned char toa,const std::string&,const preprocessor*);
 			~interpreter();
@@ -151,6 +151,8 @@
 			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&);
 			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&, const std::string&);
 			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&, const std::string&, const std::string&);
+			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
+			std::map<std::pair<unsigned int,unsigned int>,std::tuple<unsigned int,unsigned int,std::string,std::string>> find_subtree_root_of(const unsigned int,const std::string&,const std::string&);
 	};
 
 	class semper_error:public std::exception{

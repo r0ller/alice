@@ -6,7 +6,7 @@ BUILDDIR=build
 ABSBUILDDIR=$$(readlink -f ${BUILDDIR})
 CXX=clang++
 CXXFLAGS=-std=c++17 -fPIC -pedantic -Wall
-INCLUDEDIRS=-I${PROJECTSRCDIR} -I/usr/pkg/include -I/usr/local/include
+INCLUDEDIRS=-I${PROJECTSRCDIR} -I${BUILDDIR}/hi_desktop -I/usr/pkg/include -I/usr/local/include
 COMMONLIBDIRS=-L/usr/pkg/lib -L/usr/local/lib
 NATIVELIBDIR=-L${BUILDDIR}/hi_desktop
 NATIVEEXELDFLAGS=-Wl,-rpath=${ABSBUILDDIR}/hi_desktop -lhilib -lsqlite3 -lfoma -lz
@@ -66,7 +66,7 @@ JSFOMAPATH=${PROJECTSRCDIR}/hi_js/foma/english.foma
 JSFSTNAME=english.fst
 JSLEXCFILES=${PROJECTSRCDIR}/hi_js/foma
 
-all: desktop_fst desktop_parser_db desktop_bison_parser desktop_parser shared_native_lib desktop_client android_fst android_parser_db android_bison_parser android_parser arm32_lib arm64_lib js_fst js_parser_db js_bison_parser js_parser embedded_js_lib node_js_lib test_tools ml_tools
+all: desktop_fst desktop_parser_db desktop_bison_parser desktop_parser shared_native_lib desktop_client android_fst android_parser_db android_bison_parser android_parser arm32_lib arm64_lib js_fst js_parser_db js_bison_parser js_parser embedded_js_lib node_js_lib test_tools ml_tools tools
 
 desktop_client:
 	mkdir -p ${BUILDDIR};\
@@ -268,6 +268,14 @@ ml_tools:
 	includedirs="${INCLUDEDIRS}";\
 	${CXX} $$projectdir/ml/prep_abl.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/lexer.cpp $$projectdir/sp.cpp $$projectdir/tokenpaths.cpp $$projectdir/query_result.cpp $$projectdir/morphan_result.cpp $$projectdir/morphan.cpp $$projectdir/transgraph.cpp -o ${BUILDDIR}/prep_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3 -lfoma;\
 	${CXX} $$projectdir/ml/proc_abl.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp -o ${BUILDDIR}/proc_abl ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} -lsqlite3;\
+
+misc_tools:
+	mkdir -p ${BUILDDIR};\
+	projectdir=${PROJECTSRCDIR};\
+	includedirs="${INCLUDEDIRS}";\
+  nativelibdir=${NATIVELIBDIR};\
+	nativeexeldflags="${NATIVEEXELDFLAGS}";\
+	${CXX} $$projectdir/tools/mapr2r.cpp $$projectdir/logger.cpp $$projectdir/sqlite_db.cpp $$projectdir/query_result.cpp $$projectdir/sp.cpp $$projectdir/lexer.cpp -o ${BUILDDIR}/mapr2r ${CXXFLAGS} ${CXXFLAGS_DEBUG} $$includedirs ${COMMONLIBDIRS} $$nativelibdir $$nativeexeldflags;\
 
 clean:
 	rm -rf ${BUILDDIR}

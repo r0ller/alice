@@ -3123,7 +3123,9 @@ unsigned int interpreter::create_node(const std::string& lid,const std::string& 
 	unsigned int new_node_id=0;
 	db *sqlite=NULL;
 	query_result *language_entries=NULL;
-	//TODO?: insert lexicon in lexer cache?
+	//Don't insert in cache the newly created words as token path calculation won't be updated
+	//and tokenpaths::next_word() (fed by lexer::next_token()) relies on the cache and the
+	//already calculated token paths.
 	if(morpheme_id.empty()==false){
 		sqlite=db_factory::get_instance();
 		language_entries=sqlite->exec_sql("SELECT * FROM LANGUAGES WHERE LID !='"+lid+"';");
@@ -3201,6 +3203,8 @@ unsigned int interpreter::find_context_node_ids_for_syntax_node(const std::strin
 				context_node_id_to_new_node_id_map.insert(std::make_pair(std::atoi(syntaxObject["id"].GetString()),new_node_id));
 				return new_node_id;
 			}
+			//TODO: if there is no morpheme id, it may still be a terminal node of a linguistic feature having no left or
+			//right child. A node shall be created for them as well but nothing indicates to which word they belong to.
 			if(syntaxObject.HasMember("left child")==true){
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"find_context_node_ids_for_syntax_node: checking left child");
 				auto left_child=syntaxObject["left child"].GetObject();
@@ -3292,4 +3296,74 @@ rapidjson::Value::Object interpreter::find_syntax_node(const rapidjson::Value::O
 		}
 	}
 	return syntaxObject;
+}
+
+std::map<std::pair<unsigned int,unsigned int>,std::tuple<unsigned int,unsigned int,std::string,std::string>> interpreter::find_subtree_root_of(const unsigned int root_node_id,const std::string& lexeme,const std::string& dependency){
+	//call get_paths_to_lexeme() for lexeme, then for dependency, then check if there are common node ids in the paths for both
+	std::vector<std::vector<unsigned int>> lexeme_paths,dependency_paths;
+	std::vector<unsigned int> current_path,subtree_roots;
+	std::map<std::pair<unsigned int,unsigned int>,std::tuple<unsigned int,unsigned int,std::string,std::string>> lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map;
+	if(root_node_id>0){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"find_subtree_root_of lexeme:"+lexeme+" and dependency:"+dependency);
+		node_info root_node=get_node_info(root_node_id);
+		get_paths_to_lexeme(root_node,lexeme,lexeme_paths,current_path);
+		current_path.clear();
+		get_paths_to_lexeme(root_node,dependency,dependency_paths,current_path);
+		for(auto lexeme_path:lexeme_paths){
+			unsigned int lexeme_node_level=0;
+			for(auto lexeme_path_node_id:lexeme_path){
+				for(auto dependency_path:dependency_paths){
+					unsigned int dependency_node_level=0;
+					for(auto dependency_path_node_id:dependency_path){
+						if(lexeme_node_level==dependency_node_level&&lexeme_path_node_id==dependency_path_node_id){
+							auto lexnodeid_depnodeid_nodeid_level=lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map.find({lexeme_path.back(),dependency_path.back()});
+							if(lexnodeid_depnodeid_nodeid_level==lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map.end()){
+								//record which child of the subtree root node leads to the lexeme ('H') and the dependency ('N')
+								node_info subroot_node=get_node_info(lexeme_path_node_id);
+								std::string left_root_type="H";
+								std::string right_root_type="N";
+								if(subroot_node.left_child==dependency_path[dependency_node_level+1]){
+									left_root_type="N";
+									right_root_type="H";
+								}
+								lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map.insert({{lexeme_path.back(),dependency_path.back()},{lexeme_path_node_id,lexeme_node_level,left_root_type,right_root_type}});
+							}
+							else{
+								auto& [lex_node_id,dep_node_id]=lexnodeid_depnodeid_nodeid_level->first;
+								auto& [node_id,node_level,left_root_type,right_root_type]=lexnodeid_depnodeid_nodeid_level->second;
+								if(lexeme_node_level>node_level){
+									//node_id=lexeme_path_node_id;
+									//node_level=lexeme_node_level;
+									node_info subroot_node=get_node_info(lexeme_path_node_id);
+									std::string left_root_type="H";
+									std::string right_root_type="N";
+									if(subroot_node.left_child==dependency_path[dependency_node_level+1]){
+										left_root_type="N";
+										right_root_type="H";
+									}
+									lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map.erase(lexnodeid_depnodeid_nodeid_level);
+									lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map.insert({{lexeme_path.back(),dependency_path.back()},{lexeme_path_node_id,lexeme_node_level,left_root_type,right_root_type}});
+								}
+							}
+						}
+						++dependency_node_level;
+					}
+				}
+				++lexeme_node_level;
+			}
+		}
+	}
+	return lexnodeid_depnodeid_pair_to_nodeid_level_leftroottype_rightroottype_tuple_map;
+}
+
+void interpreter::get_paths_to_lexeme(const node_info& node,const std::string& lexeme,std::vector<std::vector<unsigned int>>& paths,std::vector<unsigned int> current_path){
+	current_path.push_back(node.node_id);
+	if(node.left_child==0&&node.right_child==0&&(node.expression.lexeme==lexeme||node.expression.gcat==lexeme)){
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"leaf lexeme:"+node.expression.lexeme);
+		paths.push_back(current_path);
+		return;
+	}
+	if(node.left_child!=0) get_paths_to_lexeme(get_node_info(node.left_child),lexeme,paths,current_path);
+	if(node.right_child!=0) get_paths_to_lexeme(get_node_info(node.right_child),lexeme,paths,current_path);
+	return;
 }

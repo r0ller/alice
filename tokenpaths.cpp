@@ -134,7 +134,6 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 		//	}
 		//	TODO: find out which token should be passed to the followup_token() call in which case (see experimenting if-else cases above for printing out the error token
 		//	followup_token(lex->last_token_returned());
-
 			if(reason=="syntax error"||reason=="semantic error"){
 				if(toa_&HI_SYNTAX){
 					validated_words=lex->validated_words();
@@ -178,7 +177,8 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 			if(yyerror.empty()==false){
 				error+=",{\"source\":\"bison\",";
 				error+="\"type\":\"syntax error\",";
-				error+="\"message\":\""+yyerror+"\"}";
+				if(yyerror.front()=='{') error+="\"message\":"+yyerror+"}";
+				else error+="\"message\":\""+yyerror+"\"}";
 				yyerror.clear();
 			}
 			invalid_path_errors.push_back(error);
