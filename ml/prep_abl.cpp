@@ -68,7 +68,7 @@ void calculate_token_paths(tokenpaths *token_paths, const std::string& sentence,
 				}
 			}
 			//std::cout<<"nr_of_symbols:"<<nr_of_symbols<<" nr_of_cons:"<<nr_of_cons<<std::endl;
-			token_paths->validate_path(words,NULL,false);
+			token_paths->validate_path(words,NULL,std::vector<node_info>{},false);
 			delete lex;
 			lex=NULL;
 		}
@@ -103,28 +103,30 @@ void assign_token_paths(const std::string& sentence, const std::string& lid, con
 	if(nr_of_paths<nr_of_threads){
 		nr_of_threads=nr_of_paths;
 	}
-	unsigned int paths_per_thread=nr_of_paths/nr_of_threads;
-	unsigned int remainder=nr_of_paths-(paths_per_thread*nr_of_threads);
-	//std::cout<<"nr_of_threads:"<<nr_of_threads<<" nr_of_paths:"<<nr_of_paths<<" paths_per_thread:"<<paths_per_thread<<" remainder:"<<remainder<<std::endl;
-	unsigned int start=0, end=paths_per_thread+remainder;
-	if(nr_of_threads>1) threads=new std::thread[nr_of_threads];
-	for(unsigned int i=1;i<nr_of_threads;++i){
+	if(nr_of_paths>0){
+		unsigned int paths_per_thread=nr_of_paths/nr_of_threads;
+		unsigned int remainder=nr_of_paths-(paths_per_thread*nr_of_threads);
+		//std::cout<<"nr_of_threads:"<<nr_of_threads<<" nr_of_paths:"<<nr_of_paths<<" paths_per_thread:"<<paths_per_thread<<" remainder:"<<remainder<<std::endl;
+		unsigned int start=0, end=paths_per_thread+remainder;
+		if(nr_of_threads>1) threads=new std::thread[nr_of_threads];
+		for(unsigned int i=1;i<nr_of_threads;++i){
 //		std::cout<<"i="<<i<<std::endl;
+			token_paths=new tokenpaths(start,end);
+			all_token_paths.push_back(token_paths);
+			threads[i]=std::thread([=]()->void {calculate_token_paths(token_paths,sentence,lid,lexicalize,output,i);});
+			start=end;
+			end+=paths_per_thread;
+		}
+		//Get some job done on the main thread
 		token_paths=new tokenpaths(start,end);
-		all_token_paths.push_back(token_paths);
-		threads[i]=std::thread([=]()->void {calculate_token_paths(token_paths,sentence,lid,lexicalize,output,i);});
-		start=end;
-		end+=paths_per_thread;
-	}
-	//Get some job done on the main thread
-	token_paths=new tokenpaths(start,end);
-	calculate_token_paths(token_paths,sentence,lid,lexicalize,output,0);
-	delete token_paths;
-	for(unsigned int i=1;i<nr_of_threads;++i){
-		threads[i].join();
-	}
-	for(auto i:all_token_paths){
-		delete i;
+		calculate_token_paths(token_paths,sentence,lid,lexicalize,output,0);
+		delete token_paths;
+		for(unsigned int i=1;i<nr_of_threads;++i){
+			threads[i].join();
+		}
+		for(auto i:all_token_paths){
+			delete i;
+		}
 	}
 }
 

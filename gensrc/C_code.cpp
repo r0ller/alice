@@ -22,6 +22,44 @@ int yylex(yy::parser::semantic_type* yylval){
 	}
 }
 
+void yy::parser::report_syntax_error(const context& ctx) const {
+	std::string msg="{\"expected\":[";
+	int nr_of_expected_tokens=ctx.expected_tokens(NULL,0);
+	symbol_kind_type *expected=(symbol_kind_type*) malloc(nr_of_expected_tokens*sizeof(symbol_kind_type));
+	int n=ctx.expected_tokens(expected,nr_of_expected_tokens);
+	std::string lid=lex->language();
+	db *sqlite=db_factory::get_instance();
+	for(int i=0;i<n;++i){
+		std::string description;
+		std::string symbol=std::string(symbol_name(expected[i]));
+		query_result *description_entry=NULL;
+		description_entry=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE symbol='"+symbol+"' AND lid='"+lid+"';");
+		if(description_entry!=NULL){
+			description=*description_entry->field_value_at_row_position(0,"description");
+			delete description_entry;
+		}
+		msg+="{\"symbol\":\""+symbol+"\",\"description\":\""+description+"\"},";
+	}
+	free(expected);
+	if(msg.back()==',') msg.pop_back();
+	msg+="],\"unexpected\":";
+	symbol_kind_type lookahead=ctx.token();
+	if(lookahead!=symbol_kind::S_YYEMPTY){
+		std::string description;
+		std::string symbol=std::string(symbol_name(lookahead));
+		query_result *description_entry=NULL;
+		description_entry=sqlite->exec_sql("SELECT * FROM SYMBOLS WHERE symbol='"+symbol+"' AND lid='"+lid+"';");
+		if(description_entry!=NULL){
+			description=*description_entry->field_value_at_row_position(0,"description");
+			delete description_entry;
+		}
+		msg+="{\"symbol\":\""+symbol+"\",\"description\":\""+description+"\"}";
+	}
+	msg+="}";
+	token_paths->log_yyerror(msg);
+	return;
+}
+
 void yy::parser::error(const std::string& msg){
 	token_paths->log_yyerror(msg);
 	return;

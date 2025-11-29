@@ -12,8 +12,8 @@
 				if(lid=="JSON"||lid=="json"){
 					pp=(preprocessor*) new json_preprocessor(timestamp,text);
 				}
-				else{//Uncomment instantiation if no pp is required
-					pp=(preprocessor*) new nl_preprocessor(timestamp,text,lid);
+				else{//Uncomment instantiation if pp is required
+					//pp=(preprocessor*) new nl_preprocessor(timestamp,text,lid);
 				}
 				return pp;
 			}

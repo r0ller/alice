@@ -25,7 +25,7 @@
 			static std::map<std::string,std::vector<std::string>> sentences_word_forms;
 			std::vector<std::string> word_forms_;
 			void destroy_words();
-			static void read_dependencies_by_key(const std::string&, const std::string&, query_result*);
+			static void read_dependencies_by_key(const std::string&, const std::string&, query_result*, const bool=false);
 			unsigned int token;
 			std::locale locale;
 			static std::map<std::string,std::vector<lexicon> > cache;
@@ -46,7 +46,7 @@
 			std::string validated_words();
 			std::vector<lexicon> word_entries();
 			unsigned int last_token_returned();
-			static query_result* dependencies_read_for_functor(const std::string&);
+			static query_result* dependencies_read_for_functor(const std::string&,const bool=false);
 			std::vector<std::string> word_forms();
 			std::string work_string();
 			static std::vector<std::string> word_forms(const std::string& sentence){

@@ -339,7 +339,7 @@ lexicon lexer::tokenize_word(morphan_result& morphalytics, const std::string& la
 	return new_word;
 }
 
-query_result* lexer::dependencies_read_for_functor(const std::string& functor){
+query_result* lexer::dependencies_read_for_functor(const std::string& functor,const bool optional_only){
 	db *sqlite=NULL;
 	query_result *dependencies=NULL;
 	std::string semantic_dependency,ref_d_key;
@@ -357,36 +357,59 @@ query_result* lexer::dependencies_read_for_functor(const std::string& functor){
 			semantic_dependency=*dependencies->field_value_at_row_position(i,"semantic_dependency");
 			ref_d_key=*dependencies->field_value_at_row_position(i,"ref_d_key");
 			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
-				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies,optional_only);
 			}
 		}
 	}
 	return dependencies;
 }
 
-void lexer::read_dependencies_by_key(const std::string& functor, const std::string& d_key, query_result* dependencies){
+void lexer::read_dependencies_by_key(const std::string& functor, const std::string& d_key, query_result* dependencies, const bool optional_only){
 	db *sqlite=NULL;
 	query_result *result=NULL;
-	std::string semantic_dependency,ref_d_key;
+	std::string semantic_dependency,ref_d_key,d_failover;
 	const std::pair<const unsigned int,field> *dependency=NULL;
 
 	sqlite=db_factory::get_instance();
-	result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
-	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"reading dependency "+functor+" ref_d_key "+d_key);
-	if(result==NULL){
-		throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
-	}
-	dependencies->append(*result);
-	for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
-		semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");
-		ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
-		if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
-			dependency=dependencies->first_value_for_field_name_found("lexeme",semantic_dependency);
-			while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key){
-				dependency=dependencies->value_for_field_name_found_after_row_position(dependency->first,"lexeme",semantic_dependency);
+	if(optional_only==true){
+		result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' AND ( OPTIONAL_PARENT_ALLOWED != 0 OR OPTIONAL_PARENT_ALLOWED IS NOT NULL ) ORDER BY LEXEME, D_KEY, D_COUNTER;");
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"reading dependency "+functor+" ref_d_key "+d_key);
+		if(result!=NULL){
+			dependencies->append(*result);
+			for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
+				semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");
+				ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
+				d_failover=*result->field_value_at_row_position(i,"d_failover");
+				if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
+					dependency=dependencies->first_value_for_field_name_found("lexeme",semantic_dependency);
+					while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key){
+						dependency=dependencies->value_for_field_name_found_after_row_position(dependency->first,"lexeme",semantic_dependency);
+					}
+					if(dependency==NULL&&std::atoi(d_failover.c_str())!=0){
+						read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies,optional_only);
+					}
+				}
 			}
-			if(dependency==NULL){
-				read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+		}
+	}
+	else{
+		result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+functor+"' AND D_KEY = '"+d_key+"' ORDER BY LEXEME, D_KEY, D_COUNTER;");
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"reading dependency "+functor+" ref_d_key "+d_key);
+		if(result==NULL){
+			throw std::runtime_error("No dependency entry defined for functor "+functor+" in DEPOLEX db table.");
+		}
+		dependencies->append(*result);
+		for(unsigned int i=0, n=result->nr_of_result_rows();i<n;++i){
+			semantic_dependency=*result->field_value_at_row_position(i,"semantic_dependency");
+			ref_d_key=*result->field_value_at_row_position(i,"ref_d_key");
+			if(semantic_dependency.empty()==false&&ref_d_key.empty()==false){
+				dependency=dependencies->first_value_for_field_name_found("lexeme",semantic_dependency);
+				while(dependency!=NULL&&*dependencies->field_value_at_row_position(dependency->first,"d_key")!=ref_d_key){
+					dependency=dependencies->value_for_field_name_found_after_row_position(dependency->first,"lexeme",semantic_dependency);
+				}
+				if(dependency==NULL){
+					read_dependencies_by_key(semantic_dependency,ref_d_key,dependencies);
+				}
 			}
 		}
 	}
@@ -452,6 +475,9 @@ unsigned int lexer::last_token_returned(){
 }
 
 std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
+	//Don't change the cache after it's been called for a sentence as token path calculation won't
+	//be updated as tokenpaths::next_word() (fed by lexer::next_token()) relies on the cache and the
+	//already calculated token paths.
 	std::string::iterator human_input_iterator;
 	std::string last_word,new_word_form;
 	lexicon new_word;
