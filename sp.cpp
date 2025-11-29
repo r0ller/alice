@@ -493,7 +493,7 @@ void interpreter::get_nodes_by_symbol(const node_info& root_node, const std::str
 void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_of_node_ids_and_d_keys_to_nr_of_deps& dependencies_found,
 	std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >& optional_dependencies_checked){
 	std::pair<unsigned int,unsigned int> dependency_for_d_key_found;
-	std::string d_key="0";
+	std::string d_key="0",functor;
 	unsigned int d_counter=0;
 	const std::pair<const unsigned int,field> *depolex_entry=NULL;
 	std::vector<p_m1_node_id_m2_d_key> node_d_key_route;
@@ -504,12 +504,18 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 
 	const node_info& node=get_node_info(node_id);
 	if(node.expression.dependencies!=NULL){
-		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",node.expression.lexeme);
-		while(depolex_entry!=NULL&&node.expression.lexeme==*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
+		if(node.expression.lexicon_entry==true){
+			functor=node.expression.lexeme;
+		}
+		else{
+			functor=node.expression.gcat;
+		}
+		depolex_entry=node.expression.dependencies->first_value_for_field_name_found("lexeme",functor);
+		while(depolex_entry!=NULL&&functor==*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"lexeme")
 				&&d_key!=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")){
 			d_key=*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key");
 			d_counter=std::atoi(node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_counter")->c_str());
-			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking top level entry for functor "+node.expression.lexeme+" d_key "+d_key);
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"checking top level entry for functor "+functor+" d_key "+d_key);
 			if(node_dependency_traversal_stack.empty()==false){
 				parent_node=node_dependency_traversal_stack.top();
 				auto traversal_node=node_dependency_traversal_stack_tree.find(std::make_pair(node_dependency_traversal_stack.size(),parent_node));
@@ -658,7 +664,7 @@ void interpreter::find_dependencies_for_node(const unsigned int node_id, t_map_o
 				}
 			}
 			while(depolex_entry!=NULL&&*node.expression.dependencies->field_value_at_row_position(depolex_entry->first,"d_key")==d_key){
-				depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",node.expression.lexeme);
+				depolex_entry=node.expression.dependencies->value_for_field_name_found_after_row_position(depolex_entry->first,"lexeme",functor);
 			}
 		}
 	}
@@ -1831,7 +1837,7 @@ unsigned int interpreter::is_valid_combination(const std::string& symbol, const 
 											if(l->second==dependent_or_ref_node->node_id) break;
 										}
 										if(l==main_or_ref_node->dependency_validation_matrix.end()){
-											if(dependent_or_ref_node->expression.morphalytics!=NULL&&dependent_or_ref_node->expression.morphalytics->is_mocked()==false
+											if(dependent_or_ref_node->expression.morphalytics!=NULL//&&dependent_or_ref_node->expression.morphalytics->is_mocked()==false
 												&&dependent_or_ref_node->expression.morphalytics->has_feature("Relative")==true){
 												if(dependency_lookup_root=="HC"||dependency_lookup_root=="NC"){
 													std::set<unsigned int> nodes_found=find_context_reference_node(dependent_or_ref_node->node_id);
@@ -2454,13 +2460,23 @@ unsigned int interpreter::add_feature_to_leaf_with_value(const node_info& node, 
 }
 
 unsigned int interpreter::direct_descendant_of(const node_info& root_node){
-	if(root_node.left_child==0&&root_node.right_child==0){
-		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"direct descendant found: "+std::to_string(root_node.node_id));
-		return root_node.node_id;
+	if(root_node.ref_to_context==true&&root_node.ref_node_ids.empty()==false){
+		for(unsigned int i:root_node.ref_node_ids){
+			node_info ref_node=get_node_info(i);
+			auto direct_descendant=direct_descendant_of(ref_node);
+			if(direct_descendant>0) return direct_descendant;
+		}
+		return 0;
 	}
-	if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
-	else if(root_node.right_child!=0&&root_node.left_child==0) return direct_descendant_of(get_node_info(root_node.right_child));
-	else return 0;
+	else{
+		if(root_node.left_child==0&&root_node.right_child==0){
+			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"direct descendant found: "+std::to_string(root_node.node_id));
+			return root_node.node_id;
+		}
+		if(root_node.left_child!=0&&root_node.right_child==0) return direct_descendant_of(get_node_info(root_node.left_child));
+		else if(root_node.right_child!=0&&root_node.left_child==0) return direct_descendant_of(get_node_info(root_node.right_child));
+		else return 0;
+	}
 }
 
 void interpreter::get_leafs_of_node_lr(const node_info& root_node, std::vector<unsigned int>& leafs){
