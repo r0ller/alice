@@ -137,19 +137,19 @@ const std::pair<const unsigned int,field>* query_result::value_for_field_name_fo
 }
 
 void query_result::keep(const std::set<unsigned int>& rowids){
-	std::multimap<unsigned int,field>::const_iterator position,upper_bound;
+	std::multimap<unsigned int,field>::const_iterator position,upper_bound,lower_bound;
 	std::set<std::pair<std::string,std::string> > field_set;
 
 	for(position=raw_result_set.begin();position!=raw_result_set.end();++position){
 		if(rowids.find(position->first)==rowids.end()){
 			upper_bound=raw_result_set.upper_bound(position->first);
+			lower_bound=raw_result_set.lower_bound(position->first);
 			field_set.clear();
-			for(auto i=raw_result_set.lower_bound(position->first);
-				i!=upper_bound;++i){
+			for(auto i=lower_bound;i!=upper_bound;++i){
 				field_set.insert(std::make_pair(i->second.field_name,i->second.field_value));
 			}
 			if(field_set.empty()==false){
-				position=raw_result_set.erase(position,upper_bound);
+				position=raw_result_set.erase(lower_bound,upper_bound);
 				row_set.erase(field_set);
 			}
 		}

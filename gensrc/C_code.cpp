@@ -17,6 +17,7 @@ int yylex(yy::parser::semantic_type* yylval){
 		return token;
 	}
 	else{
+		logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"next token:"+std::to_string(0));
 		lex->end_reached();
 		return 0;//historic indicator of YACC about end of input stream
 	}
