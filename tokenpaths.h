@@ -35,8 +35,8 @@
 			std::string yyerror;
 			std::string functors(const std::map<std::string,std::map<std::string,std::string> >&,const std::map<std::string,std::vector<lexicon> >&,const unsigned int&,std::string&);
 			std::string dependencies(query_result&,std::map<std::pair<std::string,std::string>,std::string>&);
-			std::string syntax(const std::vector<node_info>&);
-			std::string traverse_nodes_lr(const node_info&, const std::vector<node_info>&);
+			std::string syntax(const std::vector<node_info>&, const std::map<unsigned int,std::pair<std::string,unsigned int>>&);
+			std::string traverse_nodes_lr(const node_info&, const std::vector<node_info>&, const std::map<unsigned int,std::pair<std::string,unsigned int>>&);
 			lexer *lex;
 			unsigned int path_nr_to_start_at;
 			unsigned int path_nr_to_stop_at;

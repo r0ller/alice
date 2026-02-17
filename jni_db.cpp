@@ -30,7 +30,7 @@ void jni_db::open(const std::string& filename){
 	env->CallVoidMethod(dbhelperobj,dbhelper_open,jfilename);
 	if(env->ExceptionCheck()==JNI_TRUE){
 		env->ExceptionClear();
-		throw failed_to_open_db();
+		throw failed_to_open_db("Failed to open db");
 	}
 	env->ReleaseStringUTFChars(jfilename,env->GetStringUTFChars(jfilename,NULL));
 	env->DeleteLocalRef(jfilename);
@@ -40,7 +40,7 @@ void jni_db::close(){
 	env->CallVoidMethod(dbhelperobj,dbhelper_close);
 	if(env->ExceptionCheck()==JNI_TRUE){
 		env->ExceptionClear();
-		throw failed_to_close_db();
+		throw failed_to_close_db("Failed to close db");
 	}
 }
 

@@ -680,7 +680,7 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 				//After all those changes, the features added at syntactic level shall be extracted
 				//in tokenpaths::syntax().
 				analysis+="\"syntax\":[";
-				analysis+=syntax(valid_parse_trees.at(i));
+				analysis+=syntax(valid_parse_trees.at(i),valid_graphs_node_functor_maps.at(i));
 				analysis+="],";
 			}
 			std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
@@ -791,29 +791,60 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 	return analysis;
 }
 
-std::string tokenpaths::syntax(const std::vector<node_info>& nodes){
+std::string tokenpaths::syntax(const std::vector<node_info>& nodes,const std::map<unsigned int,std::pair<std::string,unsigned int>>& graph_node_functor_map){
 
 	const node_info& root=nodes.back();
-	std::string syntax=traverse_nodes_lr(root,nodes);
+	std::string syntax=traverse_nodes_lr(root,nodes,graph_node_functor_map);
 	return syntax;
 }
 
-std::string tokenpaths::traverse_nodes_lr(const node_info& root_node, const std::vector<node_info>& nodes){
+std::string tokenpaths::traverse_nodes_lr(const node_info& root_node, const std::vector<node_info>& nodes, const std::map<unsigned int,std::pair<std::string,unsigned int>>& graph_node_functor_map){
 
 	std::string syntax="{\"symbol\":\""+root_node.symbol+"\"";
 	syntax+=",\"id\":\""+std::to_string(root_node.node_id)+"\"";
-	if(root_node.left_child==0&&root_node.right_child==0){
+	if(root_node.ref_to_context==true&&root_node.ref_node_ids.empty()==false){
+		syntax+=",\"ref_node_ids\":[";
+		unsigned int node_found=0;
+		for(auto& i:root_node.ref_node_ids){
+			syntax+=std::to_string(i)+",";
+			for(auto& j:graph_node_functor_map){
+				if(node_found==0&&i==j.first){
+					node_found=i;
+					break;
+				}
+				else if(node_found>0&&i==j.first){
+					//TODO: if this shall be allowed (which I don't think currently) then one possibility could be to generate
+					//a separate json section for the context nodes and the logic encapsulated in find_context_reference_node()
+					//shall be adapted to take into that as well when building syntax tree from json.
+					throw std::runtime_error("More than one context nodes are referenced by a syntax node.");
+				}
+			}
+		}
+		if(root_node.ref_node_ids.empty()==false&&syntax.back()==','){
+			syntax.pop_back();
+			syntax+="]";
+		}
 		if(root_node.expression.morphalytics!=NULL) syntax+=",\"morpheme id\":\""+root_node.expression.morphalytics->suffixed_id()+"\"";
+		syntax+=",\"left child\":{}";
+		syntax+=",\"right child\":";
+		if(node_found>0) syntax+=traverse_nodes_lr(nodes.at(node_found-1),nodes,graph_node_functor_map);
+		else syntax+="{}";
 		syntax+="}";
-		return syntax;
 	}
-	syntax+=",\"left child\":";
-	if(root_node.left_child!=0) syntax+=traverse_nodes_lr(nodes.at(root_node.left_child-1),nodes);
-	else syntax+="{}";
-	syntax+=",\"right child\":";
-	if(root_node.right_child!=0) syntax+=traverse_nodes_lr(nodes.at(root_node.right_child-1),nodes);
-	else syntax+="{}";
-	syntax+="}";
+	else{
+		if(root_node.left_child==0&&root_node.right_child==0){
+			if(root_node.expression.morphalytics!=NULL) syntax+=",\"morpheme id\":\""+root_node.expression.morphalytics->suffixed_id()+"\"";
+			syntax+="}";
+			return syntax;
+		}
+		syntax+=",\"left child\":";
+		if(root_node.left_child!=0) syntax+=traverse_nodes_lr(nodes.at(root_node.left_child-1),nodes,graph_node_functor_map);
+		else syntax+="{}";
+		syntax+=",\"right child\":";
+		if(root_node.right_child!=0) syntax+=traverse_nodes_lr(nodes.at(root_node.right_child-1),nodes,graph_node_functor_map);
+		else syntax+="{}";
+		syntax+="}";
+		}
 	return syntax;
 }
 

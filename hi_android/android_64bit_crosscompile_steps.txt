@@ -83,7 +83,7 @@ endif
 To expriment with foma-0.10 instead, use the script build64_foma.sh
 
 After that: make (do not do make install as w/o versioning the so file will be overwritten).
-
+Under ndk 28, add the option -Wl,-z,max-page-size=16384 to the CMakeFiles.txt line set(CMAKE_C_FLAGS ... 
 Android project related steps:
 1)hilib needs to be created with createlib64.sh instead of ndk-build and needs a few includes and library paths to be set which should be correctly set in the script and the followings shall be found in the corresponding android project directories:
 includes - fomalib.h, fomalibconf.h
