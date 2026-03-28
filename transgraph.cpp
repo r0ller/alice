@@ -127,12 +127,13 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			tags+="],";
 			transcript+=tags;
 		}
-		else{//TODO?: add copying features_to_inherit
+		else{
 			std::string tags="\"tags\":[";
-			/*for(auto&& feature:features_to_inherit){
+			get_tags(functor_tag_entries,morphan,features_to_inherit,ref_id);
+			for(auto&& feature:features_to_inherit){
 				tags+=feature;
 				tag_content+=feature;
-			}*/
+			}
 			std::map<unsigned int,std::string> global_features=morphan_result::global_features();
 			for(auto&& node_feature:global_features){
 				auto node_found=node_functor_map.find(node_feature.first);
@@ -145,9 +146,9 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			if(tags.back()==','){
 				tags.pop_back();
 			}
-			/*if(tag_content.back()==','){
+			if(tag_content.back()==','){
 				tag_content.pop_back();
-			}*/
+			}
 			tags+="],";
 			transcript+=tags;
 		}
@@ -325,6 +326,16 @@ std::string transgraph::get_tags(query_result *functor_tag_entries,morphan_resul
 						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"trigger_tag:"+trigger_tag+",tag:"+tag+",value:"+value);
 					}
 				}
+			}
+		}
+	}
+	else{
+		if(morphan!=NULL){
+			auto&& feature=morphan->find_feature_to_inherit(morphan->node_id());
+			if(feature.second.empty()==false){
+				std::string tag_to_inherit=feature.second+",";
+				features_to_inherit.insert(tag_to_inherit);
+				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"tag to inherit:"+tag_to_inherit+" parent_node:"+std::to_string(feature.first)+",leaf_node:"+std::to_string(morphan->node_id()));
 			}
 		}
 	}

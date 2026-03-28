@@ -92,6 +92,7 @@ int main(int argc,char **argv){
 		}
 		while(true){
 			getline(cin,text);
+			//text="a másodikat";
 			//Test sms scenario:
 			//text="küldj sms tesztnek hogy x";
 			//text="a másodiknak\n";
@@ -113,6 +114,8 @@ int main(int argc,char **argv){
 			//text="mi kell ?";
 			//text="list files !";
 			//Test interpreting json:
+			//text="{\"anya\":\"van\"}";
+			//text="{\"anya\":\"van\",\"apa\":\"nincs\"}";//FIXME: does not work yet
 			//text="{\"anya\":1}";
 			//text="{\"anya\":{\"darab\":1}}";
 			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":2}}";
@@ -131,6 +134,7 @@ int main(int argc,char **argv){
 			//text="{\"anya\":[{\"darab\":1}]}";
 			//text="{\"anya\":[1,{\"darab\":2}]}";
 			//text="{\"anya\":[{\"darab\":1},{\"mennyiség\":2}]}";
+			//text="{\"táblázat\":[{\"név\":\"Péter\",\"telefonszám\":\"1234\"},{\"név\":\"Kata\",\"telefonszám\":\"5678\"}]}";//FIXME: does not work yet
 			//text="{\"anya\":{\"darab\":[{\"mennyiség\":1}]}}";
 			//text="{\"anya\":{\"adat\":[{\"darab\":1},{\"mennyiség\":2}]}}";
 			//text="{\"anya\":[[1]]}";//FIXME: does not work yet
@@ -145,7 +149,7 @@ int main(int argc,char **argv){
 					//toa=HI_MORPHOLOGY|HI_SEMANTICS;
 					//crh=HI_VERB;
 				}
-				analyses=hi(text.c_str(),"HUN",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
+				analyses=hi(text.c_str(),"ENG",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
 				if(analyses!=NULL){
 					cout<<analyses<<endl;
 					if(bundle==true){

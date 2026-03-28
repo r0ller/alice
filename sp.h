@@ -80,9 +80,9 @@
 			unsigned int is_valid_combination(const std::string&, const node_info&, const node_info&);
 			void find_functors_for_dependency(const std::string&, const std::string&, const query_result*, std::multimap<std::pair<std::string,std::string>, std::pair<unsigned int,std::string> >&, std::vector<std::pair<unsigned int,std::string> >&);
 			std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::string> >* functors_found_for_dependencies(const node_info&, node_info&);
-			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&);
-			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&,std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&, std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&);
-			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, const std::string&, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&);
+			void find_dependencies_for_node(const unsigned int, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<std::pair<unsigned int,unsigned int>,std::string>&);
+			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&,std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&, std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<std::pair<unsigned int,unsigned int>,std::string>&);
+			void find_dependencies_for_functor(const std::string&, const std::string&, const unsigned int, const unsigned int, const std::string&, const std::string&, const std::string&, t_map_of_node_ids_and_d_keys_to_nr_of_deps&, std::multimap<std::pair<std::string,unsigned int>,std::tuple<std::string,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<unsigned int,std::tuple<unsigned int,unsigned int,unsigned int,unsigned int> >&,std::multimap<std::pair<unsigned int,unsigned int>,std::string>&);
 			const std::pair<const unsigned int,field>* followup_dependency(const unsigned int, const std::string&, const std::string&, const bool, const query_result&);
 			std::pair<p_m1_node_id_m2_d_key,t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter> calculate_longest_matching_dependency_route(std::map<p_m1_node_id_m2_d_key,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> > > >&);
 			void calculate_longest_matching_dependency_route(const unsigned int, const p_m1_node_id_m2_d_key&, std::map<unsigned int,std::pair<t_m0_parent_node_m1_nr_of_deps_m2_nr_of_deps_to_find_m3_parent_dkey_m4_parent_dcounter,unsigned int> >&);
@@ -117,9 +117,9 @@
 			//find_dependency_nodes_with_tag_value: 2nd and 3rd params (key, value) are pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
 			void find_dependency_nodes_with_tag_value(rapidjson::Document::AllocatorType&,const std::string,const std::string,const rapidjson::Value&,std::vector<rapidjson::Value>&);
 			//find_dependency_chain_with_tag_value: lid (fist param) is pass by value to avoid passing in something from a node instance which may be invalidated during set_node_info() calls inside
-			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&);
-			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
-			unsigned int create_node_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&);
+			void find_dependency_chain_with_tag_value(const std::string,const std::string&,const std::string&,const unsigned int&,const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::set<unsigned int>&,std::map<unsigned int,unsigned int>&,const std::string&,const unsigned int);
+			unsigned int create_node(const std::string&,const std::string&,const rapidjson::Value::Object&,const std::string&,const unsigned int);
+			unsigned int create_node_for_syntax_node(const std::string&,const std::string&,const rapidjson::Value::Object&,const std::string&,const unsigned int);
 			std::set<unsigned int> context_node_ids;
 			std::string timestamp_;
 			const preprocessor *pp_;
@@ -136,7 +136,7 @@
 			int set_node_info_left(const std::string&, const node_info&);
 			const node_info& get_node_info(unsigned int);
 			int combine_nodes(const std::string&, const node_info&, const node_info&);
-			transgraph* longest_match_for_semantic_rules_found();
+			transgraph* longest_match_for_semantic_rules_found(std::multimap<std::pair<unsigned int,unsigned int>,std::string>&);
 			unsigned int add_feature_to_leaf(const node_info&,const std::string&, const bool& = false, const unsigned int& = 0);
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const bool& = false, const unsigned int& = 0);
 			unsigned int add_feature_to_leaf(const node_info&, const std::string&, const std::string&, const std::string&, const bool& = false, const unsigned int& = 0);
@@ -151,7 +151,7 @@
 			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&);
 			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&, const std::string&);
 			unsigned int add_feature_to_leaf_with_value(const node_info&, const std::string&, const std::string&, const std::string&, const std::string&);
-			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&);
+			unsigned int find_context_node_ids_for_syntax_node(const std::string&,const rapidjson::Value::Object&,const rapidjson::Value::Object&,std::map<unsigned int,unsigned int>&,const std::string&,const unsigned int);
 			std::map<std::pair<unsigned int,unsigned int>,std::tuple<unsigned int,unsigned int,std::string,std::string>> find_subtree_root_of(const unsigned int,const std::string&,const std::string&);
 	};
 

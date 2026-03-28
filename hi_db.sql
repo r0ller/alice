@@ -82,6 +82,18 @@ FOREIGN KEY(lexeme, d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIA
 FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
 );
 
+create table FUNCTOR_PARAMETERS(
+lexeme varchar(47),
+d_key smallint not null check(d_key>0),
+semantic_dependency varchar(47),
+ref_d_key smallint,
+lid varchar(5) references LANGUAGES(lid),
+parameter varchar(64),
+PRIMARY KEY(lexeme, d_key, semantic_dependency, ref_d_key, lid)
+FOREIGN KEY(lexeme, d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
+FOREIGN KEY(semantic_dependency, ref_d_key) REFERENCES FUNCTORS(functor, d_key) DEFERRABLE INITIALLY DEFERRED
+);
+
 /*Maps each syntactic rule to a semantic rule (note: semantic combination rules are divided into different steps due to
 technical reasons)*/
 create table RULE_TO_RULE_MAP(
@@ -145,6 +157,7 @@ sentence text,
 rank float,/*nr of constants/nr of words ratio, the smaller the better*/
 a_counter smallint,/*analysis counter*/
 analysis text,
+non_pp text,/*non-preprocessed version of the original 'sentence' if pp was active, set only for the last pp row*/
 PRIMARY KEY(source,timestamp,sentence,rank,a_counter)
 );
 

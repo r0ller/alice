@@ -19,6 +19,7 @@
 			std::pair<std::string,std::string> get_row(const unsigned int) const;
 			std::string get_search_ref_id(const std::string&) const;
 			std::string add_space(const std::string&);
+			bool is_last_row(const unsigned int) const;
 	};
 
 #endif

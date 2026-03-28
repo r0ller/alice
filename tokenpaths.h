@@ -54,10 +54,10 @@
 			lexicon next_word(const std::vector<lexicon>&);
 			void validate_path(const std::vector<lexicon>&, const transgraph *, const std::vector<node_info>&, const bool);
 			void validate_path_wo_checks(const std::vector<lexicon>&,const transgraph*, const std::vector<node_info>&);
-			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *);
+			void invalidate_path(const std::vector<lexicon>&, const std::string&, std::exception *,std::multimap<std::pair<unsigned int,unsigned int>,std::string>&);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int);
 			std::multimap<p_m1_token_symbol_m2_counter,token_symbol> followup_token(const unsigned int,const std::string&,const std::string&,const std::string&);
-			std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::string&,const std::time_t&,const std::string&,const std::string&);
+			std::string create_analysis(const unsigned char&,const std::string&,const std::string&,const std::string&,const std::time_t&,const std::string&,const std::string&, preprocessor* const, const unsigned int&);
 			void log_yyerror(const std::string&);
 			void validate_parse_tree(const std::vector<node_info>&);
 			void invalidate_parse_tree(const std::vector<node_info>&);
