@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc,char **argv){
 
 	const char *analyses,*script_chr=NULL;
-	string text,script,language="js";
+	string text,script,language="sh",lid="ENG";
 	FILE *fp;
 	char line[256];
 	unsigned char toa=0,crh=0;
@@ -80,25 +80,21 @@ int main(int argc,char **argv){
 	else{
 		bool bundle=false;
 		if(argc==2&&string(argv[1])=="-b") bundle=true;
-		if(argc==5&&((string(argv[1])=="-toa"&&string(argv[3])=="-crh")||(string(argv[3])=="-toa"&&string(argv[1])=="-crh"))){
-			if(string(argv[1])=="-toa"){
-				toa=std::atoi(argv[2]);
-				crh=std::atoi(argv[4]);
-			}
-			else{
-				toa=std::atoi(argv[4]);
-				crh=std::atoi(argv[2]);
-			}
+		if(argc==7&&(string(argv[1])=="-toa"&&string(argv[3])=="-crh"&&string(argv[5])=="-lid")){
+			toa=std::atoi(argv[2]);
+			crh=std::atoi(argv[4]);
+			lid=std::atoi(argv[6]);
 		}
 		while(true){
 			getline(cin,text);
+			//text="a másodikat";
 			//Test sms scenario:
 			//text="küldj sms tesztnek hogy x";
 			//text="a másodiknak\n";
 			//text="üzenem péternek hogy hello";
 			//text="küldd\n";
 			//Test context ref handling for verb:
-			//text="hí­vd fel pétert\n";
+			//text="hívd fel pétert";
 			//text="a harmadikat\n";
 			//Test interpreting statement (see question test above at -q):
 			//text="today is peter's birthday .\n";
@@ -113,6 +109,8 @@ int main(int argc,char **argv){
 			//text="mi kell ?";
 			//text="list files !";
 			//Test interpreting json:
+			//text="{\"anya\":\"van\"}";
+			//text="{\"anya\":\"van\",\"apa\":\"nincs\"}";//FIXME: does not work yet
 			//text="{\"anya\":1}";
 			//text="{\"anya\":{\"darab\":1}}";
 			//text="{\"mátrix\":{\"sor\":1,\"oszlop\":2}}";
@@ -131,11 +129,13 @@ int main(int argc,char **argv){
 			//text="{\"anya\":[{\"darab\":1}]}";
 			//text="{\"anya\":[1,{\"darab\":2}]}";
 			//text="{\"anya\":[{\"darab\":1},{\"mennyiség\":2}]}";
+			//text="{\"táblázat\":[{\"név\":\"Péter\",\"telefonszám\":\"1234\"},{\"név\":\"Kata\",\"telefonszám\":\"5678\"}]}";//FIXME: does not work yet
 			//text="{\"anya\":{\"darab\":[{\"mennyiség\":1}]}}";
 			//text="{\"anya\":{\"adat\":[{\"darab\":1},{\"mennyiség\":2}]}}";
 			//text="{\"anya\":[[1]]}";//FIXME: does not work yet
 			//Test semantics with leo (lexical entries only) syntax:
 			//text="kérem az izé útmutatót !"
+			//text="kérem az izé útmutatót";
 			if(text.empty()==false){
 				if(argc!=5){
 					//toa=HI_MORPHOLOGY|HI_SYNTAX;
@@ -145,7 +145,7 @@ int main(int argc,char **argv){
 					//toa=HI_MORPHOLOGY|HI_SEMANTICS;
 					//crh=HI_VERB;
 				}
-				analyses=hi(text.c_str(),"HUN",toa,language.c_str(),"hi_desktop/hi.db","test",crh);
+				analyses=hi(text.c_str(),lid.c_str(),toa,language.c_str(),"hi_desktop/hi.db","test",crh);
 				if(analyses!=NULL){
 					cout<<analyses<<endl;
 					if(bundle==true){

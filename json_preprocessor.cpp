@@ -1,6 +1,6 @@
 #include "json_preprocessor.h"
 
-json_preprocessor::json_preprocessor(const time_t& timestamp,const std::string& jsondoc):preprocessor(timestamp){
+json_preprocessor::json_preprocessor(const time_t& timestamp,const std::string& jsondoc):preprocessor(timestamp,jsondoc){
 	this->jsondoc.Parse(jsondoc.c_str());
 	rapidjson::Value::Object jsonObj=this->jsondoc.GetObject();
 	traverse(jsonObj,"",0,0,0);
@@ -49,8 +49,12 @@ void json_preprocessor::traverse(const rapidjson::Value::Object& jsonObj,const s
 				value=std::to_string(i.value.GetInt());
 				row=" \" "+std::string(i.name.GetString())+" \" : "+value;
 			}
+			else if(i.value.IsUint()==true){
+				value=std::to_string(i.value.GetUint());
+				row=" \" "+std::string(i.name.GetString())+" \" : "+value;
+			}
 			else{
-				value=std::to_string(*i.value.GetString());
+				value=i.value.GetString();
 				row=" \" "+std::string(i.name.GetString())+" \" : \" "+value+" \"";
 			}
 		}
@@ -123,4 +127,11 @@ std::string json_preprocessor::get_search_ref_id(const std::string& ref_id) cons
 	auto hit=ref_ids_to_search_ref_ids.find(ref_id);
 	if(hit!=ref_ids_to_search_ref_ids.end()) search_ref_id=hit->second;
 	return search_ref_id;
+}
+
+bool json_preprocessor::is_last_row(const unsigned int row_nr) const{
+	bool result=true;
+
+	if(row_nr<ref_ids_and_rows.size()) result=false;
+	return result;
 }

@@ -103,7 +103,7 @@ void tokenpaths::validate_path_wo_checks(const std::vector<lexicon>& words, cons
 	reset();
 }
 
-void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::string& reason,std::exception *exception){
+void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::string& reason,std::exception *exception,std::multimap<std::pair<unsigned int,unsigned int>,std::string>& dependencies_not_found){
 	std::string last_word,validated_words,error;
 
 //	if(is_any_path_left==true&&words.size()==path_indices.size()){ //<--This condition did NOT work out, figure out something else to prevent unnecessary calls from having an effect
@@ -157,7 +157,29 @@ void tokenpaths::invalidate_path(const std::vector<lexicon>& words,const std::st
 				if(exception!=NULL){
 					error+=",\"message\":\""+std::string(exception->what())+"\"";
 				}
-				error+="}";
+				error+=",\"missing_dependencies\":[";
+				db *sqlite=NULL;
+				sqlite=db_factory::get_instance();
+				for(auto& dependency_info:dependencies_not_found){
+					node_info main_node=sparser->get_node_info(dependency_info.first.first);
+					error+="{\"word\":\""+main_node.expression.morphalytics->word()+"\",";
+					query_result *result=sqlite->exec_sql("SELECT * FROM DEPOLEX WHERE LEXEME = '"+main_node.expression.lexeme+"' AND D_KEY = '"+std::to_string(dependency_info.first.second)+"' AND SEMANTIC_DEPENDENCY = '"+dependency_info.second+"';");
+					std::string ref_d_key;
+					if(result==NULL){
+						throw std::runtime_error("Semantic dependency "+dependency_info.second+" not found for: "+main_node.expression.lexeme+" and d_key "+std::to_string(dependency_info.first.second));
+					}
+					ref_d_key=*result->field_value_at_row_position(0,"ref_d_key");
+					delete result;
+					result=sqlite->exec_sql("SELECT * FROM FUNCTOR_PARAMETERS WHERE LEXEME = '"+main_node.expression.lexeme+"' AND D_KEY = '"+std::to_string(dependency_info.first.second)+"' AND SEMANTIC_DEPENDENCY = '"+dependency_info.second+"' AND REF_D_KEY = '"+ref_d_key+"' AND LID = '"+lex->language()+"';");
+					if(result==NULL){
+						throw std::runtime_error("No functor parameter name found for: "+dependency_info.second+" and ref_d_key "+ref_d_key+" as dependency of: "+main_node.expression.lexeme+" and d_key "+std::to_string(dependency_info.first.second));
+					}
+					std::string parameter=*result->field_value_at_row_position(0,"parameter");
+					delete result;
+					error+="\"expected\":\""+parameter+"\"},";
+				}
+				if(error.back()==',') error.pop_back();
+				error+="]}";
 			}
 			else if(reason=="invalid combination"){
 				error="{\"source\":\"hi\",";
@@ -584,7 +606,7 @@ std::string tokenpaths::functors(const std::map<std::string,std::map<std::string
 	return functors;
 }
 
-std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source,const std::string& ref_id){
+std::string tokenpaths::create_analysis(const unsigned char& toa,const std::string& language,const std::string& target_language,const std::string& sentence,const std::time_t& timestamp,const std::string& source,const std::string& ref_id,preprocessor* const pp,const unsigned int& row_nr){
 	std::map<std::string,std::string> related_functors;
 	std::map<std::string,std::map<std::string,std::string> > functors_of_words;
 	std::multimap<float,std::string> ranked_analyses_map;
@@ -779,7 +801,11 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			if(analysis.back()==',') analysis.pop_back();
 			analysis+="}";
 			ranked_analyses_map.insert(std::make_pair(rank,analysis));
-			sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(rank)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"');");
+			std::string non_pp_text;
+			if(pp!=NULL&&pp->is_last_row(row_nr)==true){
+				non_pp_text=pp->original_text();
+			}
+			sqlite->exec_sql("INSERT INTO ANALYSES VALUES('"+source+"','"+std::to_string(timestamp)+"','"+sqlite->escape(sentence)+"','"+std::to_string(rank)+"','"+std::to_string(i+1)+"','"+sqlite->escape(analysis)+"','"+sqlite->escape(non_pp_text)+"');");
 		}
 		analysis="{\"analyses\":[";
 		for(auto&& i:ranked_analyses_map){

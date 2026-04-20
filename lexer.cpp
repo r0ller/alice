@@ -390,6 +390,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 					}
 				}
 			}
+			delete result;
 		}
 	}
 	else{
@@ -412,6 +413,7 @@ void lexer::read_dependencies_by_key(const std::string& functor, const std::stri
 				}
 			}
 		}
+		delete result;
 	}
 	return;
 }
@@ -587,6 +589,7 @@ std::vector<std::string> lexer::analyze_and_cache(std::string& human_input){
 						cache.insert(std::make_pair(last_word,new_words));
 					}
 					else throw std::runtime_error("Got neither real nor mocked morphological analysis. Stop.");
+					delete language_entries;
 				}
 			}
 			else human_input_iterator=human_input.end();//Don't let the iterator advance into infinity in case of garbage input

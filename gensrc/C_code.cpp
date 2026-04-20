@@ -86,6 +86,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 	std::set<std::pair<std::string,unsigned int>> functors_with_matching_nr_of_deps;
 	std::set<std::pair<std::string,unsigned int>>::const_iterator functor_with_matching_nr_of_deps;
 	lexicon main_verb;
+	std::multimap<std::pair<unsigned int,unsigned int>,std::string> dependencies_not_found;
 
 	logger::singleton("console",0,"LE");//Don't forget to turn off logging i.e. comment out if necessary e.g. in android release versions
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"human_input:"+std::string(human_input));
@@ -199,7 +200,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 					int parse_error=parser.parse();
 					if(parse_error==0){
 						if(toa&HI_SEMANTICS){
-							transgraph=sparser->longest_match_for_semantic_rules_found();
+							transgraph=sparser->longest_match_for_semantic_rules_found(dependencies_not_found);
 							if(transgraph!=NULL){
 								token_paths->validate_parse_tree(sparser->nodes());
 								token_paths->validate_path(lex->word_entries(),transgraph,sparser->context_nodes(),true);
@@ -208,7 +209,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 							else{
 								logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error");
 								token_paths->invalidate_parse_tree(sparser->nodes());
-								token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+								token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL,dependencies_not_found);
 							}
 						}
 						else if(toa&HI_SYNTAX){
@@ -223,11 +224,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"syntax error");
 						if(toa&HI_SEMANTICS){
 							token_paths->invalidate_parse_tree(sparser->nodes());
-							token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
+							token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL,dependencies_not_found);
 						}
 						else if(toa&HI_SYNTAX){
 							token_paths->invalidate_parse_tree(sparser->nodes());
-							token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL);
+							token_paths->invalidate_path(lex->word_entries(),"syntax error",NULL,dependencies_not_found);
 						}
 						else{
 							throw std::runtime_error("Logic error: missing type of analysis code coverage in case of syntax error");
@@ -353,7 +354,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 						}
 						else{
 							token_paths->invalidate_parse_tree(sparser->nodes());
-							token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL);
+							token_paths->invalidate_path(lex->word_entries(),"semantic error",NULL,dependencies_not_found);
 						}
 						delete sparser;
 						sparser=NULL;
@@ -399,7 +400,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				return NULL;
 			}
 			catch(invalid_combination& exception){
-				token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception);
+				token_paths->invalidate_path(lex->word_entries(),"invalid combination",&exception,dependencies_not_found);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"invalid_combination:"+std::string(exception.what()));
 				if(token_paths->is_any_left()==true){
 					delete sparser;
@@ -410,7 +411,7 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 				}
 			}
 			catch(dependency_counter_manner_validation_failed& exception){
-				token_paths->invalidate_path(lex->word_entries(),"semantic error",&exception);
+				token_paths->invalidate_path(lex->word_entries(),"semantic error",&exception,dependencies_not_found);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"semantic error:"+std::string(exception.what()));
 				if(token_paths->is_any_left()==true){
 					delete sparser;
@@ -442,10 +443,11 @@ const char *hi(const char *human_input,const char *language,const unsigned char 
 			morphan_result::clear_global_features();
 			morphan_result::clear_features_to_inherit();
 			transgraph::clear_node_functor_map();
+			dependencies_not_found.clear();
 		}
 		if(pp_human_input.empty()==false){
 			try{
-				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id);
+				analyses=token_paths->create_analysis(toa,language,target_language,std::string(pp_human_input),timestamp,std::string(source),ref_id,pp,row_nr);
 				if(analyses.empty()==false){
 				#ifdef BUNDLE_JS_RESULTS
 					if(target_language=="js"){

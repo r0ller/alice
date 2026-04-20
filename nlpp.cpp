@@ -1,6 +1,6 @@
 #include "nlpp.h"
 
-nl_preprocessor::nl_preprocessor(const time_t& timestamp,const std::string& text,const std::string& lid):preprocessor(timestamp){
+nl_preprocessor::nl_preprocessor(const time_t& timestamp,const std::string& text,const std::string& lid):preprocessor(timestamp,text){
 //Check for new line chars and punctuation indicating end of sentence and split the text string according to them.
 	std::string::size_type position=0,split_position=0;;
 
@@ -86,4 +86,11 @@ std::string nl_preprocessor::add_space(const std::string& text){
 		}
 	}
 	return spaced;
+}
+
+bool nl_preprocessor::is_last_row(const unsigned int row_nr) const{
+	bool result=true;
+
+	if(row_nr<rows.size()) result=false;
+	return result;
 }

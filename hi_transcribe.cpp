@@ -11,10 +11,12 @@ const char *hi_transcribe(const char *transcriptor,const char *analyses){
 	if(std::string(transcriptor)=="sh"){
 		sh_trans=new sh_transcriptor(analyses);
 		script=sh_trans->transcribe();
+		delete sh_trans;
 	}
 	else if(std::string(transcriptor)=="js"){
 		js_trans=new js_transcriptor(analyses);
 		script=js_trans->transcribe();
+		delete js_trans;
 	}
 	if(script.empty()==false){
 		script_chr=new char[script.length()+1];

@@ -70,7 +70,9 @@ std::string js_transcriptor::transcribeDependencies(rapidjson::Value& morphology
 			for(auto& tagObj: dependency["tags"].GetArray()){
 				std::string tag_quoted;
 				for(auto& tag: tagObj.GetObject()){
-					tag_quoted+="\""+std::string(tag.name.GetString())+"\":\""+std::string(tag.value.GetString())+"\",";
+					std::string value=value_to_string(tag.value);
+					//tag_quoted+="\""+std::string(tag.name.GetString())+"\":\""+std::string(tag.value.GetString())+"\",";
+					tag_quoted+="\""+std::string(tag.name.GetString())+"\":"+value+",";
 					//quoting here is necessary for js
 					find_replace(tag_quoted,"\"","\\\"");
 				}
@@ -104,7 +106,12 @@ std::string js_transcriptor::transcribeDependencies(rapidjson::Value& morphology
 			//TODO:if functor has no definition but has dependencies, propagate the outgoing result of its dependencies to the parent.
 			//However, if there are more than one functor having no definition it'll be necessary to pass on which is the last
 			//functor that has a definition in order that the arguments are propagated to the right level.
-			script+=functionName+"_out="+"\""+morphologyArg+"\";";
+			if(tags.empty()==false){
+				script+=functionName+"_out="+"\""+morphologyArg;
+				script.pop_back();
+				script+=",\\\"functor_tags\\\":"+tags+"}\";";
+			}
+			else script+=functionName+"_out="+"\""+morphologyArg+"\";";
 		}
 		else{
 			script+=morphologyVarName+"="+"\""+morphologyArg+"\";";

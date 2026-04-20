@@ -20,6 +20,7 @@
 			~json_preprocessor();
 			std::pair<std::string,std::string> get_row(const unsigned int) const;
 			std::string get_search_ref_id(const std::string&) const;
+			bool is_last_row(const unsigned int) const;
 	};
 
 #endif
