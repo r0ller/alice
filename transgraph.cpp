@@ -95,14 +95,17 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 				functors.insert(std::make_pair(functor_id,""));
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Empty definition field found for functor id "+functor_id+" of functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTOR_DEFS db table.");
 			}
+			delete functor_def_entry;
 		}
 		else{
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Empty functor_id field found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 		}
+		delete functor_id_entry;
 		functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
 		if(functor_tag_entries!=NULL){
 			std::string tags="\"tags\":[";
 			std::string tags_returned=get_tags(functor_tag_entries,morphan,features_to_inherit,ref_id);
+			delete functor_tag_entries;
 			tags+=tags_returned;
 			tag_content+=tags_returned;
 			for(auto&& feature:features_to_inherit){
@@ -116,6 +119,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 					std::pair<std::string,unsigned int> functor=node_found->second;
 					functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
 					tags+=get_global_tags(functor_tag_entries);
+					delete functor_tag_entries;
 				}
 			}
 			if(tags.back()==','){
@@ -141,6 +145,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 					std::pair<std::string,unsigned int> functor=node_found->second;
 					functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
 					tags+=get_global_tags(functor_tag_entries);
+					delete functor_tag_entries;
 				}
 			}
 			if(tags.back()==','){
@@ -206,6 +211,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			transcript+="]";
 		}
 		transcript+="},";
+		delete dependencies;
 	}
 	else{
 		if(dependencies!=NULL&&morphan!=NULL&&morphan->gcat()=="CON"){
@@ -213,10 +219,12 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			if(functor_id_entry==NULL){
 				throw std::runtime_error("No entries found for functor "+functor.first+" and d_key "+std::to_string(functor.second)+" in FUNCTORS db table.");
 			}
+			delete functor_id_entry;
 			functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' ORDER BY TRIGGER_TAG, COUNTER;");
 			if(functor_tag_entries!=NULL){
 				std::string tags="\"tags\":[";
 				std::string tags_returned=get_tags(functor_tag_entries,morphan,features_to_inherit,ref_id);
+				delete functor_tag_entries;
 				tags+=tags_returned;
 				tag_content+=tags_returned;
 				for(auto&& feature:features_to_inherit){
@@ -230,6 +238,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 						std::pair<std::string,unsigned int> functor=node_found->second;
 						functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
 						tags+=get_global_tags(functor_tag_entries);
+						delete functor_tag_entries;
 					}
 				}
 				if(tags.back()==','){
@@ -254,6 +263,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 						std::pair<std::string,unsigned int> functor=node_found->second;
 						functor_tag_entries=sqlite->exec_sql("SELECT * FROM FUNCTOR_TAGS WHERE FUNCTOR = '"+functor.first+"' AND D_KEY = '"+std::to_string(functor.second)+"' AND TRIGGER_TAG = '"+node_feature.second+"' ORDER BY COUNTER;");
 						tags+=get_global_tags(functor_tag_entries);
+						delete functor_tag_entries;
 					}
 				}
 				if(tags.back()==','){
@@ -268,6 +278,7 @@ std::string transgraph::transcript(std::map<std::string,std::string>& functors,c
 			dependency_path.push_back(std::make_tuple(level,morphan->word(),parent_functor,parent_d_key,parent_d_counter,functor.first,functor.second,tag_content,"CON_"+my_id));
 			if(transcript.back()==',') transcript.pop_back();
 			transcript+="},";
+			delete dependencies;
 		}
 		else{//TODO?: add copying features_to_inherit
 			if(transcript.back()==',') transcript.pop_back();

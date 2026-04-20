@@ -7,19 +7,20 @@ while IFS= read -r line;
 		echo $line;
 		if [ `expr $row_nr % 2` -eq 0 ];
 		then
-			if [ ! "$output" = "$line" ];
+			if [ "$checkoption" = "=" ] && [ ! "$output" = "$line" ];
 			then
 				echo "Line $row_nr does not match the output:";
 				echo "$output";
 			fi;
 		else
-			text=$(echo $line|cut -f1 -d'|');
-			options=$(echo $line|cut -f2 -d'|');
+			checkoption=$(echo $line|cut -f1 -d'|');
+			text=$(echo $line|cut -f2 -d'|');
+			options=$(echo $line|cut -f3 -d'|');
 			output=$(echo $text|./hi $options|tail -2|tr -d '\n' );
 		fi;
 	done < $1;
 echo $line;
-if [ ! "$output" = "$line" ];
+if [ "$checkoption" = "=" ] && [ ! "$output" = "$line" ];
 then
 	echo "Line $row_nr does not match the output:";
 	echo "$output";

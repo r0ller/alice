@@ -102,8 +102,8 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 			}
 			else{
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dropping this morphan");
-				delete analysis;
 			}
+			delete analysis;
 			morphemes_vector.clear();
 			start_position=0;
 			result=apply_up(morphan::morphan_handle, NULL);
@@ -123,8 +123,8 @@ std::vector<morphan_result> *morphan::analyze(const std::string& word,const bool
 		}
 		else{
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dropping this morphan");
-			delete analysis;
 		}
+		delete analysis;
 	}
 	return analyses;
 }

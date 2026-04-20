@@ -279,6 +279,7 @@ int interpreter::combine_nodes(const std::string& symbol, const node_info& left_
 					if(non_head_leaf_words.empty()==false) non_head_leaf_words.pop_back();
 					throw invalid_combination(head_leaf_words,non_head_leaf_words);
 				}
+				delete rule_to_rule_map;
 			}
 		}
 		nodeinfo.symbol=symbol;
@@ -366,6 +367,7 @@ std::multimap<std::pair<std::string,std::string>,std::pair<unsigned int,std::str
 	if(functors==NULL){
 		throw std::runtime_error("Functor "+functor+" not found in FUNCTOR db table.");
 	}
+	delete functors;
 	for(auto i=functors_found->begin();i!=functors_found->end();){
 		if(i->first.first==functor&&functors_deps_found_unique.find(std::make_tuple(i->first.first,i->first.second,i->second.first,i->second.second))==functors_deps_found_unique.end()){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"dependency "+i->second.second+" with node id "+std::to_string(dependent_node.node_id)
@@ -1094,6 +1096,7 @@ unsigned int interpreter::nr_of_dependencies_to_be_found(){
 			logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"Dependency to be found:"+i.expression.lexeme);
 		}
 	}
+	delete gcats;
 	return nr_of_non_ref_leafs;
 }
 
@@ -3007,7 +3010,8 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 			if(ref_tagged_analysis!=NULL){
 				std::string analyses=*ref_tagged_analysis->field_value_at_row_position(0,"analysis");//trust ranking, take the first record
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"context analysis found:"+analyses);
-				std::string non_pp=*ref_tagged_analysis->field_value_at_row_position(0,"non_pp");
+				std::string non_pp;
+				if(natural_language==false) non_pp=*ref_tagged_analysis->field_value_at_row_position(0,"non_pp");
 				rapidjson::Document jsondoc;
 				jsondoc.Parse(analyses.c_str());
 				rapidjson::Value::Object analysisObject=jsondoc.GetObject();
