@@ -54,6 +54,7 @@ std::pair<std::string,std::string> nl_preprocessor::get_row(const unsigned int r
 }
 
 std::string nl_preprocessor::get_search_ref_id(const std::string&) const{
+	return std::string();
 }
 
 std::string nl_preprocessor::add_space(const std::string& text){
