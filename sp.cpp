@@ -2986,7 +2986,7 @@ std::set<unsigned int> interpreter::find_context_reference_node(const unsigned i
 		ref_value=o_node.expression.morphalytics->gcat();
 	}
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"ref_id:"+ref_id+", ref_value:"+ref_value);
-	std::string analysis_deps_query="SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' AND RANK IN (SELECT MIN(RANK) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE) GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD ORDER BY TIMESTAMP DESC;";
+	std::string analysis_deps_query="SELECT * FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"\"%' AND RANK IN (SELECT MIN(RANK) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"\"%' GROUP BY SOURCE,TIMESTAMP,SENTENCE) AND TIMESTAMP = (SELECT MAX(TIMESTAMP) FROM ANALYSES_DEPS WHERE TAGS LIKE '%\""+ref_tag+"\":\""+ref_value+"\"%') GROUP BY SOURCE,TIMESTAMP,SENTENCE,RANK,A_COUNTER,MOOD;";
 	logger::singleton()==NULL?(void)0:logger::singleton()->log(3,"query:"+analysis_deps_query);
 	ref_tagged_entries=sqlite->exec_sql(analysis_deps_query);
 	if(ref_tagged_entries!=NULL){

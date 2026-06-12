@@ -484,7 +484,9 @@ std::string tokenpaths::morphology(std::vector<lexicon>& word_analyses,unsigned 
 			morphology+="\"lexeme\":\""+transgraph::apply_json_escapes(node.expression.lexeme)+"\",";
 			morphology+="\"stem\":\""+transgraph::apply_json_escapes(node.expression.morphalytics->stem())+"\",";
 			morphology+="\"gcat\":\""+transgraph::apply_json_escapes(node.expression.morphalytics->gcat())+"\"";
-			if(node.expression.morphalytics->gcat()=="CON") ++nr_of_cons;
+			//Don't increase nr_of_cons for context nodes as it screws up ranking calculation
+			//if nr_of_cons ratio is part of it.
+			//if(node.expression.morphalytics->gcat()=="CON") ++nr_of_cons;
 			if(node.expression.morphalytics->is_mocked()==false){
 				morphology+=",\"tags\":[";
 				unsigned int morphan_index=0;
@@ -707,10 +709,21 @@ std::string tokenpaths::create_analysis(const unsigned char& toa,const std::stri
 			}
 			std::vector<std::tuple<unsigned int,std::string,std::string,unsigned int,unsigned int,std::string,unsigned int,std::string,std::string>> dependency_path;
 			if(toa&HI_SEMANTICS){
-				//TODO:adding 1 to nr_of_cons to avoid getting the same rank (0) for different
-				//nr of nodes but none of them having constants. Figure out if there are better
-				//ways of ranking than this.
-				rank=(float)(nr_of_cons+1)/(float)valid_graphs_node_functor_maps[i].size();
+				//TODO: fine tune penalty based coverage metrics:
+				//rank=(mapped words/total words)-(penalty*unmapped words);
+				//Penalty is 1/mapped_functors.
+				//When context is pulled in, the distribution of nr_of_cons of the
+				//original sentence is calculated using mapped_functors which also
+				//contains functors not present in the original sentence. It may
+				//be better to calculate their distribution based only on the
+				//functors of the original sentence but now when context is present,
+				//they are not taken into account by setting nr_of_words=mapped_functors.
+				//Ranking shall be calculated in a way that the smaller is better due to
+				//earlier practices implemented in the code.
+				float mapped_functors=valid_graphs_node_functor_maps[i].size();
+				float nr_of_words=valid_paths[i].size();
+				if(valid_context_nodes.at(i).empty()==false&&mapped_functors>nr_of_words) nr_of_words=mapped_functors;
+				rank=(float)1-(mapped_functors/nr_of_words-(float)nr_of_cons/mapped_functors);
 				logger::singleton()==NULL?(void)0:logger::singleton()->log(0,"nr of words:"+std::to_string(valid_paths[i].size())+", nr of cons:"+std::to_string(nr_of_cons)+", nr of functors:"+std::to_string(valid_graphs_node_functor_maps[i].size())+", rank:"+std::to_string(rank)+", ref_id:"+ref_id);
 				std::set<std::string> features_to_inherit;
 				analysis+="\"semantics\":["+valid_graphs.at(i)->transcript(related_functors,valid_graphs_node_functor_maps[i],target_language,dependency_path,features_to_inherit,ref_id);

@@ -83,7 +83,7 @@ int main(int argc,char **argv){
 		if(argc==7&&(string(argv[1])=="-toa"&&string(argv[3])=="-crh"&&string(argv[5])=="-lid")){
 			toa=std::atoi(argv[2]);
 			crh=std::atoi(argv[4]);
-			lid=std::atoi(argv[6]);
+			lid=argv[6];
 		}
 		while(true){
 			getline(cin,text);
@@ -137,7 +137,7 @@ int main(int argc,char **argv){
 			//text="kérem az izé útmutatót !"
 			//text="kérem az izé útmutatót";
 			if(text.empty()==false){
-				if(argc!=5){
+				if(argc!=7){
 					//toa=HI_MORPHOLOGY|HI_SYNTAX;
 					//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_LEO_SYNTAX;
 					//toa=HI_MORPHOLOGY|HI_SYNTAX|HI_SEMANTICS;
